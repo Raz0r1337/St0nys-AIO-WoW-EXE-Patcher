@@ -422,6 +422,7 @@ name, and before patching it lists them once more.
 | [84](PATCHES.en.md#patch-clienttitle) | Change program title (file properties and window title) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior (fixed by St0ny) | – | – | – |
 | [85](PATCHES.en.md#patch-clientdate) | Change build date (original Jun 24 2010) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
 | [86](PATCHES.en.md#patch-clienticon) | Change program icon (icon of Wow.exe) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
+| [87](PATCHES.en.md#patch-y38fix) | Year 2038 fix: show dates shifted by N years *(asks for the value; only together with the matching server module)* | 🟠 **[untested]** | St0ny | – | – | – |
 
 </details>
 
@@ -450,10 +451,10 @@ clicking the number of a patch takes you straight to its description.
   - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 10, 11, 23–25,
     41, 42, 45–50, 74 and 82–86 (red warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 4, 26, 29, 39, 44, 51, 62, 68, 71–73 and 80 (red
-    warning).
+    you kicked or banned: No. 4, 26, 29, 39, 44, 51, 62, 68, 71–73, 80 and 87
+    (red warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 29, 44, 51 and 62 (red warning).
+    possibly buggy: No. 25, 26, 29, 44, 51, 62 and 87 (red warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 50,
     63, 64, 74 and 80. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change

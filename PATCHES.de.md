@@ -1647,3 +1647,42 @@ Meldung ab.
 > Windows: `Wow.exe` kurz umbenennen oder in einen anderen Ordner kopieren,
 > Verknüpfungen neu anlegen oder den Explorer neu starten. Das Icon im Spiel
 > selbst (Fenstertitel) kommt ebenfalls aus diesen Ressourcen.
+
+<a id="patch-y38fix"></a>
+**Jahr-2038-Fix: Daten um N Jahre verschoben anzeigen** *(Nr. 87, Autor: St0ny)* 🟠 **[ungetestet]**
+
+> [!WARNING]
+> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
+>
+> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
+
+Der 3.3.5-Client speichert Daten gepackt mit einem 5-Bit-Jahr ab 2000 – das
+reicht nur bis 2031 – und rechnet mit 32-Bit-Unix-Zeiten (bis 2038). Die Idee:
+Ein Servermodul schickt alle Daten um N Jahre in die Vergangenheit, dieser
+Patch zählt sie für die Anzeige wieder dazu. N ist ein Vielfaches von 28, dann
+stimmen Wochentage und Schaltjahre genau. Intern bleibt alles im Bereich
+2000–2030, angezeigt wird 2000+N bis 2030+N – mit N = 28 also 2028 bis 2058.
+Der Patcher fragt N ab: 28 (Vorschlag), 56 oder 84. So lässt sich der Zyklus
+später erneut starten.
+
+Was der Patch ändert:
+- Jahresbasis 2000 → 2000+N an allen Lua-Schnittstellen des Kalenders
+  (Datum, Grenzen, Monate, Termine, Antwortzeit, Sperren), in der
+  Kalender-Post, beim Gründungsdatum der Gilde (`/ginfo`) und bei
+  Statistik-Daten. Bei Eingaben (Termin anlegen, Monat wählen) wird N wieder
+  abgezogen.
+- Kalender-Untergrenze 24.11.2004 → 1.1.2000 (vier Stellen), damit
+  verschobene Daten vor 2004 gültig sind.
+- Erfolgsdaten rechnen mit zweistelligem Jahr: `GetAchievementInfo`,
+  `GetAchievementComparisonInfo` und der Erfolgs-Link (Tooltip) bekommen +N.
+- Dateigröße und PE-Header bleiben unverändert.
+
+> [!IMPORTANT]
+> **Nur zusammen mit dem passenden Servermodul verwenden** (gleiches N). Ohne
+> das Modul zeigt der Client alle Daten N Jahre zu spät an. Die PC-Uhr
+> (Chat-Zeitstempel, `date()`/`time()` in Addons) bleibt unverändert, weil
+> der Client sie nie mit Server-Daten vergleicht.
+
+> [!NOTE]
+> WotLK-Extensions hat einen eigenen Zeit-Fix. Den dort nicht zusätzlich
+> einschalten.

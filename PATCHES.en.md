@@ -1598,3 +1598,39 @@ patcher aborts with a message.
 > cache: rename `Wow.exe` briefly or copy it to another folder, recreate
 > shortcuts or restart Explorer. The icon in the game itself (window title)
 > comes from these resources as well.
+
+<a id="patch-y38fix"></a>
+**Year 2038 fix: show dates shifted by N years** *(No. 87, Author: St0ny)* 🟠 **[untested]**
+
+> [!WARNING]
+> **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
+>
+> **Untested ingame** – the function has not been checked in game yet, possibly buggy.
+
+The 3.3.5 client stores dates packed with a 5-bit year from 2000 – which only
+reaches 2031 – and uses 32-bit Unix times (until 2038). The idea: a server
+module sends all dates N years into the past, and this patch adds them back
+for display. N is a multiple of 28, so weekdays and leap years match exactly.
+Internally everything stays within 2000–2030, shown are 2000+N to 2030+N – with
+N = 28 that is 2028 to 2058. The patcher asks for N: 28 (suggestion), 56 or
+84, so the cycle can be restarted later.
+
+What the patch changes:
+- Year base 2000 → 2000+N at all Lua interfaces of the calendar (date,
+  limits, months, events, response time, lockouts), in the calendar mail, the
+  guild founding date (`/ginfo`) and statistic dates. For input (creating an
+  event, choosing a month) N is subtracted again.
+- Calendar lower limit 24 Nov 2004 → 1 Jan 2000 (four places), so shifted
+  dates before 2004 are valid.
+- Achievement dates use a two-digit year: `GetAchievementInfo`,
+  `GetAchievementComparisonInfo` and the achievement link (tooltip) get +N.
+- File size and PE header stay unchanged.
+
+> [!IMPORTANT]
+> **Only use it together with the matching server module** (same N). Without
+> the module the client shows all dates N years too late. The PC clock (chat
+> timestamps, `date()`/`time()` in addons) stays unchanged, because the client
+> never compares it with server dates.
+
+> [!NOTE]
+> WotLK-Extensions has its own time fix. Do not switch it on there as well.

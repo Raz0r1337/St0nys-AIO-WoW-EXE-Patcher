@@ -432,6 +432,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [84](PATCHES.de.md#patch-clienttitle) | Programmtitel ändern (Dateieigenschaften und Fenstertitel) *(fragt den Wert ab)* | 🔴 **[unsicher]** | MacWarrior (fixed by St0ny) | – | – | – |
 | [85](PATCHES.de.md#patch-clientdate) | Build-Datum ändern (Original Jun 24 2010) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
 | [86](PATCHES.de.md#patch-clienticon) | Programm-Icon ändern (Symbol der Wow.exe) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
+| [87](PATCHES.de.md#patch-y38fix) | Jahr-2038-Fix: Daten um N Jahre verschoben anzeigen *(fragt den Wert ab; nur zusammen mit dem passenden Servermodul)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
 </details>
 
@@ -460,10 +461,10 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 10,
     11, 23–25, 41, 42, 45–50, 74 und 82–86 (rote Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
-    kann zu Kick/Bann führen: Nr. 4, 26, 29, 39, 44, 51, 62, 68, 71–73 und 80 (rote
-    Warnung).
+    kann zu Kick/Bann führen: Nr. 4, 26, 29, 39, 44, 51, 62, 68, 71–73, 80 und 87
+    (rote Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 29, 44, 51 und 62 (rote Warnung).
+    möglicherweise verbuggt: Nr. 25, 26, 29, 44, 51, 62 und 87 (rote Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 50, 63, 64, 74 und 80. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
