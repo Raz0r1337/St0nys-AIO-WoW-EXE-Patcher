@@ -360,7 +360,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [37](PATCHES.de.md#patch-mail) | Neue Post ohne 60 Sekunden Wartezeit | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [38](PATCHES.de.md#patch-deadchat) | Chat-Befehle auch im Tod erlauben | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [39](PATCHES.de.md#patch-follow) | /follow auch bei NPCs erlauben | 🟠 **[online ungetestet]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
-| [40](PATCHES.de.md#patch-level101) | Level 101+ Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte) | 🟢 **[sicher]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
+| [40](PATCHES.de.md#patch-level101) | Level 101+ Druid Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte) | 🟢 **[sicher]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
 | [41](PATCHES.de.md#patch-raceclass) | Charaktererstellung: mehr als 10 Klassen (Zufallsklasse) *(für eigene Klassen; Server muss es unterstützen)* | 🔴 **[unsicher]** | Alastor StrixEfuartus / Robinsch | – | – | – |
 | [42](PATCHES.de.md#patch-namecheck) | Namensprüfung bei der Charaktererstellung abschalten (z. B. Zahlen im Namen) *(Server muss die Namen ebenfalls erlauben)* | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | – |
 | [43](PATCHES.de.md#patch-maxchars) | Max. Charaktere pro Server auf 255 erhöht | 🟢 **[sicher]** | St0ny | – | ✅ | – |

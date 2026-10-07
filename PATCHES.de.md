@@ -577,7 +577,7 @@ stattdessen der bedingte Sprung hinter der Prüfung unbedingt gemacht – ein
 einziges Byte, gleiche Wirkung, und die Patches vertragen sich.
 
 <a id="patch-level101"></a>
-**Level 101+ Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte)** *(Nr. 40, Autor: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[sicher]**
+**Level 101+ Druid Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte)** *(Nr. 40, Autor: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[sicher]**
 
 Die Spielwert-Tabellen des Clients (`gtCombatRatings`, `gtBarberShopCostBase`,
 `gtOCTRegenHP`/`MP`, `gtChanceToMeleeCrit` … – elf Tabellen) haben je Spalte

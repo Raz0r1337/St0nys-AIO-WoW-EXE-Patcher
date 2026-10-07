@@ -565,7 +565,7 @@ unconditional instead – a single byte, same effect, and the patches work
 together.
 
 <a id="patch-level101"></a>
-**Level 101+ fix (game tables, barber chair, base stats)** *(No. 40, Author: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[safe]**
+**Level 101+ Druid fix (game tables, barber chair, base stats)** *(No. 40, Author: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[safe]**
 
 The client's game tables (`gtCombatRatings`, `gtBarberShopCostBase`,
 `gtOCTRegenHP`/`MP`, `gtChanceToMeleeCrit` … – eleven tables) have 100 rows per
