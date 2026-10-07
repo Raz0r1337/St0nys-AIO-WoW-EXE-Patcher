@@ -289,7 +289,7 @@ name, and before patching it lists them once more.
 | [1](PATCHES.en.md#patch-laa) | 4GB patch (Large Address Aware) | 🟢 **[safe]** | Alastor StrixEfuartus / Kebabstorm / Robinsch | ✅ | ✅ | ✅ |
 | [2](PATCHES.en.md#patch-cache) | Disable CACHE folder creation | 🟢 **[safe]** | Alastor StrixEfuartus / Kebabstorm | – | – | – |
 | [3](PATCHES.en.md#patch-itemcache) | Refresh item cache immediately | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [4](PATCHES.en.md#patch-worldcrash) | WorldFrame crash fix (invalid triangle indices) | 🟠 **[untested online]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | ✅ |
+| [4](PATCHES.en.md#patch-worldcrash) | WorldFrame crash fix (invalid triangle indices) | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | ✅ |
 | [5](PATCHES.en.md#patch-timer) | Always use the precise timer (fixes turning stutter) | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 | [6](PATCHES.en.md#patch-nothrottle) | Do not throttle item and player name queries | 🟢 **[safe]** | tb (ported by St0ny) | – | – | ✅ |
 | [7](PATCHES.en.md#patch-mirrorfix) | Mirror Image crash fix (memory leak with mirror images) | 🟢 **[safe]** | tb (ported by St0ny) | ✅ | – | ✅ |
@@ -448,10 +448,10 @@ clicking the number of a patch takes you straight to its description.
   in square brackets, and before the confirmation prompt the patcher lists the
   selected patches with a warning once more:
   - 🟢 **safe** – tested in game, no warning in the patcher.
-  - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 10, 11, 23–25,
+  - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 10, 11, 23–25,
     41, 42, 45–50, 75 and 83–87 (red warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 4, 26, 29, 39, 44, 51, 62, 65, 69, 72–74 and 81
+    you kicked or banned: No. 26, 29, 39, 44, 51, 62, 65, 69, 72–74 and 81
     (red warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
     possibly buggy: No. 25, 26, 29, 44, 51, 62 and 65 (red warning).
