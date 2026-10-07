@@ -320,9 +320,9 @@ name, and before patching it lists them once more.
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [19](PATCHES.en.md#patch-glue) | Allow custom GlueXML | 🟢 **[safe]** | Alastor StrixEfuartus / Kebabstorm (fixed by St0ny) | ✅ | ✅ | ✅ |
-| [20](PATCHES.en.md#patch-mpqsig) | Allow unsigned / incorrectly signed MPQs | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | – | ✅ |
-| [21](PATCHES.en.md#patch-mpqnames) | Allow extended MPQ names | 🟢 **[safe]** | unknown | ✅ | ✅ | ✅ |
-| [22](PATCHES.en.md#patch-localdata) | Load data directly from the Data folder (no MPQ) | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
+| [20](PATCHES.en.md#patch-mpqsig) | Allow unsigned / incorrectly signed MPQs | 🟢 **[safe]** | Alastor StrixEfuartus | – | – | ✅ |
+| [21](PATCHES.en.md#patch-mpqnames) | Allow extended MPQ names | 🟢 **[safe]** | unknown | – | ✅ | ✅ |
+| [22](PATCHES.en.md#patch-localdata) | Load data directly from the Data folder (no MPQ) | 🟢 **[safe]** | Alastor StrixEfuartus | – | ✅ | ✅ |
 | [23](PATCHES.en.md#patch-luaunlock) | LUA unlock (spells, movement, macros) | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
 | [24](PATCHES.en.md#patch-luaunlockfull) | LUA unlock (complete): allow all protected functions | 🔴 **[unsafe]** | St0ny | – | – | – |
 | [25](PATCHES.en.md#patch-keyprop) | Pass all keyboard events on to addons (OnKeyDown) | 🔴 **[unsafe]**<br>🟠 **[untested ingame]** | Alyst3r (0x539wowmod) | – | – | – |
