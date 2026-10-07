@@ -330,9 +330,9 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [19](PATCHES.de.md#patch-glue) | Custom Glue-XML erlauben | 🟢 **[sicher]** | Alastor StrixEfuartus / Kebabstorm (fixed by St0ny) | ✅ | ✅ | ✅ |
-| [20](PATCHES.de.md#patch-mpqsig) | Falsch/Nicht signierte MPQs zulassen | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | – | ✅ |
-| [21](PATCHES.de.md#patch-mpqnames) | Erweiterte MPQ-Namen erlauben | 🟢 **[sicher]** | unbekannt | ✅ | ✅ | ✅ |
-| [22](PATCHES.de.md#patch-localdata) | Daten direkt aus dem Data-Ordner laden (ohne MPQ) | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
+| [20](PATCHES.de.md#patch-mpqsig) | Falsch/Nicht signierte MPQs zulassen | 🟢 **[sicher]** | Alastor StrixEfuartus | – | – | ✅ |
+| [21](PATCHES.de.md#patch-mpqnames) | Erweiterte MPQ-Namen erlauben | 🟢 **[sicher]** | unbekannt | – | ✅ | ✅ |
+| [22](PATCHES.de.md#patch-localdata) | Daten direkt aus dem Data-Ordner laden (ohne MPQ) | 🟢 **[sicher]** | Alastor StrixEfuartus | – | ✅ | ✅ |
 | [23](PATCHES.de.md#patch-luaunlock) | LUA Unlock (Zauber, Bewegung, Makros) | 🔴 **[unsicher]** | Alastor StrixEfuartus | – | – | – |
 | [24](PATCHES.de.md#patch-luaunlockfull) | LUA Unlock (vollständig): alle geschützten Funktionen freigeben | 🔴 **[unsicher]** | St0ny | – | – | – |
 | [25](PATCHES.de.md#patch-keyprop) | Alle Tastatur-Ereignisse an Addons weiterreichen (OnKeyDown) | 🔴 **[unsicher]**<br>🟠 **[ingame ungetestet]** | Alyst3r (0x539wowmod) | – | – | – |

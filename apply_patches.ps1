@@ -4039,7 +4039,7 @@ $patches = @(
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',
     'scandll', 'noserverpatch', 'nosurvey', 'skipbnet', 'skiprdp', 'nohttp',
-    'glue', 'mpqsig', 'mpqnames', 'localdata', 'awesome',
+    'glue', 'awesome',
     'areatrigger', 'swing', 'npcanim', 'spellanim', 'ghostattack', 'naked',
     'forcereaction', 'mail', 'deadchat', 'level101',
     'farclip', 'horizon', 'envdetail', 'grounddist', 'sliders', 'goscale',
