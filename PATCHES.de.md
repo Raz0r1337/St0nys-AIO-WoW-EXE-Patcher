@@ -38,10 +38,10 @@ Entfernt die 30-Sekunden-Verzögerung beim Aktualisieren des Item-Caches.
 Änderungen an Items werden sofort sichtbar.
 
 <a id="patch-worldcrash"></a>
-**WorldFrame-Absturzfix (ungültige Dreiecks-Indizes)** *(Nr. 4, Autor: Alyst3r (0x539wowmod) (fixed by St0ny))* 🟠 **[online ungetestet]**
+**WorldFrame-Absturzfix (ungültige Dreiecks-Indizes)** *(Nr. 4, Autor: Alyst3r (0x539wowmod) (fixed by St0ny))* 🔴 **[unsicher]**
 
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
+> [!CAUTION]
+> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Verhindert einen Absturz in einer Funktion der Weltdarstellung (VA `0x81D510`).
 Sie läuft über Dreiecke aus je drei Vertex-Indizes und rechnet „Index minus

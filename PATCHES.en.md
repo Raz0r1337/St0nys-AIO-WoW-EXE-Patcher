@@ -38,10 +38,10 @@ Removes the 30-second delay when refreshing the item cache. Item changes
 become visible immediately.
 
 <a id="patch-worldcrash"></a>
-**WorldFrame crash fix (invalid triangle indices)** *(No. 4, Author: Alyst3r (0x539wowmod) (fixed by St0ny))* 🟠 **[untested online]**
+**WorldFrame crash fix (invalid triangle indices)** *(No. 4, Author: Alyst3r (0x539wowmod) (fixed by St0ny))* 🔴 **[unsafe]**
 
-> [!WARNING]
-> **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
+> [!CAUTION]
+> **Unsafe** – ban risk, can lead to a ban on many servers. Only use it on servers that allow it.
 
 Prevents a crash in a world rendering function (VA `0x81D510`). It walks over
 triangles made of three vertex indices each and turns "index minus base" into a
