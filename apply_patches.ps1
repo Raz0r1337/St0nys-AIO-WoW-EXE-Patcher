@@ -3110,7 +3110,7 @@ $patches = @(
         Patch 0x2689FD @(0x00, 0x00)
     }}
 
-    @{ Id = 'worldcrash'; Cat = 'system'; On = $false; PublicUntested = $true
+    @{ Id = 'worldcrash'; Cat = 'system'; On = $false; BanRisk = $true
        Author = 'Alyst3r (0x539wowmod) (fixed by St0ny)'
        De = 'WorldFrame-Absturzfix (ungueltige Dreiecks-Indizes)'
        En = 'WorldFrame crash fix (invalid triangle indices)'
