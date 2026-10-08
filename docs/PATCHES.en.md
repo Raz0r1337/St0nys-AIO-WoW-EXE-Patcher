@@ -3,8 +3,8 @@
 [🇩🇪 Deutsch](PATCHES.de.md) | 🇬🇧 English
 
 Detailed descriptions of all patches of the
-[St0nys-AIO-WoW-EXE-Patcher](README.en.md). The overview with authors and
-preset assignment is in the [README](README.en.md#patch-overview). It also
+[St0nys-AIO-WoW-EXE-Patcher](README.md). The overview with authors and
+preset assignment is in the [README](README.md#patch-overview). It also
 explains what the ratings after the names mean, e.g. 🔴 **[unsafe]** or
 🟡 **[safe - exe grows]**.
 
