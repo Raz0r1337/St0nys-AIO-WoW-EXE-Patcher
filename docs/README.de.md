@@ -1,6 +1,6 @@
 # St0nys-AIO-WoW-EXE-Patcher
 
-🇩🇪 Deutsch | [🇬🇧 English](README.md)
+🇩🇪 Deutsch | [🇬🇧 English](README.en.md)
 
 Ein All-in-One-Patcher (AIO) für die `Wow.exe` von **World of Warcraft 3.3.5a
 (Build 12340)**.
@@ -260,7 +260,7 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 |---------------------|-------|
 | `patcher.bat`       | Startdatei, ruft `apply_patches.ps1` auf |
 | `apply_patches.ps1` | Patch-Engine: Sprachwahl, Prüfungen, Auswahlmenü, Backup; liest die EXE einmal, patcht im Speicher, schreibt einmal zurück |
-| `docs/README.md`    | Englische Anleitung |
+| `docs/README.en.md` | Englische Anleitung |
 | `docs/README.de.md` | Diese Datei |
 | `docs/PATCHES.de.md` | Ausführliche Beschreibungen aller Patches |
 | `docs/PATCHES.en.md` | Patch-Beschreibungen auf Englisch |

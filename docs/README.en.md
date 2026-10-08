@@ -250,7 +250,7 @@ the user or because no more input is possible).
 |---------------------|---------|
 | `patcher.bat`       | Launcher, calls `apply_patches.ps1` |
 | `apply_patches.ps1` | Patch engine: language selection, checks, selection menu, backup; reads the EXE once, patches in memory, writes it back once |
-| `docs/README.md`    | This file |
+| `docs/README.en.md` | This file |
 | `docs/README.de.md` | German documentation |
 | `docs/PATCHES.de.md` | Detailed patch descriptions in German |
 | `docs/PATCHES.en.md` | Detailed descriptions of all patches |
