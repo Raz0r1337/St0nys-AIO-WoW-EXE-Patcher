@@ -250,10 +250,10 @@ the user or because no more input is possible).
 |---------------------|---------|
 | `patcher.bat`       | Launcher, calls `apply_patches.ps1` |
 | `apply_patches.ps1` | Patch engine: language selection, checks, selection menu, backup; reads the EXE once, patches in memory, writes it back once |
-| `README.md`         | This file |
-| `README.de.md`      | German documentation |
-| `PATCHES.de.md`     | Detailed patch descriptions in German |
-| `PATCHES.en.md`     | Detailed descriptions of all patches |
+| `docs/README.md`    | This file |
+| `docs/README.de.md` | German documentation |
+| `docs/PATCHES.de.md` | Detailed patch descriptions in German |
+| `docs/PATCHES.en.md` | Detailed descriptions of all patches |
 | `patcher_selection.ini` | Created on the first start (remembered language), stores the accepted selection and the entered values |
 | `patcher_state.ini` | Created when patching: hash of the patched `Wow.exe`, applied patches, values and original bytes – speeds up the next start, but is not strictly required |
 | `Wow.exe.ORI`       | Backup of the original `Wow.exe`, created on the first patch run |
@@ -522,7 +522,7 @@ clicking the number of a patch takes you straight to its description.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](../LICENSE).
 Copyright (c) 2026 St0ny (Raz0r1337).
 
 In short: anyone may use, modify and redistribute the patcher – including in

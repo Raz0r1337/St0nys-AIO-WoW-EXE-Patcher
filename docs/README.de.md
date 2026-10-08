@@ -260,10 +260,10 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 |---------------------|-------|
 | `patcher.bat`       | Startdatei, ruft `apply_patches.ps1` auf |
 | `apply_patches.ps1` | Patch-Engine: Sprachwahl, Prüfungen, Auswahlmenü, Backup; liest die EXE einmal, patcht im Speicher, schreibt einmal zurück |
-| `README.md`         | Englische Anleitung |
-| `README.de.md`      | Diese Datei |
-| `PATCHES.de.md`     | Ausführliche Beschreibungen aller Patches |
-| `PATCHES.en.md`     | Patch-Beschreibungen auf Englisch |
+| `docs/README.md`    | Englische Anleitung |
+| `docs/README.de.md` | Diese Datei |
+| `docs/PATCHES.de.md` | Ausführliche Beschreibungen aller Patches |
+| `docs/PATCHES.en.md` | Patch-Beschreibungen auf Englisch |
 | `patcher_selection.ini` | Wird beim ersten Start angelegt (gemerkte Sprache) und speichert die übernommene Auswahl samt eingegebenen Werten |
 | `patcher_state.ini` | Wird beim Patchen angelegt: Hash der gepatchten `Wow.exe`, eingespielte Patches, Werte und Original-Bytes – beschleunigt den nächsten Start, ist aber nicht zwingend nötig |
 | `Wow.exe.ORI`       | Sicherung der originalen `Wow.exe`, angelegt beim ersten Patchen |
@@ -536,7 +536,7 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
 
 ## Lizenz
 
-Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
+Dieses Projekt steht unter der [MIT-Lizenz](../LICENSE).
 Copyright (c) 2026 St0ny (Raz0r1337).
 
 Kurz gesagt: Jeder darf den Patcher nutzen, verändern und weitergeben – auch in
