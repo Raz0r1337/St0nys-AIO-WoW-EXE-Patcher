@@ -46,8 +46,17 @@ $ErrorActionPreference = 'Stop'
 
 $scriptPath = $MyInvocation.MyCommand.Path
 $scriptDir = Split-Path -Parent $scriptPath
+$wowHits = @()
 if (-not $Path) {
     $Path = Join-Path $scriptDir 'Wow.exe'
+    # Linux unterscheidet Gross-/Kleinschreibung: dann auch WoW.exe, wow.exe
+    # usw. finden. Unter Windows passt immer schon der Pfad oben. Liegen
+    # mehrere Schreibweisen im Ordner, bricht der Patcher weiter unten ab.
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        $wowHits = @(Get-ChildItem -LiteralPath $scriptDir -File -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -ieq 'Wow.exe' })
+        if ($wowHits.Count -eq 1) { $Path = $wowHits[0].FullName }
+    }
 } elseif (-not [System.IO.Path]::IsPathRooted($Path)) {
     # .NET loest relative Pfade gegen das Prozessverzeichnis auf, nicht gegen
     # das aktuelle PowerShell-Verzeichnis - daher selbst absolut machen.
@@ -109,6 +118,7 @@ $TEXT = @{
         Thanks        = 'Danke an Billy Hoyle, MacWarrior und Stormhand fuer ihre Hilfe und die vielen Tests im Spiel!'
         PressStart    = 'ENTER druecken um zu starten'
         NotFound      = '[FEHLER] Keine Wow.exe gefunden: {0}'
+        WowMulti      = '[FEHLER] Mehrere Wow.exe in unterschiedlicher Schreibweise gefunden: {0} - bitte nur eine davon im Ordner lassen oder die richtige mit -Path angeben.'
         Checking      = 'Pruefe Wow.exe Integritaet...'
         HashBad1      = '[FEHLER] Die Wow.exe ist weder original noch mit diesem Patcher gepatcht (kein Wasserzeichen).'
         HashBad2      = '         Sie wurde mit einem anderen Tool oder einer alten Patcher-Version gepatcht oder ist eine andere Version.'
@@ -214,6 +224,7 @@ $TEXT = @{
         Thanks        = 'Thanks to Billy Hoyle, MacWarrior and Stormhand for their help and all the testing in game!'
         PressStart    = 'Press ENTER to start'
         NotFound      = '[ERROR] No Wow.exe found: {0}'
+        WowMulti      = '[ERROR] Several Wow.exe with different spelling found: {0} - please keep only one of them in the folder or pass the right one with -Path.'
         Checking      = 'Checking Wow.exe integrity...'
         HashBad1      = '[ERROR] This Wow.exe is neither original nor patched with this patcher (no watermark).'
         HashBad2      = '        It has been patched with another tool or an old patcher version, or is a different version.'
@@ -5028,6 +5039,10 @@ if (-not $Unattended) {
 # patcher_state.ini, wird das Original schnell aus der Zustandsdatei
 # rekonstruiert, sonst ueber die Original-Byte-Tabelle (mit Erkennung der
 # eingespielten Patches und ihrer Werte).
+if ($wowHits.Count -gt 1) {
+    Say (T 'WowMulti' (($wowHits | ForEach-Object { $_.Name }) -join ', ')) 'Red'
+    Exit-Patcher 1
+}
 if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
     Say (T 'NotFound' $file) 'Red'
     Exit-Patcher 1
