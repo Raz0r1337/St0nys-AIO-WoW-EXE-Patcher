@@ -33,6 +33,7 @@ originalen `Wow.exe`.
 
 - [Voraussetzungen](#voraussetzungen)
 - [Benutzung](#benutzung)
+  - [Unter Linux](#unter-linux)
 - [Ablauf](#ablauf)
 - [Patch-Auswahl](#patch-auswahl)
 - [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen)
@@ -48,7 +49,8 @@ originalen `Wow.exe`.
 
 ## Voraussetzungen
 
-- Windows mit PowerShell (Windows PowerShell 5.1 ist ab Windows 10 vorinstalliert)
+- Windows mit PowerShell (Windows PowerShell 5.1 ist ab Windows 10 vorinstalliert) –
+  Linux: siehe [Unter Linux](#unter-linux)
 - Eine **originale, unmodifizierte** `Wow.exe` 3.3.5a, Build 12340 mit
   SHA256 `AA63A5750D60EF16746C686B3D5E26876D98953EAB08B1C026CD0FAF78E88CB8`
   (nur beim ersten Start; danach genügt eine mit diesem Patcher gepatchte
@@ -76,6 +78,27 @@ siehe [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen).
 > veränderte Blizzard-Datei nicht erstellen. Starten lässt sie sich trotzdem,
 > z. B. über „Weitere Informationen“ → „Trotzdem ausführen“. Mehr dazu unter
 > [Hinweise](#hinweise).
+
+### Unter Linux
+
+Der Patcher ist für Windows geschrieben, läuft aber auch unter Linux direkt
+mit PowerShell 7 (`pwsh`) – Wine wird dafür nicht gebraucht.
+
+1. PowerShell 7 installieren, z. B. für [Ubuntu](https://learn.microsoft.com/powershell/scripting/install/install-ubuntu),
+   [Debian](https://learn.microsoft.com/powershell/scripting/install/install-debian) oder [RHEL](https://learn.microsoft.com/powershell/scripting/install/install-rhel).
+   Für andere Distributionen gibt es Snap und ein Archiv zum Entpacken
+   ([Anleitung](https://learn.microsoft.com/powershell/scripting/install/install-other-linux)), für Arch das Paket im AUR.
+2. Das ZIP entpacken und die originale `Wow.exe` in den Ordner
+   `St0nys-AIO-WoW-EXE-Patcher` kopieren – wie unter Windows. Wie die
+   `Wow.exe` geschrieben ist (`WoW.exe`, `wow.exe` …), spielt keine Rolle.
+3. Im Terminal in diesem Ordner `./patcher.sh` starten. Falls das nicht
+   startet (z. B. weil beim Entpacken das Ausführungsrecht verloren ging):
+   `sh patcher.sh`.
+4. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren.
+
+Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
+`patcher.bat` steht, nimmst du `./patcher.sh`. Auf einem Mac kann der
+Patcher mit PowerShell 7 ebenfalls funktionieren, das ist aber ungetestet.
 
 ## Ablauf
 
@@ -264,6 +287,7 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 | Datei               | Zweck |
 |---------------------|-------|
 | `patcher.bat`       | Startdatei, ruft `apply_patches.ps1` auf |
+| `patcher.sh`        | Startdatei für Linux |
 | `apply_patches.ps1` | Patch-Engine: Sprachwahl, Prüfungen, Auswahlmenü, Backup; liest die EXE einmal, patcht im Speicher, schreibt einmal zurück |
 | `docs/README.md`    | Englische Anleitung |
 | `docs/README.de.md` | Diese Datei |
