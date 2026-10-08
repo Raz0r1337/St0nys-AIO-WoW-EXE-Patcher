@@ -280,7 +280,10 @@ Click the number of a patch to jump to its description.
 | 🟠 **[untested]** | Neither tested online nor ingame. | red warning |
 | 🟡 **[exe grows]** | The patch appends a section to `Wow.exe`. Not a certain ban, but a risk: some servers check the file size. | yellow note |
 
-A patch can carry several ratings, e.g. 🟢 **[safe]** and 🟡 **[exe grows]**.
+A patch can carry several ratings, e.g. **[safe]** and **[exe grows]**.
+In the overview each patch has only one dot: for safe patches that grow
+the exe the green dot turns yellow (🟡 **[safe]** **[exe grows]**); red
+and orange dots stay.
 In the patcher the warnings are shown in square brackets after the
 name, and before patching it lists them once more.
 
@@ -296,7 +299,7 @@ name, and before patching it lists them once more.
 | [6](PATCHES.en.md#patch-nothrottle) | Do not throttle item and player name queries | 🟢 **[safe]** | tb (ported by St0ny) | – | – | ✅ |
 | [7](PATCHES.en.md#patch-mirrorfix) | Mirror Image crash fix (memory leak with mirror images) | 🟢 **[safe]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [8](PATCHES.en.md#patch-wmocube) | Missing WMO file: error cube instead of ERROR #134 | 🟢 **[safe]** | Alyst3r (ported by St0ny) | ✅ | – | ✅ |
-| [9](PATCHES.en.md#patch-glyphfix) | Font glyph fix (wrong or garbled characters in text) | 🟢 **[safe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [9](PATCHES.en.md#patch-glyphfix) | Font glyph fix (wrong or garbled characters in text) | 🟡 **[safe]**<br>**[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 
 #### Security & privacy
 
@@ -363,7 +366,7 @@ name, and before patching it lists them once more.
 | [48](PATCHES.en.md#patch-airforward) | Steer forward/backward while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [49](PATCHES.en.md#patch-airlateral) | Steer sideways while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [50](PATCHES.en.md#patch-airturn) | Turning while jumping changes the flight direction | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
-| [51](PATCHES.en.md#patch-doublejump) | Double jump (more jumps in the air) *(asks for the value)* | 🔴 **[unsafe]**<br>🟡 **[exe grows]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
+| [51](PATCHES.en.md#patch-doublejump) | Double jump (more jumps in the air) *(asks for the value)* | 🔴 **[unsafe]**<br>**[exe grows]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [52](PATCHES.en.md#patch-noammo) | Ranged attacks without ammo *(the server has to support it, otherwise it still reports "no ammo")* | 🟠 **[untested]** | Alyst3r (ported by St0ny) | – | – | – |
 
 #### Graphics & view distance
@@ -381,8 +384,8 @@ name, and before patching it lists them once more.
 | [61](PATCHES.en.md#patch-bluemoon) | Re-enable the blue moon in the night sky | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [62](PATCHES.en.md#patch-notransparency) | No character transparency when zooming in | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
 | [63](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
-| [64](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟢 **[safe]**<br>🟡 **[exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
-| [65](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟢 **[safe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [64](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe]**<br>**[exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
+| [65](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe]**<br>**[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 
 #### Interface & comfort
 
@@ -397,7 +400,7 @@ name, and before patching it lists them once more.
 | [72](PATCHES.en.md#patch-lootopen) | Loot window stays open while moving | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
 | [73](PATCHES.en.md#patch-showlevel) | Real level instead of "??" for enemies 10+ levels above you *(bosses still show "??" – see No. 74)* | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
 | [74](PATCHES.en.md#patch-showlevelboss) | Real level for bosses too instead of "??" (extension to No. 73) | 🟠 **[untested online]** | St0ny | – | – | – |
-| [75](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | – | – | ✅ |
+| [75](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe]**<br>**[exe grows]** | tb (ported by St0ny) | – | – | ✅ |
 | [76](PATCHES.en.md#patch-bubblerange) | Increase the chat bubble range (original 25 yards) *(asks for the value)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 
 #### Window, mouse & camera
@@ -408,7 +411,7 @@ name, and before patching it lists them once more.
 | [78](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 77)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 | [79](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [80](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [81](PATCHES.en.md#patch-camera) | CameraReforged [BETA]: camera height and zoom limits *(shoulder offset has no effect yet)* | 🟠 **[untested online]**<br>🟡 **[exe grows]** | Stormhand (fixed by St0ny) | – | – | – |
+| [81](PATCHES.en.md#patch-camera) | CameraReforged [BETA]: camera height and zoom limits *(shoulder offset has no effect yet)* | 🟠 **[untested online]**<br>**[exe grows]** | Stormhand (fixed by St0ny) | – | – | – |
 
 #### Sound
 

@@ -290,9 +290,12 @@ Ein Klick auf die Nummer eines Patches springt zu seiner Beschreibung.
 | 🟠 **[ungetestet]** | Weder online noch ingame getestet. | rote Warnung |
 | 🟡 **[Exe wird größer]** | Der Patch hängt eine Sektion an die `Wow.exe` an. Keine sichere Bann-Gefahr, aber ein Risiko: Manche Server prüfen die Dateigröße. | gelber Hinweis |
 
-Ein Patch kann mehrere Kennzeichnungen tragen, z. B. 🟢 **[sicher]** und
-🟡 **[Exe wird größer]**. Im Patcher stehen die Warnungen in eckigen
-Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
+Ein Patch kann mehrere Kennzeichnungen tragen, z. B. **[sicher]** und
+**[Exe wird größer]**. In der Übersicht hat jeder Patch nur einen Punkt: Bei
+sicheren Patches, die die Exe vergrößern, wird der grüne Punkt gelb
+(🟡 **[sicher]** **[Exe wird größer]**), rote und orange Punkte bleiben.
+Im Patcher stehen die Warnungen in eckigen Klammern hinter dem Namen, vor
+dem Patchen listet er sie noch einmal auf.
 
 #### System & Leistung
 
@@ -306,7 +309,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [6](PATCHES.de.md#patch-nothrottle) | Gegenstands- und Namensabfragen nicht drosseln | 🟢 **[sicher]** | tb (ported by St0ny) | – | – | ✅ |
 | [7](PATCHES.de.md#patch-mirrorfix) | Mirror-Image-Absturzfix (Speicherleck bei Spiegelbildern) | 🟢 **[sicher]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [8](PATCHES.de.md#patch-wmocube) | Fehlende WMO-Datei: Fehlerwürfel statt ERROR #134 | 🟢 **[sicher]** | Alyst3r (ported by St0ny) | ✅ | – | ✅ |
-| [9](PATCHES.de.md#patch-glyphfix) | Schrift-Glyphen-Fix (falsche oder kaputte Zeichen in Texten) | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [9](PATCHES.de.md#patch-glyphfix) | Schrift-Glyphen-Fix (falsche oder kaputte Zeichen in Texten) | 🟡 **[sicher]**<br>**[Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 
 #### Sicherheit & Datenschutz
 
@@ -373,7 +376,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [48](PATCHES.de.md#patch-airforward) | Im Sprung vorwärts/rückwärts steuern | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [49](PATCHES.de.md#patch-airlateral) | Im Sprung seitwärts steuern | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [50](PATCHES.de.md#patch-airturn) | Im Sprung drehen ändert die Flugrichtung | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
-| [51](PATCHES.de.md#patch-doublejump) | Doppelsprung (weitere Sprünge in der Luft) *(fragt den Wert ab)* | 🔴 **[unsicher]**<br>🟡 **[Exe wird größer]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
+| [51](PATCHES.de.md#patch-doublejump) | Doppelsprung (weitere Sprünge in der Luft) *(fragt den Wert ab)* | 🔴 **[unsicher]**<br>**[Exe wird größer]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [52](PATCHES.de.md#patch-noammo) | Fernkampf ohne Munition *(Server muss mitspielen, sonst meldet er weiter „Keine Munition“)* | 🟠 **[ungetestet]** | Alyst3r (ported by St0ny) | – | – | – |
 
 #### Grafik & Sichtweite
@@ -391,8 +394,8 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [61](PATCHES.de.md#patch-bluemoon) | Blauer Mond am Nachthimmel reaktiviert | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [62](PATCHES.de.md#patch-notransparency) | Keine Transparenz beim Heranzoomen | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
 | [63](PATCHES.de.md#patch-nofade) | Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN *(Server muss das Flag setzen)* | 🟠 **[ungetestet]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
-| [64](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
-| [65](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [64](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher]**<br>**[Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
+| [65](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟡 **[sicher]**<br>**[Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 
 #### Interface & Komfort
 
@@ -407,7 +410,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [72](PATCHES.de.md#patch-lootopen) | Lootfenster bleibt beim Laufen offen | 🟠 **[online ungetestet]** | tb (ported by St0ny) | – | – | – |
 | [73](PATCHES.de.md#patch-showlevel) | Echtes Level statt „??“ bei Gegnern ab 10 Level über dir *(Bosse zeigen weiter „??“ – dafür Nr. 74)* | 🟠 **[online ungetestet]** | tb (ported by St0ny) | – | – | – |
 | [74](PATCHES.de.md#patch-showlevelboss) | Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 73) | 🟠 **[online ungetestet]** | St0ny | – | – | – |
-| [75](PATCHES.de.md#patch-holdrepeat) | Aktionstasten gedrückt halten zum Wiederholen | 🔴 **[unsicher]**<br>🟡 **[Exe wird größer]** | tb (ported by St0ny) | – | – | ✅ |
+| [75](PATCHES.de.md#patch-holdrepeat) | Aktionstasten gedrückt halten zum Wiederholen | 🔴 **[unsicher]**<br>**[Exe wird größer]** | tb (ported by St0ny) | – | – | ✅ |
 | [76](PATCHES.de.md#patch-bubblerange) | Sprechblasen-Reichweite erhöhen (Original 25 Meter) *(fragt den Wert ab)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 
 #### Fenster, Maus & Kamera
@@ -418,7 +421,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [78](PATCHES.de.md#patch-maximize) | Fenstermodus maximiert als Standard setzen *(wirkt nur zusammen mit Nr. 77)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 | [79](PATCHES.de.md#patch-windowfix) | Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [80](PATCHES.de.md#patch-mouse) | Mausflackern / Kamerasprünge Fix | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
-| [81](PATCHES.de.md#patch-camera) | CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen *(Schulterversatz noch ohne Wirkung)* | 🟠 **[online ungetestet]**<br>🟡 **[Exe wird größer]** | Stormhand (fixed by St0ny) | – | – | – |
+| [81](PATCHES.de.md#patch-camera) | CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen *(Schulterversatz noch ohne Wirkung)* | 🟠 **[online ungetestet]**<br>**[Exe wird größer]** | Stormhand (fixed by St0ny) | – | – | – |
 
 #### Sound
 
