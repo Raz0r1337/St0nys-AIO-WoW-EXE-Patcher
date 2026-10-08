@@ -132,8 +132,8 @@ Vor der Sicherheitsabfrage zeigt der Patcher **Hinweise** an, gesperrt wird
 nichts: wenn ein Ergänzungs-Patch fehlt (z. B. brauchen die erweiterten
 Slider-Maxima die CVar-Unlocks), wenn ein Patch einen anderen überflüssig macht
 (Warden komplett abschalten ersetzt den RCE-Fix) und wenn gewählte Patches eine
-Warnung tragen – mit roter Warnung bei Bann-Gefahr und bei Patches, die auf
-öffentlichen Servern oder im Spiel noch ungetestet sind, gelb bei vergrößerter
+Warnung tragen – rot bei Bann-Gefahr, orange bei Patches, die auf öffentlichen
+Servern oder im Spiel noch ungetestet sind, und gelb bei vergrößerter
 `Wow.exe` (siehe [Hinweise](#hinweise)).
 
 ### Auswahl wird gespeichert
@@ -285,9 +285,9 @@ Ein Klick auf die Nummer eines Patches springt zu seiner Beschreibung.
 |---------------|-----------|------------|
 | 🟢 **[sicher]** | Im Spiel getestet und sicher nutzbar. | keine Warnung |
 | 🔴 **[unsicher]** | Bestätigte Bann-Gefahr: kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben. | rote Warnung |
-| 🟠 **[online ungetestet]** | Nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr: Niemand kann vorhersagen, wie der Server reagiert. Vorsicht, kann zu Kick/Bann führen. | rote Warnung |
-| 🟠 **[ingame ungetestet]** | Die Funktion ist im Spiel noch nicht geprüft: Niemand kann vorhersagen, wie das Spiel reagiert, möglicherweise verbuggt. | rote Warnung |
-| 🟠 **[ungetestet]** | Weder online noch ingame getestet. | rote Warnung |
+| 🟠 **[online ungetestet]** | Nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr: Niemand kann vorhersagen, wie der Server reagiert. Vorsicht, kann zu Kick/Bann führen. | orange Warnung |
+| 🟠 **[ingame ungetestet]** | Die Funktion ist im Spiel noch nicht geprüft: Niemand kann vorhersagen, wie das Spiel reagiert, möglicherweise verbuggt. | orange Warnung |
+| 🟠 **[ungetestet]** | Weder online noch ingame getestet. | orange Warnung |
 | 🟡 **[Exe wird größer]** | Der Patch hängt eine Sektion an die `Wow.exe` an. Keine sichere Bann-Gefahr, aber ein Risiko: Manche Server prüfen die Dateigröße. | gelber Hinweis |
 
 Ein Patch kann mehrere Kennzeichnungen tragen. Sie stehen dann zusammen in
@@ -469,9 +469,9 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     11, 23–25, 42, 43, 46–51, 76 und 84–88 (rote Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
     kann zu Kick/Bann führen: Nr. 26, 29, 30, 40, 45, 52, 63, 66, 70, 73–75 und 82
-    (rote Warnung).
+    (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 29, 30, 45, 52 und 63 (rote Warnung).
+    möglicherweise verbuggt: Nr. 25, 26, 29, 30, 45, 52 und 63 (orange Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 51, 64–66, 76 und 82. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle

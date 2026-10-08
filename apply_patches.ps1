@@ -3167,9 +3167,9 @@ function Get-BubbleRangeFromExe {
 #    BanRisk - optional: $true bei Bann-Gefahr (Code 2, roter Hinweis)
 #    PublicUntested - optional: $true, wenn der Patch nicht auf oeffentlichen
 #            Servern getestet ist - Vorsicht, kann zu Kick/Bann fuehren
-#            (Code 3, gelber Hinweis)
+#            (Code 3, oranger Hinweis)
 #    GameUntested - optional: $true, wenn die Funktion im Spiel ungetestet
-#            ist - moeglicherweise verbuggt (Code 4, gelber Hinweis)
+#            ist - moeglicherweise verbuggt (Code 4, oranger Hinweis)
 #    Needs - optional: Ids von Patches, ohne die dieser nicht voll wirkt
 #            (erzeugt nur einen Hinweis, keine Sperre)
 #    PromptDe/PromptEn, Default, Check - optional, fuer Patches mit eigenem
@@ -5856,17 +5856,17 @@ $public = @()
 foreach ($p in $chosen) { if ($p.PublicUntested) { $public += PatchRef $p } }
 if ($public.Count -gt 0) {
     Write-Host ''
-    Say (T 'PublicHead') 'Yellow'
-    foreach ($m in $public) { Say "  - $m" 'Yellow' }
-    Say (T 'PublicBan') 'Red'
+    Say (T 'PublicHead') 'DarkYellow'
+    foreach ($m in $public) { Say "  - $m" 'DarkYellow' }
+    Say (T 'PublicBan') 'DarkYellow'
 }
 $untested = @()
 foreach ($p in $chosen) { if ($p.GameUntested) { $untested += PatchRef $p } }
 if ($untested.Count -gt 0) {
     Write-Host ''
-    Say (T 'UntestedHead') 'Yellow'
-    foreach ($m in $untested) { Say "  - $m" 'Yellow' }
-    Say (T 'UntestedWarn') 'Red'
+    Say (T 'UntestedHead') 'DarkYellow'
+    foreach ($m in $untested) { Say "  - $m" 'DarkYellow' }
+    Say (T 'UntestedWarn') 'DarkYellow'
 }
 Write-Host ''
 
