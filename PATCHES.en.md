@@ -1172,11 +1172,18 @@ How it works:
 - While the figure is drawn, its visible pixels are marked in the stencil.
   Then it is drawn eight more times invisibly, each shifted by 2 pixels in
   every direction (via the shader's projection matrix), with depth test –
-  these copies mark the outline.
+  these copies mark the outline and store the figure's depth there.
+- Whatever is drawn afterwards in front of the figure (e.g. bushes,
+  mushrooms, grass) clears the mark at its pixels and so hides the outline as
+  well. Things behind stay behind the outline thanks to the stored depth.
+  Transparent things like water or spell effects leave the outline in place.
+- Further parts of the same figure (cloak, weapon, mount) are drawn once more
+  on their own outline without depth test, so no outline is left between the
+  parts.
 - After the models and before the interface, a full-screen quad colors only
   the outline pixels; then the stencil is cleared and the game sends all its
   graphics states again.
-- Code and data live in a section of their own (`.outl`, 0x880 bytes).
+- Code and data live in a section of their own (`.outl`, 0x9DA bytes).
 
 > [!NOTE]
 > Only with `gxApi d3d9` (default) and a 24-bit depth buffer (default). With

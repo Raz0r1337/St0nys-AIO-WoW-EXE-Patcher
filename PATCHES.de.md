@@ -1207,11 +1207,19 @@ So funktioniert es:
 - Beim Zeichnen der Figur werden ihre sichtbaren Pixel im Stencil markiert.
   Danach wird sie noch achtmal unsichtbar gezeichnet, je um 2 Pixel in alle
   Richtungen verschoben (über die Projektionsmatrix des Shaders), mit
-  Tiefentest – diese Kopien markieren den Rand.
+  Tiefentest – diese Kopien markieren den Rand und tragen dort die Tiefe der
+  Figur ein.
+- Was danach gezeichnet wird und vor der Figur liegt (z. B. Büsche, Pilze,
+  Gras), löscht die Markierung an seinen Pixeln und verdeckt so auch den Rand.
+  Dinge dahinter bleiben dank der eingetragenen Tiefe hinter dem Rand.
+  Durchsichtiges wie Wasser oder Zaubereffekte lässt den Rand stehen.
+- Weitere Teile derselben Figur (Umhang, Waffe, Reittier) werden auf ihrem
+  eigenen Rand noch einmal ohne Tiefentest gezeichnet, damit kein Rand
+  zwischen den Teilen hängen bleibt.
 - Nach den Modellen und vor dem Interface färbt eine bildschirmfüllende Fläche
   nur die Rand-Pixel ein; danach wird der Stencil geleert und das Spiel setzt
   alle Grafik-Einstellungen neu.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x880 Byte).
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x9DA Byte).
 
 > [!NOTE]
 > Nur mit `gxApi d3d9` (Standard) und 24-Bit-Tiefenpuffer (Standard). Mit
