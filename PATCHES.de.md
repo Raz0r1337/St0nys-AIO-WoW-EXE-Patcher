@@ -1238,34 +1238,66 @@ Registerbelegung für Shader-Autoren (Vertex-Shader, Modelle und Gebäude):
 > Im Shader-Weg bleiben Boden und Wasser bei 3 Lichtern. Sie haben eigene
 > Shader und einen eigenen Datenweg; der folgt in einer späteren Stufe.
 
+> [!TIP]
+> Zum Testen am besten zusammen mit Nr. 66: Ohne ihn schaltet der Client das
+> Licht einer Quelle ab, sobald die Quelle aus dem Bild gedreht wird – auch auf
+> Figuren, die noch zu sehen sind.
+
 > [!NOTE]
 > Sind alle Patches mit eigener Sektion gleichzeitig aktiv, ist im PE-Header
 > kein Platz mehr für einen weiteren Sektionseintrag. Dann verlängert der
 > Patcher die zuletzt angehängte Sektion, statt eine neue anzulegen.
 
+<a id="patch-lightstay"></a>
+**Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist** *(Nr. 66, Autor: St0ny)* 🟠 **[ungetestet]**
+
+> [!WARNING]
+> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
+>
+> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
+
+Behebt einen Fehler des Original-Clients: Dreht man die Kamera so, dass eine
+Lichtquelle (z. B. eine Fackel) aus dem Bild rutscht, verschwindet ihr Licht
+auch auf allem, was noch zu sehen ist – etwa auf der eigenen Figur direkt
+daneben. Das passiert mit und ohne Shader.
+
+Ursache: Punktlichter hängen an Modellen. Ihr Zeitstempel wird nur gesetzt,
+wenn das Modell im aktuellen Bild gezeichnet wird (VA `0x828B9C`); Modelle
+außerhalb des Blickfelds werden nicht gezeichnet. Beim Sammeln der Lichter
+(VA `0x81E400`) schaltet der Client jedes Licht mit veraltetem Zeitstempel ab.
+Der Patch ändert dort ein Byte (VA `0x81E548`, `je` → `jmp`): Das Licht bleibt
+aktiv.
+
+- Beim Entfernen eines Modells (Fackel abgebaut, Einheit verschwunden) meldet
+  es seine Lichter weiterhin selbst ab (VA `0x824D30`) – es bleiben keine
+  verwaisten Lichter zurück.
+- Bewegt sich eine Lichtquelle außerhalb des Bildes, bleibt ihr Licht an der
+  zuletzt gesehenen Stelle; Flackern oder Ein-/Ausschalten wird erst
+  weiterberechnet, wenn die Quelle wieder im Bild ist.
+
 ## Interface & Komfort
 
 <a id="patch-tracker"></a>
-**Quest-Tracker automatisch sortieren** *(Nr. 66)* 🟢 **[sicher]**
+**Quest-Tracker automatisch sortieren** *(Nr. 67)* 🟢 **[sicher]**
 
 Setzt das CVar `trackerSorting` standardmäßig auf 1. Quests im Tracker werden
 automatisch sortiert.
 
 <a id="patch-worldmap"></a>
-**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 67)* 🟢 **[sicher]**
+**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 68)* 🟢 **[sicher]**
 
 Setzt das CVar `advancedWorldMap` standardmäßig auf 1. Die erweiterte
 Kartenansicht ist von Anfang an aktiviert.
 
 <a id="patch-castbars"></a>
-**Cast Bars auf allen Frames** *(Nr. 68, Autor: Kebabstorm)* 🟢 **[sicher]**
+**Cast Bars auf allen Frames** *(Nr. 69, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Ermöglicht die Anzeige von Zauberbalken auf allen Unit-Frames (Party, Arena,
 Boss etc.), nicht nur auf Target und Focus, sowie auf allen
 Standard-Nameplates. Entspricht dem Verhalten ab Cataclysm.
 
 <a id="patch-emblems"></a>
-**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 69, Autor: MacWarrior)* 🟠 **[online ungetestet]**
+**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 70, Autor: MacWarrior)* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1301,7 +1333,7 @@ ist frei wählbar (`patch-*.MPQ`), dafür sorgt der Patch
 „Erweiterte MPQ-Namen erlauben“ (Nr. 21).
 
 <a id="patch-flash"></a>
-**FlashWindow Patch** *(Nr. 70, Autor: Kebabstorm)* 🟢 **[sicher]**
+**FlashWindow Patch** *(Nr. 71, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Lässt das WoW-Fenster in der Taskleiste blinken, wenn ein relevantes Ereignis
 eintritt und das Spiel im Hintergrund läuft. Dafür wird die in 3.3.5a
@@ -1314,7 +1346,7 @@ das braucht zusätzlich `IsWindowFocused()` aus der `AwesomeWotlkLib.dll`
 (Nr. 27).
 
 <a id="patch-charrandom"></a>
-**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 71, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
+**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 72, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
 
 Beim Öffnen der Charaktererstellung (Klick auf „Neuer Charakter“) und beim
 Wechsel von Volk oder Geschlecht würfelt der Client Gesicht, Haut, Frisur usw.
@@ -1322,7 +1354,7 @@ nicht mehr automatisch aus, man startet mit dem Standard-Aussehen. Der
 Zufall-Knopf funktioniert weiter – er nutzt im Client einen eigenen Weg.
 
 <a id="patch-lootopen"></a>
-**Lootfenster bleibt beim Laufen offen** *(Nr. 72, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Lootfenster bleibt beim Laufen offen** *(Nr. 73, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1333,7 +1365,7 @@ Bewegungs-Handlern, die das Fenster schließen, werden übersprungen (je ein
 Byte).
 
 <a id="patch-showlevel"></a>
-**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 73, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 74, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1342,10 +1374,10 @@ Ist ein feindliches Ziel 10 oder mehr Level über dir, zeigt der Client statt
 des Levels „??“ (bzw. einen Totenkopf auf der Namensplakette, `UnitLevel`
 liefert -1). Mit dem Patch zeigen Tooltip, Namensplakette und `UnitLevel` das
 echte Level. Bosse zeigen weiterhin „??“ – diese Prüfung bleibt erhalten, sie
-nimmt Nr. 74 heraus.
+nimmt Nr. 75 heraus.
 
 <a id="patch-showlevelboss"></a>
-**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 73)** *(Nr. 74, Autor: St0ny)* 🟠 **[online ungetestet]**
+**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 74)** *(Nr. 75, Autor: St0ny)* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1360,10 +1392,10 @@ steht dort das Level, das der Server für den Boss schickt. Die Beschriftung
 > [!NOTE]
 > Ist ein Boss 10 oder mehr Level über dir, greift zusätzlich die
 > Level-Prüfung – deren „??“ entfernt Nr. 73. Für alle Bosse daher zusammen mit
-> Nr. 73 einspielen; der Patcher weist darauf hin, wenn Nr. 73 fehlt.
+> Nr. 74 einspielen; der Patcher weist darauf hin, wenn Nr. 74 fehlt.
 
 <a id="patch-holdrepeat"></a>
-**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 75, Autor: tb (ported by St0ny))* 🔴 **[unsicher]** 🟡 **[Exe wird größer]**
+**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 76, Autor: tb (ported by St0ny))* 🔴 **[unsicher]** 🟡 **[Exe wird größer]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1395,7 +1427,7 @@ werden.
 > Patch eine Sektion an – die `Wow.exe` wird größer (Bann-Gefahr).
 
 <a id="patch-bubblerange"></a>
-**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 76, Autor: St0ny)* 🟢 **[sicher]**
+**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 77, Autor: St0ny)* 🟢 **[sicher]**
 
 Der Client zeigt Sprechblasen (Sagen, Gruppe, Schreien, NPC-Sagen und
 NPC-Schreien) nur für Sprecher bis 25 Meter Entfernung. Schickt der Server
@@ -1422,37 +1454,37 @@ PE-Header bleiben unverändert.
 ## Fenster, Maus & Kamera
 
 <a id="patch-window"></a>
-**Fenstermodus als Standard setzen** *(Nr. 77, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus als Standard setzen** *(Nr. 78, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxWindow` standardmäßig auf 1. Das Spiel startet im
 Fenstermodus statt im Vollbild.
 
 > [!TIP]
-> **Nr. 77 und Nr. 78 gehören zusammen:** Nr. 77 schaltet den Fenstermodus ein,
-> Nr. 78 maximiert das Fenster.
+> **Nr. 78 und Nr. 79 gehören zusammen:** Nr. 78 schaltet den Fenstermodus ein,
+> Nr. 79 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 77:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 78:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 78:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 79:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-maximize"></a>
-**Fenstermodus maximiert als Standard setzen** *(Nr. 78, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus maximiert als Standard setzen** *(Nr. 79, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxMaximize` standardmäßig auf 1. Das Fenster wird beim Start
 automatisch maximiert.
 
 > [!TIP]
-> **Nr. 77 und Nr. 78 gehören zusammen:** Nr. 77 schaltet den Fenstermodus ein,
-> Nr. 78 maximiert das Fenster.
+> **Nr. 78 und Nr. 79 gehören zusammen:** Nr. 78 schaltet den Fenstermodus ein,
+> Nr. 79 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 77:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 78:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 78:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 79:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-windowfix"></a>
-**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 79, Autor: Robinsch)* 🟢 **[sicher]**
+**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 80, Autor: Robinsch)* 🟢 **[sicher]**
 
 Wer im laufenden Spiel in den Fenstermodus wechselt, bekommt danach keinen
 schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
@@ -1460,14 +1492,14 @@ schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
 damit das CVar `DesktopGamma` sind ohne Wirkung.
 
 <a id="patch-mouse"></a>
-**Mausflackern / Kamerasprünge Fix** *(Nr. 80, Autor: Robinsch)* 🟢 **[sicher]**
+**Mausflackern / Kamerasprünge Fix** *(Nr. 81, Autor: Robinsch)* 🟢 **[sicher]**
 
 Ein umfangreicher Patch (4 Teile), der Probleme mit Mäusen behebt, die eine
 hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
 <a id="patch-camera"></a>
-**CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen** *(Nr. 81, Autor: Stormhand (fixed by St0ny))* 🟠 **[online ungetestet]** 🟡 **[Exe wird größer]**
+**CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen** *(Nr. 82, Autor: Stormhand (fixed by St0ny))* 🟠 **[online ungetestet]** 🟡 **[Exe wird größer]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1541,7 +1573,7 @@ R6002-Absturz zurück und überschreibt die Tabelle des Slider-Patches.
 ## Sound
 
 <a id="patch-sound"></a>
-**Sound-Einstellungen optimieren** *(Nr. 82, Autor: St0ny)* 🟢 **[sicher]**
+**Sound-Einstellungen optimieren** *(Nr. 83, Autor: St0ny)* 🟢 **[sicher]**
 
 Umfasst folgende Änderungen:
 
@@ -1570,7 +1602,7 @@ einer Meldung neu abgefragt, und alle Werte werden geprüft, bevor irgendetwas
 geschrieben wird. Die Werte merkt sich der Patcher in `patcher_selection.ini`
 (`value.<Id>=…`); mit `-Unattended` gelten die gemerkten Werte, ohne gemerkten
 Wert die Originalwerte – Ausnahmen: Build-Datum (aktueller Zeitpunkt) und Icon
-(Abbruch), siehe Nr. 86 und 87. Steckt ein Patch schon in der `Wow.exe`, ist
+(Abbruch), siehe Nr. 87 und 88. Steckt ein Patch schon in der `Wow.exe`, ist
 sein aktueller Wert der Vorschlag.
 Bei der Abfrage steht er auch hinter dem Patchnamen (`-> Vorschlag: …`, bei einem
 bereits eingespielten Patch `-> aktuell: …`).
@@ -1580,7 +1612,7 @@ bereits eingespielten Patch `-> aktuell: …`).
 > muss also zum Server passen.
 
 <a id="patch-clientversion"></a>
-**Client-Version ändern (Original 3.3.5)** *(Nr. 83, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Client-Version ändern (Original 3.3.5)** *(Nr. 84, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1593,7 +1625,7 @@ FileVersion-Text (`3, 3, 5, 12340`) wird zur reinen Version (`3.3.6`). Haupt-
 und Nebenversion müssen zusammen in das ProductVersion-Feld passen (z. B. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Build-Nummer ändern (Original 12340)** *(Nr. 84, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Build-Nummer ändern (Original 12340)** *(Nr. 85, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1625,7 +1657,7 @@ den Server.
 > offline.
 
 <a id="patch-clienttitle"></a>
-**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 85, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
+**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 86, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1646,7 +1678,7 @@ ab, damit er stehen bleibt.
 > Titel.
 
 <a id="patch-clientdate"></a>
-**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 86, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 87, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1669,7 +1701,7 @@ Patchens. Ist der Patch schon eingespielt, steht dort das aktuelle Datum samt
 Uhrzeit der `Wow.exe`.
 
 <a id="patch-clienticon"></a>
-**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 87, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 88, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
