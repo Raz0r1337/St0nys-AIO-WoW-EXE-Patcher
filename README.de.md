@@ -390,7 +390,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [62](PATCHES.de.md#patch-nofade) | Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN *(Server muss das Flag setzen)* | 🟠 **[ungetestet]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
 | [63](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [64](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
-| [65](PATCHES.de.md#patch-outline) | Umrandung für Ziel und Mouseover (Proof of Concept) *(nur gxApi d3d9)* | 🟠 **[ungetestet]**<br>🟡 **[Exe wird größer]** | St0ny | – | – | – |
+| [65](PATCHES.de.md#patch-outline) | Umrandung für Ziel und Mouseover *(nur gxApi d3d9)* | 🟠 **[online ungetestet]**<br>🟡 **[Exe wird größer]** | St0ny | – | – | – |
 
 #### Interface & Komfort
 
@@ -464,7 +464,7 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     kann zu Kick/Bann führen: Nr. 26, 29, 39, 44, 51, 62, 65, 69, 72–74 und 81
     (rote Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 29, 44, 51, 62 und 65 (rote Warnung).
+    möglicherweise verbuggt: Nr. 25, 26, 29, 44, 51 und 62 (rote Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 50, 63–65, 75 und 81. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle

@@ -1153,12 +1153,10 @@ which does it in its DLL. Icons at the font's original size stay unchanged.
 > file size.
 
 <a id="patch-outline"></a>
-**Outline for target and mouseover (proof of concept)** *(No. 65, Author: St0ny)* 🟠 **[untested]** 🟡 **[exe grows]**
+**Outline for target and mouseover** *(No. 65, Author: St0ny)* 🟠 **[untested online]** 🟡 **[exe grows]**
 
 > [!WARNING]
 > **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
->
-> **Untested ingame** – the function has not been checked in game yet, possibly buggy.
 
 Like in retail, the 3D figure of your target and the figure under the mouse
 cursor get a thin outline (about 2 pixels) in their reaction color – the same
@@ -1188,7 +1186,8 @@ How it works:
 > [!NOTE]
 > Only with `gxApi d3d9` (default) and a 24-bit depth buffer (default). With
 > D3D9Ex, OpenGL or `gxDepthBits` 16/32 the patch switches itself off. It
-> should work with DXVK, because WoW uses Direct3D 9 there as well.
+> works with DXVK as well (tested in game), because WoW uses Direct3D 9 there
+> as well.
 
 > [!NOTE]
 > If all patches with a section of their own are active at the same time,

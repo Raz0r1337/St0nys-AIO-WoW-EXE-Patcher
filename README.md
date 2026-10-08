@@ -380,7 +380,7 @@ name, and before patching it lists them once more.
 | [62](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
 | [63](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟢 **[safe]**<br>🟡 **[exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [64](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟢 **[safe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
-| [65](PATCHES.en.md#patch-outline) | Outline for target and mouseover (proof of concept) *(gxApi d3d9 only)* | 🟠 **[untested]**<br>🟡 **[exe grows]** | St0ny | – | – | – |
+| [65](PATCHES.en.md#patch-outline) | Outline for target and mouseover *(gxApi d3d9 only)* | 🟠 **[untested online]**<br>🟡 **[exe grows]** | St0ny | – | – | – |
 
 #### Interface & comfort
 
@@ -454,7 +454,7 @@ clicking the number of a patch takes you straight to its description.
     you kicked or banned: No. 26, 29, 39, 44, 51, 62, 65, 69, 72–74 and 81
     (red warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 29, 44, 51, 62 and 65 (red warning).
+    possibly buggy: No. 25, 26, 29, 44, 51 and 62 (red warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 50,
     63–65, 75 and 81. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change

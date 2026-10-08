@@ -2096,7 +2096,7 @@ function Add-HoldRepeat {
 }
 
 # ============================================================
-#  Umrandung fuer Ziel und Mouseover (Proof of Concept, St0ny)
+#  Umrandung fuer Ziel und Mouseover (St0ny)
 #  Wie in Retail bekommt die 3D-Figur des markierten Ziels und die unter dem
 #  Mauszeiger eine duenne Umrandung in ihrer Gesinnungsfarbe (Farbe wie der
 #  Auswahlkreis, 0x521BF0). Nur fuer gxApi d3d9 mit 24-Bit-Tiefenpuffer;
@@ -4303,10 +4303,10 @@ $patches = @(
         Add-IconPixelSnap
     }}
 
-    @{ Id = 'outline'; Cat = 'graphics'; On = $false; GrowsExe = $true; PublicUntested = $true; GameUntested = $true
+    @{ Id = 'outline'; Cat = 'graphics'; On = $false; GrowsExe = $true; PublicUntested = $true
        Author = 'St0ny'
-       De = 'Umrandung fuer Ziel und Mouseover (Proof of Concept)'
-       En = 'Outline for target and mouseover (proof of concept)'
+       De = 'Umrandung fuer Ziel und Mouseover'
+       En = 'Outline for target and mouseover'
        NoteDe = 'nur gxApi d3d9'
        NoteEn = 'gxApi d3d9 only'
        Code = {

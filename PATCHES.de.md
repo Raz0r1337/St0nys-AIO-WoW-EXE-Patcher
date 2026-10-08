@@ -1187,12 +1187,10 @@ unverändert.
 > Server prüfen die Dateigröße.
 
 <a id="patch-outline"></a>
-**Umrandung für Ziel und Mouseover (Proof of Concept)** *(Nr. 65, Autor: St0ny)* 🟠 **[ungetestet]** 🟡 **[Exe wird größer]**
+**Umrandung für Ziel und Mouseover** *(Nr. 65, Autor: St0ny)* 🟠 **[online ungetestet]** 🟡 **[Exe wird größer]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
 
 Wie in Retail bekommt die 3D-Figur des markierten Ziels und die Figur unter
 dem Mauszeiger eine dünne Umrandung (etwa 2 Pixel) in ihrer Gesinnungsfarbe –
@@ -1224,7 +1222,8 @@ So funktioniert es:
 > [!NOTE]
 > Nur mit `gxApi d3d9` (Standard) und 24-Bit-Tiefenpuffer (Standard). Mit
 > D3D9Ex, OpenGL oder `gxDepthBits` 16/32 schaltet sich der Patch ab. Mit
-> DXVK sollte er funktionieren, weil WoW auch dort Direct3D 9 nutzt.
+> DXVK funktioniert er ebenfalls (im Spiel getestet), weil WoW auch dort
+> Direct3D 9 nutzt.
 
 > [!NOTE]
 > Sind alle Patches mit eigener Sektion gleichzeitig aktiv, ist im PE-Header
