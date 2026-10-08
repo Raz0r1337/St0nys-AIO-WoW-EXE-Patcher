@@ -312,7 +312,7 @@ function PatchName($p, [switch]$NoTags) {
     if ($note) { $n = "$n ($note)" }
     if ($NoTags) { return $n }
     $tags = @(PatchTags $p)
-    if ($tags.Count -gt 0) { $n = "$n [$($tags -join ', ')]" }
+    if ($tags.Count -gt 0) { $n = "$n [$($tags -join ' - ')]" }
     return $n
 }
 
