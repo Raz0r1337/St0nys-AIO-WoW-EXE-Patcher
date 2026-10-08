@@ -161,7 +161,9 @@ zusammengestellt von Stormhand, und die Standard-Auswahl. Es enthält nur
 sichere Patches (🟢), die Stormhand alle mehrere Stunden auf Warmane getestet
 hat – **das Preset ist sicher** und kann auch auf öffentlichen Servern
 verwendet werden. Drei davon (Nr. 9, 63 und 64) vergrößern die `Wow.exe`; auf
-Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen. Welche Patches
+Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen.
+Dazu kommen die Licht-Patches Nr. 65 und 66 für Stormhands Grafik-Overhaul. Sie
+sind noch ungetestet, Nr. 65 vergrößert die `Wow.exe` ebenfalls. Welche Patches
 dazugehören, zeigt die Spalte „Reforged“ in der
 [Patch-Übersicht](#patch-übersicht); im Skript steht die Liste unter
 `$PRESET_REFORGED`.
@@ -390,8 +392,8 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [62](PATCHES.de.md#patch-nofade) | Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN *(Server muss das Flag setzen)* | 🟠 **[ungetestet]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
 | [63](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [64](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
-| [65](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) *(sichtbar nur mit neuen Shadern oder mit fixedFunction 1)* | 🟠 **[ungetestet]**<br>🟡 **[Exe wird größer]** | St0ny | – | – | – |
-| [66](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist | 🟠 **[ungetestet]** | St0ny | – | – | – |
+| [65](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) *(sichtbar nur mit neuen Shadern oder mit fixedFunction 1)* | 🟠 **[ungetestet]**<br>🟡 **[Exe wird größer]** | St0ny | ✅ | – | – |
+| [66](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist | 🟠 **[ungetestet]** | St0ny | ✅ | – | – |
 
 #### Interface & Komfort
 

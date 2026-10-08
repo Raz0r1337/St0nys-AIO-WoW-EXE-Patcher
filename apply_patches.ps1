@@ -4380,8 +4380,9 @@ $patches = @(
 
 # Standard-Preset "Reforged" - das offizielle Preset des Projekts
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
-# von Stormhand. Nur sichere Patches, alle von Stormhand mehrere Stunden auf
-# Warmane getestet (Nr. 9, 63 und 64 vergroessern die Wow.exe). Im Menue mit R, ueber
+# von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
+# Warmane getestet (Nr. 9, 63 und 64 vergroessern die Wow.exe); dazu die noch
+# ungetesteten Licht-Patches Nr. 65 und 66. Im Menue mit R, ueber
 # -Select reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',
@@ -4391,6 +4392,7 @@ $PRESET_REFORGED = @(
     'forcereaction', 'mail', 'deadchat', 'level101',
     'farclip', 'horizon', 'envdetail', 'grounddist', 'sliders', 'goscale',
     'occluder', 'bluemoon', 'notransparency', 'hdportraits', 'iconsnap',
+    'lights', 'lightstay',
     'tracker', 'worldmap', 'castbars', 'charrandom', 'bubblerange',
     'window', 'maximize', 'windowfix', 'mouse', 'sound'
 )

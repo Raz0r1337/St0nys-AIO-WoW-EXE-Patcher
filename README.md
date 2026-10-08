@@ -154,7 +154,9 @@ together by Stormhand, and the default selection. It contains only patches
 rated safe (🟢), all tested by Stormhand for several hours on Warmane – **the
 preset is safe** and can be used on public servers as well. Three of them
 (No. 9, 63 and 64) make `Wow.exe` larger; that was no problem on Warmane, but
-other servers may check the file size. The "Reforged" column in the
+other servers may check the file size. On top of that come the light patches
+No. 65 and 66 for Stormhand's graphics overhaul. They are still untested, and
+No. 65 makes `Wow.exe` larger as well. The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it; in the
 script the list is `$PRESET_REFORGED`.
 
@@ -380,8 +382,8 @@ name, and before patching it lists them once more.
 | [62](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
 | [63](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟢 **[safe]**<br>🟡 **[exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [64](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟢 **[safe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
-| [65](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) *(visible only with new shaders or with fixedFunction 1)* | 🟠 **[untested]**<br>🟡 **[exe grows]** | St0ny | – | – | – |
-| [66](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen | 🟠 **[untested]** | St0ny | – | – | – |
+| [65](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) *(visible only with new shaders or with fixedFunction 1)* | 🟠 **[untested]**<br>🟡 **[exe grows]** | St0ny | ✅ | – | – |
+| [66](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen | 🟠 **[untested]** | St0ny | ✅ | – | – |
 
 #### Interface & comfort
 
