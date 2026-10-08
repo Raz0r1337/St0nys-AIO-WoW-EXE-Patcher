@@ -52,7 +52,7 @@ Gegenüber dem Original sind die drei Sprungweiten korrigiert und der Code ist
 kürzer.
 
 > [!NOTE]
-> Der Code liegt in der freien Lücke am Ende von `.text`, die auch Nr. 62 nutzt.
+> Der Code liegt in der freien Lücke am Ende von `.text`, die auch Nr. 63 nutzt.
 > Beide passen zusammen hinein, die Dateigröße ändert sich nicht.
 
 > [!NOTE]
@@ -418,7 +418,7 @@ Fehlt die DLL, startet WoW normal weiter.
 > Anti-Cheat auffallen – also nur dort einsetzen, wo awesome_wotlk erlaubt ist.
 
 > [!NOTE]
-> Ist zusätzlich Nr. 63 (HD-Portraits) eingespielt, hat die CVar
+> Ist zusätzlich Nr. 64 (HD-Portraits) eingespielt, hat die CVar
 > `portraitResolution` von awesome_wotlk keine Wirkung – es gilt immer die
 > Auflösung des Exe-Patches.
 
@@ -457,8 +457,36 @@ Die Dateigröße ändert sich nicht.
 > DLL gilt deren Fassung. Ihr Zeit-Fix lässt allerdings jährliche Feiertage mit
 > festem Datum und wöchentliche Feiertage aus dem Kalender verschwinden.
 
+<a id="patch-lexara"></a>
+**Lexara.dll beim Start laden (HD-Schriften von Stormhand)** *(Nr. 29, Autor: St0ny)* 🟠 **[ungetestet]**
+
+> [!WARNING]
+> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
+>
+> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
+
+Lädt beim Start die `Lexara.dll` aus dem WoW-Ordner –
+[Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) von Stormhand ersetzt die Schriftdarstellung
+des Clients durch scharfe HD-Schriften (MSDF). Bisher lief Lexara als
+`dinput8.dll` neben der Exe und kam sich dabei mit anderen Mods in die Quere,
+die denselben Dateinamen benutzen. Mit diesem Patch lädt die Exe Lexara selbst.
+Fehlt die DLL, startet WoW ganz normal.
+
+So wird es eingerichtet: Die `dinput8.dll` aus dem Lexara-Download in
+`Lexara.dll` umbenennen und zusammen mit `skia.dll` in den WoW-Ordner legen.
+Keine zusätzliche `dinput8.dll` von Lexara liegen lassen, sonst wird Lexara
+doppelt geladen.
+
+Dateigröße und PE-Header bleiben unverändert: Der Einstiegspunkt (VA
+`0x401000`) ruft zuerst `__security_init_cookie` auf. Dieser Aufruf zeigt jetzt
+auf eine freie 16-Byte-Lücke (VA `0x6DC8C0`) mit `push "Lexara.dll"` →
+`call [LoadLibraryA]` → Sprung zu `__security_init_cookie`. Der Name steht in
+einer zweiten Lücke (VA `0x6DC0E0`). Eine Proxy-DLL wird ebenfalls vor dem
+Einstiegspunkt geladen, der Zeitpunkt passt also. Der Patch verträgt sich mit
+dem voice.dll-Lader (Nr. 30), der nur den Sprung direkt danach ändert.
+
 <a id="patch-voicedll"></a>
-**voice.dll beim Start laden (mod-voicechat) [ALPHA]** *(Nr. 29, Autor: St0ny)* 🟠 **[ungetestet]**
+**voice.dll beim Start laden (mod-voicechat) [ALPHA]** *(Nr. 30, Autor: St0ny)* 🟠 **[ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -482,19 +510,19 @@ Einstiegspunkt, Lücke und den `LoadLibraryA`-Import.
 ## Gameplay-Fixes
 
 <a id="patch-areatrigger"></a>
-**Area-Trigger-Timer genauer (50 ms statt 100 ms)** *(Nr. 30, Autor: Robinsch)* 🟢 **[sicher]**
+**Area-Trigger-Timer genauer (50 ms statt 100 ms)** *(Nr. 31, Autor: Robinsch)* 🟢 **[sicher]**
 
 Erhöht die Prüffrequenz für Area-Trigger von 100 ms auf 50 ms. Dadurch werden
 Zonen-Übergänge und Trigger präziser erkannt.
 
 <a id="patch-swing"></a>
-**Nahkampf-Schwung bei Rechtsklick entfernt** *(Nr. 31, Autor: Robinsch)* 🟢 **[sicher]**
+**Nahkampf-Schwung bei Rechtsklick entfernt** *(Nr. 32, Autor: Robinsch)* 🟢 **[sicher]**
 
 Verhindert den fehlerhaften Auto-Attack-Swing, der beim Rechtsklick auf ein
 Ziel ausgelöst wurde.
 
 <a id="patch-npcanim"></a>
-**NPC-Angriffsanimation beim Drehen unterdrückt** *(Nr. 32, Autor: Robinsch (fixed by St0ny))* 🟢 **[sicher]**
+**NPC-Angriffsanimation beim Drehen unterdrückt** *(Nr. 33, Autor: Robinsch (fixed by St0ny))* 🟢 **[sicher]**
 
 Unterdrückt die Angriffsanimation von NPCs beim Drehen, wenn kein echter
 Angriff stattfindet.
@@ -512,13 +540,13 @@ Hier ist der Block bei VA `0x73E385`–`0x73E3D5` kompakter neu geschrieben
 drehen sich wie im Original, NPCs verhalten sich wie mit Robinschs Patch.
 
 <a id="patch-spellanim"></a>
-**Zauber-Animation nach Abbruch repariert** *(Nr. 33, Autor: Robinsch)* 🟢 **[sicher]**
+**Zauber-Animation nach Abbruch repariert** *(Nr. 34, Autor: Robinsch)* 🟢 **[sicher]**
 
 Behebt einen Bug, bei dem nach dem Abbrechen eines kanalisierten Zaubers die
 Vorbereitungsanimation hängen blieb.
 
 <a id="patch-ghostattack"></a>
-**„Geister“-Angriff von NPCs beim Evade behoben** *(Nr. 34, Autor: Robinsch (fixed by St0ny))* 🟢 **[sicher]**
+**„Geister“-Angriff von NPCs beim Evade behoben** *(Nr. 35, Autor: Robinsch (fixed by St0ny))* 🟢 **[sicher]**
 
 Bevor der Client ein neues Nahkampf-Ergebnis anzeigt, spielt er den zuletzt
 gespeicherten Schlag noch einmal auf dem Ziel ab. Hat ein NPC inzwischen den
@@ -532,7 +560,7 @@ In Robinschs Liste steht der Offset `0x355BF` – dort fehlt eine 5. Er traf ein
 gemacht. Hier ist er auf `0x3555BF` korrigiert.
 
 <a id="patch-naked"></a>
-**Nackter-Charakter-Bug behoben** *(Nr. 35, Autor: Robinsch (fixed by St0ny))* 🟢 **[sicher]**
+**Nackter-Charakter-Bug behoben** *(Nr. 36, Autor: Robinsch (fixed by St0ny))* 🟢 **[sicher]**
 
 Behebt nackt dargestellte Charaktere, wie sie auf privaten Servern vorkommen,
 wenn neue Items nur über `ItemDisplayInfo` verteilt werden. Der Patch schaltet
@@ -546,24 +574,24 @@ ein `push 0` in der Lua-Funktion `GetTradeSkillTools`. Hier ist er auf
 `0x2DDC5D` korrigiert.
 
 <a id="patch-forcereaction"></a>
-**Force-Reaction bei /reload erhalten** *(Nr. 36, Autor: Robinsch)* 🟢 **[sicher]**
+**Force-Reaction bei /reload erhalten** *(Nr. 37, Autor: Robinsch)* 🟢 **[sicher]**
 
 Verhindert, dass Force-Reaction-Werte (z. B. Fraktionsstatus) beim Neuladen
 der UI zurückgesetzt werden. Wichtig für Custom-Server.
 
 <a id="patch-mail"></a>
-**Neue Post ohne 60 Sekunden Wartezeit** *(Nr. 37, Autor: Robinsch)* 🟢 **[sicher]**
+**Neue Post ohne 60 Sekunden Wartezeit** *(Nr. 38, Autor: Robinsch)* 🟢 **[sicher]**
 
 Der Client fragt neue Post sofort ab – kein Warten mehr von 60 Sekunden und kein
 Relog, um neue Post zu bekommen.
 
 <a id="patch-deadchat"></a>
-**Chat-Befehle auch im Tod erlauben** *(Nr. 38, Autor: Robinsch)* 🟢 **[sicher]**
+**Chat-Befehle auch im Tod erlauben** *(Nr. 39, Autor: Robinsch)* 🟢 **[sicher]**
 
 Slash-Befehle funktionieren auch, während der Charakter tot ist.
 
 <a id="patch-follow"></a>
-**/follow auch bei NPCs erlauben** *(Nr. 39, Autor: St0ny (original by Alastor StrixEfuartus))* 🟠 **[online ungetestet]**
+**/follow auch bei NPCs erlauben** *(Nr. 40, Autor: St0ny (original by Alastor StrixEfuartus))* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -572,12 +600,12 @@ Mit `/follow` lässt sich auch NPCs folgen, nicht nur Spielern. Basiert auf
 dem `/follow`-Patch aus der 12th Generation EXE von Alastor StrixEfuartus,
 Portierung und Anpassung von St0ny: Das Original leitet die Prüfung in
 eine Code-Höhle um, die ihr Ergebnis ignoriert. Diese Höhle läge aber genau
-in der Lücke am Ende von `.text`, die Nr. 4 und Nr. 62 nutzen. Hier wird
+in der Lücke am Ende von `.text`, die Nr. 4 und Nr. 63 nutzen. Hier wird
 stattdessen der bedingte Sprung hinter der Prüfung unbedingt gemacht – ein
 einziges Byte, gleiche Wirkung, und die Patches vertragen sich.
 
 <a id="patch-level101"></a>
-**Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl für alle)** *(Nr. 40, Autor: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[sicher]**
+**Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl für alle)** *(Nr. 41, Autor: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[sicher]**
 
 Die Spielwert-Tabellen des Clients (`gtCombatRatings`, `gtBarberShopCostBase`,
 `gtOCTRegenHP`/`MP`, `gtChanceToMeleeCrit` … – elf Tabellen) haben je Spalte
@@ -602,7 +630,7 @@ darunter bleibt unverändert.
 Quelle heißt er „Disable XML SIG MD5“, daher der dortige Hinweis „Use XML MD5“.
 
 <a id="patch-raceclass"></a>
-**Charaktererstellung: mehr als 10 Klassen (Zufallsklasse)** *(Nr. 41, Autor: Alastor StrixEfuartus / Robinsch)* 🔴 **[unsicher]**
+**Charaktererstellung: mehr als 10 Klassen (Zufallsklasse)** *(Nr. 42, Autor: Alastor StrixEfuartus / Robinsch)* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -614,7 +642,7 @@ vergrößert es auf 30 Plätze. Welche Rasse welche Klasse darf, prüft weiterhi
 der Server – mehr macht dieser Patch nicht.
 
 <a id="patch-namecheck"></a>
-**Namensprüfung bei der Charaktererstellung abschalten (z. B. Zahlen im Namen)** *(Nr. 42, Autor: Alyst3r (0x539wowmod) (fixed by St0ny))* 🔴 **[unsicher]**
+**Namensprüfung bei der Charaktererstellung abschalten (z. B. Zahlen im Namen)** *(Nr. 43, Autor: Alyst3r (0x539wowmod) (fixed by St0ny))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -638,7 +666,7 @@ erlauben“ (Nr. 19).
 > lehnt er den Charakter ab.
 
 <a id="patch-maxchars"></a>
-**Max. Charaktere pro Server auf 255 erhöht** *(Nr. 43, Autor: St0ny)* 🟢 **[sicher]**
+**Max. Charaktere pro Server auf 255 erhöht** *(Nr. 44, Autor: St0ny)* 🟢 **[sicher]**
 
 Hebt die clientseitige Begrenzung von 10 auf 255 Charaktere pro Server an.
 Der Server muss dies ebenfalls unterstützen. Zusätzliche
@@ -646,7 +674,7 @@ Interface-Anpassungen (Glue-XML) sind nötig, damit der
 Charakterauswahl-Bildschirm mehr als 10 Slots anzeigt.
 
 <a id="patch-customitem"></a>
-**Custom Item Fix (BETA) v2** *(Nr. 44, Autor: Kebabstorm (fixed by St0ny))* 🟠 **[ungetestet]**
+**Custom Item Fix (BETA) v2** *(Nr. 45, Autor: Kebabstorm (fixed by St0ny))* 🟠 **[ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -687,7 +715,7 @@ Aus v1 nicht übernommen: die PE-Prüfsumme (Windows prüft sie bei Programmen
 nicht) und die Änderung `Cache` → `||che` – das ist genau Patch Nr. 2.
 
 <a id="patch-climb"></a>
-**Steigwinkel-Begrenzung aufheben (jeden Hang hochlaufen)** *(Nr. 45, Autor: Alastor StrixEfuartus)* 🔴 **[unsicher]**
+**Steigwinkel-Begrenzung aufheben (jeden Hang hochlaufen)** *(Nr. 46, Autor: Alastor StrixEfuartus)* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -701,7 +729,7 @@ Schluss: Der Client vergleicht die Neigung mit dem Kosinus dieses Winkels
 > Bann führen.
 
 <a id="patch-jump"></a>
-**Sprunghöhe ändern (Original -7.9555473)** *(Nr. 46, Autor: Alastor StrixEfuartus)* 🔴 **[unsicher]**
+**Sprunghöhe ändern (Original -7.9555473)** *(Nr. 47, Autor: Alastor StrixEfuartus)* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -718,7 +746,7 @@ Wert wird wie bei den Client-Info-Patches gemerkt.
 > Bann führen.
 
 <a id="patch-airforward"></a>
-**Im Sprung vorwärts/rückwärts steuern** *(Nr. 47, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
+**Im Sprung vorwärts/rückwärts steuern** *(Nr. 48, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -736,7 +764,7 @@ der Byte-Patch aus 0x539wowmod, der die Bewegung in der Luft aktualisiert.
 > kann zu einem Bann führen.
 
 <a id="patch-airlateral"></a>
-**Im Sprung seitwärts steuern** *(Nr. 48, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
+**Im Sprung seitwärts steuern** *(Nr. 49, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -750,7 +778,7 @@ Bewegung bei gesetztem Fall-Flag nicht mehr vorzeitig abbricht.
 > kann zu einem Bann führen.
 
 <a id="patch-airturn"></a>
-**Im Sprung drehen ändert die Flugrichtung** *(Nr. 49, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
+**Im Sprung drehen ändert die Flugrichtung** *(Nr. 50, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -765,7 +793,7 @@ den beiden vorigen Patches.
 > kann zu einem Bann führen.
 
 <a id="patch-doublejump"></a>
-**Doppelsprung (weitere Sprünge in der Luft)** *(Nr. 50, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]** 🟡 **[Exe wird größer]**
+**Doppelsprung (weitere Sprünge in der Luft)** *(Nr. 51, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]** 🟡 **[Exe wird größer]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -780,7 +808,7 @@ Hier geschieht dasselbe in einer kleinen Code-Höhle: Beim Sprung vom Boden wird
 ein Zähler auf die gewählte Anzahl gesetzt, in der Luft ist ein Sprung erlaubt,
 solange der Zähler nicht 0 ist. Festgewurzelt oder fliegend bleibt Springen
 gesperrt. Jeder Luftsprung nutzt dieselbe Sprunghöhe wie ein normaler Sprung
-(also auch den Wert aus „Sprunghöhe ändern“, Nr. 46). Den doppelten Sprung aus
+(also auch den Wert aus „Sprunghöhe ändern“, Nr. 47). Den doppelten Sprung aus
 0x539wowmod mit eigener zweiter Sprunghöhe gibt es hier nicht. Der Zähler wird
 erst beim nächsten Sprung vom Boden neu gesetzt, nicht beim Landen: Wer nach
 einem Sprung landet und dann von einer Kante läuft, hat in der Luft wieder die
@@ -799,7 +827,7 @@ beschreibbar); die `Wow.exe` wird dadurch etwas größer.
 > Dateigröße der `Wow.exe`.
 
 <a id="patch-noammo"></a>
-**Fernkampf ohne Munition** *(Nr. 51, Autor: Alyst3r (ported by St0ny))* 🟠 **[ungetestet]**
+**Fernkampf ohne Munition** *(Nr. 52, Autor: Alyst3r (ported by St0ny))* 🟠 **[ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -819,7 +847,7 @@ diese Prüfung im Client weg (Sprung zum Erfolgsausgang bei VA `0x809540`).
 ## Grafik & Sichtweite
 
 <a id="patch-farclip"></a>
-**CVar farclip unlock (max 10000)** *(Nr. 52, Autor: Alastor StrixEfuartus)* 🟢 **[sicher]**
+**CVar farclip unlock (max 10000)** *(Nr. 53, Autor: Alastor StrixEfuartus)* 🟢 **[sicher]**
 
 Entsperrt die maximale Sichtweite (Farclip) auf 10000 Yards. Der Client klemmt
 den Wert beim Setzen in einer einzigen Funktion (VA `0x780770`) nach oben ab
@@ -832,16 +860,16 @@ Die Untergrenze von 183 Yards bleibt unangetastet, und ein davon getrenntes
 Eingabelimit für das CVar gibt es nicht – diese Klemme ist das Limit.
 Nicht zu verwechseln mit der 1277 aus dem Video-Menü: Das ist die Obergrenze
 des Sichtweite-Reglers und eine völlig andere Stelle in der EXE (siehe
-Patch Nr. 56 „Grafikoptionen: Slider-Maxima erweitern“).
+Patch Nr. 57 „Grafikoptionen: Slider-Maxima erweitern“).
 
 <a id="patch-horizon"></a>
-**CVar horizonFarclipScale unlock (max 12)** *(Nr. 53, Autor: St0ny)* 🟢 **[sicher]**
+**CVar horizonFarclipScale unlock (max 12)** *(Nr. 54, Autor: St0ny)* 🟢 **[sicher]**
 
 Entsperrt das CVar `horizonFarclipScale` und setzt den maximalen Wert auf 12.
 Erhöht die Sichtweite des Horizonts deutlich.
 
 <a id="patch-envdetail"></a>
-**CVar environmentDetail unlock (kein Limit statt 1.5)** *(Nr. 54, Autor: St0ny)* 🟢 **[sicher]**
+**CVar environmentDetail unlock (kein Limit statt 1.5)** *(Nr. 55, Autor: St0ny)* 🟢 **[sicher]**
 
 Entfernt die Obergrenze des CVars `environmentDetail` komplett. Original wird
 der Wert auf den Bereich 0.5 bis 1.5 begrenzt; der Patch ersetzt am gemeinsamen
@@ -849,18 +877,18 @@ Ausgang der Prüfung den geklemmten Wert durch den Rohwert – damit fällt auch
 die Untergrenze 0.5 weg, beliebige Werte werden durchgereicht (sinnvoll sind
 Werte ab 0.5).
 Wichtig: Dieses CVar tut nichts anderes, als die GameObject-Sichtweiten zu
-multiplizieren (siehe Patch Nr. 57) – im Original nur die der Kategorien 1 bis
-3, mit Patch Nr. 57 alle fünf. Es ist damit der bequemste FPS-Hebel im
+multiplizieren (siehe Patch Nr. 58) – im Original nur die der Kategorien 1 bis
+3, mit Patch Nr. 58 alle fünf. Es ist damit der bequemste FPS-Hebel im
 Objekt-Rendering, weil er ohne Neupatchen im Spiel wirkt.
 
 <a id="patch-grounddist"></a>
-**CVar groundEffectDist unlock (max 3166 statt 140)** *(Nr. 55)* 🟢 **[sicher]**
+**CVar groundEffectDist unlock (max 3166 statt 140)** *(Nr. 56)* 🟢 **[sicher]**
 
 Erhöht die maximale Sichtweite für Bodeneffekte (Gras, Blumen, Bodendeko) von
 140 auf 3166 Yards.
 
 <a id="patch-sliders"></a>
-**Grafikoptionen: Slider-Maxima erweitern** *(Nr. 56, Autor: St0ny)* 🟢 **[sicher]**
+**Grafikoptionen: Slider-Maxima erweitern** *(Nr. 57, Autor: St0ny)* 🟢 **[sicher]**
 
 Hebt die Obergrenzen von vier Reglern im Video-Menü an, Reiter „Effekte“. Die
 CVars selbst sind durch die Unlock-Patches längst entsperrt – die Regler
@@ -917,8 +945,8 @@ irgendetwas auffällt.
 
 - Der Regler setzt nur das CVar. Ohne die Unlock-Patches klemmt der Client den
   Wert beim Setzen sofort wieder auf sein Original zurück – die Patches
-  „CVar farclip unlock“ (Nr. 52), „CVar environmentDetail unlock“ (Nr. 54) und
-  „CVar groundEffectDist unlock“ (Nr. 55) gehören also dazu. Fehlen sie in der
+  „CVar farclip unlock“ (Nr. 53), „CVar environmentDetail unlock“ (Nr. 55) und
+  „CVar groundEffectDist unlock“ (Nr. 56) gehören also dazu. Fehlen sie in der
   Auswahl, weist der Patcher darauf hin.
 - Bei `groundEffectDensity` wirkt oberhalb von 64 nichts mehr: Der Vertexbuffer
   der Bodendeko ist im Client fest auf Dichte × 64 ≤ 4096 geklemmt. Der Regler
@@ -962,10 +990,10 @@ nichts anzuheben gibt. Der Wert lässt sich weiterhin nur über die
 > [!NOTE]
 > Die Dateigröße ändert sich nicht: Die kleine Such-Routine liegt in einer
 > freien Lücke zwischen zwei Funktionen, die Tabelle mit den Maxima im
-> ungenutzten Rest von `.rdata`. Mit Nr. 4 und Nr. 62 gibt es keine Überschneidung.
+> ungenutzten Rest von `.rdata`. Mit Nr. 4 und Nr. 63 gibt es keine Überschneidung.
 
 <a id="patch-goscale"></a>
-**GameObject Sichtweite: Cat 0 und Cat 4 auf environmentDetail reagieren lassen** *(Nr. 57, Autor: St0ny)* 🟢 **[sicher]**
+**GameObject Sichtweite: Cat 0 und Cat 4 auf environmentDetail reagieren lassen** *(Nr. 58, Autor: St0ny)* 🟢 **[sicher]**
 
 Behebt eine Auslassung im Client: Die Funktion, die aus den Basiswerten die
 Laufzeit-Sichtweiten rechnet, multipliziert nur Cat 1 bis 3 mit dem CVar
@@ -984,12 +1012,12 @@ geregelt wird über das CVar:
 | 2.0               | 60    | 200   | 400   | 1500  | 2500  |
 | 10 | 300   | 1000  | 2000  | 7500  | 12500 |
 
-Mit Patch Nr. 58 liegt Cat 0 bei 50 statt 30 Yards (in der Tabelle oben also
+Mit Patch Nr. 59 liegt Cat 0 bei 50 statt 30 Yards (in der Tabelle oben also
 50 / 100 / 500). Werte über 1.5 setzen den Patch „CVar environmentDetail
-unlock“ (Nr. 54) voraus.
+unlock“ (Nr. 55) voraus.
 
 <a id="patch-cat0"></a>
-**GameObject Sichtweite: Cat 0 von 30 auf 50 Yards** *(Nr. 58, Autor: St0ny)* 🟢 **[sicher]**
+**GameObject Sichtweite: Cat 0 von 30 auf 50 Yards** *(Nr. 59, Autor: St0ny)* 🟢 **[sicher]**
 
 Der Patch kostet Leistung: Es ist deutlich mehr Kleinkram gleichzeitig
 sichtbar, und die Anzahl der gezeichneten Objekte ist der Performance-Hebel.
@@ -999,7 +1027,7 @@ Säcke, Werkzeug. Cat 0 ist im Original mit 30 Yards so knapp bemessen, dass
 Kleinkram deutlich früher verschwindet als alles andere; 50 verbessert das
 Verhältnis zu Cat 1 von 1:3.3 auf 1:2, und der `environmentDetail`-Regler zieht
 ihn proportional mit. Cat 1 bis 4 werden nicht angefasst – geregelt wird die
-Sichtweite über das CVar, das mit dem Code-Patch Nr. 57 alle fünf Kategorien
+Sichtweite über das CVar, das mit dem Code-Patch Nr. 58 alle fünf Kategorien
 gleichmäßig streckt.
 
 Geändert werden fünf zusammengehörige Werte:
@@ -1048,13 +1076,13 @@ Sichtweite = Basiswert * environmentDetail
 
 Im Original gilt das NUR für Cat 1, 2 und 3 – bei Cat 0 und Cat 4 fehlt die
 Multiplikation im Code. Der Patch „Cat 0 und Cat 4 auf environmentDetail
-reagieren lassen“ (Nr. 57) ergänzt sie, sodass alle fünf Kategorien gleichmäßig
+reagieren lassen“ (Nr. 58) ergänzt sie, sodass alle fünf Kategorien gleichmäßig
 mitwachsen.
 
 Wichtig beim Nachrechnen: Die beiden Faktoren **multiplizieren** sich.
 Basiswert ×2 bei CVar 1.5 ergibt ×3, nicht ×2. Wer einen Zielfaktor Z am
 CVar-Wert E erreichen will, trägt Z/E als Basiswert ein.
-Ohne Patch Nr. 57 gilt das nur für Cat 1–3, und dann laufen die Kategorien
+Ohne Patch Nr. 58 gilt das nur für Cat 1–3, und dann laufen die Kategorien
 bei hohen CVar-Werten auseinander: Cat 3 würde irgendwann Cat 4 überholen,
 mittelgroße Objekte wären also weiter sichtbar als riesige.
 
@@ -1099,7 +1127,7 @@ sie unabhängig von den Distanzen verbreitern.
 </details>
 
 <a id="patch-occluder"></a>
-**Occluder Fix für Stormwind (Open Azeroth)** *(Nr. 59, Autor: Robinsch)* 🟢 **[sicher]**
+**Occluder Fix für Stormwind (Open Azeroth)** *(Nr. 60, Autor: Robinsch)* 🟢 **[sicher]**
 
 Schaltet die fest in den Client eingebauten Occluder (Sichtblocker) für
 Stormwind ab: Der Karten-Schlüssel des Tabelleneintrags für die Östlichen
@@ -1108,13 +1136,13 @@ werden auf Custom-Servern mit umgebautem Stormwind keine Gebäude und Objekte
 mehr fälschlich ausgeblendet.
 
 <a id="patch-bluemoon"></a>
-**Blauer Mond am Nachthimmel reaktiviert** *(Nr. 60, Autor: Robinsch)* 🟢 **[sicher]**
+**Blauer Mond am Nachthimmel reaktiviert** *(Nr. 61, Autor: Robinsch)* 🟢 **[sicher]**
 
 Stellt ein entferntes Legacy-Feature wieder her: den blauen Mond, der früher
 am Nachthimmel sichtbar war.
 
 <a id="patch-notransparency"></a>
-**Keine Transparenz beim Heranzoomen** *(Nr. 61, Autor: Alastor StrixEfuartus)* 🟢 **[sicher]**
+**Keine Transparenz beim Heranzoomen** *(Nr. 62, Autor: Alastor StrixEfuartus)* 🟢 **[sicher]**
 
 Der eigene Charakter wird nicht mehr durchsichtig, wenn die Kamera nah
 herangezoomt wird. Der Patch entfernt die Transparenz-Zuweisung für den
@@ -1123,7 +1151,7 @@ Objekt, kann er beim Heranzoomen weiterhin durchsichtig werden (so auch im
 Original-Patch).
 
 <a id="patch-nofade"></a>
-**Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN** *(Nr. 62, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🟠 **[ungetestet]**
+**Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN** *(Nr. 63, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🟠 **[ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1144,7 +1172,7 @@ wie bisher.
 > passen zusammen hinein, die Dateigröße ändert sich nicht.
 
 <a id="patch-hdportraits"></a>
-**HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel** *(Nr. 63, Autor: St0ny (original by Badgermilk0))* 🟢 **[sicher]** 🟡 **[Exe wird größer]**
+**HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel** *(Nr. 64, Autor: St0ny (original by Badgermilk0))* 🟢 **[sicher]** 🟡 **[Exe wird größer]**
 
 Die Unit-Frames (Spieler, Ziel, Gruppe, Bosse usw.) zeigen im Client schon im
 Original das 3D-Modell des jeweiligen Charakters. Der Patch erzeugt also
@@ -1169,12 +1197,12 @@ Kopierschleife sonst über die Quelle hinaus liest.
 > [!NOTE]
 > **Zusammen mit awesome_wotlk (Nr. 27):** Die `AwesomeWotlkLib.dll` bringt mit
 > der CVar `portraitResolution` eine eigene Einstellung für die
-> Portrait-Auflösung mit. Ist Nr. 63 eingespielt, ist diese Funktion von
+> Portrait-Auflösung mit. Ist Nr. 64 eingespielt, ist diese Funktion von
 > awesome_wotlk blockiert – es gilt immer die Auflösung des Exe-Patches (256),
 > egal was in `portraitResolution` steht.
 
 <a id="patch-iconsnap"></a>
-**Icons im Text pixelgenau (scharf statt verschwommen)** *(Nr. 64, Autor: tb (ported by St0ny))* 🟢 **[sicher]** 🟡 **[Exe wird größer]**
+**Icons im Text pixelgenau (scharf statt verschwommen)** *(Nr. 65, Autor: tb (ported by St0ny))* 🟢 **[sicher]** 🟡 **[Exe wird größer]**
 
 Texte können Icons enthalten (`|T…|t`, z. B. Zielmarkierungen, Währungen oder
 Questsymbole in Chat, Tooltips und Addons). Ihre Größe und Lage rechnet der
@@ -1193,26 +1221,26 @@ unverändert.
 ## Interface & Komfort
 
 <a id="patch-tracker"></a>
-**Quest-Tracker automatisch sortieren** *(Nr. 65)* 🟢 **[sicher]**
+**Quest-Tracker automatisch sortieren** *(Nr. 66)* 🟢 **[sicher]**
 
 Setzt das CVar `trackerSorting` standardmäßig auf 1. Quests im Tracker werden
 automatisch sortiert.
 
 <a id="patch-worldmap"></a>
-**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 66)* 🟢 **[sicher]**
+**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 67)* 🟢 **[sicher]**
 
 Setzt das CVar `advancedWorldMap` standardmäßig auf 1. Die erweiterte
 Kartenansicht ist von Anfang an aktiviert.
 
 <a id="patch-castbars"></a>
-**Cast Bars auf allen Frames** *(Nr. 67, Autor: Kebabstorm)* 🟢 **[sicher]**
+**Cast Bars auf allen Frames** *(Nr. 68, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Ermöglicht die Anzeige von Zauberbalken auf allen Unit-Frames (Party, Arena,
 Boss etc.), nicht nur auf Target und Focus, sowie auf allen
 Standard-Nameplates. Entspricht dem Verhalten ab Cataclysm.
 
 <a id="patch-emblems"></a>
-**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 68, Autor: MacWarrior)* 🟠 **[online ungetestet]**
+**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 69, Autor: MacWarrior)* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1248,7 +1276,7 @@ ist frei wählbar (`patch-*.MPQ`), dafür sorgt der Patch
 „Erweiterte MPQ-Namen erlauben“ (Nr. 21).
 
 <a id="patch-flash"></a>
-**FlashWindow Patch** *(Nr. 69, Autor: Kebabstorm)* 🟢 **[sicher]**
+**FlashWindow Patch** *(Nr. 70, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Lässt das WoW-Fenster in der Taskleiste blinken, wenn ein relevantes Ereignis
 eintritt und das Spiel im Hintergrund läuft. Dafür wird die in 3.3.5a
@@ -1261,7 +1289,7 @@ das braucht zusätzlich `IsWindowFocused()` aus der `AwesomeWotlkLib.dll`
 (Nr. 27).
 
 <a id="patch-charrandom"></a>
-**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 70, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
+**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 71, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
 
 Beim Öffnen der Charaktererstellung (Klick auf „Neuer Charakter“) und beim
 Wechsel von Volk oder Geschlecht würfelt der Client Gesicht, Haut, Frisur usw.
@@ -1269,7 +1297,7 @@ nicht mehr automatisch aus, man startet mit dem Standard-Aussehen. Der
 Zufall-Knopf funktioniert weiter – er nutzt im Client einen eigenen Weg.
 
 <a id="patch-lootopen"></a>
-**Lootfenster bleibt beim Laufen offen** *(Nr. 71, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Lootfenster bleibt beim Laufen offen** *(Nr. 72, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1280,7 +1308,7 @@ Bewegungs-Handlern, die das Fenster schließen, werden übersprungen (je ein
 Byte).
 
 <a id="patch-showlevel"></a>
-**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 72, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 73, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1289,10 +1317,10 @@ Ist ein feindliches Ziel 10 oder mehr Level über dir, zeigt der Client statt
 des Levels „??“ (bzw. einen Totenkopf auf der Namensplakette, `UnitLevel`
 liefert -1). Mit dem Patch zeigen Tooltip, Namensplakette und `UnitLevel` das
 echte Level. Bosse zeigen weiterhin „??“ – diese Prüfung bleibt erhalten, sie
-nimmt Nr. 73 heraus.
+nimmt Nr. 74 heraus.
 
 <a id="patch-showlevelboss"></a>
-**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 72)** *(Nr. 73, Autor: St0ny)* 🟠 **[online ungetestet]**
+**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 73)** *(Nr. 74, Autor: St0ny)* 🟠 **[online ungetestet]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1307,10 +1335,10 @@ steht dort das Level, das der Server für den Boss schickt. Die Beschriftung
 > [!NOTE]
 > Ist ein Boss 10 oder mehr Level über dir, greift zusätzlich die
 > Level-Prüfung – deren „??“ entfernt Nr. 72. Für alle Bosse daher zusammen mit
-> Nr. 72 einspielen; der Patcher weist darauf hin, wenn Nr. 72 fehlt.
+> Nr. 73 einspielen; der Patcher weist darauf hin, wenn Nr. 73 fehlt.
 
 <a id="patch-holdrepeat"></a>
-**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 74, Autor: tb (ported by St0ny))* 🔴 **[unsicher]** 🟡 **[Exe wird größer]**
+**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 75, Autor: tb (ported by St0ny))* 🔴 **[unsicher]** 🟡 **[Exe wird größer]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1342,7 +1370,7 @@ werden.
 > Patch eine Sektion an – die `Wow.exe` wird größer (Bann-Gefahr).
 
 <a id="patch-bubblerange"></a>
-**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 75, Autor: St0ny)* 🟢 **[sicher]**
+**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 76, Autor: St0ny)* 🟢 **[sicher]**
 
 Der Client zeigt Sprechblasen (Sagen, Gruppe, Schreien, NPC-Sagen und
 NPC-Schreien) nur für Sprecher bis 25 Meter Entfernung. Schickt der Server
@@ -1369,37 +1397,37 @@ PE-Header bleiben unverändert.
 ## Fenster, Maus & Kamera
 
 <a id="patch-window"></a>
-**Fenstermodus als Standard setzen** *(Nr. 76, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus als Standard setzen** *(Nr. 77, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxWindow` standardmäßig auf 1. Das Spiel startet im
 Fenstermodus statt im Vollbild.
 
 > [!TIP]
-> **Nr. 76 und Nr. 77 gehören zusammen:** Nr. 76 schaltet den Fenstermodus ein,
-> Nr. 77 maximiert das Fenster.
+> **Nr. 77 und Nr. 78 gehören zusammen:** Nr. 77 schaltet den Fenstermodus ein,
+> Nr. 78 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 76:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 77:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 77:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 78:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-maximize"></a>
-**Fenstermodus maximiert als Standard setzen** *(Nr. 77, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus maximiert als Standard setzen** *(Nr. 78, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxMaximize` standardmäßig auf 1. Das Fenster wird beim Start
 automatisch maximiert.
 
 > [!TIP]
-> **Nr. 76 und Nr. 77 gehören zusammen:** Nr. 76 schaltet den Fenstermodus ein,
-> Nr. 77 maximiert das Fenster.
+> **Nr. 77 und Nr. 78 gehören zusammen:** Nr. 77 schaltet den Fenstermodus ein,
+> Nr. 78 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 76:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 77:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 77:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 78:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-windowfix"></a>
-**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 78, Autor: Robinsch)* 🟢 **[sicher]**
+**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 79, Autor: Robinsch)* 🟢 **[sicher]**
 
 Wer im laufenden Spiel in den Fenstermodus wechselt, bekommt danach keinen
 schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
@@ -1407,14 +1435,14 @@ schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
 damit das CVar `DesktopGamma` sind ohne Wirkung.
 
 <a id="patch-mouse"></a>
-**Mausflackern / Kamerasprünge Fix** *(Nr. 79, Autor: Robinsch)* 🟢 **[sicher]**
+**Mausflackern / Kamerasprünge Fix** *(Nr. 80, Autor: Robinsch)* 🟢 **[sicher]**
 
 Ein umfangreicher Patch (4 Teile), der Probleme mit Mäusen behebt, die eine
 hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
 <a id="patch-camera"></a>
-**CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen** *(Nr. 80, Autor: Stormhand (fixed by St0ny))* 🟠 **[online ungetestet]** 🟡 **[Exe wird größer]**
+**CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen** *(Nr. 81, Autor: Stormhand (fixed by St0ny))* 🟠 **[online ungetestet]** 🟡 **[Exe wird größer]**
 
 > [!WARNING]
 > **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
@@ -1488,7 +1516,7 @@ R6002-Absturz zurück und überschreibt die Tabelle des Slider-Patches.
 ## Sound
 
 <a id="patch-sound"></a>
-**Sound-Einstellungen optimieren** *(Nr. 81, Autor: St0ny)* 🟢 **[sicher]**
+**Sound-Einstellungen optimieren** *(Nr. 82, Autor: St0ny)* 🟢 **[sicher]**
 
 Umfasst folgende Änderungen:
 
@@ -1517,7 +1545,7 @@ einer Meldung neu abgefragt, und alle Werte werden geprüft, bevor irgendetwas
 geschrieben wird. Die Werte merkt sich der Patcher in `patcher_selection.ini`
 (`value.<Id>=…`); mit `-Unattended` gelten die gemerkten Werte, ohne gemerkten
 Wert die Originalwerte – Ausnahmen: Build-Datum (aktueller Zeitpunkt) und Icon
-(Abbruch), siehe Nr. 85 und 86. Steckt ein Patch schon in der `Wow.exe`, ist
+(Abbruch), siehe Nr. 86 und 87. Steckt ein Patch schon in der `Wow.exe`, ist
 sein aktueller Wert der Vorschlag.
 Bei der Abfrage steht er auch hinter dem Patchnamen (`-> Vorschlag: …`, bei einem
 bereits eingespielten Patch `-> aktuell: …`).
@@ -1527,7 +1555,7 @@ bereits eingespielten Patch `-> aktuell: …`).
 > muss also zum Server passen.
 
 <a id="patch-clientversion"></a>
-**Client-Version ändern (Original 3.3.5)** *(Nr. 82, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Client-Version ändern (Original 3.3.5)** *(Nr. 83, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1540,7 +1568,7 @@ FileVersion-Text (`3, 3, 5, 12340`) wird zur reinen Version (`3.3.6`). Haupt-
 und Nebenversion müssen zusammen in das ProductVersion-Feld passen (z. B. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Build-Nummer ändern (Original 12340)** *(Nr. 83, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Build-Nummer ändern (Original 12340)** *(Nr. 84, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1572,7 +1600,7 @@ den Server.
 > offline.
 
 <a id="patch-clienttitle"></a>
-**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 84, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
+**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 85, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1593,7 +1621,7 @@ ab, damit er stehen bleibt.
 > Titel.
 
 <a id="patch-clientdate"></a>
-**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 85, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 86, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
@@ -1616,7 +1644,7 @@ Patchens. Ist der Patch schon eingespielt, steht dort das aktuelle Datum samt
 Uhrzeit der `Wow.exe`.
 
 <a id="patch-clienticon"></a>
-**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 86, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 87, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 > [!CAUTION]
 > **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.

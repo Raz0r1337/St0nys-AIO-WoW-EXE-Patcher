@@ -150,11 +150,13 @@ prompt.
 
 The preset "Reforged" (key `R`) is the official preset of the
 [Project Reforged](https://projectreforged.github.io/wotlk/) project, put
-together by Stormhand, and the default selection. It contains only patches
+together by Stormhand, and the default selection. It contains patches
 rated safe (🟢), all tested by Stormhand for several hours on Warmane – **the
 preset is safe** and can be used on public servers as well. Three of them
-(No. 9, 63 and 64) make `Wow.exe` larger; that was no problem on Warmane, but
-other servers may check the file size. The "Reforged" column in the
+(No. 9, 64 and 65) make `Wow.exe` larger; that was no problem on Warmane, but
+other servers may check the file size. On top of that comes the Lexara loader
+(No. 29) for Stormhand's HD fonts. It is still untested; without `Lexara.dll`
+in the WoW folder it does nothing. The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it; in the
 script the list is `$PRESET_REFORGED`.
 
@@ -334,94 +336,95 @@ name, and before patching it lists them once more.
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[safe]** | FrostAtom | ✅ | ✅ | ✅ |
 | [28](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[safe]** | St0ny (original by Alyst3r) | – | – | – |
-| [29](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (mod-voicechat) [ALPHA] *(module not finished yet, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[untested]** | St0ny | – | – | – |
+| [29](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟠 **[untested]** | St0ny | ✅ | – | – |
+| [30](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (mod-voicechat) [ALPHA] *(module not finished yet, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[untested]** | St0ny | – | – | – |
 
 #### Gameplay fixes
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [30](PATCHES.en.md#patch-areatrigger) | More precise area trigger timer (50 ms instead of 100 ms) | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [31](PATCHES.en.md#patch-swing) | Remove melee swing on right-click | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [32](PATCHES.en.md#patch-npcanim) | Suppress NPC attack animation when turning | 🟢 **[safe]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
-| [33](PATCHES.en.md#patch-spellanim) | Fix spell animation after cancelled channel | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [34](PATCHES.en.md#patch-ghostattack) | Fix "ghost" attack when NPCs evade from combat | 🟢 **[safe]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
-| [35](PATCHES.en.md#patch-naked) | Fix naked character bug | 🟢 **[safe]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
-| [36](PATCHES.en.md#patch-forcereaction) | Keep force reaction on /reload | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [37](PATCHES.en.md#patch-mail) | New mail without the 60-second wait | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [38](PATCHES.en.md#patch-deadchat) | Allow chat commands while dead | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [39](PATCHES.en.md#patch-follow) | Allow /follow on NPCs | 🟠 **[untested online]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
-| [40](PATCHES.en.md#patch-level101) | Level 101+ Druid fix (druid stats in the character window, barber shop for everyone) | 🟢 **[safe]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
-| [41](PATCHES.en.md#patch-raceclass) | Character creation: more than 10 classes (random class) *(for custom classes; server must support it)* | 🔴 **[unsafe]** | Alastor StrixEfuartus / Robinsch | – | – | – |
-| [42](PATCHES.en.md#patch-namecheck) | Disable the name check in character creation (e.g. digits in names) *(server must allow the names as well)* | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | – |
-| [43](PATCHES.en.md#patch-maxchars) | Max characters per realm raised to 255 | 🟢 **[safe]** | St0ny | – | ✅ | – |
-| [44](PATCHES.en.md#patch-customitem) | Custom Item Fix (BETA) v2 *(custom items without DBC changes: model, icon and item type from the server data)* | 🟠 **[untested]** | Kebabstorm (fixed by St0ny) | – | – | – |
-| [45](PATCHES.en.md#patch-climb) | Remove the climb angle limit (walk up any slope) | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
-| [46](PATCHES.en.md#patch-jump) | Change jump height (original -7.9555473) *(asks for the value)* | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
-| [47](PATCHES.en.md#patch-airforward) | Steer forward/backward while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
-| [48](PATCHES.en.md#patch-airlateral) | Steer sideways while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
-| [49](PATCHES.en.md#patch-airturn) | Turning while jumping changes the flight direction | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
-| [50](PATCHES.en.md#patch-doublejump) | Double jump (more jumps in the air) *(asks for the value)* | 🔴 **[unsafe]**<br>🟡 **[exe grows]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
-| [51](PATCHES.en.md#patch-noammo) | Ranged attacks without ammo *(the server has to support it, otherwise it still reports "no ammo")* | 🟠 **[untested]** | Alyst3r (ported by St0ny) | – | – | – |
+| [31](PATCHES.en.md#patch-areatrigger) | More precise area trigger timer (50 ms instead of 100 ms) | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [32](PATCHES.en.md#patch-swing) | Remove melee swing on right-click | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [33](PATCHES.en.md#patch-npcanim) | Suppress NPC attack animation when turning | 🟢 **[safe]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
+| [34](PATCHES.en.md#patch-spellanim) | Fix spell animation after cancelled channel | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [35](PATCHES.en.md#patch-ghostattack) | Fix "ghost" attack when NPCs evade from combat | 🟢 **[safe]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
+| [36](PATCHES.en.md#patch-naked) | Fix naked character bug | 🟢 **[safe]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
+| [37](PATCHES.en.md#patch-forcereaction) | Keep force reaction on /reload | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [38](PATCHES.en.md#patch-mail) | New mail without the 60-second wait | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [39](PATCHES.en.md#patch-deadchat) | Allow chat commands while dead | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [40](PATCHES.en.md#patch-follow) | Allow /follow on NPCs | 🟠 **[untested online]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
+| [41](PATCHES.en.md#patch-level101) | Level 101+ Druid fix (druid stats in the character window, barber shop for everyone) | 🟢 **[safe]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
+| [42](PATCHES.en.md#patch-raceclass) | Character creation: more than 10 classes (random class) *(for custom classes; server must support it)* | 🔴 **[unsafe]** | Alastor StrixEfuartus / Robinsch | – | – | – |
+| [43](PATCHES.en.md#patch-namecheck) | Disable the name check in character creation (e.g. digits in names) *(server must allow the names as well)* | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | – |
+| [44](PATCHES.en.md#patch-maxchars) | Max characters per realm raised to 255 | 🟢 **[safe]** | St0ny | – | ✅ | – |
+| [45](PATCHES.en.md#patch-customitem) | Custom Item Fix (BETA) v2 *(custom items without DBC changes: model, icon and item type from the server data)* | 🟠 **[untested]** | Kebabstorm (fixed by St0ny) | – | – | – |
+| [46](PATCHES.en.md#patch-climb) | Remove the climb angle limit (walk up any slope) | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
+| [47](PATCHES.en.md#patch-jump) | Change jump height (original -7.9555473) *(asks for the value)* | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
+| [48](PATCHES.en.md#patch-airforward) | Steer forward/backward while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
+| [49](PATCHES.en.md#patch-airlateral) | Steer sideways while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
+| [50](PATCHES.en.md#patch-airturn) | Turning while jumping changes the flight direction | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
+| [51](PATCHES.en.md#patch-doublejump) | Double jump (more jumps in the air) *(asks for the value)* | 🔴 **[unsafe]**<br>🟡 **[exe grows]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
+| [52](PATCHES.en.md#patch-noammo) | Ranged attacks without ammo *(the server has to support it, otherwise it still reports "no ammo")* | 🟠 **[untested]** | Alyst3r (ported by St0ny) | – | – | – |
 
 #### Graphics & view distance
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [52](PATCHES.en.md#patch-farclip) | CVar farclip unlock (max 10000) | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
-| [53](PATCHES.en.md#patch-horizon) | CVar horizonFarclipScale unlock (max 12) | 🟢 **[safe]** | St0ny | ✅ | ✅ | ✅ |
-| [54](PATCHES.en.md#patch-envdetail) | CVar environmentDetail unlock (no limit instead of 1.5) | 🟢 **[safe]** | St0ny | ✅ | ✅ | ✅ |
-| [55](PATCHES.en.md#patch-grounddist) | CVar groundEffectDist unlock (max 3166 instead of 140) | 🟢 **[safe]** | unknown | ✅ | ✅ | ✅ |
-| [56](PATCHES.en.md#patch-sliders) | Graphics options: extend slider maximums | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
-| [57](PATCHES.en.md#patch-goscale) | GameObject view distance: Cat 0 and Cat 4 scale with environmentDetail | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
-| [58](PATCHES.en.md#patch-cat0) | GameObject view distance: Cat 0 from 30 to 50 yards *(costs performance, more small objects visible)* | 🟢 **[safe]** | St0ny | – | – | ✅ |
-| [59](PATCHES.en.md#patch-occluder) | Occluder fix for Stormwind (Open Azeroth) | 🟢 **[safe]** | Robinsch | ✅ | – | ✅ |
-| [60](PATCHES.en.md#patch-bluemoon) | Re-enable the blue moon in the night sky | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [61](PATCHES.en.md#patch-notransparency) | No character transparency when zooming in | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
-| [62](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
-| [63](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟢 **[safe]**<br>🟡 **[exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
-| [64](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟢 **[safe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [53](PATCHES.en.md#patch-farclip) | CVar farclip unlock (max 10000) | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
+| [54](PATCHES.en.md#patch-horizon) | CVar horizonFarclipScale unlock (max 12) | 🟢 **[safe]** | St0ny | ✅ | ✅ | ✅ |
+| [55](PATCHES.en.md#patch-envdetail) | CVar environmentDetail unlock (no limit instead of 1.5) | 🟢 **[safe]** | St0ny | ✅ | ✅ | ✅ |
+| [56](PATCHES.en.md#patch-grounddist) | CVar groundEffectDist unlock (max 3166 instead of 140) | 🟢 **[safe]** | unknown | ✅ | ✅ | ✅ |
+| [57](PATCHES.en.md#patch-sliders) | Graphics options: extend slider maximums | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [58](PATCHES.en.md#patch-goscale) | GameObject view distance: Cat 0 and Cat 4 scale with environmentDetail | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [59](PATCHES.en.md#patch-cat0) | GameObject view distance: Cat 0 from 30 to 50 yards *(costs performance, more small objects visible)* | 🟢 **[safe]** | St0ny | – | – | ✅ |
+| [60](PATCHES.en.md#patch-occluder) | Occluder fix for Stormwind (Open Azeroth) | 🟢 **[safe]** | Robinsch | ✅ | – | ✅ |
+| [61](PATCHES.en.md#patch-bluemoon) | Re-enable the blue moon in the night sky | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [62](PATCHES.en.md#patch-notransparency) | No character transparency when zooming in | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
+| [63](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
+| [64](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟢 **[safe]**<br>🟡 **[exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
+| [65](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟢 **[safe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 
 #### Interface & comfort
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [65](PATCHES.en.md#patch-tracker) | Auto-sort quest tracker | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
-| [66](PATCHES.en.md#patch-worldmap) | Advanced world map enabled by default | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
-| [67](PATCHES.en.md#patch-castbars) | Cast bars on all frames | 🟢 **[safe]** | Kebabstorm | ✅ | ✅ | ✅ |
-| [68](PATCHES.en.md#patch-emblems) | Retail guild emblems: selection extended from 170 to 196 *(requires [Patch-G](https://discord.com/channels/407664041016688662/1541873346608889936))* | 🟠 **[untested online]** | MacWarrior | – | – | ✅ |
-| [69](PATCHES.en.md#patch-flash) | FlashWindow patch *(requires the [FlashWindow addon](https://github.com/noname08662/awesome_wotlk/tree/main/addons/Flash))* | 🟢 **[safe]** | Kebabstorm | – | ✅ | ✅ |
-| [70](PATCHES.en.md#patch-charrandom) | Character creation: do not randomize the appearance automatically | 🟢 **[safe]** | Alyst3r (0x539wowmod) | ✅ | – | – |
-| [71](PATCHES.en.md#patch-lootopen) | Loot window stays open while moving | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
-| [72](PATCHES.en.md#patch-showlevel) | Real level instead of "??" for enemies 10+ levels above you *(bosses still show "??" – see No. 73)* | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
-| [73](PATCHES.en.md#patch-showlevelboss) | Real level for bosses too instead of "??" (extension to No. 72) | 🟠 **[untested online]** | St0ny | – | – | – |
-| [74](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | – | – | ✅ |
-| [75](PATCHES.en.md#patch-bubblerange) | Increase the chat bubble range (original 25 yards) *(asks for the value)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [66](PATCHES.en.md#patch-tracker) | Auto-sort quest tracker | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
+| [67](PATCHES.en.md#patch-worldmap) | Advanced world map enabled by default | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
+| [68](PATCHES.en.md#patch-castbars) | Cast bars on all frames | 🟢 **[safe]** | Kebabstorm | ✅ | ✅ | ✅ |
+| [69](PATCHES.en.md#patch-emblems) | Retail guild emblems: selection extended from 170 to 196 *(requires [Patch-G](https://discord.com/channels/407664041016688662/1541873346608889936))* | 🟠 **[untested online]** | MacWarrior | – | – | ✅ |
+| [70](PATCHES.en.md#patch-flash) | FlashWindow patch *(requires the [FlashWindow addon](https://github.com/noname08662/awesome_wotlk/tree/main/addons/Flash))* | 🟢 **[safe]** | Kebabstorm | – | ✅ | ✅ |
+| [71](PATCHES.en.md#patch-charrandom) | Character creation: do not randomize the appearance automatically | 🟢 **[safe]** | Alyst3r (0x539wowmod) | ✅ | – | – |
+| [72](PATCHES.en.md#patch-lootopen) | Loot window stays open while moving | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
+| [73](PATCHES.en.md#patch-showlevel) | Real level instead of "??" for enemies 10+ levels above you *(bosses still show "??" – see No. 74)* | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
+| [74](PATCHES.en.md#patch-showlevelboss) | Real level for bosses too instead of "??" (extension to No. 73) | 🟠 **[untested online]** | St0ny | – | – | – |
+| [75](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | – | – | ✅ |
+| [76](PATCHES.en.md#patch-bubblerange) | Increase the chat bubble range (original 25 yards) *(asks for the value)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 
 #### Window, mouse & camera
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [76](PATCHES.en.md#patch-window) | Windowed mode by default *(starts as a small window in the middle of the desktop – maximized only together with No. 77)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
-| [77](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 76)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
-| [78](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [79](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [80](PATCHES.en.md#patch-camera) | CameraReforged [BETA]: camera height and zoom limits *(shoulder offset has no effect yet)* | 🟠 **[untested online]**<br>🟡 **[exe grows]** | Stormhand (fixed by St0ny) | – | – | – |
+| [77](PATCHES.en.md#patch-window) | Windowed mode by default *(starts as a small window in the middle of the desktop – maximized only together with No. 78)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [78](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 77)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [79](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [80](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [81](PATCHES.en.md#patch-camera) | CameraReforged [BETA]: camera height and zoom limits *(shoulder offset has no effect yet)* | 🟠 **[untested online]**<br>🟡 **[exe grows]** | Stormhand (fixed by St0ny) | – | – | – |
 
 #### Sound
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [81](PATCHES.en.md#patch-sound) | Optimize sound settings *(requires [OpenAL](https://github.com/kcat/openal-soft), otherwise the settings have no effect)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [82](PATCHES.en.md#patch-sound) | Optimize sound settings *(requires [OpenAL](https://github.com/kcat/openal-soft), otherwise the settings have no effect)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 
 #### Client info: version, build, title, date, icon
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [82](PATCHES.en.md#patch-clientversion) | Change client version (original 3.3.5) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
-| [83](PATCHES.en.md#patch-clientbuild) | Change build number (original 12340) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
-| [84](PATCHES.en.md#patch-clienttitle) | Change program title (file properties and window title) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior (fixed by St0ny) | – | – | – |
-| [85](PATCHES.en.md#patch-clientdate) | Change build date (original Jun 24 2010) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
-| [86](PATCHES.en.md#patch-clienticon) | Change program icon (icon of Wow.exe) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
+| [83](PATCHES.en.md#patch-clientversion) | Change client version (original 3.3.5) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
+| [84](PATCHES.en.md#patch-clientbuild) | Change build number (original 12340) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
+| [85](PATCHES.en.md#patch-clienttitle) | Change program title (file properties and window title) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior (fixed by St0ny) | – | – | – |
+| [86](PATCHES.en.md#patch-clientdate) | Change build date (original Jun 24 2010) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
+| [87](PATCHES.en.md#patch-clienticon) | Change program icon (icon of Wow.exe) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
 
 </details>
 
@@ -448,14 +451,14 @@ clicking the number of a patch takes you straight to its description.
   selected patches with a warning once more:
   - 🟢 **safe** – tested in game, no warning in the patcher.
   - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 10, 11, 23–25,
-    41, 42, 45–50, 74 and 82–86 (red warning).
+    42, 43, 46–51, 75 and 83–87 (red warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 26, 29, 39, 44, 51, 62, 68, 71–73 and 80 (red
+    you kicked or banned: No. 26, 29, 30, 40, 45, 52, 63, 69, 72–74 and 81 (red
     warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 29, 44, 51 and 62 (red warning).
-  - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 50,
-    63, 64, 74 and 80. This does not mean a certain ban, but it is a risk: some
+    possibly buggy: No. 25, 26, 29, 30, 45, 52 and 63 (red warning).
+  - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 51,
+    64, 65, 75 and 81. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
     the file size.
 - **Signature:** the original `Wow.exe` is digitally signed by Blizzard. Every
@@ -464,7 +467,7 @@ clicking the number of a patch takes you straight to its description.
   anyway" WoW starts normally. A new signature that Windows trusts is only
   issued by certificate authorities with identity verification – you cannot
   get one for a modified Blizzard file. The patches that append a section
-  (No. 9, 50, 63, 64, 74 and 80) also remove the reference to the
+  (No. 9, 51, 64, 65, 75 and 81) also remove the reference to the
   signature from the header: the new section lies behind the signature, and
   some tools would otherwise report the file as damaged. The signature bytes
   themselves stay untouched, and removing the patches restores the original
