@@ -963,7 +963,7 @@ see above).
 > [!NOTE]
 > The file size does not change: the small search routine lives in a free gap
 > between two functions, the table with the maximums in the unused rest of
-> `.rdata`. There is no overlap with No. 4 and No. 62.
+> `.rdata`. There is no overlap with No. 4 and No. 63.
 
 <a id="patch-goscale"></a>
 **GameObject view distance: Cat 0 and Cat 4 scale with environmentDetail** *(No. 58, Author: St0ny)* 🟢 **[safe]**
@@ -1183,29 +1183,71 @@ which does it in its DLL. Icons at the font's original size stay unchanged.
 > larger. This does not mean a certain ban, but it is a risk: some servers check the
 > file size.
 
+<a id="patch-outline"></a>
+**Outline for target and mouseover** *(No. 66, Author: St0ny)* 🟠 **[untested online]** 🟡 **[exe grows]**
+
+> [!WARNING]
+> **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
+
+Like in retail, the 3D figure of your target and the figure under the mouse
+cursor get a thin outline (about 2 pixels) in their reaction color – the same
+color as the selection circle: red hostile, yellow neutral, green friendly. The
+outline only appears where the figure is visible; where a wall stands in front
+of it, there is no outline. Weapons, helmet and mount belong to the figure.
+
+How it works:
+- The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
+  itself never uses stencil.
+- While the figure is drawn, its visible pixels are marked in the stencil.
+  Then it is drawn eight more times invisibly, each shifted by 2 pixels in
+  every direction (via the shader's projection matrix), with depth test –
+  these copies mark the outline and store the figure's depth there.
+- Whatever is drawn afterwards in front of the figure (e.g. bushes,
+  mushrooms, grass) clears the mark at its pixels and so hides the outline as
+  well. Things behind stay behind the outline thanks to the stored depth.
+  Transparent things like water or spell effects leave the outline in place.
+- Further parts of the same figure (cloak, weapon, mount) are drawn once more
+  on their own outline without depth test, so no outline is left between the
+  parts.
+- After the models and before the interface, a full-screen quad colors only
+  the outline pixels; then the stencil is cleared and the game sends all its
+  graphics states again.
+- Code and data live in a section of their own (`.outl`, 0x9DA bytes).
+
+> [!NOTE]
+> Only with `gxApi d3d9` (default) and a 24-bit depth buffer (default). With
+> D3D9Ex, OpenGL or `gxDepthBits` 16/32 the patch switches itself off. It
+> works with DXVK as well (tested in game), because WoW uses Direct3D 9 there
+> as well.
+
+> [!NOTE]
+> If all patches with a section of their own are active at the same time,
+> there is no room left in the PE header for another section entry. Then the
+> patcher extends the last appended section instead of adding a new one.
+
 ## Interface & comfort
 
 <a id="patch-tracker"></a>
-**Auto-sort quest tracker** *(No. 66)* 🟢 **[safe]**
+**Auto-sort quest tracker** *(No. 67)* 🟢 **[safe]**
 
 Sets the CVar `trackerSorting` to 1 by default. Quests in the tracker are
 sorted automatically.
 
 <a id="patch-worldmap"></a>
-**Advanced world map enabled by default** *(No. 67)* 🟢 **[safe]**
+**Advanced world map enabled by default** *(No. 68)* 🟢 **[safe]**
 
 Sets the CVar `advancedWorldMap` to 1 by default. The advanced map view is
 enabled from the start.
 
 <a id="patch-castbars"></a>
-**Cast bars on all frames** *(No. 68, Author: Kebabstorm)* 🟢 **[safe]**
+**Cast bars on all frames** *(No. 69, Author: Kebabstorm)* 🟢 **[safe]**
 
 Shows cast bars on all unit frames (party, arena, boss etc.), not just target
 and focus, as well as on all default nameplates. Matches the behavior from
 Cataclysm onwards.
 
 <a id="patch-emblems"></a>
-**Retail guild emblems: selection extended from 170 to 196** *(No. 69, Author: MacWarrior)* 🟠 **[untested online]**
+**Retail guild emblems: selection extended from 170 to 196** *(No. 70, Author: MacWarrior)* 🟠 **[untested online]**
 
 > [!WARNING]
 > **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
@@ -1241,7 +1283,7 @@ up to you (`patch-*.MPQ`), thanks to the patch "Allow extended MPQ names"
 (No. 21).
 
 <a id="patch-flash"></a>
-**FlashWindow patch** *(No. 70, Author: Kebabstorm)* 🟢 **[safe]**
+**FlashWindow patch** *(No. 71, Author: Kebabstorm)* 🟢 **[safe]**
 
 Makes the WoW window flash in the taskbar when a relevant event occurs while
 the game is in the background. For this the Lua function `BNRemoveFriend`,
@@ -1254,7 +1296,7 @@ which additionally needs `IsWindowFocused()` from `AwesomeWotlkLib.dll`
 (No. 27).
 
 <a id="patch-charrandom"></a>
-**Character creation: do not randomize the appearance automatically** *(No. 71, Author: Alyst3r (0x539wowmod))* 🟢 **[safe]**
+**Character creation: do not randomize the appearance automatically** *(No. 72, Author: Alyst3r (0x539wowmod))* 🟢 **[safe]**
 
 When opening character creation (clicking "Create New Character") and when
 changing race or gender, the client no longer randomizes face, skin, hair style
@@ -1262,7 +1304,7 @@ etc. automatically; you start with the default appearance. The randomize button
 keeps working – it uses a separate path in the client.
 
 <a id="patch-lootopen"></a>
-**Loot window stays open while moving** *(No. 72, Author: tb (ported by St0ny))* 🟠 **[untested online]**
+**Loot window stays open while moving** *(No. 73, Author: tb (ported by St0ny))* 🟠 **[untested online]**
 
 > [!WARNING]
 > **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
@@ -1272,7 +1314,7 @@ With the patch it stays open. The ten places in the movement handlers that
 close the window are skipped (one byte each).
 
 <a id="patch-showlevel"></a>
-**Real level instead of "??" for enemies 10+ levels above you** *(No. 73, Author: tb (ported by St0ny))* 🟠 **[untested online]**
+**Real level instead of "??" for enemies 10+ levels above you** *(No. 74, Author: tb (ported by St0ny))* 🟠 **[untested online]**
 
 > [!WARNING]
 > **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
@@ -1280,10 +1322,10 @@ close the window are skipped (one byte each).
 If a hostile target is 10 or more levels above you, the client shows "??"
 instead of the level (or a skull on the nameplate, `UnitLevel` returns -1).
 With the patch, tooltip, nameplate and `UnitLevel` show the real level. Bosses
-still show "??" – that check is kept; No. 74 removes it.
+still show "??" – that check is kept; No. 75 removes it.
 
 <a id="patch-showlevelboss"></a>
-**Real level for bosses too instead of "??" (extension to No. 73)** *(No. 74, Author: St0ny)* 🟠 **[untested online]**
+**Real level for bosses too instead of "??" (extension to No. 74)** *(No. 75, Author: St0ny)* 🟠 **[untested online]**
 
 > [!WARNING]
 > **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
@@ -1297,11 +1339,11 @@ nameplate stay.
 
 > [!NOTE]
 > If a boss is 10 or more levels above you, the level check applies as well –
-> No. 73 removes its "??". For all bosses, apply it together with No. 73; the
-> patcher points it out if No. 73 is missing.
+> No. 74 removes its "??". For all bosses, apply it together with No. 74; the
+> patcher points it out if No. 74 is missing.
 
 <a id="patch-holdrepeat"></a>
-**Hold action buttons to repeat** *(No. 75, Author: tb (ported by St0ny))* 🔴 **[unsafe]** 🟡 **[exe grows]**
+**Hold action buttons to repeat** *(No. 76, Author: tb (ported by St0ny))* 🔴 **[unsafe]** 🟡 **[exe grows]**
 
 > [!CAUTION]
 > **Unsafe** – ban risk, can lead to a ban on many servers. Only use it on servers that allow it.
@@ -1330,7 +1372,7 @@ their own (`.hrep`). Up to 8 keys can be held at the same time.
 > appends a section – `Wow.exe` gets larger (ban risk).
 
 <a id="patch-bubblerange"></a>
-**Increase the chat bubble range (original 25 yards)** *(No. 76, Author: St0ny)* 🟢 **[safe]**
+**Increase the chat bubble range (original 25 yards)** *(No. 77, Author: St0ny)* 🟢 **[safe]**
 
 The client shows chat bubbles (say, party, yell, NPC say and NPC yell) only for
 speakers up to 25 yards away. If the server sends a yell from 100 yards, for
@@ -1355,36 +1397,36 @@ unchanged.
 ## Window, mouse & camera
 
 <a id="patch-window"></a>
-**Windowed mode by default** *(No. 77, Author: St0ny)* 🟢 **[safe]**
+**Windowed mode by default** *(No. 78, Author: St0ny)* 🟢 **[safe]**
 
 Sets the CVar `gxWindow` to 1 by default. The game starts in windowed mode
 instead of fullscreen.
 
 > [!TIP]
-> **No. 77 and No. 78 belong together:** No. 77 enables windowed mode, No. 78
+> **No. 78 and No. 79 belong together:** No. 78 enables windowed mode, No. 79
 > maximizes the window.
 > - **Both selected:** WoW starts as a maximized window covering the whole
 >   screen.
-> - **Only No. 77:** WoW starts as a small window in the middle of the desktop.
-> - **Only No. 78:** no effect, WoW starts in fullscreen. The option "Maximize
+> - **Only No. 78:** WoW starts as a small window in the middle of the desktop.
+> - **Only No. 79:** no effect, WoW starts in fullscreen. The option "Maximize
 >   window" is active, but greyed out.
 
 <a id="patch-maximize"></a>
-**Maximized window by default** *(No. 78, Author: St0ny)* 🟢 **[safe]**
+**Maximized window by default** *(No. 79, Author: St0ny)* 🟢 **[safe]**
 
 Sets the CVar `gxMaximize` to 1 by default. The window is maximized on start.
 
 > [!TIP]
-> **No. 77 and No. 78 belong together:** No. 77 enables windowed mode, No. 78
+> **No. 78 and No. 79 belong together:** No. 78 enables windowed mode, No. 79
 > maximizes the window.
 > - **Both selected:** WoW starts as a maximized window covering the whole
 >   screen.
-> - **Only No. 77:** WoW starts as a small window in the middle of the desktop.
-> - **Only No. 78:** no effect, WoW starts in fullscreen. The option "Maximize
+> - **Only No. 78:** WoW starts as a small window in the middle of the desktop.
+> - **Only No. 79:** no effect, WoW starts in fullscreen. The option "Maximize
 >   window" is active, but greyed out.
 
 <a id="patch-windowfix"></a>
-**No black screen when switching to windowed mode** *(No. 79, Author: Robinsch)* 🟢 **[safe]**
+**No black screen when switching to windowed mode** *(No. 80, Author: Robinsch)* 🟢 **[safe]**
 
 Switching to windowed mode while in-game no longer results in a black
 screen. Technically the callback of the CVar `DesktopGamma` always takes the
@@ -1392,13 +1434,13 @@ game-gamma path; the desktop-gamma path and with it the CVar `DesktopGamma`
 have no effect.
 
 <a id="patch-mouse"></a>
-**Mouse flicker / camera jump fix** *(No. 80, Author: Robinsch)* 🟢 **[safe]**
+**Mouse flicker / camera jump fix** *(No. 81, Author: Robinsch)* 🟢 **[safe]**
 
 A larger patch (4 parts) that fixes problems with mice using a high polling
 rate. Prevents cursor flicker and uncontrolled camera movement.
 
 <a id="patch-camera"></a>
-**CameraReforged [BETA]: camera height and zoom limits** *(No. 81, Author: Stormhand (fixed by St0ny))* 🟠 **[untested online]** 🟡 **[exe grows]**
+**CameraReforged [BETA]: camera height and zoom limits** *(No. 82, Author: Stormhand (fixed by St0ny))* 🟠 **[untested online]** 🟡 **[exe grows]**
 
 > [!WARNING]
 > **Untested online** – not tested on public servers, possible ban risk. Careful, it may get you kicked or banned.
@@ -1473,7 +1515,7 @@ overwrites the table of the slider patch.
 ## Sound
 
 <a id="patch-sound"></a>
-**Optimize sound settings** *(No. 82, Author: St0ny)* 🟢 **[safe]**
+**Optimize sound settings** *(No. 83, Author: St0ny)* 🟢 **[safe]**
 
 Includes the following changes:
 
@@ -1502,7 +1544,7 @@ message and asked for again, and all values are checked before anything is
 written. The patcher remembers the values in `patcher_selection.ini`
 (`value.<Id>=…`); with `-Unattended` the remembered values are used, otherwise
 the original values – exceptions: build date (current time) and icon (the
-patcher aborts), see No. 86 and 87. If a patch is already in `Wow.exe`, its
+patcher aborts), see No. 87 and 88. If a patch is already in `Wow.exe`, its
 current value is the suggestion. When asking, it is also shown after the patch
 name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 
@@ -1511,7 +1553,7 @@ name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 > to match the server.
 
 <a id="patch-clientversion"></a>
-**Change client version (original 3.3.5)** *(No. 83, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change client version (original 3.3.5)** *(No. 84, Author: MacWarrior)* 🔴 **[unsafe]**
 
 > [!CAUTION]
 > **Unsafe** – ban risk, can lead to a ban on many servers. Only use it on servers that allow it.
@@ -1524,7 +1566,7 @@ The build number in `VS_FIXEDFILEINFO` is kept; the FileVersion text
 together must fit into the ProductVersion field (e.g. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Change build number (original 12340)** *(No. 84, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change build number (original 12340)** *(No. 85, Author: MacWarrior)* 🔴 **[unsafe]**
 
 > [!CAUTION]
 > **Unsafe** – ban risk, can lead to a ban on many servers. Only use it on servers that allow it.
@@ -1555,7 +1597,7 @@ different login protocol – a 3.3.5 client can no longer get onto the server.
 > it as offline.
 
 <a id="patch-clienttitle"></a>
-**Change program title (file properties and window title)** *(No. 85, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
+**Change program title (file properties and window title)** *(No. 86, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
 
 > [!CAUTION]
 > **Unsafe** – ban risk, can lead to a ban on many servers. Only use it on servers that allow it.
@@ -1574,7 +1616,7 @@ custom title to the first place and disables the two calls so that it stays.
 > as the title of error messages – the custom title appears there as well.
 
 <a id="patch-clientdate"></a>
-**Change build date (original Jun 24 2010)** *(No. 86, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change build date (original Jun 24 2010)** *(No. 87, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 > [!CAUTION]
 > **Unsafe** – ban risk, can lead to a ban on many servers. Only use it on servers that allow it.
@@ -1596,7 +1638,7 @@ the time of patching if nothing is remembered. If the patch is already applied,
 the current date and time of `Wow.exe` are suggested.
 
 <a id="patch-clienticon"></a>
-**Change program icon (icon of Wow.exe)** *(No. 87, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change program icon (icon of Wow.exe)** *(No. 88, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 > [!CAUTION]
 > **Unsafe** – ban risk, can lead to a ban on many servers. Only use it on servers that allow it.
