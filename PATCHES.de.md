@@ -577,14 +577,18 @@ stattdessen der bedingte Sprung hinter der Prüfung unbedingt gemacht – ein
 einziges Byte, gleiche Wirkung, und die Patches vertragen sich.
 
 <a id="patch-level101"></a>
-**Level 101+ Druid Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte)** *(Nr. 40, Autor: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[sicher]**
+**Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl für alle)** *(Nr. 40, Autor: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[sicher]**
 
 Die Spielwert-Tabellen des Clients (`gtCombatRatings`, `gtBarberShopCostBase`,
 `gtOCTRegenHP`/`MP`, `gtChanceToMeleeCrit` … – elf Tabellen) haben je Spalte
 100 Zeilen, eine pro Level. Ab Level 101 greift der Client außerhalb der Spalte
-zu – Druiden sehen ihre Grundwerte nicht mehr, der Barbierstuhl funktioniert
-nicht, im schlimmsten Fall stürzt der Client ab. Der Patch begrenzt die Zeile
-auf die letzte der Spalte: Level 101+ bekommt die Werte für Level 100, alles
+zu. Das fällt vor allem an zwei Stellen auf:
+- **Druiden** sehen im Charakterfenster (Reiter Charakterinfo) ihre Werte nicht
+  mehr richtig.
+- Der **Barbierstuhl** funktioniert für **alle Klassen** nicht mehr.
+
+Im schlimmsten Fall stürzt der Client ab. Der Patch begrenzt die Zeile auf die
+letzte der Spalte: Level 101+ bekommt die Werte für Level 100, alles
 darunter bleibt unverändert.
 
 > [!NOTE]

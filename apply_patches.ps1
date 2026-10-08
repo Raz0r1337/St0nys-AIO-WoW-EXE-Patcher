@@ -3079,8 +3079,8 @@ $patches = @(
 
     @{ Id = 'level101'; Cat = 'gameplay'; On = $false; Needs = @('glue')
        Author = 'Alastor StrixEfuartus (fixed by St0ny)'
-       De = 'Level 101+ Druid Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte)'
-       En = 'Level 101+ Druid fix (game tables, barber chair, base stats)'
+       De = 'Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl fuer alle)'
+       En = 'Level 101+ Druid fix (druid stats in the character window, barber shop for everyone)'
        Code = {
         # Die Spielwert-Tabellen (gtCombatRatings, gtBarberShopCostBase,
         # gtOCTRegenHP/MP, gtChanceToMeleeCrit, ... - elf Tabellen) sind je

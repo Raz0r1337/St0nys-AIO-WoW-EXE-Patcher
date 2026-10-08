@@ -565,14 +565,18 @@ unconditional instead – a single byte, same effect, and the patches work
 together.
 
 <a id="patch-level101"></a>
-**Level 101+ Druid fix (game tables, barber chair, base stats)** *(No. 40, Author: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[safe]**
+**Level 101+ Druid fix (druid stats in the character window, barber shop for everyone)** *(No. 40, Author: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[safe]**
 
 The client's game tables (`gtCombatRatings`, `gtBarberShopCostBase`,
 `gtOCTRegenHP`/`MP`, `gtChanceToMeleeCrit` … – eleven tables) have 100 rows per
-column, one per level. From level 101 on the client reads outside the column –
-druids no longer see their base stats, the barber chair does not work, in the
-worst case the client crashes. The patch clamps the row to the last one of the
-column: level 101+ gets the values for level 100, everything below stays
+column, one per level. From level 101 on the client reads outside the column.
+This shows up mainly in two places:
+- **Druids** no longer see their stats correctly in the character window
+  (character info tab).
+- The **barber shop** no longer works for **all classes**.
+
+In the worst case the client crashes. The patch clamps the row to the last one
+of the column: level 101+ gets the values for level 100, everything below stays
 unchanged.
 
 > [!NOTE]
