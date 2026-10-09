@@ -65,8 +65,8 @@ extended** at any time later – all the way back to the original `Wow.exe`.
 2. Copy your original `Wow.exe` from your WoW folder into that folder.
 3. Double-click `patcher-win.bat`.
 4. Choose the language (first start only), select patches, confirm.
-5. Close WoW and copy the patched `Wow.exe` back into your WoW folder,
-   replacing the old one.
+5. If WoW is running, close it and copy the patched `Wow.exe` back into your
+   WoW folder, replacing the old one.
 
 To **change or remove** patches just run `patcher-win.bat` in the patcher folder
 again and copy `Wow.exe` back into your WoW folder afterwards, see

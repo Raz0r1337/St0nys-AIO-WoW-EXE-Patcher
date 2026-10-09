@@ -68,8 +68,8 @@ originalen `Wow.exe`.
 2. Die originale `Wow.exe` aus dem WoW-Ordner in diesen Ordner kopieren.
 3. `patcher-win.bat` per Doppelklick starten.
 4. Sprache wählen (nur beim ersten Start), Patches auswählen, bestätigen.
-5. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren,
-   dort ersetzt sie die alte.
+5. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
+   den WoW-Ordner, dort ersetzt sie die alte.
 
 Patches **ändern oder zurücknehmen:** `patcher-win.bat` im Patcher-Ordner einfach
 erneut starten und die `Wow.exe` danach wieder in den WoW-Ordner kopieren,
