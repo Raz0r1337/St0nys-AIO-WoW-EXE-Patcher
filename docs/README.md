@@ -30,7 +30,9 @@ extended** at any time later – all the way back to the original `Wow.exe`.
 
 - [Requirements](#requirements)
 - [Usage](#usage)
+  - [On Windows](#on-windows)
   - [On Linux](#on-linux)
+  - [On a Mac](#on-a-mac)
 - [Workflow](#workflow)
 - [Patch selection](#patch-selection)
 - [Changing or removing patches](#changing-or-removing-patches)
@@ -46,14 +48,17 @@ extended** at any time later – all the way back to the original `Wow.exe`.
 
 ## Requirements
 
-- Windows with PowerShell (Windows PowerShell 5.1 ships with Windows 10 and later) –
-  Linux: see [On Linux](#on-linux)
+- Windows with PowerShell (Windows PowerShell 5.1 ships with Windows 10 and later),
+  Linux or Mac with PowerShell 7 – see [On Linux](#on-linux) and
+  [On a Mac](#on-a-mac)
 - An **original, unmodified** `Wow.exe` 3.3.5a, build 12340 with
   SHA256 `AA63A5750D60EF16746C686B3D5E26876D98953EAB08B1C026CD0FAF78E88CB8`
   (only on the first start; after that a `Wow.exe` patched with this patcher is
   enough)
 
 ## Usage
+
+### On Windows
 
 1. Download the ZIP from the [latest release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) and unpack it. It
    contains the folder `St0nys-AIO-WoW-EXE-Patcher`.
@@ -95,8 +100,31 @@ PowerShell 7 (`pwsh`) – no Wine needed. Tested on Ubuntu 24.04.
 4. Close WoW and copy the patched `Wow.exe` back into your WoW folder.
 
 Everything else works as on Windows: wherever this guide says `patcher-win.bat`,
-use `./patcher-lin.sh`. On a Mac the patcher may also work with PowerShell 7, but
-this is untested.
+use `./patcher-lin.sh`.
+
+### On a Mac
+
+> [!NOTE]
+> I don't have a Mac and cannot test the patcher there. The steps should work
+> because PowerShell 7 is also available for macOS – but there is no
+> guarantee. If you try it, I'd be glad about feedback as an
+> [issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues).
+
+The patcher modifies the Windows `Wow.exe`. On a Mac that is the `Wow.exe` you
+run e.g. with CrossOver or Wine – it cannot patch the Mac client itself.
+
+1. Install PowerShell 7, e.g. with [Homebrew](https://brew.sh):
+   `brew install --cask powershell`. Microsoft also offers an installer
+   package ([instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-macos)).
+2. Unpack the ZIP and copy your original `Wow.exe` into the folder
+   `St0nys-AIO-WoW-EXE-Patcher` – just like on Windows.
+3. Open Terminal and change to that folder, e.g. type `cd ` and drag the
+   folder into the Terminal window. Then run `sh patcher-lin.sh` – the Linux
+   start file works on a Mac as well.
+4. Close WoW and copy the patched `Wow.exe` back into your WoW folder.
+
+Everything else works as on Windows: wherever this guide says
+`patcher-win.bat`, use `sh patcher-lin.sh`.
 
 ## Workflow
 
@@ -281,7 +309,7 @@ the user or because no more input is possible).
 | File                | Purpose |
 |---------------------|---------|
 | `patcher-win.bat`   | Launcher for Windows, calls `apply_patches.ps1` |
-| `patcher-lin.sh`    | Launcher for Linux |
+| `patcher-lin.sh`    | Launcher for Linux, also for a Mac |
 | `apply_patches.ps1` | Patch engine: language selection, checks, selection menu, backup; reads the EXE once, patches in memory, writes it back once |
 | `docs/README.md`    | This file |
 | `docs/README.de.md` | German documentation |
