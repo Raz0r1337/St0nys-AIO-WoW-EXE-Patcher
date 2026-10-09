@@ -2913,7 +2913,7 @@ $patches = @(
 
     # --- DLL-Loader ---
 
-    @{ Id = 'wowoptimize'; Cat = 'dll'; On = $false; BanRisk = $true; GameUntested = $true
+    @{ Id = 'wowoptimize'; Cat = 'dll'; On = $false; DllRisky = $true
        Author = 'St0ny'
        De = 'wow_optimize.dll beim Start laden (Performance-Optimierung von SUPREMATIST) [BETA]'
        En = 'Load wow_optimize.dll at startup (performance optimizer by SUPREMATIST) [BETA]'

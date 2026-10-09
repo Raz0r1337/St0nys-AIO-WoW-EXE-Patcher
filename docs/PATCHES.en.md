@@ -363,7 +363,7 @@ not included.
 ## DLL loaders
 
 <a id="patch-wowoptimize"></a>
-**Load wow_optimize.dll at startup (performance optimizer by SUPREMATIST) [BETA]** *(No. 27, Author: St0ny)* 🔴 **[unsafe - untested ingame]**
+**Load wow_optimize.dll at startup (performance optimizer by SUPREMATIST) [BETA]** *(No. 27, Author: St0ny)* 🟡 **[safe - DLL risky]**
 
 Loads `wow_optimize.dll` from the WoW folder at startup –
 [wow_optimize](https://github.com/suprepupre/wow-optimize) by SUPREMATIST
@@ -377,9 +377,11 @@ If the DLL is missing, WoW starts normally.
 > branches for now, not in `st0ny-main`.
 
 > [!CAUTION]
-> According to the author of wow_optimize, **Warmane** treats the DLL as
-> prohibited software – the result is a **permanent ban**. On **WoW Circle** it
-> gets you disconnected. Only use it on servers that allow it.
+> The patch itself is safe, it only loads a DLL that is not included here.
+> The loaded `wow_optimize.dll`, however, may be detected or blocked on public
+> servers: according to the author of wow_optimize, **Warmane** treats the DLL
+> as prohibited software – the result is a **permanent ban**. On **WoW Circle**
+> it gets you disconnected. Only use it on servers that allow it.
 
 Setup: put only `wow_optimize.dll` from the wow_optimize download into the WoW
 folder. The `version.dll` of wow_optimize is not needed; if it is still there,
