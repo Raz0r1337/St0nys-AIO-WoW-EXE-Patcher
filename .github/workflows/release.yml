@@ -105,12 +105,12 @@ jobs:
             printf '%s\n' \
               '### Download & start' \
               "Unpack the ZIP – it contains the folder \`$name\`. Copy your original" \
-              '`Wow.exe` into that folder and double-click `patcher.bat`. Then copy the' \
+              '`Wow.exe` into that folder and double-click `patcher-win.bat`. Then copy the' \
               'patched `Wow.exe` back into your WoW folder. The first run needs an' \
               'original, unmodified `Wow.exe` 3.3.5a (build 12340).' \
               ''
-            if [ -f patcher.sh ]; then
-              printf 'Linux: `./patcher.sh` with PowerShell 7, see the [README](%s/README.md#on-linux).\n\n' "$docs"
+            if [ -f patcher-lin.sh ]; then
+              printf 'Linux: `./patcher-lin.sh` with PowerShell 7, see the [README](%s/README.md#on-linux).\n\n' "$docs"
             fi
             printf 'Docs: [English](%s/README.md) · [Deutsch](%s/README.de.md)\n\n' "$docs" "$docs"
             printf 'SHA256 (ZIP): `%s`\n\n---\n\n' "$sha"
