@@ -102,9 +102,10 @@ $TEXT = @{
         StartWarn1    = 'HINWEIS: Patches ohne Warnung in eckigen Klammern sind im Spiel getestet und sollten auch'
         StartWarn2    = 'auf oeffentlichen Servern unbedenklich sein - eine 100%-Garantie gibt es aber nicht.'
         StartWarn3    = 'Warnungen: [unsicher] (Bann-Gefahr), [online ungetestet] (Vorsicht, kann zu Kick/Bann fuehren),'
-        StartWarn4    = '[ingame ungetestet] (moeglicherweise verbuggt), [ungetestet], [Exe wird groesser] (Bann-Risiko).'
-        StartWarn5    = 'Im Zweifel pruefe die Richtlinien deines Servers, bevor du eine gepatchte Wow.exe dort benutzt.'
-        StartWarn6    = 'Benutzung auf eigene Gefahr.'
+        StartWarn4    = '[ingame ungetestet] (moeglicherweise verbuggt), [ungetestet], [Exe wird groesser] (Bann-Risiko),'
+        StartWarn5    = '[DLL riskant] (Patch sicher, die DLL kann auf oeffentlichen Servern erkannt/blockiert werden).'
+        StartWarn6    = 'Im Zweifel pruefe die Richtlinien deines Servers, bevor du eine gepatchte Wow.exe dort benutzt.'
+        StartWarn7    = 'Benutzung auf eigene Gefahr.'
         Thanks        = 'Danke an Billy Hoyle, MacWarrior und Stormhand fuer ihre Hilfe und die vielen Tests im Spiel!'
         PressStart    = 'ENTER druecken um zu starten'
         NotFound      = '[FEHLER] Keine Wow.exe gefunden: {0}'
@@ -161,6 +162,8 @@ $TEXT = @{
         Obsolete      = 'macht diese Patches ueberfluessig (beide zusammen schaden nicht):'
         GrowHead      = 'HINWEIS: Diese Patches haengen eine Sektion an und machen die Wow.exe groesser:'
         GrowBan       = 'Das ist keine sichere Bann-Gefahr, aber ein Risiko: Manche Server pruefen die Groesse der Wow.exe.'
+        DllHead       = 'HINWEIS: Diese Patches laden eine DLL, die auf oeffentlichen Servern erkannt oder blockiert werden kann:'
+        DllWarn       = 'Der Patch selbst ist sicher - die DLL nur auf Servern nutzen, die sie erlauben.'
         CheatHead     = 'ACHTUNG - unsicher, Bann-Gefahr: Diese Patches koennen von Servern als Cheat oder Botting gewertet werden:'
         CheatBan      = 'Das kann zu einem Bann fuehren - nur auf Servern nutzen, die das erlauben!'
         PublicHead    = 'VORSICHT: Diese Patches sind nicht auf oeffentlichen Servern getestet - moegliche Bann-Gefahr:'
@@ -172,6 +175,7 @@ $TEXT = @{
         TagGame       = 'ingame ungetestet'
         TagBoth       = 'ungetestet'
         TagGrow       = 'Exe wird groesser'
+        TagDll        = 'DLL riskant'
         Confirm       = 'Patchen jetzt starten? (J/N)'
         Yes           = 'J'
         Aborted       = 'Abgebrochen. Die Wow.exe wurde nicht veraendert.'
@@ -203,9 +207,10 @@ $TEXT = @{
         StartWarn1    = 'NOTE: Patches without a warning in square brackets have been tested in game and should be'
         StartWarn2    = 'harmless on public servers as well - but there is no 100% guarantee.'
         StartWarn3    = 'Warnings: [unsafe] (ban risk), [untested online] (careful, may get you kicked/banned),'
-        StartWarn4    = '[untested ingame] (possibly buggy), [untested], [exe grows] (possible ban risk).'
-        StartWarn5    = 'If in doubt, check the rules of your server before using a patched Wow.exe there.'
-        StartWarn6    = 'Use at your own risk.'
+        StartWarn4    = '[untested ingame] (possibly buggy), [untested], [exe grows] (possible ban risk),'
+        StartWarn5    = '[DLL risky] (the patch is safe, but the DLL may be detected/blocked on public servers).'
+        StartWarn6    = 'If in doubt, check the rules of your server before using a patched Wow.exe there.'
+        StartWarn7    = 'Use at your own risk.'
         Thanks        = 'Thanks to Billy Hoyle, MacWarrior and Stormhand for their help and all the testing in game!'
         PressStart    = 'Press ENTER to start'
         NotFound      = '[ERROR] No Wow.exe found: {0}'
@@ -262,6 +267,8 @@ $TEXT = @{
         Obsolete      = 'makes these patches unnecessary (both together do no harm):'
         GrowHead      = 'NOTE: These patches append a section and make Wow.exe larger:'
         GrowBan       = 'This does not mean a certain ban, but it is a risk: some servers check the size of Wow.exe.'
+        DllHead       = 'NOTE: These patches load a DLL that may be detected or blocked on public servers:'
+        DllWarn       = 'The patch itself is safe - only use the DLL on servers that allow it.'
         CheatHead     = 'WARNING - unsafe, ban risk: servers may treat these patches as cheating or botting:'
         CheatBan      = 'This can lead to a ban - only use them on servers that allow it!'
         PublicHead    = 'CAUTION: These patches have not been tested on public servers - possible ban risk:'
@@ -273,6 +280,7 @@ $TEXT = @{
         TagGame       = 'untested ingame'
         TagBoth       = 'untested'
         TagGrow       = 'exe grows'
+        TagDll        = 'DLL risky'
         Confirm       = 'Start patching now? (Y/N)'
         Yes           = 'Y'
         Aborted       = 'Aborted. Wow.exe has not been modified.'
@@ -318,7 +326,7 @@ function PatchName($p, [switch]$NoTags) {
 
 # Einheitliche Warnungen (Warn-Codes): BanRisk = Bann-Gefahr (2),
 # PublicUntested = nicht auf oeffentlichen Servern getestet (3),
-# GameUntested = Funktion im Spiel ungetestet (4), dazu GrowsExe.
+# GameUntested = Funktion im Spiel ungetestet (4), dazu GrowsExe und DllRisky.
 function PatchTags($p) {
     $tags = @()
     if ($p.BanRisk) { $tags += T 'TagBan' }
@@ -326,6 +334,7 @@ function PatchTags($p) {
     elseif ($p.PublicUntested) { $tags += T 'TagPublic' }
     elseif ($p.GameUntested) { $tags += T 'TagGame' }
     if ($p.GrowsExe) { $tags += T 'TagGrow' }
+    if ($p.DllRisky) { $tags += T 'TagDll' }
     return $tags
 }
 
@@ -2813,6 +2822,9 @@ function Get-BubbleRangeFromExe {
 #            (erzeugt nur einen Hinweis, wenn beide ausgewaehlt sind)
 #    GrowsExe - optional: $true, wenn der Patch immer eine Sektion anhaengt und
 #            die Wow.exe damit groesser macht (erzeugt einen Bann-Hinweis)
+#    DllRisky - optional: $true bei DLL-Ladern, deren DLL auf oeffentlichen
+#            Servern erkannt oder blockiert werden kann - der Patch selbst ist
+#            sicher (erzeugt einen gelben Hinweis)
 #    Warn-Codes - Patches ohne die drei folgenden Flags sind sicher (Code 1,
 #            keine Warnung). Jedes Flag erzeugt eine Warnung in eckigen
 #            Klammern hinter dem Namen und einen Hinweis vor dem Patchen:
@@ -3210,7 +3222,7 @@ $patches = @(
 
     # --- DLL-Loader ---
 
-    @{ Id = 'awesome'; Cat = 'dll'; On = $true; Needs = @('laa')
+    @{ Id = 'awesome'; Cat = 'dll'; On = $true; Needs = @('laa'); DllRisky = $true
        Author = 'FrostAtom'
        De = 'AwesomeWotlkLib.dll Unterstuetzung aktivieren (Client-Erweiterungen von noname08662)'
        En = 'Enable AwesomeWotlkLib.dll support (client extensions by noname08662)'
@@ -3231,7 +3243,7 @@ $patches = @(
         Patch 0xE50B0 @(0xB8, 0x01, 0x00, 0x00, 0x00, 0xA3, 0x74, 0xB4, 0xB6, 0x00, 0x68, 0xE0, 0x5C, 0x4E, 0x00, 0xE8, 0x1C, 0x68, 0x38, 0x00, 0x83, 0xC4, 0x04, 0x55, 0x8B, 0xEC, 0xE8, 0xA1, 0x10, 0xF2, 0xFF, 0xE9, 0x04, 0x5B, 0xF2, 0xFF, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0x41, 0x77, 0x65, 0x73, 0x6F, 0x6D, 0x65, 0x57, 0x6F, 0x74, 0x6C, 0x6B, 0x4C, 0x69, 0x62, 0x2E, 0x64, 0x6C, 0x6C, 0x00)
     }}
 
-    @{ Id = 'wotlkext'; Cat = 'dll'; On = $false; Needs = @('laa')
+    @{ Id = 'wotlkext'; Cat = 'dll'; On = $false; Needs = @('laa'); DllRisky = $true
        Author = 'St0ny (original by Alyst3r)'
        De = 'WotLKExtensions.dll Unterstuetzung aktivieren (Client-Erweiterungen von Alyst3r)'
        En = 'Enable WotLKExtensions.dll support (client extensions by Alyst3r)'
@@ -5269,6 +5281,7 @@ Say (T 'StartWarn3') 'Yellow'
 Say (T 'StartWarn4') 'Yellow'
 Say (T 'StartWarn5') 'Yellow'
 Say (T 'StartWarn6') 'Yellow'
+Say (T 'StartWarn7') 'Yellow'
 Write-Host ''
 Say (T 'Thanks') 'Magenta'
 Write-Host ''
@@ -5544,6 +5557,14 @@ if ($grow.Count -gt 0) {
     Say (T 'GrowHead') 'Yellow'
     foreach ($m in $grow) { Say "  - $m" 'Yellow' }
     Say (T 'GrowBan') 'Yellow'
+}
+$dll = @()
+foreach ($p in $chosen) { if ($p.DllRisky) { $dll += PatchRef $p } }
+if ($dll.Count -gt 0) {
+    Write-Host ''
+    Say (T 'DllHead') 'Yellow'
+    foreach ($m in $dll) { Say "  - $m" 'Yellow' }
+    Say (T 'DllWarn') 'Yellow'
 }
 $public = @()
 foreach ($p in $chosen) { if ($p.PublicUntested) { $public += PatchRef $p } }

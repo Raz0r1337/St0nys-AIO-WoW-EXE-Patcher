@@ -285,12 +285,14 @@ Click the number of a patch to jump to its description.
 | 🟠 **[untested ingame]** | The function has not been checked in game yet: nobody can predict how the game will react, possibly buggy. | orange warning |
 | 🟠 **[untested]** | Neither tested online nor ingame. | orange warning |
 | 🟡 **[exe grows]** | The patch appends a section to `Wow.exe`. Not a certain ban, but a risk: some servers check the file size. | yellow note |
+| 🟡 **[DLL risky]** | The patch itself is safe, but it loads a DLL that may be detected or blocked on public servers. Only use it where the DLL is allowed. | yellow note |
 
 A patch can carry several ratings. They then share one pair of brackets
 with a single dot in front: the stricter one wins (red before orange before
-yellow), and a green dot turns yellow when the exe grows. For example
-🟡 **[safe - exe grows]**, 🔴 **[unsafe - exe grows]**,
-🟠 **[untested - exe grows]** or 🔴 **[unsafe - untested ingame]**.
+yellow), and a green dot turns yellow when the exe grows or the DLL is
+risky. For example 🟡 **[safe - exe grows]**, 🟡 **[safe - DLL risky]**,
+🔴 **[unsafe - exe grows]**, 🟠 **[untested - exe grows]** or
+🔴 **[unsafe - untested ingame]**.
 In the patcher the warnings are shown in square brackets after the
 name, and before patching it lists them once more.
 
@@ -344,8 +346,8 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[safe]** | FrostAtom | ✅ | ✅ | ✅ |
-| [28](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[safe]** | St0ny (original by Alyst3r) | – | – | – |
+| [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom | ✅ | ✅ | ✅ |
+| [28](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
 | [29](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) [BETA] *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟠 **[untested]** | St0ny | ✅ | – | – |
 | [30](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (mod-voicechat) [ALPHA] *(module not finished yet, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[untested]** | St0ny | – | – | – |
 
@@ -471,6 +473,9 @@ clicking the number of a patch takes you straight to its description.
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 51, 64–66, 77 and 83. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
     the file size.
+  - 🟡 **DLL risky** – the patch itself is safe, but it loads a DLL that may be
+    detected or blocked on public servers: No. 27 and 28 (yellow note). Only
+    use it where the DLL is allowed.
 - **Signature:** the original `Wow.exe` is digitally signed by Blizzard. Every
   patch invalidates this signature. Windows will therefore probably warn about
   an unsigned, potentially harmful app when it starts; with "More info" → "Run
