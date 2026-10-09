@@ -29,8 +29,7 @@ extended** at any time later – all the way back to the original `Wow.exe`.
 ## Contents
 
 - [Requirements](#requirements)
-- [Usage](#usage)
-  - [On Windows](#on-windows)
+- [Usage on Windows](#usage-on-windows)
   - [On Linux](#on-linux)
   - [On a Mac](#on-a-mac)
 - [Workflow](#workflow)
@@ -56,9 +55,7 @@ extended** at any time later – all the way back to the original `Wow.exe`.
   (only on the first start; after that a `Wow.exe` patched with this patcher is
   enough)
 
-## Usage
-
-### On Windows
+## Usage on Windows
 
 1. Download the ZIP from the [latest release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) and unpack it. It
    contains the folder `St0nys-AIO-WoW-EXE-Patcher`.

@@ -32,8 +32,7 @@ originalen `Wow.exe`.
 ## Inhalt
 
 - [Voraussetzungen](#voraussetzungen)
-- [Benutzung](#benutzung)
-  - [Unter Windows](#unter-windows)
+- [Benutzung unter Windows](#benutzung-unter-windows)
   - [Unter Linux](#unter-linux)
   - [Auf dem Mac](#auf-dem-mac)
 - [Ablauf](#ablauf)
@@ -59,9 +58,7 @@ originalen `Wow.exe`.
   (nur beim ersten Start; danach genügt eine mit diesem Patcher gepatchte
   `Wow.exe`)
 
-## Benutzung
-
-### Unter Windows
+## Benutzung unter Windows
 
 1. Das ZIP vom [neuesten Release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) herunterladen und entpacken.
    Darin liegt der Ordner `St0nys-AIO-WoW-EXE-Patcher`.
