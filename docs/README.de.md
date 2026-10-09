@@ -82,10 +82,14 @@ siehe [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen).
 ### Unter Linux
 
 Der Patcher ist für Windows geschrieben, läuft aber auch unter Linux direkt
-mit PowerShell 7 (`pwsh`) – Wine wird dafür nicht gebraucht.
+mit PowerShell 7 (`pwsh`) – Wine wird dafür nicht gebraucht. Getestet mit
+Ubuntu 24.04.
 
 1. PowerShell 7 installieren, z. B. für [Ubuntu](https://learn.microsoft.com/powershell/scripting/install/install-ubuntu),
    [Debian](https://learn.microsoft.com/powershell/scripting/install/install-debian) oder [RHEL](https://learn.microsoft.com/powershell/scripting/install/install-rhel).
+   PowerShell liegt nicht in den normalen Paketquellen; die verlinkten
+   Anleitungen richten deshalb zuerst die Paketquelle von Microsoft ein,
+   sonst findet z. B. `apt` das Paket `powershell` nicht.
    Für andere Distributionen gibt es Snap und ein Archiv zum Entpacken
    ([Anleitung](https://learn.microsoft.com/powershell/scripting/install/install-other-linux)), für Arch das Paket im AUR.
 2. Das ZIP entpacken und die originale `Wow.exe` in den Ordner
