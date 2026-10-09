@@ -403,7 +403,7 @@ den DLL-Namen legt der Thread auf dem Stack ab. Der Patch verträgt sich mit dem
 Lexara-Lader (Nr. 30) und dem voice.dll-Lader (Nr. 31).
 
 <a id="patch-awesome"></a>
-**AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662)** *(Nr. 28, Autor: FrostAtom)* 🟢 **[sicher]**
+**AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662)** *(Nr. 28, Autor: FrostAtom)* 🟡 **[sicher - DLL riskant]**
 
 Ermöglicht das Laden der `AwesomeWotlkLib.dll` beim Client-Start. Diese DLL
 erweitert den Client um zusätzliche Funktionen und Verbesserungen für private
@@ -418,10 +418,11 @@ Der Lader sitzt am Start der Haupt-Fiber des Clients (kurz vor `WinMain`) und
 Der Patch schaltet damit nebenbei den Scan.dll-Mechanismus ab (wie Nr. 12).
 Fehlt die DLL, startet WoW normal weiter.
 
-> [!NOTE]
-> Der Patch selbst ist unkritisch, er lädt nur eine DLL, die hier nicht
-> enthalten ist. Erst die geladene `AwesomeWotlkLib.dll` kann auf Servern mit
-> Anti-Cheat auffallen – also nur dort einsetzen, wo awesome_wotlk erlaubt ist.
+> [!WARNING]
+> Der Patch selbst ist sicher, er lädt nur eine DLL, die hier nicht enthalten
+> ist. Die geladene `AwesomeWotlkLib.dll` kann aber auf öffentlichen Servern
+> erkannt oder blockiert werden – also nur dort einsetzen, wo awesome_wotlk
+> erlaubt ist.
 
 > [!NOTE]
 > Ist zusätzlich Nr. 65 (HD-Portraits) eingespielt, hat die CVar
@@ -429,7 +430,7 @@ Fehlt die DLL, startet WoW normal weiter.
 > Auflösung des Exe-Patches.
 
 <a id="patch-wotlkext"></a>
-**WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r)** *(Nr. 29, Autor: St0ny (original by Alyst3r))* 🟢 **[sicher]**
+**WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r)** *(Nr. 29, Autor: St0ny (original by Alyst3r))* 🟡 **[sicher - DLL riskant]**
 
 Lädt beim Client-Start die `WotLKExtensions.dll` aus dem WoW-Ordner. Die DLL aus
 [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions) von Alyst3r
@@ -449,11 +450,12 @@ Leerlauf und das Scan.dll-Flag auf „bestanden“ gesetzt – der Scan.dll-Mech
 ist damit abgeschaltet (wie Nr. 12). Fehlt die DLL, startet WoW normal weiter.
 Die Dateigröße ändert sich nicht.
 
-> [!NOTE]
-> Der Patch selbst ist unkritisch, er lädt nur eine DLL, die hier nicht
-> enthalten ist. WotLK-Extensions ist für eigene Server-Projekte gedacht; laut
-> dem Projekt können manche Server Aufrufe seiner Lua-Funktionen erkennen. Nur
-> dort einsetzen, wo WotLK-Extensions erlaubt ist.
+> [!WARNING]
+> Der Patch selbst ist sicher, er lädt nur eine DLL, die hier nicht enthalten
+> ist. Die geladene `WotLKExtensions.dll` kann aber auf öffentlichen Servern
+> erkannt oder blockiert werden; laut dem Projekt können manche Server Aufrufe
+> seiner Lua-Funktionen erkennen. WotLK-Extensions ist für eigene
+> Server-Projekte gedacht – nur dort einsetzen, wo es erlaubt ist.
 
 > [!NOTE]
 > Die DLL spielt beim Start selbst einige Patches im Speicher ein, darunter

@@ -395,7 +395,7 @@ the stack. The patch works together with the Lexara loader (No. 30) and the
 voice.dll loader (No. 31).
 
 <a id="patch-awesome"></a>
-**Enable AwesomeWotlkLib.dll support (client extensions by noname08662)** *(No. 28, Author: FrostAtom)* 🟢 **[safe]**
+**Enable AwesomeWotlkLib.dll support (client extensions by noname08662)** *(No. 28, Author: FrostAtom)* 🟡 **[safe - DLL risky]**
 
 Allows `AwesomeWotlkLib.dll` to be loaded on client start. This DLL extends
 the client with additional features and improvements for private servers.
@@ -409,10 +409,10 @@ that; the Lua function `ScanDLLStart` becomes a no-op and the Scan.dll flag is
 set to "passed". As a side effect the patch disables the Scan.dll mechanism
 (like No. 12). If the DLL is missing, WoW simply starts normally.
 
-> [!NOTE]
-> The patch itself is harmless, it only loads a DLL that is not included here.
-> Only the loaded `AwesomeWotlkLib.dll` may be noticed by servers with
-> anti-cheat – so use it only where awesome_wotlk is allowed.
+> [!WARNING]
+> The patch itself is safe, it only loads a DLL that is not included here.
+> The loaded `AwesomeWotlkLib.dll`, however, may be detected or blocked on
+> public servers – so use it only where awesome_wotlk is allowed.
 
 > [!NOTE]
 > If No. 65 (HD portraits) is applied as well, awesome_wotlk's CVar
@@ -420,7 +420,7 @@ set to "passed". As a side effect the patch disables the Scan.dll mechanism
 > wins.
 
 <a id="patch-wotlkext"></a>
-**Enable WotLKExtensions.dll support (client extensions by Alyst3r)** *(No. 29, Author: St0ny (original by Alyst3r))* 🟢 **[safe]**
+**Enable WotLKExtensions.dll support (client extensions by Alyst3r)** *(No. 29, Author: St0ny (original by Alyst3r))* 🟡 **[safe - DLL risky]**
 
 Loads `WotLKExtensions.dll` from the WoW folder when the client starts. The DLL
 from [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions) by Alyst3r
@@ -438,11 +438,12 @@ No. 28, the Lua function `ScanDLLStart` becomes a no-op and the Scan.dll flag is
 set to "passed" – which also disables the Scan.dll mechanism (like No. 12). If
 the DLL is missing, WoW simply starts as usual. The file size does not change.
 
-> [!NOTE]
-> The patch itself is harmless, it only loads a DLL that is not included here.
-> WotLK-Extensions is meant for your own server projects; according to the
-> project, some servers can detect calls to its Lua functions. Only use it
-> where WotLK-Extensions is allowed.
+> [!WARNING]
+> The patch itself is safe, it only loads a DLL that is not included here.
+> The loaded `WotLKExtensions.dll`, however, may be detected or blocked on
+> public servers; according to the project, some servers can detect calls to
+> its Lua functions. WotLK-Extensions is meant for your own server projects –
+> only use it where it is allowed.
 
 > [!NOTE]
 > At startup the DLL applies some patches in memory itself, always including

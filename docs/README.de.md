@@ -318,11 +318,13 @@ Ein Klick auf die Nummer eines Patches springt zu seiner Beschreibung.
 | 🟠 **[ingame ungetestet]** | Die Funktion ist im Spiel noch nicht geprüft: Niemand kann vorhersagen, wie das Spiel reagiert, möglicherweise verbuggt. | orange Warnung |
 | 🟠 **[ungetestet]** | Weder online noch ingame getestet. | orange Warnung |
 | 🟡 **[Exe wird größer]** | Der Patch hängt eine Sektion an die `Wow.exe` an. Keine sichere Bann-Gefahr, aber ein Risiko: Manche Server prüfen die Dateigröße. | gelber Hinweis |
+| 🟡 **[DLL riskant]** | Der Patch selbst ist sicher, er lädt aber eine DLL, die auf öffentlichen Servern erkannt oder blockiert werden kann. Nur dort einsetzen, wo die DLL erlaubt ist. | gelber Hinweis |
 
 Ein Patch kann mehrere Kennzeichnungen tragen. Sie stehen dann zusammen in
 einer Klammer, und davor steht nur ein Punkt: Der strengere gewinnt (Rot vor
-Orange vor Gelb), ein grüner Punkt wird gelb, wenn die Exe größer wird. Zum
-Beispiel 🟡 **[sicher - Exe wird größer]**, 🔴 **[unsicher - Exe wird größer]**,
+Orange vor Gelb), ein grüner Punkt wird gelb, wenn die Exe größer wird oder
+die DLL riskant ist. Zum Beispiel 🟡 **[sicher - Exe wird größer]**,
+🟡 **[sicher - DLL riskant]**, 🔴 **[unsicher - Exe wird größer]**,
 🟠 **[ungetestet - Exe wird größer]** oder 🔴 **[unsicher - ingame ungetestet]**.
 Im Patcher stehen die Warnungen in eckigen Klammern hinter dem Namen, vor
 dem Patchen listet er sie noch einmal auf.
@@ -378,8 +380,8 @@ dem Patchen listet er sie noch einmal auf.
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.de.md#patch-wowoptimize) | wow_optimize.dll beim Start laden (Performance-Optimierung von SUPREMATIST) [BETA] *(benötigt [wow_optimize](https://github.com/suprepupre/wow-optimize) – nur `wow_optimize.dll`, ohne `version.dll`)* | 🔴 **[unsicher - ingame ungetestet]** | St0ny | – | – | ✅ |
-| [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[sicher]** | FrostAtom | ✅ | ✅ | ✅ |
-| [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[sicher]** | St0ny (original by Alyst3r) | – | – | – |
+| [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom | ✅ | ✅ | ✅ |
+| [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.de.md#patch-lexara) | Lexara.dll beim Start laden (HD-Schriften von Stormhand) [BETA] *(benötigt [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – `dinput8.dll` in `Lexara.dll` umbenennen)* | 🟠 **[ungetestet]** | St0ny | ✅ | – | – |
 | [31](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (mod-voicechat) [ALPHA] *(Modul noch unfertig, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
@@ -505,6 +507,9 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     Nr. 9, 52, 65, 66, 76 und 82. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
     anderen Patches ändern die Dateigröße nicht.
+  - 🟡 **DLL riskant** – der Patch selbst ist sicher, er lädt aber eine DLL, die
+    auf öffentlichen Servern erkannt oder blockiert werden kann: Nr. 28 und 29
+    (gelber Hinweis). Nur dort einsetzen, wo die DLL erlaubt ist.
 - **Signatur:** Die originale `Wow.exe` ist von Blizzard digital signiert. Jeder
   Patch macht diese Signatur ungültig. Windows warnt deshalb wahrscheinlich
   beim Start vor einer nicht signierten, möglicherweise schädlichen App; mit
