@@ -386,10 +386,9 @@ Exe sie selbst. Fehlt die DLL, startet WoW ganz normal.
 > [!CAUTION]
 > Der Patch selbst ist sicher, er lädt nur eine DLL, die hier nicht enthalten
 > ist. Die geladene `wow_optimize.dll` kann aber auf öffentlichen Servern
-> erkannt oder blockiert werden: Laut dem Autor von wow_optimize wertet
-> **Warmane** die DLL als verbotene Software – die Folge ist ein **dauerhafter
-> Bann**. Auf **WoW Circle** führt sie zum Disconnect. Nur auf Servern
-> verwenden, die das erlauben.
+> erkannt oder blockiert werden: Laut dem Autor von wow_optimize führt sie auf
+> manchen öffentlichen Servern zu einem **dauerhaften Bann**, auf anderen zum
+> Disconnect. Nur auf Servern verwenden, die das erlauben.
 
 So wird es eingerichtet: Nur die `wow_optimize.dll` aus dem
 wow_optimize-Download in den WoW-Ordner legen. Die `version.dll` von

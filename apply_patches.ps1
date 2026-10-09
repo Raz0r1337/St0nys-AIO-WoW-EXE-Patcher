@@ -2925,7 +2925,8 @@ $patches = @(
         # dem WoW-Ordner - genau wie die Proxy-version.dll von wow_optimize:
         # Beim Start legt die Exe einen eigenen Thread an, der 3 Sekunden
         # wartet und dann LoadLibraryA("wow_optimize.dll") aufruft. Fehlt die
-        # DLL, startet WoW ganz normal. Laut wow_optimize bannt Warmane dafuer.
+        # DLL, startet WoW ganz normal. Laut wow_optimize bannen manche
+        # oeffentlichen Server dafuer.
         # Eingehaengt ist das in den einmaligen Aufruf call 0x7755F0 bei VA
         # 0x76E490, den nur der Einstiegspunkt erreicht (nach dem Lexara-Lader,
         # vor dem Sprung, den der voice.dll-Lader umbiegt). Der Code steht in
