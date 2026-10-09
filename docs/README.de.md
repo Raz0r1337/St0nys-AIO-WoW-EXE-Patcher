@@ -61,12 +61,12 @@ originalen `Wow.exe`.
 1. Das ZIP vom [neuesten Release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) herunterladen und entpacken.
    Darin liegt der Ordner `St0nys-AIO-WoW-EXE-Patcher`.
 2. Die originale `Wow.exe` aus dem WoW-Ordner in diesen Ordner kopieren.
-3. `patcher.bat` per Doppelklick starten.
+3. `patcher-win.bat` per Doppelklick starten.
 4. Sprache wählen (nur beim ersten Start), Patches auswählen, bestätigen.
 5. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren,
    dort ersetzt sie die alte.
 
-Patches **ändern oder zurücknehmen:** `patcher.bat` im Patcher-Ordner einfach
+Patches **ändern oder zurücknehmen:** `patcher-win.bat` im Patcher-Ordner einfach
 erneut starten und die `Wow.exe` danach wieder in den WoW-Ordner kopieren,
 siehe [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen).
 
@@ -91,13 +91,13 @@ mit PowerShell 7 (`pwsh`) – Wine wird dafür nicht gebraucht.
 2. Das ZIP entpacken und die originale `Wow.exe` in den Ordner
    `St0nys-AIO-WoW-EXE-Patcher` kopieren – wie unter Windows. Wie die
    `Wow.exe` geschrieben ist (`WoW.exe`, `wow.exe` …), spielt keine Rolle.
-3. Im Terminal in diesem Ordner `./patcher.sh` starten. Falls das nicht
+3. Im Terminal in diesem Ordner `./patcher-lin.sh` starten. Falls das nicht
    startet (z. B. weil beim Entpacken das Ausführungsrecht verloren ging):
-   `sh patcher.sh`.
+   `sh patcher-lin.sh`.
 4. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren.
 
 Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
-`patcher.bat` steht, nimmst du `./patcher.sh`. Auf einem Mac kann der
+`patcher-win.bat` steht, nimmst du `./patcher-lin.sh`. Auf einem Mac kann der
 Patcher mit PowerShell 7 ebenfalls funktionieren, das ist aber ungetestet.
 
 ## Ablauf
@@ -221,7 +221,7 @@ Bann!** Der Patcher zeigt das beim Laden mit `S` als gelben Hinweis an.
 
 ## Patches ändern oder zurücknehmen
 
-Eingespielte Patches sind nicht endgültig. Starte `patcher.bat` einfach erneut:
+Eingespielte Patches sind nicht endgültig. Starte `patcher-win.bat` einfach erneut:
 Im Menü sind dann genau die Patches angehakt, die gerade in der `Wow.exe`
 stecken. Neu angehakte Patches sind mit **(neu)** markiert, abgewählte mit
 **(wird zurückgenommen)**. So kannst du beliebig Patches dazunehmen, abwählen
@@ -264,7 +264,7 @@ So funktioniert es:
 
 ## Parameter für den unbeaufsichtigten Betrieb
 
-Alle Parameter sind optional und werden von `patcher.bat` an
+Alle Parameter sind optional und werden von `patcher-win.bat` an
 `apply_patches.ps1` durchgereicht.
 
 | Parameter              | Bedeutung                                                                   |
@@ -277,7 +277,7 @@ Alle Parameter sind optional und werden von `patcher.bat` an
 Beispiel:
 
 ```bat
-patcher.bat -Language de -Select saved -Unattended
+patcher-win.bat -Language de -Select saved -Unattended
 ```
 
 Exit-Codes: `0` = erfolgreich (oder nichts zu tun), `1` = Fehler, `2` =
@@ -287,8 +287,8 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 
 | Datei               | Zweck |
 |---------------------|-------|
-| `patcher.bat`       | Startdatei, ruft `apply_patches.ps1` auf |
-| `patcher.sh`        | Startdatei für Linux |
+| `patcher-win.bat`   | Startdatei für Windows, ruft `apply_patches.ps1` auf |
+| `patcher-lin.sh`    | Startdatei für Linux |
 | `apply_patches.ps1` | Patch-Engine: Sprachwahl, Prüfungen, Auswahlmenü, Backup; liest die EXE einmal, patcht im Speicher, schreibt einmal zurück |
 | `docs/README.md`    | Englische Anleitung |
 | `docs/README.de.md` | Diese Datei |

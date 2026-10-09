@@ -58,12 +58,12 @@ extended** at any time later – all the way back to the original `Wow.exe`.
 1. Download the ZIP from the [latest release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) and unpack it. It
    contains the folder `St0nys-AIO-WoW-EXE-Patcher`.
 2. Copy your original `Wow.exe` from your WoW folder into that folder.
-3. Double-click `patcher.bat`.
+3. Double-click `patcher-win.bat`.
 4. Choose the language (first start only), select patches, confirm.
 5. Close WoW and copy the patched `Wow.exe` back into your WoW folder,
    replacing the old one.
 
-To **change or remove** patches just run `patcher.bat` in the patcher folder
+To **change or remove** patches just run `patcher-win.bat` in the patcher folder
 again and copy `Wow.exe` back into your WoW folder afterwards, see
 [Changing or removing patches](#changing-or-removing-patches).
 
@@ -87,12 +87,12 @@ PowerShell 7 (`pwsh`) – no Wine needed.
 2. Unpack the ZIP and copy your original `Wow.exe` into the folder
    `St0nys-AIO-WoW-EXE-Patcher` – just like on Windows. How `Wow.exe` is
    spelled (`WoW.exe`, `wow.exe` …) does not matter.
-3. In a terminal in that folder, run `./patcher.sh`. If that does not start
-   (e.g. because unpacking lost the execute permission), use `sh patcher.sh`.
+3. In a terminal in that folder, run `./patcher-lin.sh`. If that does not start
+   (e.g. because unpacking lost the execute permission), use `sh patcher-lin.sh`.
 4. Close WoW and copy the patched `Wow.exe` back into your WoW folder.
 
-Everything else works as on Windows: wherever this guide says `patcher.bat`,
-use `./patcher.sh`. On a Mac the patcher may also work with PowerShell 7, but
+Everything else works as on Windows: wherever this guide says `patcher-win.bat`,
+use `./patcher-lin.sh`. On a Mac the patcher may also work with PowerShell 7, but
 this is untested.
 
 ## Workflow
@@ -211,7 +211,7 @@ The patcher shows this as a yellow note when you load it with `S`.
 
 ## Changing or removing patches
 
-Applied patches are not final. Just run `patcher.bat` again: the menu then has
+Applied patches are not final. Just run `patcher-win.bat` again: the menu then has
 exactly the patches checked that are currently in `Wow.exe`. Newly checked
 patches are marked **(new)**, deselected ones **(will be removed)**. This way
 you can add patches, deselect them or change values (jump height, double
@@ -254,7 +254,7 @@ How it works:
 
 ## Parameters for unattended use
 
-All parameters are optional and are passed through from `patcher.bat` to
+All parameters are optional and are passed through from `patcher-win.bat` to
 `apply_patches.ps1`.
 
 | Parameter              | Meaning                                                                    |
@@ -267,7 +267,7 @@ All parameters are optional and are passed through from `patcher.bat` to
 Example:
 
 ```bat
-patcher.bat -Language en -Select saved -Unattended
+patcher-win.bat -Language en -Select saved -Unattended
 ```
 
 Exit codes: `0` = success (or nothing to do), `1` = error, `2` = cancelled (by
@@ -277,8 +277,8 @@ the user or because no more input is possible).
 
 | File                | Purpose |
 |---------------------|---------|
-| `patcher.bat`       | Launcher, calls `apply_patches.ps1` |
-| `patcher.sh`        | Launcher for Linux |
+| `patcher-win.bat`   | Launcher for Windows, calls `apply_patches.ps1` |
+| `patcher-lin.sh`    | Launcher for Linux |
 | `apply_patches.ps1` | Patch engine: language selection, checks, selection menu, backup; reads the EXE once, patches in memory, writes it back once |
 | `docs/README.md`    | This file |
 | `docs/README.de.md` | German documentation |

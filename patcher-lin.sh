@@ -5,7 +5,7 @@
 #  Backup, Patchen) steckt in apply_patches.ps1. Noetig ist
 #  PowerShell 7 (Befehl "pwsh"), Wine wird nicht gebraucht.
 #  Parameter werden durchgereicht, z.B.:
-#    ./patcher.sh -Language en -Select default
+#    ./patcher-lin.sh -Language en -Select default
 # ============================================================
 cd "$(dirname "$0")" || exit 1
 if ! command -v pwsh >/dev/null 2>&1; then
