@@ -372,7 +372,7 @@ Login-Bildschirm), ist nicht enthalten.
 ## DLL-Loader
 
 <a id="patch-wowoptimize"></a>
-**wow_optimize.dll beim Start laden (Performance-Optimierung von SUPREMATIST) [BETA]** *(Nr. 27, Autor: St0ny)* 🟡 **[sicher - DLL riskant]**
+**wow_optimize.dll beim Start laden (Performance-Optimierung von SUPREMATIST)** *(Nr. 27, Autor: St0ny)* 🟡 **[sicher - DLL riskant]**
 
 Lädt beim Start die `wow_optimize.dll` aus dem WoW-Ordner –
 [wow_optimize](https://github.com/suprepupre/wow-optimize) von SUPREMATIST
@@ -380,10 +380,6 @@ optimiert den Client auf Engine-Ebene: Speicherverwaltung, Lua-VM, Timer sowie
 Datei- und Netzwerkzugriffe. Bisher wurde die DLL über die mitgelieferte
 `version.dll` (Proxy) oder einen Injector geladen. Mit diesem Patch lädt die
 Exe sie selbst. Fehlt die DLL, startet WoW ganz normal.
-
-> [!WARNING]
-> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
-> den dev-Zweigen, nicht in `st0ny-main`.
 
 > [!CAUTION]
 > Der Patch selbst ist sicher, er lädt nur eine DLL, die hier nicht enthalten
@@ -470,7 +466,7 @@ Die Dateigröße ändert sich nicht.
 > festem Datum und wöchentliche Feiertage aus dem Kalender verschwinden.
 
 <a id="patch-lexara"></a>
-**Lexara.dll beim Start laden (HD-Schriften von Stormhand) [BETA]** *(Nr. 30, Autor: St0ny)* 🟠 **[ungetestet]**
+**Lexara.dll beim Start laden (HD-Schriften von Stormhand)** *(Nr. 30, Autor: St0ny)* 🟡 **[sicher - DLL riskant]**
 
 Lädt beim Start die `Lexara.dll` aus dem WoW-Ordner –
 [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) von Stormhand ersetzt die Schriftdarstellung
@@ -480,8 +476,9 @@ die denselben Dateinamen benutzen. Mit diesem Patch lädt die Exe Lexara selbst.
 Fehlt die DLL, startet WoW ganz normal.
 
 > [!WARNING]
-> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
-> den dev-Zweigen, nicht in `st0ny-main`.
+> Der Patch selbst ist sicher, er lädt nur eine DLL, die hier nicht enthalten
+> ist. Die geladene `Lexara.dll` kann aber auf öffentlichen Servern erkannt
+> oder blockiert werden – also nur dort einsetzen, wo Lexara erlaubt ist.
 
 So wird es eingerichtet: Die `dinput8.dll` aus dem Lexara-Download in
 `Lexara.dll` umbenennen und zusammen mit `skia.dll` in den WoW-Ordner legen.
