@@ -2672,8 +2672,8 @@ $patches = @(
 
     @{ Id = 'timer'; Cat = 'system'; On = $false
        Author = 'St0ny'
-       De = 'Genauen Timer immer nutzen (Ruckeln beim Drehen behoben)'
-       En = 'Always use the precise timer (fixes turning stutter)'
+       De = 'Precise Timer Fix (behebt das Ruckeln beim Drehen des Charakters)'
+       En = 'Precise timer fix (fixes the character turning stutter bug)'
        Code = {
         # Beim Start waehlt TimeManager (VA 0x86AB30) die Zeitquelle: QPC
         # (genau) oder GetTickCount (~16-ms-Schritte). Dazu vergleicht er 250 ms
@@ -2836,8 +2836,8 @@ $patches = @(
 
     @{ Id = 'afk'; Cat = 'login'; On = $false
        Author = 'St0ny'
-       De = 'Idle-Kick nach Character-Autologin verhindern'
-       En = 'Prevent the idle kick after character auto-login'
+       De = 'CharAutoLogin Idle-Kick Fix'
+       En = 'CharAutoLogin idle-kick fix'
        NoteDe = 'wird fuer Character-Autologin benoetigt; AFK- und Idle-Timer bleiben aktiv'
        NoteEn = 'required for character auto-login; AFK and idle timers stay active'
        Url = 'https://discord.com/channels/858041817043042364/1515439916878663701'
@@ -2992,8 +2992,8 @@ $patches = @(
 
     @{ Id = 'awesome'; Cat = 'dll'; On = $true; Needs = @('laa')
        Author = 'FrostAtom'
-       De = 'AwesomeWotlkLib.dll Unterstuetzung aktivieren'
-       En = 'Enable AwesomeWotlkLib.dll support'
+       De = 'AwesomeWotlkLib.dll Unterstuetzung aktivieren (Client-Erweiterungen von noname08662)'
+       En = 'Enable AwesomeWotlkLib.dll support (client extensions by noname08662)'
        NoteDe = 'benoetigt awesome_wotlk'
        NoteEn = 'requires awesome_wotlk'
        Url = 'https://github.com/noname08662/awesome_wotlk'
@@ -3013,8 +3013,8 @@ $patches = @(
 
     @{ Id = 'wotlkext'; Cat = 'dll'; On = $false; Needs = @('laa')
        Author = 'St0ny (original by Alyst3r)'
-       De = 'WotLKExtensions.dll Unterstuetzung aktivieren'
-       En = 'Enable WotLKExtensions.dll support'
+       De = 'WotLKExtensions.dll Unterstuetzung aktivieren (Client-Erweiterungen von Alyst3r)'
+       En = 'Enable WotLKExtensions.dll support (client extensions by Alyst3r)'
        NoteDe = 'benoetigt WotLK-Extensions'
        NoteEn = 'requires WotLK-Extensions'
        Url = 'https://github.com/Alyst3r/WotLK-Extensions'
@@ -3243,7 +3243,7 @@ $patches = @(
     }}
 
     @{ Id = 'customitem'; Cat = 'gameplay'; On = $false; Needs = @('cache'); PublicUntested = $true; GameUntested = $true
-       Author = 'Kebabstorm (fixed by St0ny)'
+       Author = 'St0ny (original by Kebabstorm)'
        De = 'Custom Item Fix (BETA) v2'
        En = 'Custom Item Fix (BETA) v2'
        NoteDe = 'Custom-Items ohne DBC-Anpassung: Modell, Icon und Item-Typ aus den Serverdaten'
