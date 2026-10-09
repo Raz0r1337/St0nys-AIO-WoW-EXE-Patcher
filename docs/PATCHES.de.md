@@ -45,19 +45,21 @@ Entfernt die 30-Sekunden-Verzögerung beim Aktualisieren des Item-Caches.
 Verhindert einen Absturz in einer Funktion der Weltdarstellung (VA `0x81D510`).
 Sie läuft über Dreiecke aus je drei Vertex-Indizes und rechnet „Index minus
 Basis“ in eine Speicheradresse um. Ist ein Index kleiner als die Basis, zeigt
-die Adresse vor den Puffer und der Client stürzt ab. Der Patch prüft vorher die
-drei Indizes des ersten Dreiecks und überspringt die Funktion in diesem Fall.
-Gegenüber dem Original sind die drei Sprungweiten korrigiert und der Code ist
-kürzer.
+die Adresse vor den Puffer und der Client stürzt ab. Der Patch prüft in der
+Schleife die drei Indizes jedes Dreiecks; ein Dreieck mit ungültigem Index wird
+übersprungen, die übrigen werden normal verarbeitet.
+Das Original (0x539wowmod) prüft nur das erste Dreieck jedes Aufrufs, einmal
+vor der Schleife, und hat falsch berechnete Sprungweiten; hier sitzt die
+Prüfung im Schleifenkörper, bei gleicher Codegröße.
 
 > [!NOTE]
 > Der Code liegt in der freien Lücke am Ende von `.text`, die auch Nr. 63 nutzt.
 > Beide passen zusammen hinein, die Dateigröße ändert sich nicht.
 
 > [!NOTE]
-> Ein heuristischer Fix, wie ihn auch der Autor nennt: Geprüft wird nur das erste
-> Dreieck jedes Aufrufs. Er stört nicht, wenn alles stimmt, fängt aber nicht jeden
-> denkbaren Fall ab.
+> Geprüft wird nur, ob ein Index kleiner als die Basis ist – das ist der Fall,
+> der vor den Puffer zeigt. Eine Obergrenze kennt die Funktion nicht, ein zu
+> großer Index wird also weiterhin nicht abgefangen.
 
 <a id="patch-timer"></a>
 **Precise Timer Fix (behebt das Ruckeln beim Drehen des Charakters)** *(Nr. 5, Autor: St0ny)* 🟢 **[sicher]**
