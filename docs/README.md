@@ -343,7 +343,7 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom | ✅ | ✅ | ✅ |
+| [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom | – | ✅ | ✅ |
 | [28](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
 | [29](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (mod-voicechat) [ALPHA] *(module not finished yet, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[untested]** | St0ny | – | – | – |
 
