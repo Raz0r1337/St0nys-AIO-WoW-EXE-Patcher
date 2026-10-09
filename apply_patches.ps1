@@ -312,7 +312,7 @@ function PatchName($p, [switch]$NoTags) {
     if ($note) { $n = "$n ($note)" }
     if ($NoTags) { return $n }
     $tags = @(PatchTags $p)
-    if ($tags.Count -gt 0) { $n = "$n [$($tags -join ', ')]" }
+    if ($tags.Count -gt 0) { $n = "$n [$($tags -join ' - ')]" }
     return $n
 }
 
@@ -2819,9 +2819,9 @@ function Get-BubbleRangeFromExe {
 #    BanRisk - optional: $true bei Bann-Gefahr (Code 2, roter Hinweis)
 #    PublicUntested - optional: $true, wenn der Patch nicht auf oeffentlichen
 #            Servern getestet ist - Vorsicht, kann zu Kick/Bann fuehren
-#            (Code 3, gelber Hinweis)
+#            (Code 3, oranger Hinweis)
 #    GameUntested - optional: $true, wenn die Funktion im Spiel ungetestet
-#            ist - moeglicherweise verbuggt (Code 4, gelber Hinweis)
+#            ist - moeglicherweise verbuggt (Code 4, oranger Hinweis)
 #    Needs - optional: Ids von Patches, ohne die dieser nicht voll wirkt
 #            (erzeugt nur einen Hinweis, keine Sperre)
 #    PromptDe/PromptEn, Default, Check - optional, fuer Patches mit eigenem
@@ -3262,8 +3262,8 @@ $patches = @(
 
     @{ Id = 'lexara'; Cat = 'dll'; On = $false; PublicUntested = $true; GameUntested = $true
        Author = 'St0ny'
-       De = 'Lexara.dll beim Start laden (HD-Schriften von Stormhand)'
-       En = 'Load Lexara.dll at startup (HD fonts by Stormhand)'
+       De = 'Lexara.dll beim Start laden (HD-Schriften von Stormhand) [BETA]'
+       En = 'Load Lexara.dll at startup (HD fonts by Stormhand) [BETA]'
        NoteDe = 'benoetigt Lexara - dinput8.dll in Lexara.dll umbenennen'
        NoteEn = 'requires Lexara - rename dinput8.dll to Lexara.dll'
        Url = 'https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5'
@@ -3426,8 +3426,8 @@ $patches = @(
 
     @{ Id = 'level101'; Cat = 'gameplay'; On = $false; Needs = @('glue')
        Author = 'Alastor StrixEfuartus (fixed by St0ny)'
-       De = 'Level 101+ Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte)'
-       En = 'Level 101+ fix (game tables, barber chair, base stats)'
+       De = 'Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl fuer alle)'
+       En = 'Level 101+ Druid fix (druid stats in the character window, barber shop for everyone)'
        Code = {
         # Die Spielwert-Tabellen (gtCombatRatings, gtBarberShopCostBase,
         # gtOCTRegenHP/MP, gtChanceToMeleeCrit, ... - elf Tabellen) sind je
@@ -3984,8 +3984,8 @@ $patches = @(
 
     @{ Id = 'lights'; Cat = 'graphics'; On = $false; GrowsExe = $true; PublicUntested = $true; GameUntested = $true
        Author = 'St0ny'
-       De = 'Mehr Lichter: 8 statt 4 Punktlichter (Grundlage fuer neue Shader)'
-       En = 'More lights: 8 instead of 4 point lights (groundwork for new shaders)'
+       De = 'Mehr Lichter: 8 statt 4 Punktlichter (Grundlage fuer neue Shader) [BETA]'
+       En = 'More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA]'
        NoteDe = 'sichtbar nur mit neuen Shadern oder mit fixedFunction 1'
        NoteEn = 'visible only with new shaders or with fixedFunction 1'
        Code = {
@@ -3995,8 +3995,8 @@ $patches = @(
 
     @{ Id = 'lightstay'; Cat = 'graphics'; On = $false; PublicUntested = $true; GameUntested = $true
        Author = 'St0ny'
-       De = 'Lichter bleiben an, wenn ihre Quelle ausserhalb des Bildes ist'
-       En = 'Lights stay on when their source is off-screen'
+       De = 'Lichter bleiben an, wenn ihre Quelle ausserhalb des Bildes ist [BETA]'
+       En = 'Lights stay on when their source is off-screen [BETA]'
        Code = {
         # Punktlichter haengen an Modellen (Fackeln, Zauber ...). Ihr Zeitstempel
         # (Licht +4) wird nur gesetzt, wenn das Modell in diesem Bild gezeichnet
@@ -4392,8 +4392,8 @@ $patches = @(
        Author = 'St0ny (original by MacWarrior)'
        De = 'Programm-Icon aendern (Symbol der Wow.exe)'
        En = 'Change program icon (icon of Wow.exe)'
-       PromptDe = 'Icon-Datei (.ico oder .png), Pfad absolut oder relativ zum WoW-Ordner'
-       PromptEn = 'Icon file (.ico or .png), path absolute or relative to the WoW folder'
+       PromptDe = 'Icon-Datei (.ico oder .png), Pfad absolut oder relativ zum Ordner der Wow.exe'
+       PromptEn = 'Icon file (.ico or .png), path absolute or relative to the folder of Wow.exe'
        Default = ''
        Check = { param($v) Test-ClientIcon $v }
        Decode = { Get-ClientIconFromExe }
@@ -5549,17 +5549,17 @@ $public = @()
 foreach ($p in $chosen) { if ($p.PublicUntested) { $public += PatchRef $p } }
 if ($public.Count -gt 0) {
     Write-Host ''
-    Say (T 'PublicHead') 'Yellow'
-    foreach ($m in $public) { Say "  - $m" 'Yellow' }
-    Say (T 'PublicBan') 'Red'
+    Say (T 'PublicHead') 'DarkYellow'
+    foreach ($m in $public) { Say "  - $m" 'DarkYellow' }
+    Say (T 'PublicBan') 'DarkYellow'
 }
 $untested = @()
 foreach ($p in $chosen) { if ($p.GameUntested) { $untested += PatchRef $p } }
 if ($untested.Count -gt 0) {
     Write-Host ''
-    Say (T 'UntestedHead') 'Yellow'
-    foreach ($m in $untested) { Say "  - $m" 'Yellow' }
-    Say (T 'UntestedWarn') 'Red'
+    Say (T 'UntestedHead') 'DarkYellow'
+    foreach ($m in $untested) { Say "  - $m" 'DarkYellow' }
+    Say (T 'UntestedWarn') 'DarkYellow'
 }
 Write-Host ''
 

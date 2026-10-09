@@ -4,7 +4,9 @@
 
 Ausführliche Beschreibungen aller Patches des
 [St0nys-AIO-WoW-EXE-Patcher](README.de.md). Die Übersicht mit Autoren und
-Preset-Zuordnung steht in der [README](README.de.md#patch-übersicht).
+Preset-Zuordnung steht in der [README](README.de.md#patch-übersicht). Dort
+steht auch, was die Kennzeichnungen hinter den Namen bedeuten, z. B.
+🔴 **[unsicher]** oder 🟡 **[sicher - Exe wird größer]**.
 
 - [System & Leistung](#system--leistung)
 - [Sicherheit & Datenschutz](#sicherheit--datenschutz)
@@ -39,9 +41,6 @@ Entfernt die 30-Sekunden-Verzögerung beim Aktualisieren des Item-Caches.
 
 <a id="patch-worldcrash"></a>
 **WorldFrame-Absturzfix (ungültige Dreiecks-Indizes)** *(Nr. 4, Autor: Alyst3r (0x539wowmod) (fixed by St0ny))* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Verhindert einen Absturz in einer Funktion der Weltdarstellung (VA `0x81D510`).
 Sie läuft über Dreiecke aus je drei Vertex-Indizes und rechnet „Index minus
@@ -136,7 +135,7 @@ der DLL steckt. Die Änderung passt in die Original-Funktion, die Dateigröße
 ändert sich nicht.
 
 <a id="patch-glyphfix"></a>
-**Schrift-Glyphen-Fix (falsche oder kaputte Zeichen in Texten)** *(Nr. 9, Autor: tb (ported by St0ny))* 🟢 **[sicher]** 🟡 **[Exe wird größer]**
+**Schrift-Glyphen-Fix (falsche oder kaputte Zeichen in Texten)** *(Nr. 9, Autor: tb (ported by St0ny))* 🟡 **[sicher - Exe wird größer]**
 
 Behebt Blizzard-Fehler im Glyphen-Cache, der die gerenderten Schriftzeichen
 auf Textur-Seiten ablegt: Texte (vor allem Zahlen, Schaden und Chat) zeigen
@@ -156,10 +155,6 @@ Das entspricht dem Glyphen-Fix aus WotLK-Extensions (Fork von tb), dort
 per DLL. Hier stecken die vier Hooks in einer eigenen Sektion (`.glyph`,
 223 Byte), eine Funktion wird an Ort und Stelle neu geschrieben.
 
-> [!WARNING]
-> Der Patch hängt eine Sektion an – die `Wow.exe` wird größer. Das ist keine
-> sichere Bann-Gefahr, aber ein Risiko: Manche Server prüfen die Dateigröße.
-
 > [!NOTE]
 > Verträgt sich mit awesome_wotlk: Dessen MSDF-Schriften hängen sich an
 > andere Stellen derselben Funktionen oder setzen auf die neu geschriebene
@@ -169,9 +164,6 @@ per DLL. Hier stecken die vier Hooks in einer eigenen Sektion (`.glyph`,
 
 <a id="patch-rce"></a>
 **Remote Code Execution Exploit Fix** *(Nr. 10, Autor: Robinsch)* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Schließt eine Sicherheitslücke, die Remote-Code-Ausführung über manipulierte
 Pakete ermöglichen konnte: Die Sektion `.zdata` verliert ihr Ausführungsrecht,
@@ -189,9 +181,6 @@ läuft weiter.
 
 <a id="patch-wardenoff"></a>
 **Warden komplett abschalten, RCE-Fix** *(Nr. 11, Autor: Robinsch)* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Der Client verwirft alle Warden-Pakete des Servers (`SMSG_WARDEN_DATA`).
 Warden-Module sind Code, den der Server im Client ausführen lässt – mit diesem
@@ -302,9 +291,6 @@ Praktisch für Modder.
 <a id="patch-luaunlock"></a>
 **LUA Unlock (Zauber, Bewegung, Makros)** *(Nr. 23, Autor: Alastor StrixEfuartus)* 🔴 **[unsicher]**
 
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
-
 Addons und Makros dürfen geschützte Funktionen aufrufen: Bewegungsfunktionen
 (`MoveForwardStart`, `TurnLeftStart`, …), `CastSpellByName`, `CastSpell`,
 `UseAction`, `PetAttack`, `RunMacro`/`RunMacroText` und die
@@ -318,9 +304,6 @@ meldet weiterhin einen Fehler. Diese und alle übrigen gibt Nr. 24 frei.
 
 <a id="patch-luaunlockfull"></a>
 **LUA Unlock (vollständig): alle geschützten Funktionen freigeben** *(Nr. 24, Autor: St0ny)* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Erweitert Nr. 23 auf alle geschützten Funktionen. Die zentrale Schutzprüfung
 des Clients kennt 24 Schutztypen in drei Klassen (immer verboten, nur nach
@@ -344,12 +327,7 @@ Patcher weist dann nur darauf hin.
 > das als Botting werten – das kann zu einem Bann führen.
 
 <a id="patch-keyprop"></a>
-**Alle Tastatur-Ereignisse an Addons weiterreichen (OnKeyDown)** *(Nr. 25, Autor: Alyst3r (0x539wowmod))* 🔴 **[unsicher]** 🟠 **[ingame ungetestet]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
+**Alle Tastatur-Ereignisse an Addons weiterreichen (OnKeyDown)** *(Nr. 25, Autor: Alyst3r (0x539wowmod))* 🔴 **[unsicher - ingame ungetestet]**
 
 Hat ein Frame ein OnKeyDown-Skript, meldet der Client die Taste danach als
 erledigt – sie erreicht die Tastenbelegungen dann nicht mehr. Mit dem Patch läuft
@@ -362,11 +340,6 @@ Addons alle Tastendrücke mitlesen, ohne die normale Steuerung zu blockieren.
 
 <a id="patch-globalsv"></a>
 **Addon-Daten aller Accounts zusammenlegen (SavedVariables)** *(Nr. 26, Autor: St0ny (original by boredatom))* 🟠 **[ungetestet]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
 
 WoW speichert die Daten der Addons normalerweise pro Account unter
 `WTF\Account\<ACCOUNT>\`. Mit dem Patch nutzen alle Accounts dafür den
@@ -458,12 +431,7 @@ Die Dateigröße ändert sich nicht.
 > festem Datum und wöchentliche Feiertage aus dem Kalender verschwinden.
 
 <a id="patch-lexara"></a>
-**Lexara.dll beim Start laden (HD-Schriften von Stormhand)** *(Nr. 29, Autor: St0ny)* 🟠 **[ungetestet]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
+**Lexara.dll beim Start laden (HD-Schriften von Stormhand) [BETA]** *(Nr. 29, Autor: St0ny)* 🟠 **[ungetestet]**
 
 Lädt beim Start die `Lexara.dll` aus dem WoW-Ordner –
 [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) von Stormhand ersetzt die Schriftdarstellung
@@ -471,6 +439,10 @@ des Clients durch scharfe HD-Schriften (MSDF). Bisher lief Lexara als
 `dinput8.dll` neben der Exe und kam sich dabei mit anderen Mods in die Quere,
 die denselben Dateinamen benutzen. Mit diesem Patch lädt die Exe Lexara selbst.
 Fehlt die DLL, startet WoW ganz normal.
+
+> [!WARNING]
+> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
+> den dev-Zweigen, nicht in `st0ny-main`.
 
 So wird es eingerichtet: Die `dinput8.dll` aus dem Lexara-Download in
 `Lexara.dll` umbenennen und zusammen mit `skia.dll` in den WoW-Ordner legen.
@@ -487,11 +459,6 @@ dem voice.dll-Lader (Nr. 30), der nur den Sprung direkt danach ändert.
 
 <a id="patch-voicedll"></a>
 **voice.dll beim Start laden (mod-voicechat) [ALPHA]** *(Nr. 30, Autor: St0ny)* 🟠 **[ungetestet]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
 
 Lädt beim Start die `voice.dll` aus dem WoW-Ordner – den Client-Teil von
 [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat), einem
@@ -593,9 +560,6 @@ Slash-Befehle funktionieren auch, während der Charakter tot ist.
 <a id="patch-follow"></a>
 **/follow auch bei NPCs erlauben** *(Nr. 40, Autor: St0ny (original by Alastor StrixEfuartus))* 🟠 **[online ungetestet]**
 
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
-
 Mit `/follow` lässt sich auch NPCs folgen, nicht nur Spielern. Basiert auf
 dem `/follow`-Patch aus der 12th Generation EXE von Alastor StrixEfuartus,
 Portierung und Anpassung von St0ny: Das Original leitet die Prüfung in
@@ -605,14 +569,18 @@ stattdessen der bedingte Sprung hinter der Prüfung unbedingt gemacht – ein
 einziges Byte, gleiche Wirkung, und die Patches vertragen sich.
 
 <a id="patch-level101"></a>
-**Level 101+ Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte)** *(Nr. 41, Autor: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[sicher]**
+**Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl für alle)** *(Nr. 41, Autor: Alastor StrixEfuartus (fixed by St0ny))* 🟢 **[sicher]**
 
 Die Spielwert-Tabellen des Clients (`gtCombatRatings`, `gtBarberShopCostBase`,
 `gtOCTRegenHP`/`MP`, `gtChanceToMeleeCrit` … – elf Tabellen) haben je Spalte
 100 Zeilen, eine pro Level. Ab Level 101 greift der Client außerhalb der Spalte
-zu – Druiden sehen ihre Grundwerte nicht mehr, der Barbierstuhl funktioniert
-nicht, im schlimmsten Fall stürzt der Client ab. Der Patch begrenzt die Zeile
-auf die letzte der Spalte: Level 101+ bekommt die Werte für Level 100, alles
+zu. Das fällt vor allem an zwei Stellen auf:
+- **Druiden** sehen im Charakterfenster (Reiter Charakterinfo) ihre Werte nicht
+  mehr richtig.
+- Der **Barbierstuhl** funktioniert für **alle Klassen** nicht mehr.
+
+Im schlimmsten Fall stürzt der Client ab. Der Patch begrenzt die Zeile auf die
+letzte der Spalte: Level 101+ bekommt die Werte für Level 100, alles
 darunter bleibt unverändert.
 
 > [!NOTE]
@@ -628,9 +596,6 @@ Quelle heißt er „Disable XML SIG MD5“, daher der dortige Hinweis „Use XML
 <a id="patch-raceclass"></a>
 **Charaktererstellung: mehr als 10 Klassen (Zufallsklasse)** *(Nr. 42, Autor: Alastor StrixEfuartus / Robinsch)* 🔴 **[unsicher]**
 
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
-
 Die Zufallsauswahl der Klasse bei der Charaktererstellung sammelt die
 erlaubten Klassen in einem Feld mit 10 Plätzen. Mit eigenen Klassen
 (`ChrClasses.dbc` mit mehr als 10 Einträgen) würde es überlaufen; der Patch
@@ -639,9 +604,6 @@ der Server – mehr macht dieser Patch nicht.
 
 <a id="patch-namecheck"></a>
 **Namensprüfung bei der Charaktererstellung abschalten (z. B. Zahlen im Namen)** *(Nr. 43, Autor: Alyst3r (0x539wowmod) (fixed by St0ny))* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Schaltet die komplette clientseitige Namensprüfung bei der Charaktererstellung
 ab: Die Prüffunktion (VA `0x6B0F90`) meldet immer „Name gültig“. Damit sind z. B.
@@ -671,11 +633,6 @@ Charakterauswahl-Bildschirm mehr als 10 Slots anzeigt.
 
 <a id="patch-customitem"></a>
 **Custom Item Fix (BETA) v2** *(Nr. 45, Autor: Kebabstorm (fixed by St0ny))* 🟠 **[ungetestet]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
 
 Macht Custom-Items möglich, ohne die `Item.dbc` des Clients anzupassen. Viele
 Stellen im Client lesen Display-ID, Inventartyp, Klasse, Unterklasse und Scheide
@@ -713,9 +670,6 @@ nicht) und die Änderung `Cache` → `||che` – das ist genau Patch Nr. 2.
 <a id="patch-climb"></a>
 **Steigwinkel-Begrenzung aufheben (jeden Hang hochlaufen)** *(Nr. 46, Autor: Alastor StrixEfuartus)* 🔴 **[unsicher]**
 
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
-
 Der Charakter kommt jeden Hang hoch, egal wie steil. Im Original ist bei 50°
 Schluss: Der Client vergleicht die Neigung mit dem Kosinus dieses Winkels
 (`0.6427876` bei VA `0xA37F0C`). Der Patch setzt ihn auf `0.0` = cos 90°.
@@ -726,9 +680,6 @@ Schluss: Der Client vergleicht die Neigung mit dem Kosinus dieses Winkels
 
 <a id="patch-jump"></a>
 **Sprunghöhe ändern (Original -7.9555473)** *(Nr. 47, Autor: Alastor StrixEfuartus)* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Ändert die Anfangsgeschwindigkeit des Sprungs (VA `0xAA33DC`, Original
 `-7.9555473`). Der Patcher fragt den Wert nach der Auswahl ab: eine negative
@@ -743,9 +694,6 @@ Wert wird wie bei den Client-Info-Patches gemerkt.
 
 <a id="patch-airforward"></a>
 **Im Sprung vorwärts/rückwärts steuern** *(Nr. 48, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Normalerweise ignoriert der Client Vorwärts- und Rückwärts-Eingaben, solange der
 Charakter springt oder fällt. Mit dem Patch lässt sich die Richtung auch in der
@@ -762,9 +710,6 @@ der Byte-Patch aus 0x539wowmod, der die Bewegung in der Luft aktualisiert.
 <a id="patch-airlateral"></a>
 **Im Sprung seitwärts steuern** *(Nr. 49, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
 
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
-
 Wie der vorige Patch, nur für seitliche Bewegung (Strafen): zwei Sprünge in der
 Seitwärts-Eingabe des Clients plus der Byte-Patch aus 0x539wowmod, der die
 Bewegung bei gesetztem Fall-Flag nicht mehr vorzeitig abbricht.
@@ -776,9 +721,6 @@ Bewegung bei gesetztem Fall-Flag nicht mehr vorzeitig abbricht.
 <a id="patch-airturn"></a>
 **Im Sprung drehen ändert die Flugrichtung** *(Nr. 50, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]**
 
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
-
 Dreht man sich im Sprung (Maus oder Tasten), behält der Charakter im Original
 seine Flugrichtung. Mit dem Patch setzt der Client die Bewegungsrichtung auch in
 der Luft neu, wie es die DLL von 0x539wowmod tut. Passt am besten zusammen mit
@@ -789,10 +731,7 @@ den beiden vorigen Patches.
 > kann zu einem Bann führen.
 
 <a id="patch-doublejump"></a>
-**Doppelsprung (weitere Sprünge in der Luft)** *(Nr. 51, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher]** 🟡 **[Exe wird größer]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
+**Doppelsprung (weitere Sprünge in der Luft)** *(Nr. 51, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🔴 **[unsicher - Exe wird größer]**
 
 Erlaubt weitere Sprünge, während der Charakter in der Luft ist. Der Patcher fragt
 nach der Auswahl, wie viele zusätzliche Sprünge es sein sollen (1 bis 9, `1` =
@@ -817,18 +756,9 @@ beschreibbar); die `Wow.exe` wird dadurch etwas größer.
 > [!WARNING]
 > Server mit Anti-Cheat können Sprünge in der Luft erkennen – das kann zu einem
 > Bann führen.
->
-> Dieser Patch hängt eine eigene Sektion an, die `Wow.exe` wird dadurch größer.
-> Das ist keine sichere Bann-Gefahr, aber ein Risiko: Manche Server prüfen die
-> Dateigröße der `Wow.exe`.
 
 <a id="patch-noammo"></a>
 **Fernkampf ohne Munition** *(Nr. 52, Autor: Alyst3r (ported by St0ny))* 🟠 **[ungetestet]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
 
 Der Client prüft bei Schießen, Automatischem Schuss und anderen Fähigkeiten,
 die Munition brauchen, ob Pfeile oder Kugeln vorhanden sind. Der Patch lässt
@@ -1149,11 +1079,6 @@ Original-Patch).
 <a id="patch-nofade"></a>
 **Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN** *(Nr. 63, Autor: Alyst3r (0x539wowmod) (ported by St0ny))* 🟠 **[ungetestet]**
 
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
-
 Beim Entfernen eines NPCs (z. B. Despawn) blendet der Client das Modell
 normalerweise langsam aus. Mit dem Patch verschwinden NPCs sofort, bei denen der
 Server in `UNIT_FIELD_FLAGS_2` das Flag `UNIT_FLAG2_DO_NOT_FADE_IN` (`0x20`) setzt –
@@ -1168,7 +1093,7 @@ wie bisher.
 > passen zusammen hinein, die Dateigröße ändert sich nicht.
 
 <a id="patch-hdportraits"></a>
-**HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel** *(Nr. 64, Autor: St0ny (original by Badgermilk0))* 🟢 **[sicher]** 🟡 **[Exe wird größer]**
+**HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel** *(Nr. 64, Autor: St0ny (original by Badgermilk0))* 🟡 **[sicher - Exe wird größer]**
 
 Die Unit-Frames (Spieler, Ziel, Gruppe, Bosse usw.) zeigen im Client schon im
 Original das 3D-Modell des jeweiligen Charakters. Der Patch erzeugt also
@@ -1184,11 +1109,9 @@ Nur der 3D-Modell-Pfad wird angehoben; der Icon-/Datei-Pfad (feste
 64×64-Bilder für Item-/Zauber-Icons) bleibt bewusst auf 64, da dessen
 Kopierschleife sonst über die Quelle hinaus liest.
 
-> [!WARNING]
-> Dieser Patch hängt eine neue PE-Sektion `.hdp` an die `Wow.exe` an (generierte
-> 256er-Alphamaske + Code-Höhlen + Detour des Masken-Builders), die Datei wächst
-> dadurch um ca. 69 KB. Das ist keine sichere Bann-Gefahr, aber ein Risiko:
-> Manche Server prüfen die Dateigröße der `Wow.exe`.
+Der Patch hängt eine neue PE-Sektion `.hdp` an die `Wow.exe` an (generierte
+256er-Alphamaske + Code-Höhlen + Detour des Masken-Builders), die Datei wächst
+dadurch um ca. 69 KB.
 
 > [!NOTE]
 > **Zusammen mit awesome_wotlk (Nr. 27):** Die `AwesomeWotlkLib.dll` bringt mit
@@ -1198,7 +1121,7 @@ Kopierschleife sonst über die Quelle hinaus liest.
 > egal was in `portraitResolution` steht.
 
 <a id="patch-iconsnap"></a>
-**Icons im Text pixelgenau (scharf statt verschwommen)** *(Nr. 65, Autor: tb (ported by St0ny))* 🟢 **[sicher]** 🟡 **[Exe wird größer]**
+**Icons im Text pixelgenau (scharf statt verschwommen)** *(Nr. 65, Autor: tb (ported by St0ny))* 🟡 **[sicher - Exe wird größer]**
 
 Texte können Icons enthalten (`|T…|t`, z. B. Zielmarkierungen, Währungen oder
 Questsymbole in Chat, Tooltips und Addons). Ihre Größe und Lage rechnet der
@@ -1209,23 +1132,19 @@ Versatz der Icons auf ganze Pixel, wie der Pixel-Snap aus WotLK-Extensions
 (Fork von tb), dort per DLL. Icons in Originalgröße der Schrift bleiben
 unverändert.
 
-> [!WARNING]
-> Der Patch hängt eine kleine Sektion an (`.isnap`, 179 Byte) – die `Wow.exe`
-> wird größer. Das ist keine sichere Bann-Gefahr, aber ein Risiko: Manche
-> Server prüfen die Dateigröße.
+Der Code liegt in einer eigenen kleinen Sektion (`.isnap`, 179 Byte).
 
 <a id="patch-lights"></a>
-**Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader)** *(Nr. 66, Autor: St0ny)* 🟠 **[ungetestet]** 🟡 **[Exe wird größer]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
+**Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) [BETA]** *(Nr. 66, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
 
 Im Original bekommt jedes Modell und jedes Gebäude neben der Sonne höchstens
 die 4 nächsten Punktlichter ab (Fackeln, Zauber, Lichter an Modellen). Der
 Patch lässt das Spiel die 8 nächsten sammeln und an die Grafik weitergeben.
 Er ist die Exe-Grundlage für neue Shader, die mehr Lichter darstellen.
+
+> [!WARNING]
+> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
+> den dev-Zweigen, nicht in `st0ny-main`.
 
 So funktioniert es:
 - Die 4 nächsten Lichter bleiben wie bisher an ihrem Platz, Spiel und
@@ -1267,7 +1186,7 @@ Registerbelegung für Shader-Autoren (Vertex-Shader, Modelle und Gebäude):
 > Shader und einen eigenen Datenweg; der folgt in einer späteren Stufe.
 
 > [!TIP]
-> Zum Testen am besten zusammen mit Nr. 67: Ohne ihn schaltet der Client das
+> Zum Testen am besten zusammen mit Nr. 68: Ohne ihn schaltet der Client das
 > Licht einer Quelle ab, sobald die Quelle aus dem Bild gedreht wird – auch auf
 > Figuren, die noch zu sehen sind.
 
@@ -1277,17 +1196,16 @@ Registerbelegung für Shader-Autoren (Vertex-Shader, Modelle und Gebäude):
 > Patcher die zuletzt angehängte Sektion, statt eine neue anzulegen.
 
 <a id="patch-lightstay"></a>
-**Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist** *(Nr. 67, Autor: St0ny)* 🟠 **[ungetestet]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
->
-> **Ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft, möglicherweise verbuggt.
+**Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist [BETA]** *(Nr. 67, Autor: St0ny)* 🟠 **[ungetestet]**
 
 Behebt einen Fehler des Original-Clients: Dreht man die Kamera so, dass eine
 Lichtquelle (z. B. eine Fackel) aus dem Bild rutscht, verschwindet ihr Licht
 auch auf allem, was noch zu sehen ist – etwa auf der eigenen Figur direkt
 daneben. Das passiert mit und ohne Shader.
+
+> [!WARNING]
+> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
+> den dev-Zweigen, nicht in `st0ny-main`.
 
 Ursache: Punktlichter hängen an Modellen. Ihr Zeitstempel wird nur gesetzt,
 wenn das Modell im aktuellen Bild gezeichnet wird (VA `0x828B9C`); Modelle
@@ -1326,9 +1244,6 @@ Standard-Nameplates. Entspricht dem Verhalten ab Cataclysm.
 
 <a id="patch-emblems"></a>
 **Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 71, Autor: MacWarrior)* 🟠 **[online ungetestet]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
 
 Der Client hält die Anzahl der wählbaren Tabard-Varianten in einer kleinen
 Tabelle (VA `0xA14908`, Datei-Offset `0x613108`): 170 Embleme, 17 Emblemfarben,
@@ -1384,9 +1299,6 @@ Zufall-Knopf funktioniert weiter – er nutzt im Client einen eigenen Weg.
 <a id="patch-lootopen"></a>
 **Lootfenster bleibt beim Laufen offen** *(Nr. 74, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
-
 Im Original schließt sich das Lootfenster, sobald du läufst, seitwärts gehst
 oder dich drehst. Mit dem Patch bleibt es offen. Die zehn Stellen in den
 Bewegungs-Handlern, die das Fenster schließen, werden übersprungen (je ein
@@ -1394,9 +1306,6 @@ Byte).
 
 <a id="patch-showlevel"></a>
 **Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 75, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
 
 Ist ein feindliches Ziel 10 oder mehr Level über dir, zeigt der Client statt
 des Levels „??“ (bzw. einen Totenkopf auf der Namensplakette, `UnitLevel`
@@ -1407,9 +1316,6 @@ nimmt Nr. 76 heraus.
 <a id="patch-showlevelboss"></a>
 **Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 75)** *(Nr. 76, Autor: St0ny)* 🟠 **[online ungetestet]**
 
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
-
 Kreaturen, die als Boss markiert sind (Flag in den Kreaturdaten, z. B.
 Schlachtzug- und Dungeonbosse), zeigen im Original immer „??“ – im Tooltip,
 auf der Namensplakette (Totenkopf) und über `UnitLevel` (-1), egal wie hoch
@@ -1419,14 +1325,11 @@ steht dort das Level, das der Server für den Boss schickt. Die Beschriftung
 
 > [!NOTE]
 > Ist ein Boss 10 oder mehr Level über dir, greift zusätzlich die
-> Level-Prüfung – deren „??“ entfernt Nr. 74. Für alle Bosse daher zusammen mit
+> Level-Prüfung – deren „??“ entfernt Nr. 75. Für alle Bosse daher zusammen mit
 > Nr. 75 einspielen; der Patcher weist darauf hin, wenn Nr. 75 fehlt.
 
 <a id="patch-holdrepeat"></a>
-**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 77, Autor: tb (ported by St0ny))* 🔴 **[unsicher]** 🟡 **[Exe wird größer]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
+**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 77, Autor: tb (ported by St0ny))* 🔴 **[unsicher - Exe wird größer]**
 
 Hältst du die Taste einer Aktionsleisten-Belegung gedrückt (die Hauptleiste,
 `ACTIONBUTTON1`–`12`, mit Seiten-, Haltungs- und Gestaltleisten), löst der
@@ -1451,8 +1354,7 @@ werden.
 
 > [!WARNING]
 > Server mit Anti-Cheat können das als Automatisierung (Bot) werten, viele
-> Server verbieten „ein Tastendruck = mehrere Aktionen“. Außerdem hängt der
-> Patch eine Sektion an – die `Wow.exe` wird größer (Bann-Gefahr).
+> Server verbieten „ein Tastendruck = mehrere Aktionen“.
 
 <a id="patch-bubblerange"></a>
 **Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 78, Autor: St0ny)* 🟢 **[sicher]**
@@ -1527,10 +1429,7 @@ hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
 <a id="patch-camera"></a>
-**CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen** *(Nr. 83, Autor: Stormhand (fixed by St0ny))* 🟠 **[online ungetestet]** 🟡 **[Exe wird größer]**
-
-> [!WARNING]
-> **Online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr. Vorsicht, kann zu Kick/Bann führen.
+**CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen** *(Nr. 83, Autor: Stormhand (fixed by St0ny))* 🟠 **[online ungetestet - Exe wird größer]**
 
 Portierung von [CameraReforged](https://github.com/Zendevve/CameraReforged)
 von **Stormhand** in diesen Patcher, damit
@@ -1593,11 +1492,6 @@ R6002-Absturz zurück und überschreibt die Tabelle des Slider-Patches.
 
 </details>
 
-> [!WARNING]
-> Dieser Patch hängt wie die HD-Portraits eine eigene Sektion an (etwa +1 KB),
-> die `Wow.exe` wird dadurch größer. Das ist keine sichere Bann-Gefahr, aber
-> ein Risiko: Manche Server prüfen die Dateigröße der `Wow.exe`.
-
 ## Sound
 
 <a id="patch-sound"></a>
@@ -1642,9 +1536,6 @@ bereits eingespielten Patch `-> aktuell: …`).
 <a id="patch-clientversion"></a>
 **Client-Version ändern (Original 3.3.5)** *(Nr. 85, Autor: MacWarrior)* 🔴 **[unsicher]**
 
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
-
 Setzt eine neue Version im Format `x.y.z` (z. B. `3.3.6` oder `3.3.123`, höchstens
 7 Zeichen). Geändert werden die Version, die der Client im Spiel anzeigt, die
 FileVersion und die ProductVersion (`Version x.y`) der Versionsressource sowie
@@ -1654,9 +1545,6 @@ und Nebenversion müssen zusammen in das ProductVersion-Feld passen (z. B. `3.3`
 
 <a id="patch-clientbuild"></a>
 **Build-Nummer ändern (Original 12340)** *(Nr. 86, Autor: MacWarrior)* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Setzt eine neue Build-Nummer (6142 bis 65535, Original `12340`): die interne
 Build-Nummer, die sichtbare Build-Nummer und den vierten Teil der FileVersion
@@ -1687,9 +1575,6 @@ den Server.
 <a id="patch-clienttitle"></a>
 **Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 87, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
 
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
-
 Setzt FileDescription, InternalName und ProductName der Versionsressource, also
 das, was Windows z. B. in den Dateieigenschaften und im Task-Manager anzeigt.
 Höchstens 17 Zeichen, nur ASCII.
@@ -1707,9 +1592,6 @@ ab, damit er stehen bleibt.
 
 <a id="patch-clientdate"></a>
 **Build-Datum ändern (Original Jun 24 2010)** *(Nr. 88, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
-
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
 
 Setzt das Build-Datum (Original `Jun 24 2010`) an allen drei Stellen in der EXE
 und das Jahr im Copyright-Vermerk, dazu die Uhrzeit. Die steht an zwei Stellen:
@@ -1731,12 +1613,9 @@ Uhrzeit der `Wow.exe`.
 <a id="patch-clienticon"></a>
 **Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 89, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
-> [!CAUTION]
-> **Unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben.
-
 Tauscht das Icon aus, das Windows für die `Wow.exe` anzeigt (Explorer,
 Taskleiste, Verknüpfungen). Der Patcher fragt nach dem Pfad einer `.ico`-
-oder `.png`-Datei, absolut oder relativ zum WoW-Ordner. Aus der Datei baut er
+oder `.png`-Datei, absolut oder relativ zum Ordner der `Wow.exe`. Aus der Datei baut er
 die vier Größen, die in der `Wow.exe` stecken (48, 32, 24 und 16 Pixel, je
 32 Bit mit Alphakanal): Ist eine Größe in der ICO enthalten, wird sie direkt
 übernommen, sonst wird das nächstgrößere Bild per Flächenmittelung

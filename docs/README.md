@@ -53,13 +53,16 @@ extended** at any time later – all the way back to the original `Wow.exe`.
 
 ## Usage
 
-1. Copy `patcher.bat` and `apply_patches.ps1` into your WoW folder
-   (next to `Wow.exe`).
-2. Close WoW if it is still running.
+1. Download the ZIP from the [latest release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) and unpack it. It
+   contains the folder `St0nys-AIO-WoW-EXE-Patcher`.
+2. Copy your original `Wow.exe` from your WoW folder into that folder.
 3. Double-click `patcher.bat`.
-4. Choose the language (first start only), select patches, confirm – done.
+4. Choose the language (first start only), select patches, confirm.
+5. Close WoW and copy the patched `Wow.exe` back into your WoW folder,
+   replacing the old one.
 
-To **change or remove** patches just run `patcher.bat` again, see
+To **change or remove** patches just run `patcher.bat` in the patcher folder
+again and copy `Wow.exe` back into your WoW folder afterwards, see
 [Changing or removing patches](#changing-or-removing-patches).
 
 > [!NOTE]
@@ -127,8 +130,8 @@ Before the confirmation prompt the patcher shows **notes** – nothing is blocke
 when a companion patch is missing (e.g. the extended slider maximums need the
 CVar unlocks), when one patch makes another unnecessary (disabling Warden
 completely replaces the RCE fix) and when selected patches carry a warning –
-with a red warning for ban risk and for patches that are still untested on
-public servers or in game, yellow for a larger `Wow.exe` (see [Notes](#notes)).
+red for ban risk, orange for patches that are still untested on public
+servers or in game, and yellow for a larger `Wow.exe` (see [Notes](#notes)).
 
 ### The selection is remembered
 
@@ -152,13 +155,11 @@ The preset "Reforged" (key `R`) is the official preset of the
 [Project Reforged](https://projectreforged.github.io/wotlk/) project, put
 together by Stormhand, and the default selection. It contains patches
 rated safe (🟢), all tested by Stormhand for several hours on Warmane – **the
-preset is safe** and can be used on public servers as well. Three of them
-(No. 9, 64 and 65) make `Wow.exe` larger; that was no problem on Warmane, but
-other servers may check the file size. On top of that come the Lexara loader
-(No. 29) for Stormhand's HD fonts and the light patches No. 66 and 67 for the
-graphics overhaul. They are still untested; No. 66 makes `Wow.exe` larger as
-well, and without `Lexara.dll` in the WoW folder No. 29 does nothing. The
-"Reforged" column in the
+preset is safe** and can be used on public servers as well. Four of them (No. 9, 64, 65 and 66) make `Wow.exe` larger; that was no
+problem on Warmane, but other servers may check the file size. On top of that
+come the Lexara loader (No. 29) for Stormhand’s HD fonts and the light patches
+No. 66 and 67. They are still untested; without `Lexara.dll` in the WoW folder
+No. 29 does nothing. The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it; in the
 script the list is `$PRESET_REFORGED`.
 
@@ -173,7 +174,9 @@ addition "fixed by St0ny" to the author. The fixed patches have been tested in
 game and work – **the preset is safe**.
 
 If you still run into problems, please let me know via an
-[issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues).
+[issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues/new/choose).
+If you have a patch that should be part of this patcher, you can send it to me
+via an issue as well.
 
 The second preset "St0nys_Wow.exe" (key `S`) is St0ny's own selection for
 private servers. It also contains patches with a ban risk and patches that make
@@ -190,7 +193,8 @@ exactly the patches checked that are currently in `Wow.exe`. Newly checked
 patches are marked **(new)**, deselected ones **(will be removed)**. This way
 you can add patches, deselect them or change values (jump height, double
 jump, client info) as you like. `N` plus ENTER removes every patch – afterwards
-`Wow.exe` is **byte-for-byte the original** again.
+`Wow.exe` is **byte-for-byte the original** again. Afterwards copy `Wow.exe`
+back into your WoW folder.
 
 How it works:
 
@@ -252,10 +256,10 @@ the user or because no more input is possible).
 |---------------------|---------|
 | `patcher.bat`       | Launcher, calls `apply_patches.ps1` |
 | `apply_patches.ps1` | Patch engine: language selection, checks, selection menu, backup; reads the EXE once, patches in memory, writes it back once |
-| `README.md`         | This file |
-| `README.de.md`      | German documentation |
-| `PATCHES.de.md`     | Detailed patch descriptions in German |
-| `PATCHES.en.md`     | Detailed descriptions of all patches |
+| `docs/README.md`    | This file |
+| `docs/README.de.md` | German documentation |
+| `docs/PATCHES.de.md` | Detailed patch descriptions in German |
+| `docs/PATCHES.en.md` | Detailed descriptions of all patches |
 | `patcher_selection.ini` | Created on the first start (remembered language), stores the accepted selection and the entered values |
 | `patcher_state.ini` | Created when patching: hash of the patched `Wow.exe`, applied patches, values and original bytes – speeds up the next start, but is not strictly required |
 | `Wow.exe.ORI`       | Backup of the original `Wow.exe`, created on the first patch run |
@@ -277,12 +281,16 @@ Click the number of a patch to jump to its description.
 |--------|---------|----------------|
 | 🟢 **[safe]** | Tested in game and safe to use. | no warning |
 | 🔴 **[unsafe]** | Confirmed ban risk: can lead to a ban on many servers. Only use it on servers that allow it. | red warning |
-| 🟠 **[untested online]** | Not tested on public servers, possible ban risk: nobody can predict how the server will react. Careful, it may get you kicked or banned. | red warning |
-| 🟠 **[untested ingame]** | The function has not been checked in game yet: nobody can predict how the game will react, possibly buggy. | red warning |
-| 🟠 **[untested]** | Neither tested online nor ingame. | red warning |
+| 🟠 **[untested online]** | Not tested on public servers, possible ban risk: nobody can predict how the server will react. Careful, it may get you kicked or banned. | orange warning |
+| 🟠 **[untested ingame]** | The function has not been checked in game yet: nobody can predict how the game will react, possibly buggy. | orange warning |
+| 🟠 **[untested]** | Neither tested online nor ingame. | orange warning |
 | 🟡 **[exe grows]** | The patch appends a section to `Wow.exe`. Not a certain ban, but a risk: some servers check the file size. | yellow note |
 
-A patch can carry several ratings, e.g. 🟢 **[safe]** and 🟡 **[exe grows]**.
+A patch can carry several ratings. They then share one pair of brackets
+with a single dot in front: the stricter one wins (red before orange before
+yellow), and a green dot turns yellow when the exe grows. For example
+🟡 **[safe - exe grows]**, 🔴 **[unsafe - exe grows]**,
+🟠 **[untested - exe grows]** or 🔴 **[unsafe - untested ingame]**.
 In the patcher the warnings are shown in square brackets after the
 name, and before patching it lists them once more.
 
@@ -298,7 +306,7 @@ name, and before patching it lists them once more.
 | [6](PATCHES.en.md#patch-nothrottle) | Do not throttle item and player name queries | 🟢 **[safe]** | tb (ported by St0ny) | – | – | ✅ |
 | [7](PATCHES.en.md#patch-mirrorfix) | Mirror Image crash fix (memory leak with mirror images) | 🟢 **[safe]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [8](PATCHES.en.md#patch-wmocube) | Missing WMO file: error cube instead of ERROR #134 | 🟢 **[safe]** | Alyst3r (ported by St0ny) | ✅ | – | ✅ |
-| [9](PATCHES.en.md#patch-glyphfix) | Font glyph fix (wrong or garbled characters in text) | 🟢 **[safe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [9](PATCHES.en.md#patch-glyphfix) | Font glyph fix (wrong or garbled characters in text) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 
 #### Security & privacy
 
@@ -329,7 +337,7 @@ name, and before patching it lists them once more.
 | [22](PATCHES.en.md#patch-localdata) | Load data directly from the Data folder (no MPQ) | 🟢 **[safe]** | Alastor StrixEfuartus | – | ✅ | ✅ |
 | [23](PATCHES.en.md#patch-luaunlock) | LUA unlock (spells, movement, macros) | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
 | [24](PATCHES.en.md#patch-luaunlockfull) | LUA unlock (complete): allow all protected functions | 🔴 **[unsafe]** | St0ny | – | – | – |
-| [25](PATCHES.en.md#patch-keyprop) | Pass all keyboard events on to addons (OnKeyDown) | 🔴 **[unsafe]**<br>🟠 **[untested ingame]** | Alyst3r (0x539wowmod) | – | – | – |
+| [25](PATCHES.en.md#patch-keyprop) | Pass all keyboard events on to addons (OnKeyDown) | 🔴 **[unsafe - untested ingame]** | Alyst3r (0x539wowmod) | – | – | – |
 | [26](PATCHES.en.md#patch-globalsv) | Merge addon data of all accounts (SavedVariables) *(shared folder `WTF\Account\global`)* | 🟠 **[untested]** | St0ny (original by boredatom) | – | – | – |
 
 #### DLL loaders
@@ -338,7 +346,7 @@ name, and before patching it lists them once more.
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[safe]** | FrostAtom | ✅ | ✅ | ✅ |
 | [28](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[safe]** | St0ny (original by Alyst3r) | – | – | – |
-| [29](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟠 **[untested]** | St0ny | ✅ | – | – |
+| [29](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) [BETA] *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟠 **[untested]** | St0ny | ✅ | – | – |
 | [30](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (mod-voicechat) [ALPHA] *(module not finished yet, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[untested]** | St0ny | – | – | – |
 
 #### Gameplay fixes
@@ -355,7 +363,7 @@ name, and before patching it lists them once more.
 | [38](PATCHES.en.md#patch-mail) | New mail without the 60-second wait | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [39](PATCHES.en.md#patch-deadchat) | Allow chat commands while dead | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [40](PATCHES.en.md#patch-follow) | Allow /follow on NPCs | 🟠 **[untested online]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
-| [41](PATCHES.en.md#patch-level101) | Level 101+ fix (game tables, barber chair, base stats) | 🟢 **[safe]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
+| [41](PATCHES.en.md#patch-level101) | Level 101+ Druid fix (druid stats in the character window, barber shop for everyone) | 🟢 **[safe]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
 | [42](PATCHES.en.md#patch-raceclass) | Character creation: more than 10 classes (random class) *(for custom classes; server must support it)* | 🔴 **[unsafe]** | Alastor StrixEfuartus / Robinsch | – | – | – |
 | [43](PATCHES.en.md#patch-namecheck) | Disable the name check in character creation (e.g. digits in names) *(server must allow the names as well)* | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | – |
 | [44](PATCHES.en.md#patch-maxchars) | Max characters per realm raised to 255 | 🟢 **[safe]** | St0ny | – | ✅ | – |
@@ -365,7 +373,7 @@ name, and before patching it lists them once more.
 | [48](PATCHES.en.md#patch-airforward) | Steer forward/backward while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [49](PATCHES.en.md#patch-airlateral) | Steer sideways while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [50](PATCHES.en.md#patch-airturn) | Turning while jumping changes the flight direction | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
-| [51](PATCHES.en.md#patch-doublejump) | Double jump (more jumps in the air) *(asks for the value)* | 🔴 **[unsafe]**<br>🟡 **[exe grows]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
+| [51](PATCHES.en.md#patch-doublejump) | Double jump (more jumps in the air) *(asks for the value)* | 🔴 **[unsafe - exe grows]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [52](PATCHES.en.md#patch-noammo) | Ranged attacks without ammo *(the server has to support it, otherwise it still reports "no ammo")* | 🟠 **[untested]** | Alyst3r (ported by St0ny) | – | – | – |
 
 #### Graphics & view distance
@@ -383,10 +391,10 @@ name, and before patching it lists them once more.
 | [61](PATCHES.en.md#patch-bluemoon) | Re-enable the blue moon in the night sky | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [62](PATCHES.en.md#patch-notransparency) | No character transparency when zooming in | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
 | [63](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
-| [64](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟢 **[safe]**<br>🟡 **[exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
-| [65](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟢 **[safe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
-| [66](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) *(visible only with new shaders or with fixedFunction 1)* | 🟠 **[untested]**<br>🟡 **[exe grows]** | St0ny | ✅ | – | – |
-| [67](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen | 🟠 **[untested]** | St0ny | ✅ | – | – |
+| [64](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe - exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
+| [65](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [66](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA] *(visible only with new shaders or with fixedFunction 1)* | 🟠 **[untested - exe grows]** | St0ny | ✅ | – | – |
+| [67](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen [BETA] | 🟠 **[untested]** | St0ny | ✅ | – | – |
 
 #### Interface & comfort
 
@@ -401,7 +409,7 @@ name, and before patching it lists them once more.
 | [74](PATCHES.en.md#patch-lootopen) | Loot window stays open while moving | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
 | [75](PATCHES.en.md#patch-showlevel) | Real level instead of "??" for enemies 10+ levels above you *(bosses still show "??" – see No. 76)* | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
 | [76](PATCHES.en.md#patch-showlevelboss) | Real level for bosses too instead of "??" (extension to No. 75) | 🟠 **[untested online]** | St0ny | – | – | – |
-| [77](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe]**<br>🟡 **[exe grows]** | tb (ported by St0ny) | – | – | ✅ |
+| [77](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe - exe grows]** | tb (ported by St0ny) | – | – | ✅ |
 | [78](PATCHES.en.md#patch-bubblerange) | Increase the chat bubble range (original 25 yards) *(asks for the value)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 
 #### Window, mouse & camera
@@ -412,7 +420,7 @@ name, and before patching it lists them once more.
 | [80](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 79)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 | [81](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [82](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [83](PATCHES.en.md#patch-camera) | CameraReforged [BETA]: camera height and zoom limits *(shoulder offset has no effect yet)* | 🟠 **[untested online]**<br>🟡 **[exe grows]** | Stormhand (fixed by St0ny) | – | – | – |
+| [83](PATCHES.en.md#patch-camera) | CameraReforged [BETA]: camera height and zoom limits *(shoulder offset has no effect yet)* | 🟠 **[untested online - exe grows]** | Stormhand (fixed by St0ny) | – | – | – |
 
 #### Sound
 
@@ -454,16 +462,13 @@ clicking the number of a patch takes you straight to its description.
   in square brackets, and before the confirmation prompt the patcher lists the
   selected patches with a warning once more:
   - 🟢 **safe** – tested in game, no warning in the patcher.
-  - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 10, 11, 23–25,
-    42, 43, 46–51, 77 and 85–89 (red warning).
+  - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 10, 11, 23–25, 42, 43, 46–51, 77 and 85–89 (red warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 26, 29, 30, 40, 45, 52, 63, 66, 67, 71,
-    74–76 and 83 (red warning).
+    you kicked or banned: No. 26, 29, 30, 40, 45, 52, 63, 66, 67, 71, 74–76 and 83
+    (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 29, 30, 45, 52, 63, 66 and 67 (red
-    warning).
-  - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 51,
-    64–66, 77 and 83. This does not mean a certain ban, but it is a risk: some
+    possibly buggy: No. 25, 26, 29, 30, 45, 52, 63, 66 and 67 (orange warning).
+  - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 51, 64–66, 77 and 83. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
     the file size.
 - **Signature:** the original `Wow.exe` is digitally signed by Blizzard. Every
@@ -522,7 +527,7 @@ clicking the number of a patch takes you straight to its description.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](../LICENSE).
 Copyright (c) 2026 St0ny (Raz0r1337).
 
 In short: anyone may use, modify and redistribute the patcher – including in
