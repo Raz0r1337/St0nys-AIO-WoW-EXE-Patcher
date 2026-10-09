@@ -158,8 +158,10 @@ rated safe (🟢), all tested by Stormhand for several hours on Warmane – **th
 preset is safe** and can be used on public servers as well. Four of them (No. 9, 64, 65 and 66) make `Wow.exe` larger; that was no
 problem on Warmane, but other servers may check the file size. On top of that
 come the Lexara loader (No. 29) for Stormhand’s HD fonts and the light patches
-No. 66 and 67. They are still untested; without `Lexara.dll` in the WoW folder
-No. 29 does nothing. The "Reforged" column in the
+No. 66 and 67. For the Lexara loader the patch itself is safe, but
+`Lexara.dll` may be detected or blocked on public servers; without
+`Lexara.dll` in the WoW folder it does nothing. The light patches are still
+untested. The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it; in the
 script the list is `$PRESET_REFORGED`.
 
@@ -348,7 +350,7 @@ name, and before patching it lists them once more.
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom | – | ✅ | ✅ |
 | [28](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
-| [29](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) [BETA] *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟠 **[untested]** | St0ny | ✅ | – | – |
+| [29](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
 | [30](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (mod-voicechat) [ALPHA] *(module not finished yet, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[untested]** | St0ny | – | – | – |
 
 #### Gameplay fixes
@@ -466,15 +468,15 @@ clicking the number of a patch takes you straight to its description.
   - 🟢 **safe** – tested in game, no warning in the patcher.
   - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 10, 11, 23–25, 42, 43, 46–51, 77 and 85–89 (red warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 26, 29, 30, 40, 45, 52, 63, 66, 67, 71, 74–76 and 83
+    you kicked or banned: No. 26, 30, 40, 45, 52, 63, 66, 67, 71, 74–76 and 83
     (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 29, 30, 45, 52, 63, 66 and 67 (orange warning).
+    possibly buggy: No. 25, 26, 30, 45, 52, 63, 66 and 67 (orange warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 51, 64–66, 77 and 83. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
     the file size.
   - 🟡 **DLL risky** – the patch itself is safe, but it loads a DLL that may be
-    detected or blocked on public servers: No. 27 and 28 (yellow note). Only
+    detected or blocked on public servers: No. 27–29 (yellow note). Only
     use it where the DLL is allowed.
 - **Signature:** the original `Wow.exe` is digitally signed by Blizzard. Every
   patch invalidates this signature. Windows will therefore probably warn about

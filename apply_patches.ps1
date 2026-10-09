@@ -3278,10 +3278,10 @@ $patches = @(
         )
     }}
 
-    @{ Id = 'lexara'; Cat = 'dll'; On = $false; PublicUntested = $true; GameUntested = $true
+    @{ Id = 'lexara'; Cat = 'dll'; On = $false; DllRisky = $true
        Author = 'St0ny'
-       De = 'Lexara.dll beim Start laden (HD-Schriften von Stormhand) [BETA]'
-       En = 'Load Lexara.dll at startup (HD fonts by Stormhand) [BETA]'
+       De = 'Lexara.dll beim Start laden (HD-Schriften von Stormhand)'
+       En = 'Load Lexara.dll at startup (HD fonts by Stormhand)'
        NoteDe = 'benoetigt Lexara - dinput8.dll in Lexara.dll umbenennen'
        NoteEn = 'requires Lexara - rename dinput8.dll to Lexara.dll'
        Url = 'https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5'
@@ -4426,9 +4426,9 @@ $patches = @(
 # Standard-Preset "Reforged" - das offizielle Preset des Projekts
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
-# Warmane getestet (Nr. 9, 64 und 65 vergroessern die Wow.exe); dazu der noch
-# ungetestete Lexara-Lader (Nr. 29) und die noch ungetesteten Licht-Patches
-# Nr. 66 und 67. Im Menue mit R, ueber
+# Warmane getestet (Nr. 9, 64 und 65 vergroessern die Wow.exe); dazu der
+# Lexara-Lader (Nr. 29, Patch sicher, DLL riskant) und die noch ungetesteten
+# Licht-Patches Nr. 66 und 67. Im Menue mit R, ueber
 # -Select reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',

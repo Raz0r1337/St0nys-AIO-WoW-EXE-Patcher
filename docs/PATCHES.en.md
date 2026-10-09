@@ -425,7 +425,7 @@ the DLL is missing, WoW simply starts as usual. The file size does not change.
 > date and weekly holidays disappear from the calendar.
 
 <a id="patch-lexara"></a>
-**Load Lexara.dll at startup (HD fonts by Stormhand) [BETA]** *(No. 29, Author: St0ny)* 🟠 **[untested]**
+**Load Lexara.dll at startup (HD fonts by Stormhand)** *(No. 29, Author: St0ny)* 🟡 **[safe - DLL risky]**
 
 Loads `Lexara.dll` from the WoW folder at startup –
 [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) by Stormhand replaces the client's font
@@ -435,8 +435,9 @@ this patch the exe loads Lexara itself. If the DLL is missing, WoW starts
 normally.
 
 > [!WARNING]
-> **BETA** – this patch is still being tested and is therefore only in the dev
-> branches for now, not in `st0ny-main`.
+> The patch itself is safe, it only loads a DLL that is not included here.
+> The loaded `Lexara.dll`, however, may be detected or blocked on public
+> servers – so use it only where Lexara is allowed.
 
 Setup: rename `dinput8.dll` from the Lexara download to `Lexara.dll` and put it
 into the WoW folder together with `skia.dll`. Do not leave an additional Lexara
