@@ -325,7 +325,7 @@ name, and before patching it lists them once more.
 | [2](PATCHES.en.md#patch-cache) | Disable CACHE folder creation | 🟢 **[safe]** | Alastor StrixEfuartus / Kebabstorm | – | – | – |
 | [3](PATCHES.en.md#patch-itemcache) | Refresh item cache immediately | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [4](PATCHES.en.md#patch-worldcrash) | WorldFrame crash fix (invalid triangle indices) | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | ✅ |
-| [5](PATCHES.en.md#patch-timer) | Always use the precise timer (fixes turning stutter) | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [5](PATCHES.en.md#patch-timer) | Precise timer fix (fixes the character turning stutter bug) | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 | [6](PATCHES.en.md#patch-nothrottle) | Do not throttle item and player name queries | 🟢 **[safe]** | tb (ported by St0ny) | – | – | ✅ |
 | [7](PATCHES.en.md#patch-mirrorfix) | Mirror Image crash fix (memory leak with mirror images) | 🟢 **[safe]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [8](PATCHES.en.md#patch-wmocube) | Missing WMO file: error cube instead of ERROR #134 | 🟢 **[safe]** | Alyst3r (ported by St0ny) | ✅ | – | ✅ |
@@ -348,7 +348,7 @@ name, and before patching it lists them once more.
 | [15](PATCHES.en.md#patch-skipbnet) | Skip Battle.net login | 🟢 **[safe]** | Kebabstorm | ✅ | – | ✅ |
 | [16](PATCHES.en.md#patch-skiprdp) | Skip Remote Desktop check | 🟢 **[safe]** | Kebabstorm | ✅ | – | ✅ |
 | [17](PATCHES.en.md#patch-nohttp) | Disable HTTP requests to Battle.net | 🟢 **[safe]** | Kebabstorm | ✅ | – | ✅ |
-| [18](PATCHES.en.md#patch-afk) | Prevent the idle kick after character auto-login *(required for character auto-login; AFK and idle timers stay active, [Discord](https://discord.com/channels/858041817043042364/1515439916878663701))* | 🟢 **[safe]** | St0ny | – | – | ✅ |
+| [18](PATCHES.en.md#patch-afk) | CharAutoLogin idle-kick fix *(required for character auto-login; AFK and idle timers stay active, [Discord](https://discord.com/channels/858041817043042364/1515439916878663701))* | 🟢 **[safe]** | St0ny | – | – | ✅ |
 
 #### Modding: interface, MPQs & addons
 
@@ -368,8 +368,8 @@ name, and before patching it lists them once more.
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.en.md#patch-wowoptimize) | Load wow_optimize.dll at startup (performance optimizer by SUPREMATIST) [BETA] *(requires [wow_optimize](https://github.com/suprepupre/wow-optimize) – only `wow_optimize.dll`, without `version.dll`)* | 🔴 **[unsafe - untested ingame]** | St0ny | – | – | ✅ |
-| [28](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[safe]** | FrostAtom | ✅ | ✅ | ✅ |
-| [29](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[safe]** | St0ny (original by Alyst3r) | – | – | – |
+| [28](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[safe]** | FrostAtom | ✅ | ✅ | ✅ |
+| [29](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[safe]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) [BETA] *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟠 **[untested]** | St0ny | ✅ | – | – |
 | [31](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (mod-voicechat) [ALPHA] *(module not finished yet, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[untested]** | St0ny | – | – | – |
 
@@ -391,7 +391,7 @@ name, and before patching it lists them once more.
 | [43](PATCHES.en.md#patch-raceclass) | Character creation: more than 10 classes (random class) *(for custom classes; server must support it)* | 🔴 **[unsafe]** | Alastor StrixEfuartus / Robinsch | – | – | – |
 | [44](PATCHES.en.md#patch-namecheck) | Disable the name check in character creation (e.g. digits in names) *(server must allow the names as well)* | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | – |
 | [45](PATCHES.en.md#patch-maxchars) | Max characters per realm raised to 255 | 🟢 **[safe]** | St0ny | – | ✅ | – |
-| [46](PATCHES.en.md#patch-customitem) | Custom Item Fix (BETA) v2 *(custom items without DBC changes: model, icon and item type from the server data)* | 🟠 **[untested]** | Kebabstorm (fixed by St0ny) | – | – | – |
+| [46](PATCHES.en.md#patch-customitem) | Custom Item Fix (BETA) v2 *(custom items without DBC changes: model, icon and item type from the server data)* | 🟠 **[untested]** | St0ny (original by Kebabstorm) | – | – | – |
 | [47](PATCHES.en.md#patch-climb) | Remove the climb angle limit (walk up any slope) | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
 | [48](PATCHES.en.md#patch-jump) | Change jump height (original -7.9555473) *(asks for the value)* | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
 | [49](PATCHES.en.md#patch-airforward) | Steer forward/backward while jumping | 🔴 **[unsafe]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |

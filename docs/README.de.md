@@ -335,7 +335,7 @@ dem Patchen listet er sie noch einmal auf.
 | [2](PATCHES.de.md#patch-cache) | CACHE-Ordner-Erstellung deaktivieren | 🟢 **[sicher]** | Alastor StrixEfuartus / Kebabstorm | – | – | – |
 | [3](PATCHES.de.md#patch-itemcache) | Item-Cache sofort aktualisieren | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [4](PATCHES.de.md#patch-worldcrash) | WorldFrame-Absturzfix (ungültige Dreiecks-Indizes) | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | ✅ |
-| [5](PATCHES.de.md#patch-timer) | Genauen Timer immer nutzen (Ruckeln beim Drehen behoben) | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
+| [5](PATCHES.de.md#patch-timer) | Precise Timer Fix (behebt das Ruckeln beim Drehen des Charakters) | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 | [6](PATCHES.de.md#patch-nothrottle) | Gegenstands- und Namensabfragen nicht drosseln | 🟢 **[sicher]** | tb (ported by St0ny) | – | – | ✅ |
 | [7](PATCHES.de.md#patch-mirrorfix) | Mirror-Image-Absturzfix (Speicherleck bei Spiegelbildern) | 🟢 **[sicher]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [8](PATCHES.de.md#patch-wmocube) | Fehlende WMO-Datei: Fehlerwürfel statt ERROR #134 | 🟢 **[sicher]** | Alyst3r (ported by St0ny) | ✅ | – | ✅ |
@@ -358,7 +358,7 @@ dem Patchen listet er sie noch einmal auf.
 | [15](PATCHES.de.md#patch-skipbnet) | Battle.net-Login überspringen | 🟢 **[sicher]** | Kebabstorm | ✅ | – | ✅ |
 | [16](PATCHES.de.md#patch-skiprdp) | Remote-Desktop-Prüfung überspringen | 🟢 **[sicher]** | Kebabstorm | ✅ | – | ✅ |
 | [17](PATCHES.de.md#patch-nohttp) | HTTP-Anfragen an Battle.net deaktivieren | 🟢 **[sicher]** | Kebabstorm | ✅ | – | ✅ |
-| [18](PATCHES.de.md#patch-afk) | Idle-Kick nach Character-Autologin verhindern *(wird für Character-Autologin benötigt; AFK- und Idle-Timer bleiben aktiv, [Discord](https://discord.com/channels/858041817043042364/1515439916878663701))* | 🟢 **[sicher]** | St0ny | – | – | ✅ |
+| [18](PATCHES.de.md#patch-afk) | CharAutoLogin Idle-Kick Fix *(wird für Character-Autologin benötigt; AFK- und Idle-Timer bleiben aktiv, [Discord](https://discord.com/channels/858041817043042364/1515439916878663701))* | 🟢 **[sicher]** | St0ny | – | – | ✅ |
 
 #### Modding: Interface, MPQs & Addons
 
@@ -378,8 +378,8 @@ dem Patchen listet er sie noch einmal auf.
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.de.md#patch-wowoptimize) | wow_optimize.dll beim Start laden (Performance-Optimierung von SUPREMATIST) [BETA] *(benötigt [wow_optimize](https://github.com/suprepupre/wow-optimize) – nur `wow_optimize.dll`, ohne `version.dll`)* | 🔴 **[unsicher - ingame ungetestet]** | St0ny | – | – | ✅ |
-| [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[sicher]** | FrostAtom | ✅ | ✅ | ✅ |
-| [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll Unterstützung aktivieren *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[sicher]** | St0ny (original by Alyst3r) | – | – | – |
+| [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[sicher]** | FrostAtom | ✅ | ✅ | ✅ |
+| [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[sicher]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.de.md#patch-lexara) | Lexara.dll beim Start laden (HD-Schriften von Stormhand) [BETA] *(benötigt [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – `dinput8.dll` in `Lexara.dll` umbenennen)* | 🟠 **[ungetestet]** | St0ny | ✅ | – | – |
 | [31](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (mod-voicechat) [ALPHA] *(Modul noch unfertig, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
@@ -401,7 +401,7 @@ dem Patchen listet er sie noch einmal auf.
 | [43](PATCHES.de.md#patch-raceclass) | Charaktererstellung: mehr als 10 Klassen (Zufallsklasse) *(für eigene Klassen; Server muss es unterstützen)* | 🔴 **[unsicher]** | Alastor StrixEfuartus / Robinsch | – | – | – |
 | [44](PATCHES.de.md#patch-namecheck) | Namensprüfung bei der Charaktererstellung abschalten (z. B. Zahlen im Namen) *(Server muss die Namen ebenfalls erlauben)* | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | – |
 | [45](PATCHES.de.md#patch-maxchars) | Max. Charaktere pro Server auf 255 erhöht | 🟢 **[sicher]** | St0ny | – | ✅ | – |
-| [46](PATCHES.de.md#patch-customitem) | Custom Item Fix (BETA) v2 *(Custom-Items ohne DBC-Anpassung: Modell, Icon und Item-Typ aus den Serverdaten)* | 🟠 **[ungetestet]** | Kebabstorm (fixed by St0ny) | – | – | – |
+| [46](PATCHES.de.md#patch-customitem) | Custom Item Fix (BETA) v2 *(Custom-Items ohne DBC-Anpassung: Modell, Icon und Item-Typ aus den Serverdaten)* | 🟠 **[ungetestet]** | St0ny (original by Kebabstorm) | – | – | – |
 | [47](PATCHES.de.md#patch-climb) | Steigwinkel-Begrenzung aufheben (jeden Hang hochlaufen) | 🔴 **[unsicher]** | Alastor StrixEfuartus | – | – | – |
 | [48](PATCHES.de.md#patch-jump) | Sprunghöhe ändern (Original -7.9555473) *(fragt den Wert ab)* | 🔴 **[unsicher]** | Alastor StrixEfuartus | – | – | – |
 | [49](PATCHES.de.md#patch-airforward) | Im Sprung vorwärts/rückwärts steuern | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |

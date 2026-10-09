@@ -59,7 +59,7 @@ original, the three jump distances have been corrected and the code is shorter.
 > catch every conceivable case.
 
 <a id="patch-timer"></a>
-**Always use the precise timer (fixes turning stutter)** *(No. 5, Author: St0ny)* 🟢 **[safe]**
+**Precise timer fix (fixes the character turning stutter bug)** *(No. 5, Author: St0ny)* 🟢 **[safe]**
 
 Fixes an old Blizzard bug: when you turn your character, the lower body jerks
 into the new direction instead of following smoothly – sometimes right after
@@ -228,7 +228,7 @@ The client no longer fetches news, help articles and terms of use from
 Blizzard's servers – they no longer exist for 3.3.5 anyway.
 
 <a id="patch-afk"></a>
-**Prevent the idle kick after character auto-login** *(No. 18, Author: St0ny)* 🟢 **[safe]**
+**CharAutoLogin idle-kick fix** *(No. 18, Author: St0ny)* 🟢 **[safe]**
 
 After an auto-login without any keyboard or mouse input the timestamp of the
 last input is still 0 – the client immediately considers the player idle and
@@ -395,7 +395,7 @@ the stack. The patch works together with the Lexara loader (No. 30) and the
 voice.dll loader (No. 31).
 
 <a id="patch-awesome"></a>
-**Enable AwesomeWotlkLib.dll support** *(No. 28, Author: FrostAtom)* 🟢 **[safe]**
+**Enable AwesomeWotlkLib.dll support (client extensions by noname08662)** *(No. 28, Author: FrostAtom)* 🟢 **[safe]**
 
 Allows `AwesomeWotlkLib.dll` to be loaded on client start. This DLL extends
 the client with additional features and improvements for private servers.
@@ -420,7 +420,7 @@ set to "passed". As a side effect the patch disables the Scan.dll mechanism
 > wins.
 
 <a id="patch-wotlkext"></a>
-**Enable WotLKExtensions.dll support** *(No. 29, Author: St0ny (original by Alyst3r))* 🟢 **[safe]**
+**Enable WotLKExtensions.dll support (client extensions by Alyst3r)** *(No. 29, Author: St0ny (original by Alyst3r))* 🟢 **[safe]**
 
 Loads `WotLKExtensions.dll` from the WoW folder when the client starts. The DLL
 from [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions) by Alyst3r
@@ -647,7 +647,7 @@ has to support this as well. Additional interface changes (GlueXML) are
 required for the character selection screen to show more than 10 slots.
 
 <a id="patch-customitem"></a>
-**Custom Item Fix (BETA) v2** *(No. 46, Author: Kebabstorm (fixed by St0ny))* 🟠 **[untested]**
+**Custom Item Fix (BETA) v2** *(No. 46, Author: St0ny (original by Kebabstorm))* 🟠 **[untested]**
 
 Makes custom items possible without changing the client's `Item.dbc`. Many
 places in the client read the display ID, inventory type, class, subclass and
