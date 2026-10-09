@@ -45,18 +45,21 @@ become visible immediately.
 Prevents a crash in a world rendering function (VA `0x81D510`). It walks over
 triangles made of three vertex indices each and turns "index minus base" into a
 memory address. If an index is smaller than the base, the address points before
-the buffer and the client crashes. The patch checks the three indices of the
-first triangle beforehand and skips the function in that case. Compared to the
-original, the three jump distances have been corrected and the code is shorter.
+the buffer and the client crashes. The patch checks the three indices of every
+triangle inside the loop; a triangle with an invalid index is skipped, the
+others are processed normally.
+The original (0x539wowmod) only checks the first triangle of each call, once
+before the loop, and has miscalculated jump distances; here the check sits in
+the loop body, with the same code size.
 
 > [!NOTE]
 > The code lives in the free gap at the end of `.text`, which No. 63 uses as
 > well. Both fit in there together, the file size does not change.
 
 > [!NOTE]
-> A heuristic fix, as the author himself calls it: only the first triangle of
-> each call is checked. It does no harm when everything is fine, but does not
-> catch every conceivable case.
+> Only "index smaller than the base" is checked – that is the case that points
+> before the buffer. The function knows no upper limit, so an index that is too
+> large is still not caught.
 
 <a id="patch-timer"></a>
 **Precise timer fix (fixes the character turning stutter bug)** *(No. 5, Author: St0ny)* 🟢 **[safe]**

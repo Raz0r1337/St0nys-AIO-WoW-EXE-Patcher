@@ -619,10 +619,12 @@ function Add-CameraReforged([double]$Height, [double]$Shoulder, [double]$MaxFact
         AddRaw $c @(0x83, 0xC4, 0x24)                                 # add esp,24h (9 Argumente, cdecl)
         AddRaw $c @(0xA3); AddLE32 $c ($DATA_VA + $r[2])              # mov [zeiger], eax
     }
-    AddRaw $c @(0x61)                                                 # popad
-    AddRaw $c @(0xDB, 0xE3)                                           # fninit - popad rettet die FPU nicht,
-                                                                      # und am Funktionseingang ist der
-                                                                      # x87-Stack per Konvention leer
+    AddRaw $c @(0x61)                                                 # popad - die FPU bleibt unberuehrt:
+                                                                      # der Hook nutzt sie nicht, und
+                                                                      # CVars_Register (cdecl) laesst den
+                                                                      # x87-Stack leer zurueck. Ein fninit
+                                                                      # wuerde auch das Steuerwort (Genauig-
+                                                                      # keit, Rundung) zuruecksetzen.
     AddRaw $c @(0x55, 0x8B, 0xEC, 0x81, 0xEC, 0x80, 0x00, 0x00, 0x00) # verschobener Prolog
     $site = $CODE_VA + $c.Count
     AddRaw $c @(0xE9); AddLE32 $c ($INIT_CONT - ($site + 5))
@@ -1453,36 +1455,40 @@ function Assert-Bytes([int64]$Off, [byte[]]$Expected, [string]$What) {
 # ============================================================
 #  WorldFrame-Absturzfix (0x539wowmod, Alyst3r)
 #  Die Funktion bei VA 0x81D510 laeuft ueber Dreiecke aus Index-Tripeln
-#  (WORDs) und rechnet Index minus Basis ([ebp+10h]) in eine Vertex-Adresse
-#  um. Ist ein Index kleiner als die Basis, landet die Adresse vor dem Puffer
-#  und der Client stuerzt ab. Die Hoehle prueft die drei Indizes des ersten
-#  Dreiecks und springt in dem Fall zum Funktionsende (VA 0x81D66E).
-#  Einstieg ist das jae bei VA 0x81D51B, das genau dorthin springt (leere
-#  Liste) - es wird in der Hoehle nachgebildet, der Stack ist derselbe.
-#  edx ist hier frei (wird erst bei VA 0x81D547 gesetzt).
-#  Neu umgesetzt: Im Original sind die Sprungweiten der drei jg falsch
-#  berechnet, ausserdem ist diese Form kuerzer (38 statt 59 Byte).
+#  (WORDs) und rechnet Index minus Basis (ebx = [ebp+10h]) in eine
+#  Vertex-Adresse um. Ist ein Index kleiner als die Basis, landet die
+#  Adresse vor dem Puffer und der Client stuerzt ab. Die Hoehle sitzt im
+#  Schleifenkoerper (VA 0x81D536, ersetzt "movzx eax, word [edi] /
+#  sub eax, ebx") und prueft die drei Indizes JEDES Dreiecks: Ist einer
+#  kleiner als die Basis, geht es direkt zum naechsten Dreieck (VA
+#  0x81D65E: add edi, 6 / cmp / jb); sonst holt sie die beiden ersetzten
+#  Befehle nach und springt zurueck (VA 0x81D53B). Der FPU-Stack ist an
+#  beiden Stellen gleich belegt (nur der fldz vom Anfang), eax wird im
+#  Schleifenkopf ohnehin neu geladen.
+#  Das Original von Alyst3r prueft nur das erste Dreieck (einmal vor der
+#  Schleife, Hook am jae bei VA 0x81D51B) und hat falsch berechnete
+#  Sprungweiten; diese Fassung prueft alle Dreiecke bei gleicher
+#  Hoehlengroesse (38 Byte).
 # ============================================================
 function Add-WorldFrameCrashFix {
-    $HOOK_VA = 0x81D51B; $BACK_VA = 0x81D521; $EXIT_VA = 0x81D66E
-    Assert-Bytes ($HOOK_VA - 0x400C00) @(0x0F, 0x83, 0x4D, 0x01, 0x00, 0x00) 'WorldFrame-Absturzfix'
+    $HOOK_VA = 0x81D536; $BACK_VA = 0x81D53B; $NEXT_VA = 0x81D65E
+    Assert-Bytes ($HOOK_VA - 0x400C00) @(0x0F, 0xB7, 0x07, 0x2B, 0xC3) 'WorldFrame-Absturzfix'
     $loc = Get-CodeCave 'worldcrash' 38
     $CAVE = $loc[0]
     $c = New-Object System.Collections.Generic.List[byte]
-    AddRaw $c @(0x73, 0x1F)                      # jae Ausgang (leere Liste, wie im Original)
-    AddRaw $c @(0x8B, 0x55, 0x10)                # mov edx, [ebp+10h]   (Basis)
     AddRaw $c @(0x0F, 0xB7, 0x07)                # movzx eax, word [edi]
-    AddRaw $c @(0x3B, 0xD0, 0x7F, 0x15)          # cmp edx, eax / jg Ausgang
+    AddRaw $c @(0x3B, 0xC3, 0x7C, 0x1A)          # cmp eax, ebx / jl Weiter   (Index < Basis)
     AddRaw $c @(0x0F, 0xB7, 0x47, 0x02)          # movzx eax, word [edi+2]
-    AddRaw $c @(0x3B, 0xD0, 0x7F, 0x0D)          # cmp edx, eax / jg Ausgang
+    AddRaw $c @(0x3B, 0xC3, 0x7C, 0x12)          # cmp eax, ebx / jl Weiter
     AddRaw $c @(0x0F, 0xB7, 0x47, 0x04)          # movzx eax, word [edi+4]
-    AddRaw $c @(0x3B, 0xD0, 0x7F, 0x05)          # cmp edx, eax / jg Ausgang
-    AddRaw $c (Get-Rel32 @(0xE9) ($CAVE + $c.Count) $BACK_VA)     # jmp zurueck
-    AddRaw $c (Get-Rel32 @(0xE9) ($CAVE + $c.Count) $EXIT_VA)     # Ausgang: jmp Funktionsende
+    AddRaw $c @(0x3B, 0xC3, 0x7C, 0x0A)          # cmp eax, ebx / jl Weiter
+    AddRaw $c @(0x0F, 0xB7, 0x07)                # movzx eax, word [edi]   (ersetzte Befehle)
+    AddRaw $c @(0x2B, 0xC3)                      # sub eax, ebx
+    AddRaw $c (Get-Rel32 @(0xE9) ($CAVE + $c.Count) $BACK_VA)     # jmp zurueck in die Schleife
+    AddRaw $c (Get-Rel32 @(0xE9) ($CAVE + $c.Count) $NEXT_VA)     # Weiter: jmp naechstes Dreieck
     if ($c.Count -ne 38) { throw 'WorldFrame-Absturzfix: Hoehle hat die falsche Groesse.' }
     Patch $loc[1] $c.ToArray()
-    $hook = (Get-Rel32 @(0xE9) $HOOK_VA $CAVE) + [byte[]](0x90)
-    Patch ($HOOK_VA - 0x400C00) ([byte[]]$hook)
+    Patch ($HOOK_VA - 0x400C00) ([byte[]](Get-Rel32 @(0xE9) $HOOK_VA $CAVE))
 }
 
 # ============================================================
@@ -4463,7 +4469,7 @@ laa;126;03;1
 cache;61BE58;4361;1
 itemcache;2689FD;3075;1
 worldcrash;210;B3D35D00;0
-worldcrash;41C91B;0F834D010000;1
+worldcrash;41C936;0FB7072BC3;1
 worldcrash;5DD7B3;0000000000000000000000000000000000000000000000000000000000000000000000000000;1
 timer;46A08E;0F8582000000;1
 nothrottle;27547E;56;1
