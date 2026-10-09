@@ -97,7 +97,8 @@ PowerShell 7 (`pwsh`) – no Wine needed. Tested on Ubuntu 24.04.
    spelled (`WoW.exe`, `wow.exe` …) does not matter.
 3. In a terminal in that folder, run `./patcher-lin.sh`. If that does not start
    (e.g. because unpacking lost the execute permission), use `sh patcher-lin.sh`.
-4. Close WoW and copy the patched `Wow.exe` back into your WoW folder.
+4. If WoW is running, close it and copy the patched `Wow.exe` back into your
+   WoW folder.
 
 Everything else works as on Windows: wherever this guide says `patcher-win.bat`,
 use `./patcher-lin.sh`.
@@ -110,8 +111,8 @@ use `./patcher-lin.sh`.
 > guarantee. If you try it, I'd be glad about feedback as an
 > [issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues).
 
-The patcher modifies the Windows `Wow.exe`. On a Mac that is the `Wow.exe` you
-run e.g. with CrossOver or Wine – it cannot patch the Mac client itself.
+The patcher modifies the Windows `Wow.exe`, it cannot patch the Mac client
+itself. On a Mac that is the `Wow.exe` you run e.g. with CrossOver or Wine.
 
 1. Install PowerShell 7, e.g. with [Homebrew](https://brew.sh):
    `brew install --cask powershell`. Microsoft also offers an installer
@@ -120,8 +121,9 @@ run e.g. with CrossOver or Wine – it cannot patch the Mac client itself.
    `St0nys-AIO-WoW-EXE-Patcher` – just like on Windows.
 3. Open Terminal and change to that folder, e.g. type `cd ` and drag the
    folder into the Terminal window. Then run `sh patcher-lin.sh` – the Linux
-   start file works on a Mac as well.
-4. Close WoW and copy the patched `Wow.exe` back into your WoW folder.
+   start file should work on a Mac as well.
+4. If WoW is running, close it and copy the patched `Wow.exe` back into your
+   WoW folder.
 
 Everything else works as on Windows: wherever this guide says
 `patcher-win.bat`, use `sh patcher-lin.sh`.

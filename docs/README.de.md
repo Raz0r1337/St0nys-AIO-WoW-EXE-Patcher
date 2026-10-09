@@ -103,7 +103,8 @@ Ubuntu 24.04.
 3. Im Terminal in diesem Ordner `./patcher-lin.sh` starten. Falls das nicht
    startet (z. B. weil beim Entpacken das Ausführungsrecht verloren ging):
    `sh patcher-lin.sh`.
-4. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren.
+4. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
+   den WoW-Ordner.
 
 Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
 `patcher-win.bat` steht, nimmst du `./patcher-lin.sh`.
@@ -116,9 +117,9 @@ Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
 > Garantie gibt es aber nicht. Wenn du es ausprobierst, freue ich mich über
 > eine Rückmeldung als [Issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues).
 
-Der Patcher verändert die Windows-`Wow.exe`. Auf dem Mac ist das die `Wow.exe`,
-die du z. B. mit CrossOver oder Wine startest – den Mac-Client selbst kann er
-nicht patchen.
+Der Patcher verändert die Windows-`Wow.exe`, den Mac-Client selbst kann er
+nicht patchen. Auf dem Mac ist das die `Wow.exe`, die du z. B. mit CrossOver
+oder Wine startest.
 
 1. PowerShell 7 installieren, z. B. mit [Homebrew](https://brew.sh):
    `brew install --cask powershell`. Alternativ gibt es ein
@@ -127,8 +128,9 @@ nicht patchen.
    `St0nys-AIO-WoW-EXE-Patcher` kopieren – wie unter Windows.
 3. Das Terminal öffnen und in diesen Ordner wechseln, z. B. `cd ` eingeben und
    den Ordner ins Terminal-Fenster ziehen. Dann `sh patcher-lin.sh` starten –
-   die Linux-Startdatei funktioniert auch auf dem Mac.
-4. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren.
+   die Linux-Startdatei sollte auch auf dem Mac funktionieren.
+4. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
+   den WoW-Ordner.
 
 Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
 `patcher-win.bat` steht, nimmst du `sh patcher-lin.sh`.
