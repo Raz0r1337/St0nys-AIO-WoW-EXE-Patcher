@@ -60,7 +60,7 @@ kürzer.
 > denkbaren Fall ab.
 
 <a id="patch-timer"></a>
-**Genauen Timer immer nutzen (Ruckeln beim Drehen behoben)** *(Nr. 5, Autor: St0ny)* 🟢 **[sicher]**
+**Precise Timer Fix (behebt das Ruckeln beim Drehen des Charakters)** *(Nr. 5, Autor: St0ny)* 🟢 **[sicher]**
 
 Behebt einen alten Blizzard-Fehler: Dreht man den Charakter, ruckelt sich der
 Unterkörper in die neue Richtung, statt flüssig nachzudrehen – mal direkt nach
@@ -234,7 +234,7 @@ Der Client ruft keine News, Hilfe-Artikel und Nutzungsbedingungen mehr von
 Blizzards Servern ab – die gibt es für 3.3.5 ohnehin nicht mehr.
 
 <a id="patch-afk"></a>
-**Idle-Kick nach Character-Autologin verhindern** *(Nr. 18, Autor: St0ny)* 🟢 **[sicher]**
+**CharAutoLogin Idle-Kick Fix** *(Nr. 18, Autor: St0ny)* 🟢 **[sicher]**
 
 Nach einem Autologin ohne jede Tastatur- oder Mauseingabe steht der
 Zeitstempel der letzten Eingabe noch auf 0 – der Client hält den Spieler sofort
@@ -370,7 +370,7 @@ Login-Bildschirm), ist nicht enthalten.
 ## DLL-Loader
 
 <a id="patch-awesome"></a>
-**AwesomeWotlkLib.dll Unterstützung aktivieren** *(Nr. 27, Autor: FrostAtom)* 🟢 **[sicher]**
+**AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662)** *(Nr. 27, Autor: FrostAtom)* 🟢 **[sicher]**
 
 Ermöglicht das Laden der `AwesomeWotlkLib.dll` beim Client-Start. Diese DLL
 erweitert den Client um zusätzliche Funktionen und Verbesserungen für private
@@ -396,7 +396,7 @@ Fehlt die DLL, startet WoW normal weiter.
 > Auflösung des Exe-Patches.
 
 <a id="patch-wotlkext"></a>
-**WotLKExtensions.dll Unterstützung aktivieren** *(Nr. 28, Autor: St0ny (original by Alyst3r))* 🟢 **[sicher]**
+**WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r)** *(Nr. 28, Autor: St0ny (original by Alyst3r))* 🟢 **[sicher]**
 
 Lädt beim Client-Start die `WotLKExtensions.dll` aus dem WoW-Ordner. Die DLL aus
 [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions) von Alyst3r
@@ -632,7 +632,7 @@ Interface-Anpassungen (Glue-XML) sind nötig, damit der
 Charakterauswahl-Bildschirm mehr als 10 Slots anzeigt.
 
 <a id="patch-customitem"></a>
-**Custom Item Fix (BETA) v2** *(Nr. 45, Autor: Kebabstorm (fixed by St0ny))* 🟠 **[ungetestet]**
+**Custom Item Fix (BETA) v2** *(Nr. 45, Autor: St0ny (original by Kebabstorm))* 🟠 **[ungetestet]**
 
 Macht Custom-Items möglich, ohne die `Item.dbc` des Clients anzupassen. Viele
 Stellen im Client lesen Display-ID, Inventartyp, Klasse, Unterklasse und Scheide
