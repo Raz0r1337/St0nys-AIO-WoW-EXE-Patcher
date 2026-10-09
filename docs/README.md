@@ -174,7 +174,9 @@ addition "fixed by St0ny" to the author. The fixed patches have been tested in
 game and work – **the preset is safe**.
 
 If you still run into problems, please let me know via an
-[issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues).
+[issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues/new/choose).
+If you have a patch that should be part of this patcher, you can send it to me
+via an issue as well.
 
 The second preset "St0nys_Wow.exe" (key `S`) is St0ny's own selection for
 private servers. It also contains patches with a ban risk and patches that make

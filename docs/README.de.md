@@ -182,7 +182,9 @@ erkennst du sie am Zusatz „fixed by St0ny“ beim Autor. Die korrigierten Patc
 sind im Spiel getestet und funktionieren – **das Preset ist sicher**.
 
 Solltest du trotzdem auf Probleme stoßen, melde dich bitte über ein
-[Issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues).
+[Issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues/new/choose).
+Hast du einen Patch, der hier mit rein sollte, kannst du ihn mir ebenfalls über
+ein Issue schicken.
 
 Das zweite Preset „St0nys_Wow.exe“ (Taste `S`) ist St0nys eigene Auswahl für
 eigene Server. Es enthält auch Patches mit Bann-Gefahr und solche, die die
