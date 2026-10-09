@@ -1515,7 +1515,7 @@ the current date and time of `Wow.exe` are suggested.
 
 Replaces the icon Windows shows for `Wow.exe` (Explorer, taskbar, shortcuts).
 The patcher asks for the path of an `.ico` or `.png` file, absolute or
-relative to the WoW folder. From that file it builds the four sizes stored in
+relative to the folder of `Wow.exe`. From that file it builds the four sizes stored in
 `Wow.exe` (48, 32, 24 and 16 pixels, each 32-bit with alpha channel): if a size
 is present in the ICO it is used as is, otherwise the next larger image is
 downscaled by area averaging (or, as a last resort, the largest one is

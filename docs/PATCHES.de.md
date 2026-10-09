@@ -1565,7 +1565,7 @@ Uhrzeit der `Wow.exe`.
 
 Tauscht das Icon aus, das Windows für die `Wow.exe` anzeigt (Explorer,
 Taskleiste, Verknüpfungen). Der Patcher fragt nach dem Pfad einer `.ico`-
-oder `.png`-Datei, absolut oder relativ zum WoW-Ordner. Aus der Datei baut er
+oder `.png`-Datei, absolut oder relativ zum Ordner der `Wow.exe`. Aus der Datei baut er
 die vier Größen, die in der `Wow.exe` stecken (48, 32, 24 und 16 Pixel, je
 32 Bit mit Alphakanal): Ist eine Größe in der ICO enthalten, wird sie direkt
 übernommen, sonst wird das nächstgrößere Bild per Flächenmittelung

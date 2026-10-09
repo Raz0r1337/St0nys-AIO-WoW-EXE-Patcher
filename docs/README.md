@@ -53,13 +53,16 @@ extended** at any time later – all the way back to the original `Wow.exe`.
 
 ## Usage
 
-1. Copy `patcher.bat` and `apply_patches.ps1` into your WoW folder
-   (next to `Wow.exe`).
-2. Close WoW if it is still running.
+1. Download the ZIP from the [latest release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) and unpack it. It
+   contains the folder `St0nys-AIO-WoW-EXE-Patcher`.
+2. Copy your original `Wow.exe` from your WoW folder into that folder.
 3. Double-click `patcher.bat`.
-4. Choose the language (first start only), select patches, confirm – done.
+4. Choose the language (first start only), select patches, confirm.
+5. Close WoW and copy the patched `Wow.exe` back into your WoW folder,
+   replacing the old one.
 
-To **change or remove** patches just run `patcher.bat` again, see
+To **change or remove** patches just run `patcher.bat` in the patcher folder
+again and copy `Wow.exe` back into your WoW folder afterwards, see
 [Changing or removing patches](#changing-or-removing-patches).
 
 > [!NOTE]
@@ -188,7 +191,8 @@ exactly the patches checked that are currently in `Wow.exe`. Newly checked
 patches are marked **(new)**, deselected ones **(will be removed)**. This way
 you can add patches, deselect them or change values (jump height, double
 jump, client info) as you like. `N` plus ENTER removes every patch – afterwards
-`Wow.exe` is **byte-for-byte the original** again.
+`Wow.exe` is **byte-for-byte the original** again. Afterwards copy `Wow.exe`
+back into your WoW folder.
 
 How it works:
 
