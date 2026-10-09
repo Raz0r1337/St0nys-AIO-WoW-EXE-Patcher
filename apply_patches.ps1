@@ -2628,6 +2628,43 @@ $patches = @(
 
     # --- DLL-Loader ---
 
+    @{ Id = 'wowoptimize'; Cat = 'dll'; On = $false; DllRisky = $true
+       Author = 'St0ny'
+       De = 'wow_optimize.dll beim Start laden (Performance-Optimierung von SUPREMATIST)'
+       En = 'Load wow_optimize.dll at startup (performance optimizer by SUPREMATIST)'
+       NoteDe = 'benoetigt wow_optimize - nur wow_optimize.dll, ohne version.dll'
+       NoteEn = 'requires wow_optimize - only wow_optimize.dll, without version.dll'
+       Url = 'https://github.com/suprepupre/wow-optimize'
+       Code = {
+        # Laedt wow_optimize.dll (Performance-Optimierung von SUPREMATIST) aus
+        # dem WoW-Ordner - genau wie die Proxy-version.dll von wow_optimize:
+        # Beim Start legt die Exe einen eigenen Thread an, der 3 Sekunden
+        # wartet und dann LoadLibraryA("wow_optimize.dll") aufruft. Fehlt die
+        # DLL, startet WoW ganz normal. Laut wow_optimize bannen manche
+        # oeffentlichen Server dafuer.
+        # Eingehaengt ist das in den einmaligen Aufruf call 0x7755F0 bei VA
+        # 0x76E490, den nur der Einstiegspunkt erreicht (nach dem Lexara-Lader).
+        # Der Code steht in acht freien Luecken zwischen Funktionen, den
+        # DLL-Namen baut der Thread auf dem Stack. Dateigroesse und PE-Header
+        # bleiben unveraendert.
+        #   A1-A3: CreateThread(NULL, 0, B1, NULL, 0, NULL) / CloseHandle / jmp 0x7755F0
+        #   B1-B5: Sleep(3000) / LoadLibraryA("wow_optimize.dll") / return 0
+        $caves = @(
+            ,@(0x36E291, @(0x31, 0xC0, 0x50, 0x50, 0x50, 0x68, 0xA6, 0xE2, 0x76, 0x00, 0xE9, 0x32, 0xF6, 0xFF, 0xFF))   # A1, VA 0x76EE91
+            ,@(0x36D8D2, @(0x50, 0x50, 0xFF, 0x15, 0x38, 0xF3, 0x9D, 0x00, 0x50, 0xE9, 0xF5, 0x0C, 0x00, 0x00))   # A2, VA 0x76E4D2
+            ,@(0x36E5D5, @(0xFF, 0x15, 0x24, 0xF1, 0x9D, 0x00, 0xE9, 0x10, 0x64, 0x00, 0x00))   # A3, VA 0x76F1D5
+            ,@(0x36D6A6, @(0x68, 0xB8, 0x0B, 0x00, 0x00, 0xE9, 0xB3, 0x0D, 0x00, 0x00))   # B1, VA 0x76E2A6
+            ,@(0x36E463, @(0xFF, 0x15, 0x64, 0xF2, 0x9D, 0x00, 0x6A, 0x00, 0xE9, 0xC1, 0x02, 0x00, 0x00))   # B2, VA 0x76F063
+            ,@(0x36E731, @(0x68, 0x2E, 0x64, 0x6C, 0x6C, 0x68, 0x6D, 0x69, 0x7A, 0x65, 0xE9, 0xE1, 0x05, 0x00, 0x00))   # B3, VA 0x76F331
+            ,@(0x36ED21, @(0x68, 0x6F, 0x70, 0x74, 0x69, 0x68, 0x77, 0x6F, 0x77, 0x5F, 0xE9, 0x61, 0x05, 0x00, 0x00))   # B4, VA 0x76F921
+            ,@(0x36F291, @(0x54, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0x83, 0xC4, 0x14, 0x33, 0xC0, 0xC2, 0x04, 0x00))   # B5, VA 0x76FE91
+        )
+        Assert-Bytes 0x36D890 @(0xE8, 0x5B, 0x71, 0x00, 0x00) 'wow_optimize-Lader'
+        foreach ($c in $caves) { Assert-Bytes $c[0] (@(0xCC) * $c[1].Count) 'wow_optimize-Lader' }
+        Patch 0x36D890 @(0xE8, 0xFC, 0x09, 0x00, 0x00)                   # call 0x7755F0 -> call A1
+        foreach ($c in $caves) { Patch $c[0] $c[1] }
+    }}
+
     @{ Id = 'awesome'; Cat = 'dll'; On = $true; Needs = @('laa'); DllRisky = $true
        Author = 'FrostAtom'
        De = 'AwesomeWotlkLib.dll Unterstuetzung aktivieren (Client-Erweiterungen von noname08662)'
@@ -2676,6 +2713,32 @@ $patches = @(
             0x9D, 0x00, 0x68, 0x70, 0xEB, 0x5E, 0x00, 0xE9, 0x59, 0x10, 0xF2, 0xFF, 0x57, 0x6F, 0x74, 0x4C,
             0x4B, 0x45, 0x78, 0x74, 0x65, 0x6E, 0x73, 0x69, 0x6F, 0x6E, 0x73, 0x2E, 0x64, 0x6C, 0x6C, 0x00
         )
+    }}
+
+    @{ Id = 'lexara'; Cat = 'dll'; On = $false; DllRisky = $true
+       Author = 'St0ny'
+       De = 'Lexara.dll beim Start laden (HD-Schriften von Stormhand)'
+       En = 'Load Lexara.dll at startup (HD fonts by Stormhand)'
+       NoteDe = 'benoetigt Lexara - dinput8.dll in Lexara.dll umbenennen'
+       NoteEn = 'requires Lexara - rename dinput8.dll to Lexara.dll'
+       Url = 'https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5'
+       Code = {
+        # Laedt beim Start Lexara.dll (HD-Schriften per MSDF von Stormhand) aus
+        # dem WoW-Ordner. Bisher lief Lexara als Proxy-dinput8.dll und kam sich
+        # dabei mit anderen Mods in die Quere, die denselben Dateinamen nutzen.
+        # Der Einstiegspunkt (VA 0x401000) ruft zuerst __security_init_cookie
+        # (VA 0x76E490) auf; dieser Aufruf zeigt jetzt auf einen Lader in einer
+        # freien 16-Byte-Luecke (VA 0x6DC8C0, hinter einem Aufruf, der nie
+        # zurueckkehrt): push "Lexara.dll" / call [LoadLibraryA] / jmp 0x76E490.
+        # Der Name steht in einer zweiten Luecke (VA 0x6DC0E0). Eine Proxy-DLL
+        # wird ebenfalls vor dem Einstiegspunkt geladen, der Zeitpunkt passt.
+        # Fehlt die DLL, startet WoW ganz normal.
+        Assert-Bytes 0x400 @(0xE8, 0x8B, 0xD4, 0x36, 0x00) 'Lexara-Lader'
+        Assert-Bytes 0x2DBCC0 @(0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC) 'Lexara-Lader'
+        Assert-Bytes 0x2DB4E0 @(0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC) 'Lexara-Lader'
+        Patch 0x401 @(0xBB, 0xB8, 0x2D, 0x00)                   # call __security_init_cookie -> call Lader
+        Patch 0x2DBCC0 @(0x68, 0xE0, 0xC0, 0x6D, 0x00, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0xE9, 0xC0, 0x1B, 0x09, 0x00)
+        Patch 0x2DB4E0 @(0x4C, 0x65, 0x78, 0x61, 0x72, 0x61, 0x2E, 0x64, 0x6C, 0x6C, 0x00)   # "Lexara.dll"
     }}
 
     # --- Gameplay-Fixes ---
@@ -3492,13 +3555,13 @@ $patches = @(
        Author = 'tb (ported by St0ny)'
        De = 'Echtes Level statt "??" bei Gegnern ab 10 Level ueber dir'
        En = 'Real level instead of "??" for enemies 10+ levels above you'
-       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 72'
-       NoteEn = 'bosses still show "??" - see No. 72'
+       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 74'
+       NoteEn = 'bosses still show "??" - see No. 74'
        Code = {
         # Lua UnitLevel (VA 0x60F9E0), Tooltip (VA 0x620EE0) und Namensplakette
         # (VA 0x98EF10) zeigen "??" (bzw. -1 / Totenkopf), wenn ein feindliches
         # Ziel 10 oder mehr Level ueber dir ist. Diese Pruefung ("jle") faellt
-        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 72 raus).
+        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 74 raus).
         Patch 0x20EEB2 @(0x90, 0x90)
         Patch 0x220B66 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)
         Patch 0x58E3B9 @(0x90, 0x90)
@@ -3506,15 +3569,15 @@ $patches = @(
 
     @{ Id = 'showlevelboss'; Cat = 'ui'; On = $false; Needs = @('showlevel'); PublicUntested = $true
        Author = 'St0ny'
-       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 71)'
-       En = 'Real level for bosses too instead of "??" (extension to No. 71)'
+       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 73)'
+       En = 'Real level for bosses too instead of "??" (extension to No. 73)'
        Code = {
         # Ist eine Kreatur als Boss markiert (Flag 0x4 in den Kreatur-Typflags,
         # Pruefung CGUnit_C::IsBossMob bei VA 0x715D70), zeigen UnitLevel,
         # Tooltip und Namensplakette immer "??" bzw. -1 / Totenkopf. Diese drei
         # Boss-Pruefungen fallen weg; die Beschriftung "Boss" im Tooltip und das
         # Elite-Symbol der Namensplakette bleiben. Gegner 10+ Level ueber dir
-        # zeigen ihr Level erst zusammen mit Nr. 71.
+        # zeigen ihr Level erst zusammen mit Nr. 73.
         Patch 0x20EEBD @(0xEB)                                 # VA 0x60FABD UnitLevel: je -> jmp (kein -1)
         Patch 0x220B78 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)   # VA 0x621778 Tooltip: jne "??" -> nop
         Patch 0x58E358 @(0xEB)                                 # VA 0x98EF58 Namensplakette: je -> jmp (Level statt Totenkopf)
@@ -3559,8 +3622,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus als Standard setzen'
        En = 'Windowed mode by default'
-       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 76'
-       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 76'
+       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 78'
+       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 78'
        Code = {
         Patch 0x369A7D @(0x64, 0x14, 0x9E)
     }}
@@ -3569,8 +3632,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus maximiert als Standard setzen'
        En = 'Maximized window by default'
-       NoteDe = 'wirkt nur zusammen mit Nr. 75'
-       NoteEn = 'only works together with No. 75'
+       NoteDe = 'wirkt nur zusammen mit Nr. 77'
+       NoteEn = 'only works together with No. 77'
        Code = {
         Patch 0x369AB2 @(0x64, 0x14, 0x9E)
     }}
@@ -3700,13 +3763,14 @@ $patches = @(
 
 # Standard-Preset "Reforged" - das offizielle Preset des Projekts
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
-# von Stormhand. Nur sichere Patches, alle von Stormhand mehrere Stunden auf
-# Warmane getestet (Nr. 9, 62 und 63 vergroessern die Wow.exe). Im Menue mit R, ueber
+# von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
+# Warmane getestet (Nr. 9, 64 und 65 vergroessern die Wow.exe); dazu der
+# Lexara-Lader (Nr. 30, Patch sicher, DLL riskant). Im Menue mit R, ueber
 # -Select reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',
     'scandll', 'noserverpatch', 'nosurvey', 'skipbnet', 'skiprdp', 'nohttp',
-    'glue',
+    'glue', 'lexara',
     'areatrigger', 'swing', 'npcanim', 'spellanim', 'ghostattack', 'naked',
     'forcereaction', 'mail', 'deadchat', 'level101',
     'farclip', 'horizon', 'envdetail', 'grounddist', 'sliders', 'goscale',
@@ -3720,15 +3784,15 @@ $PRESET_REFORGED = @(
 # mit S, ueber -Select stony. Ids, die hier fehlen oder unbekannt sind, bleiben aus.
 $PRESET_STONY = @(
     'laa', 'itemcache', 'worldcrash', 'timer', 'nothrottle', 'mirrorfix',
-    'wmocube', 'glyphfix', 'wardenoff', 'scandll', 'noserverpatch', 'nosurvey',
-    'skipbnet', 'skiprdp', 'nohttp', 'afk', 'glue', 'mpqsig',
-    'mpqnames', 'localdata', 'awesome', 'areatrigger', 'swing', 'npcanim',
-    'spellanim', 'ghostattack', 'naked', 'forcereaction', 'mail', 'deadchat',
-    'follow', 'level101', 'airforward', 'airlateral', 'airturn', 'doublejump',
-    'farclip', 'horizon', 'envdetail', 'grounddist', 'sliders', 'goscale',
-    'cat0', 'occluder', 'bluemoon', 'notransparency', 'iconsnap', 'tracker',
-    'worldmap', 'castbars', 'emblems', 'flash', 'holdrepeat', 'bubblerange',
-    'window', 'maximize', 'windowfix', 'mouse', 'sound'
+    'wmocube', 'glyphfix', 'wardenoff', 'scandll', 'noserverpatch',
+    'nosurvey', 'skipbnet', 'skiprdp', 'nohttp', 'afk', 'glue', 'mpqsig',
+    'mpqnames', 'localdata', 'wowoptimize', 'awesome', 'areatrigger', 'swing',
+    'npcanim', 'spellanim', 'ghostattack', 'naked', 'forcereaction', 'mail',
+    'deadchat', 'follow', 'level101', 'airforward', 'airlateral', 'airturn',
+    'doublejump', 'farclip', 'horizon', 'envdetail', 'grounddist', 'sliders',
+    'goscale', 'cat0', 'occluder', 'bluemoon', 'notransparency', 'iconsnap',
+    'tracker', 'worldmap', 'castbars', 'emblems', 'flash', 'holdrepeat',
+    'bubblerange', 'window', 'maximize', 'windowfix', 'mouse', 'sound'
 )
 
 # ============================================================
@@ -3797,12 +3861,24 @@ luaunlockfull;127389;74;1
 luaunlockfull;40259C;74;1
 keyprop;8EFD9;01;1
 globalsv;1F8488;8B4508680005000050;1
+wowoptimize;36D6A6;CCCCCCCCCCCCCCCCCCCC;1
+wowoptimize;36D890;E85B710000;1
+wowoptimize;36D8D2;CCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+wowoptimize;36E291;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+wowoptimize;36E463;CCCCCCCCCCCCCCCCCCCCCCCCCC;1
+wowoptimize;36E5D5;CCCCCCCCCCCCCCCCCCCCCC;1
+wowoptimize;36E731;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+wowoptimize;36ED21;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+wowoptimize;36F291;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
 awesome;ABD0;558BECE898B5FFFF;1
 awesome;DC0F0;558BEC568B75;0
 awesome;E50B0;558BEC5633F639356CB4B6000F85DB010000393568B4B6000F85CF01000033C0B968B4B6008701566A5468F8659F006A18E85A8828006860659F00A380B4B600E81BBEF7;1
 wotlkext;6170;6870EB5E00;1
 wotlkext;DC0F0;558BEC568B75;0
 wotlkext;E5100;B6006A18526860659F00E881561D0083C40C84C074206854659F00E8C0BFF7FF6854659F006860659F00E841BFF7FF83;1
+lexara;401;8BD43600;1
+lexara;2DB4E0;CCCCCCCCCCCCCCCCCCCCCC;1
+lexara;2DBCC0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
 areatrigger;2DB241;64;1
 swing;2E1C67;6AFF6A408BCEE8BE830500;1
 npcanim;33D785;75308B96380A0000F7C2000800007522F6C1207516F7C200100000750E83F80B740583F80C752A33C9EB0CB90C000000EB05B90B0000003BC174168BCEE8C9FAFDFF85C0740B6AFF6A008BCEE85AC8FFFF;1
