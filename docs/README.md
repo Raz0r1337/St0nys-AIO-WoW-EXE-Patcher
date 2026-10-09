@@ -78,10 +78,13 @@ again and copy `Wow.exe` back into your WoW folder afterwards, see
 ### On Linux
 
 The patcher is written for Windows, but it also runs on Linux directly with
-PowerShell 7 (`pwsh`) – no Wine needed.
+PowerShell 7 (`pwsh`) – no Wine needed. Tested on Ubuntu 24.04.
 
 1. Install PowerShell 7, e.g. for [Ubuntu](https://learn.microsoft.com/powershell/scripting/install/install-ubuntu),
    [Debian](https://learn.microsoft.com/powershell/scripting/install/install-debian) or [RHEL](https://learn.microsoft.com/powershell/scripting/install/install-rhel).
+   PowerShell is not in the default package sources; the linked
+   instructions therefore first add Microsoft's package source, otherwise
+   e.g. `apt` will not find the `powershell` package.
    Other distributions can use Snap or an archive to unpack
    ([instructions](https://learn.microsoft.com/powershell/scripting/install/install-other-linux)), Arch the package from the AUR.
 2. Unpack the ZIP and copy your original `Wow.exe` into the folder
