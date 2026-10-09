@@ -56,13 +56,16 @@ originalen `Wow.exe`.
 
 ## Benutzung
 
-1. `patcher.bat` und `apply_patches.ps1` in den WoW-Ordner kopieren
-   (dorthin, wo die `Wow.exe` liegt).
-2. WoW beenden, falls es noch läuft.
+1. Das ZIP vom [neuesten Release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) herunterladen und entpacken.
+   Darin liegt der Ordner `St0nys-AIO-WoW-EXE-Patcher`.
+2. Die originale `Wow.exe` aus dem WoW-Ordner in diesen Ordner kopieren.
 3. `patcher.bat` per Doppelklick starten.
-4. Sprache wählen (nur beim ersten Start), Patches auswählen, bestätigen – fertig.
+4. Sprache wählen (nur beim ersten Start), Patches auswählen, bestätigen.
+5. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren,
+   dort ersetzt sie die alte.
 
-Patches **ändern oder zurücknehmen:** `patcher.bat` einfach erneut starten,
+Patches **ändern oder zurücknehmen:** `patcher.bat` im Patcher-Ordner einfach
+erneut starten und die `Wow.exe` danach wieder in den WoW-Ordner kopieren,
 siehe [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen).
 
 > [!NOTE]
@@ -132,8 +135,8 @@ Vor der Sicherheitsabfrage zeigt der Patcher **Hinweise** an, gesperrt wird
 nichts: wenn ein Ergänzungs-Patch fehlt (z. B. brauchen die erweiterten
 Slider-Maxima die CVar-Unlocks), wenn ein Patch einen anderen überflüssig macht
 (Warden komplett abschalten ersetzt den RCE-Fix) und wenn gewählte Patches eine
-Warnung tragen – mit roter Warnung bei Bann-Gefahr und bei Patches, die auf
-öffentlichen Servern oder im Spiel noch ungetestet sind, gelb bei vergrößerter
+Warnung tragen – rot bei Bann-Gefahr, orange bei Patches, die auf öffentlichen
+Servern oder im Spiel noch ungetestet sind, und gelb bei vergrößerter
 `Wow.exe` (siehe [Hinweise](#hinweise)).
 
 ### Auswahl wird gespeichert
@@ -157,7 +160,7 @@ Sicherheitsabfrage abgebrochen hast.
 
 Das Preset „Reforged“ (Taste `R`) ist das offizielle Preset des
 Projekts [Project Reforged](https://projectreforged.github.io/wotlk/),
-zusammengestellt von Stormhand, und die Standard-Auswahl. Es enthält nur
+zusammengestellt von Stormhand, und die Standard-Auswahl. Es enthält
 sichere Patches (🟢), die Stormhand alle mehrere Stunden auf Warmane getestet
 hat – **das Preset ist sicher** und kann auch auf öffentlichen Servern
 verwendet werden. Drei davon (Nr. 9, 63 und 64) vergrößern die `Wow.exe`; auf
@@ -177,7 +180,9 @@ erkennst du sie am Zusatz „fixed by St0ny“ beim Autor. Die korrigierten Patc
 sind im Spiel getestet und funktionieren – **das Preset ist sicher**.
 
 Solltest du trotzdem auf Probleme stoßen, melde dich bitte über ein
-[Issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues).
+[Issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues/new/choose).
+Hast du einen Patch, der hier mit rein sollte, kannst du ihn mir ebenfalls über
+ein Issue schicken.
 
 Das zweite Preset „St0nys_Wow.exe“ (Taste `S`) ist St0nys eigene Auswahl für
 eigene Server. Es enthält auch Patches mit Bann-Gefahr und solche, die die
@@ -196,7 +201,7 @@ stecken. Neu angehakte Patches sind mit **(neu)** markiert, abgewählte mit
 **(wird zurückgenommen)**. So kannst du beliebig Patches dazunehmen, abwählen
 oder Werte ändern (Sprunghöhe, Doppelsprung, Client-Infos). Mit `N` und ENTER
 nimmst du alle Patches zurück – danach ist die `Wow.exe` wieder **byte-genau
-das Original**.
+das Original**. Danach kopierst du die `Wow.exe` wieder in deinen WoW-Ordner.
 
 So funktioniert es:
 
@@ -258,10 +263,10 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 |---------------------|-------|
 | `patcher.bat`       | Startdatei, ruft `apply_patches.ps1` auf |
 | `apply_patches.ps1` | Patch-Engine: Sprachwahl, Prüfungen, Auswahlmenü, Backup; liest die EXE einmal, patcht im Speicher, schreibt einmal zurück |
-| `README.md`         | Englische Anleitung |
-| `README.de.md`      | Diese Datei |
-| `PATCHES.de.md`     | Ausführliche Beschreibungen aller Patches |
-| `PATCHES.en.md`     | Patch-Beschreibungen auf Englisch |
+| `docs/README.md`    | Englische Anleitung |
+| `docs/README.de.md` | Diese Datei |
+| `docs/PATCHES.de.md` | Ausführliche Beschreibungen aller Patches |
+| `docs/PATCHES.en.md` | Patch-Beschreibungen auf Englisch |
 | `patcher_selection.ini` | Wird beim ersten Start angelegt (gemerkte Sprache) und speichert die übernommene Auswahl samt eingegebenen Werten |
 | `patcher_state.ini` | Wird beim Patchen angelegt: Hash der gepatchten `Wow.exe`, eingespielte Patches, Werte und Original-Bytes – beschleunigt den nächsten Start, ist aber nicht zwingend nötig |
 | `Wow.exe.ORI`       | Sicherung der originalen `Wow.exe`, angelegt beim ersten Patchen |
@@ -283,14 +288,18 @@ Ein Klick auf die Nummer eines Patches springt zu seiner Beschreibung.
 |---------------|-----------|------------|
 | 🟢 **[sicher]** | Im Spiel getestet und sicher nutzbar. | keine Warnung |
 | 🔴 **[unsicher]** | Bestätigte Bann-Gefahr: kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben. | rote Warnung |
-| 🟠 **[online ungetestet]** | Nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr: Niemand kann vorhersagen, wie der Server reagiert. Vorsicht, kann zu Kick/Bann führen. | rote Warnung |
-| 🟠 **[ingame ungetestet]** | Die Funktion ist im Spiel noch nicht geprüft: Niemand kann vorhersagen, wie das Spiel reagiert, möglicherweise verbuggt. | rote Warnung |
-| 🟠 **[ungetestet]** | Weder online noch ingame getestet. | rote Warnung |
+| 🟠 **[online ungetestet]** | Nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr: Niemand kann vorhersagen, wie der Server reagiert. Vorsicht, kann zu Kick/Bann führen. | orange Warnung |
+| 🟠 **[ingame ungetestet]** | Die Funktion ist im Spiel noch nicht geprüft: Niemand kann vorhersagen, wie das Spiel reagiert, möglicherweise verbuggt. | orange Warnung |
+| 🟠 **[ungetestet]** | Weder online noch ingame getestet. | orange Warnung |
 | 🟡 **[Exe wird größer]** | Der Patch hängt eine Sektion an die `Wow.exe` an. Keine sichere Bann-Gefahr, aber ein Risiko: Manche Server prüfen die Dateigröße. | gelber Hinweis |
 
-Ein Patch kann mehrere Kennzeichnungen tragen, z. B. 🟢 **[sicher]** und
-🟡 **[Exe wird größer]**. Im Patcher stehen die Warnungen in eckigen
-Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
+Ein Patch kann mehrere Kennzeichnungen tragen. Sie stehen dann zusammen in
+einer Klammer, und davor steht nur ein Punkt: Der strengere gewinnt (Rot vor
+Orange vor Gelb), ein grüner Punkt wird gelb, wenn die Exe größer wird. Zum
+Beispiel 🟡 **[sicher - Exe wird größer]**, 🔴 **[unsicher - Exe wird größer]**,
+🟠 **[ungetestet - Exe wird größer]** oder 🔴 **[unsicher - ingame ungetestet]**.
+Im Patcher stehen die Warnungen in eckigen Klammern hinter dem Namen, vor
+dem Patchen listet er sie noch einmal auf.
 
 #### System & Leistung
 
@@ -304,7 +313,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [6](PATCHES.de.md#patch-nothrottle) | Gegenstands- und Namensabfragen nicht drosseln | 🟢 **[sicher]** | tb (ported by St0ny) | – | – | ✅ |
 | [7](PATCHES.de.md#patch-mirrorfix) | Mirror-Image-Absturzfix (Speicherleck bei Spiegelbildern) | 🟢 **[sicher]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [8](PATCHES.de.md#patch-wmocube) | Fehlende WMO-Datei: Fehlerwürfel statt ERROR #134 | 🟢 **[sicher]** | Alyst3r (ported by St0ny) | ✅ | – | ✅ |
-| [9](PATCHES.de.md#patch-glyphfix) | Schrift-Glyphen-Fix (falsche oder kaputte Zeichen in Texten) | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [9](PATCHES.de.md#patch-glyphfix) | Schrift-Glyphen-Fix (falsche oder kaputte Zeichen in Texten) | 🟡 **[sicher - Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 
 #### Sicherheit & Datenschutz
 
@@ -335,7 +344,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [22](PATCHES.de.md#patch-localdata) | Daten direkt aus dem Data-Ordner laden (ohne MPQ) | 🟢 **[sicher]** | Alastor StrixEfuartus | – | ✅ | ✅ |
 | [23](PATCHES.de.md#patch-luaunlock) | LUA Unlock (Zauber, Bewegung, Makros) | 🔴 **[unsicher]** | Alastor StrixEfuartus | – | – | – |
 | [24](PATCHES.de.md#patch-luaunlockfull) | LUA Unlock (vollständig): alle geschützten Funktionen freigeben | 🔴 **[unsicher]** | St0ny | – | – | – |
-| [25](PATCHES.de.md#patch-keyprop) | Alle Tastatur-Ereignisse an Addons weiterreichen (OnKeyDown) | 🔴 **[unsicher]**<br>🟠 **[ingame ungetestet]** | Alyst3r (0x539wowmod) | – | – | – |
+| [25](PATCHES.de.md#patch-keyprop) | Alle Tastatur-Ereignisse an Addons weiterreichen (OnKeyDown) | 🔴 **[unsicher - ingame ungetestet]** | Alyst3r (0x539wowmod) | – | – | – |
 | [26](PATCHES.de.md#patch-globalsv) | Addon-Daten aller Accounts zusammenlegen (SavedVariables) *(gemeinsamer Ordner `WTF\Account\global`)* | 🟠 **[ungetestet]** | St0ny (original by boredatom) | – | – | – |
 
 #### DLL-Loader
@@ -360,7 +369,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [37](PATCHES.de.md#patch-mail) | Neue Post ohne 60 Sekunden Wartezeit | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [38](PATCHES.de.md#patch-deadchat) | Chat-Befehle auch im Tod erlauben | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [39](PATCHES.de.md#patch-follow) | /follow auch bei NPCs erlauben | 🟠 **[online ungetestet]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
-| [40](PATCHES.de.md#patch-level101) | Level 101+ Fix (Spielwert-Tabellen, Barbierstuhl, Grundwerte) | 🟢 **[sicher]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
+| [40](PATCHES.de.md#patch-level101) | Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl für alle) | 🟢 **[sicher]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
 | [41](PATCHES.de.md#patch-raceclass) | Charaktererstellung: mehr als 10 Klassen (Zufallsklasse) *(für eigene Klassen; Server muss es unterstützen)* | 🔴 **[unsicher]** | Alastor StrixEfuartus / Robinsch | – | – | – |
 | [42](PATCHES.de.md#patch-namecheck) | Namensprüfung bei der Charaktererstellung abschalten (z. B. Zahlen im Namen) *(Server muss die Namen ebenfalls erlauben)* | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (fixed by St0ny) | – | – | – |
 | [43](PATCHES.de.md#patch-maxchars) | Max. Charaktere pro Server auf 255 erhöht | 🟢 **[sicher]** | St0ny | – | ✅ | – |
@@ -370,7 +379,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [47](PATCHES.de.md#patch-airforward) | Im Sprung vorwärts/rückwärts steuern | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [48](PATCHES.de.md#patch-airlateral) | Im Sprung seitwärts steuern | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [49](PATCHES.de.md#patch-airturn) | Im Sprung drehen ändert die Flugrichtung | 🔴 **[unsicher]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
-| [50](PATCHES.de.md#patch-doublejump) | Doppelsprung (weitere Sprünge in der Luft) *(fragt den Wert ab)* | 🔴 **[unsicher]**<br>🟡 **[Exe wird größer]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
+| [50](PATCHES.de.md#patch-doublejump) | Doppelsprung (weitere Sprünge in der Luft) *(fragt den Wert ab)* | 🔴 **[unsicher - Exe wird größer]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | ✅ |
 | [51](PATCHES.de.md#patch-noammo) | Fernkampf ohne Munition *(Server muss mitspielen, sonst meldet er weiter „Keine Munition“)* | 🟠 **[ungetestet]** | Alyst3r (ported by St0ny) | – | – | – |
 
 #### Grafik & Sichtweite
@@ -388,8 +397,8 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [60](PATCHES.de.md#patch-bluemoon) | Blauer Mond am Nachthimmel reaktiviert | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [61](PATCHES.de.md#patch-notransparency) | Keine Transparenz beim Heranzoomen | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
 | [62](PATCHES.de.md#patch-nofade) | Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN *(Server muss das Flag setzen)* | 🟠 **[ungetestet]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
-| [63](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
-| [64](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟢 **[sicher]**<br>🟡 **[Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [63](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher - Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
+| [64](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟡 **[sicher - Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 
 #### Interface & Komfort
 
@@ -404,7 +413,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [71](PATCHES.de.md#patch-lootopen) | Lootfenster bleibt beim Laufen offen | 🟠 **[online ungetestet]** | tb (ported by St0ny) | – | – | – |
 | [72](PATCHES.de.md#patch-showlevel) | Echtes Level statt „??“ bei Gegnern ab 10 Level über dir *(Bosse zeigen weiter „??“ – dafür Nr. 73)* | 🟠 **[online ungetestet]** | tb (ported by St0ny) | – | – | – |
 | [73](PATCHES.de.md#patch-showlevelboss) | Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 72) | 🟠 **[online ungetestet]** | St0ny | – | – | – |
-| [74](PATCHES.de.md#patch-holdrepeat) | Aktionstasten gedrückt halten zum Wiederholen | 🔴 **[unsicher]**<br>🟡 **[Exe wird größer]** | tb (ported by St0ny) | – | – | ✅ |
+| [74](PATCHES.de.md#patch-holdrepeat) | Aktionstasten gedrückt halten zum Wiederholen | 🔴 **[unsicher - Exe wird größer]** | tb (ported by St0ny) | – | – | ✅ |
 | [75](PATCHES.de.md#patch-bubblerange) | Sprechblasen-Reichweite erhöhen (Original 25 Meter) *(fragt den Wert ab)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 
 #### Fenster, Maus & Kamera
@@ -415,7 +424,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [77](PATCHES.de.md#patch-maximize) | Fenstermodus maximiert als Standard setzen *(wirkt nur zusammen mit Nr. 76)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 | [78](PATCHES.de.md#patch-windowfix) | Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [79](PATCHES.de.md#patch-mouse) | Mausflackern / Kamerasprünge Fix | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
-| [80](PATCHES.de.md#patch-camera) | CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen *(Schulterversatz noch ohne Wirkung)* | 🟠 **[online ungetestet]**<br>🟡 **[Exe wird größer]** | Stormhand (fixed by St0ny) | – | – | – |
+| [80](PATCHES.de.md#patch-camera) | CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen *(Schulterversatz noch ohne Wirkung)* | 🟠 **[online ungetestet - Exe wird größer]** | Stormhand (fixed by St0ny) | – | – | – |
 
 #### Sound
 
@@ -432,7 +441,7 @@ Klammern hinter dem Namen, vor dem Patchen listet er sie noch einmal auf.
 | [84](PATCHES.de.md#patch-clienttitle) | Programmtitel ändern (Dateieigenschaften und Fenstertitel) *(fragt den Wert ab)* | 🔴 **[unsicher]** | MacWarrior (fixed by St0ny) | – | – | – |
 | [85](PATCHES.de.md#patch-clientdate) | Build-Datum ändern (Original Jun 24 2010) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
 | [86](PATCHES.de.md#patch-clienticon) | Programm-Icon ändern (Symbol der Wow.exe) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
-| [87](PATCHES.de.md#patch-y38fix) | Jahr-2038-Fix: Daten um N Jahre verschoben anzeigen *(fragt den Wert ab; nur zusammen mit dem passenden Servermodul)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
+| [87](PATCHES.de.md#patch-y38fix) | Jahr-2038-Fix: Daten um N Jahre verschoben anzeigen [BETA] *(fragt den Wert ab; nur zusammen mit dem passenden Servermodul)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
 </details>
 
@@ -458,13 +467,12 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   eckigen Klammern, und vor der Sicherheitsabfrage listet der Patcher die
   gewählten Patches mit Warnung noch einmal auf:
   - 🟢 **sicher** – im Spiel getestet, im Patcher ohne Warnung.
-  - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 4, 10,
-    11, 23–25, 41, 42, 45–50, 74 und 82–86 (rote Warnung).
+  - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 4, 10, 11, 23–25, 41, 42, 45–50, 74 und 82–86 (rote Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
     kann zu Kick/Bann führen: Nr. 26, 29, 39, 44, 51, 62, 68, 71–73, 80 und 87
-    (rote Warnung).
+    (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 29, 44, 51, 62 und 87 (rote Warnung).
+    möglicherweise verbuggt: Nr. 25, 26, 29, 44, 51, 62 und 87 (orange Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 50, 63, 64, 74 und 80. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
@@ -529,7 +537,7 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
 
 ## Lizenz
 
-Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
+Dieses Projekt steht unter der [MIT-Lizenz](../LICENSE).
 Copyright (c) 2026 St0ny (Raz0r1337).
 
 Kurz gesagt: Jeder darf den Patcher nutzen, verändern und weitergeben – auch in
