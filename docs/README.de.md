@@ -292,11 +292,13 @@ Ein Klick auf die Nummer eines Patches springt zu seiner Beschreibung.
 | 🟠 **[ingame ungetestet]** | Die Funktion ist im Spiel noch nicht geprüft: Niemand kann vorhersagen, wie das Spiel reagiert, möglicherweise verbuggt. | orange Warnung |
 | 🟠 **[ungetestet]** | Weder online noch ingame getestet. | orange Warnung |
 | 🟡 **[Exe wird größer]** | Der Patch hängt eine Sektion an die `Wow.exe` an. Keine sichere Bann-Gefahr, aber ein Risiko: Manche Server prüfen die Dateigröße. | gelber Hinweis |
+| 🟡 **[DLL riskant]** | Der Patch selbst ist sicher, er lädt aber eine DLL, die auf öffentlichen Servern erkannt oder blockiert werden kann. Nur dort einsetzen, wo die DLL erlaubt ist. | gelber Hinweis |
 
 Ein Patch kann mehrere Kennzeichnungen tragen. Sie stehen dann zusammen in
 einer Klammer, und davor steht nur ein Punkt: Der strengere gewinnt (Rot vor
-Orange vor Gelb), ein grüner Punkt wird gelb, wenn die Exe größer wird. Zum
-Beispiel 🟡 **[sicher - Exe wird größer]**, 🔴 **[unsicher - Exe wird größer]**,
+Orange vor Gelb), ein grüner Punkt wird gelb, wenn die Exe größer wird oder
+die DLL riskant ist. Zum Beispiel 🟡 **[sicher - Exe wird größer]**,
+🟡 **[sicher - DLL riskant]**, 🔴 **[unsicher - Exe wird größer]**,
 🟠 **[ungetestet - Exe wird größer]** oder 🔴 **[unsicher - ingame ungetestet]**.
 Im Patcher stehen die Warnungen in eckigen Klammern hinter dem Namen, vor
 dem Patchen listet er sie noch einmal auf.
@@ -351,8 +353,8 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [27](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟢 **[sicher]** | FrostAtom | ✅ | ✅ | ✅ |
-| [28](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟢 **[sicher]** | St0ny (original by Alyst3r) | – | – | – |
+| [27](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom | ✅ | ✅ | ✅ |
+| [28](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [29](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (mod-voicechat) [ALPHA] *(Modul noch unfertig, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
 #### Gameplay-Fixes
@@ -477,6 +479,9 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     Nr. 9, 50, 63, 64, 74 und 80. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
     anderen Patches ändern die Dateigröße nicht.
+  - 🟡 **DLL riskant** – der Patch selbst ist sicher, er lädt aber eine DLL, die
+    auf öffentlichen Servern erkannt oder blockiert werden kann: Nr. 27 und 28
+    (gelber Hinweis). Nur dort einsetzen, wo die DLL erlaubt ist.
 - **Signatur:** Die originale `Wow.exe` ist von Blizzard digital signiert. Jeder
   Patch macht diese Signatur ungültig. Windows warnt deshalb wahrscheinlich
   beim Start vor einer nicht signierten, möglicherweise schädlichen App; mit
