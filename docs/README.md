@@ -381,7 +381,7 @@ name, and before patching it lists them once more.
 | [21](PATCHES.en.md#patch-mpqnames) | Allow extended MPQ names | 🟢 **[safe]** | unknown | – | ✅ | ✅ |
 | [22](PATCHES.en.md#patch-localdata) | Load data directly from the Data folder (no MPQ) | 🟢 **[safe]** | Alastor StrixEfuartus | – | ✅ | ✅ |
 | [23](PATCHES.en.md#patch-luaunlock) | LUA unlock (spells, movement, macros) | 🔴 **[unsafe]** | Alastor StrixEfuartus | – | – | – |
-| [24](PATCHES.en.md#patch-luaunlockfull) | LUA unlock (complete): allow all protected functions | 🔴 **[unsafe]** | St0ny | – | – | – |
+| [24](PATCHES.en.md#patch-luaunlockfull) | LUA unlock (complete): allow all protected functions | 🔴 **[unsafe]** | St0ny (original by Alastor StrixEfuartus) | – | – | – |
 | [25](PATCHES.en.md#patch-keyprop) | Pass all keyboard events on to addons (OnKeyDown) | 🔴 **[unsafe - untested ingame]** | Alyst3r (0x539wowmod) | – | – | – |
 | [26](PATCHES.en.md#patch-globalsv) | Merge addon data of all accounts (SavedVariables) *(shared folder `WTF\Account\global`)* | 🟠 **[untested]** | St0ny (original by boredatom) | – | – | – |
 
