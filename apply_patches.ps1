@@ -220,6 +220,10 @@ $TEXT = @{
         TagDll        = 'DLL riskant'
         Confirm       = 'Patchen jetzt starten? (J/N)'
         Yes           = 'J'
+        No            = 'N'
+        YesNo         = '(J/N)'
+        YesNoBad      = 'Bitte J oder N eingeben (ENTER = Vorschlag in Klammern).'
+        OptNone       = 'Standard (alles N)'
         Aborted       = 'Abgebrochen. Die Wow.exe wurde nicht veraendert.'
         BackupFail    = '[FEHLER] Konnte Wow.exe nicht sichern. Abbruch.'
         BackupOk      = 'Original gesichert als: {0}'
@@ -354,6 +358,10 @@ $TEXT = @{
         TagDll        = 'DLL risky'
         Confirm       = 'Start patching now? (Y/N)'
         Yes           = 'Y'
+        No            = 'N'
+        YesNo         = '(Y/N)'
+        YesNoBad      = 'Please enter Y or N (ENTER = suggestion in brackets).'
+        OptNone       = 'default (all N)'
         Aborted       = 'Aborted. Wow.exe has not been modified.'
         BackupFail    = '[ERROR] Could not back up Wow.exe. Aborting.'
         BackupOk      = 'Original saved as: {0}'
@@ -2156,27 +2164,28 @@ function Add-HoldRepeat {
 }
 
 # ============================================================
-#  Umrandung fuer Ziel und Mouseover (St0ny), mit Zusatzoptionen
+#  Umrandung fuer Ziel und Mouseover (St0ny), mit Einstellungen
 #  Wie in Retail bekommt die 3D-Figur des markierten Ziels und die unter dem
 #  Mauszeiger eine duenne Umrandung. Nur fuer gxApi d3d9 mit 24-Bit-
 #  Tiefenpuffer; sonst schaltet sich der Patch ab. Eigene beschreibbare
 #  Sektion (.outl).
-#  Zusatzoptionen (Nr. 69-74) setzen je ein CC-Fuellbyte nach einem ret in
-#  .text auf 1, der Code liest sie zur Laufzeit: 0x6AB7DF durch Waende,
-#  0x6ABAAF eigener Charakter, 0x6ABE2F 5er-Gruppe (GUIDs ab 0xBD1948),
-#  0x6ABE8F Schlachtzug (Zeiger ab 0xBEB568, Anzahl 0xBEB608), 0x6ABF3F
-#  eigener Charakter nur wo verdeckt, 0x6ABE5F Gesinnungs- statt
-#  Klassenfarbe. Ohne Optionen: nur Ziel und Mouseover, nicht durch Waende.
+#  Einstellungen ($OUTLINE_OPTIONS, J/N-Fragen vor dem Patchen) setzen je ein
+#  CC-Fuellbyte nach einem ret in .text auf 1, der Code liest sie zur
+#  Laufzeit: 0x6AB7DF durch Waende, 0x6ABAAF eigener Charakter, 0x6ABE2F
+#  5er-Gruppe (GUIDs ab 0xBD1948), 0x6ABE8F Schlachtzug (Zeiger ab 0xBEB568,
+#  Anzahl 0xBEB608), 0x6ABF3F eigener Charakter nur wo verdeckt, 0x6ABE5F
+#  Gesinnungs- statt Klassenfarbe. Standard (alles N): nur Ziel und
+#  Mouseover, nicht durch Waende.
 #  - Pro Bild eine Tabelle der umrandeten Einheiten (bis 48): Schlachtzug,
 #    Gruppe, eigener Charakter, Ziel, Mouseover - jede nur einmal. Ihr
 #    Index + 1 ist ihr Stencil-Wert (Rand), die Figur selbst bekommt 0x80.
 #    Spaeter Eingetragene gewinnen am gemeinsamen Rand (Ziel, Mouseover).
 #  - Farbe: bei Spielern die Klassenfarbe ([[obj+0xD0]+0x45] wie UnitClass,
 #    Spieler = ObjectPtr mit Typmaske 0x10 wie UnitIsPlayer, Tabelle mit den
-#    Farben der Raid-Frames), sonst und mit der Option die Farbe des
-#    Auswahlkreises (0x521BF0). Ist der Auswahlkreis eines Spielers in
-#    Klassenfarbe rot (0xFFFF0000, feindlich), pulsiert sein Rand sanft
-#    zwischen Klassenfarbe und Rot (GetTickCount, 1,5 s je Puls).
+#    Farben der Raid-Frames), sonst und mit der Einstellung Gesinnungsfarbe
+#    die Farbe des Auswahlkreises (0x521BF0). Ist der Auswahlkreis eines
+#    Spielers in Klassenfarbe rot (0xFFFF0000, feindlich), pulsiert sein Rand
+#    sanft zwischen Klassenfarbe und Rot (GetTickCount, 1,5 s je Puls).
 #  - Tiefenpuffer D24X8 -> D24S8 (Formattabelle 0xA2E4A8, Index 5), damit es
 #    einen Stencil-Puffer gibt. Das Spiel selbst nutzt Stencil nie.
 #  - SetViewport (VA 0x6A9B10): der zuletzt gesetzte Viewport wird gemerkt.
@@ -3119,6 +3128,51 @@ function Add-Outline {
     Patch 0x62CCBC @(0x4B)                                     # Tiefenpuffer D24X8 -> D24S8 (mit Stencil)
 }
 
+# Einstellungen der Umrandung: J/N-Fragen vor dem Patchen (Questions). Der Wert
+# sind die eingeschalteten Punkte durch Komma getrennt (z.B. "self,party")
+# oder "none". Jeder Punkt ist ein CC-Fuellbyte hinter einem ret in .text
+# (Va), 1 = an.
+$OUTLINE_OPTIONS = @(
+    @{ Key = 'walls'; Va = 0x6AB7DF; BanRisk = $true
+       De = 'Durch Waende sichtbar? (unsicher, Bann-Gefahr)'; En = 'Visible through walls? (unsafe, ban risk)'
+       ShortDe = 'durch Waende'; ShortEn = 'through walls' }
+    @{ Key = 'self'; Va = 0x6ABAAF
+       De = 'Eigener Charakter immer umrandet?'; En = 'Own character always outlined?'
+       ShortDe = 'eigener Charakter'; ShortEn = 'own character' }
+    @{ Key = 'party'; Va = 0x6ABE2F
+       De = 'Eigene 5er-Gruppe immer umrandet?'; En = 'Own party of 5 always outlined?'
+       ShortDe = '5er-Gruppe'; ShortEn = 'party' }
+    @{ Key = 'raid'; Va = 0x6ABE8F
+       De = 'Ganzer Schlachtzug immer umrandet? (kostet viele FPS)'; En = 'Whole raid always outlined? (costs a lot of FPS)'
+       ShortDe = 'Schlachtzug'; ShortEn = 'raid' }
+    @{ Key = 'hidden'; Va = 0x6ABF3F
+       De = 'Eigener Charakter nur dort umrandet, wo er verdeckt ist?'; En = 'Own character outlined only where it is hidden?'
+       ShortDe = 'eigener Charakter nur verdeckt'; ShortEn = 'own character only hidden' }
+    @{ Key = 'react'; Va = 0x6ABE5F
+       De = 'Gesinnungsfarbe statt Klassenfarbe?'; En = 'Reaction color instead of class color?'
+       ShortDe = 'Gesinnungsfarbe'; ShortEn = 'reaction color' }
+)
+
+function Set-OutlineOptions([string]$v) {
+    $on = Get-OptionKeys $OUTLINE_OPTIONS $v
+    foreach ($o in $OUTLINE_OPTIONS) {
+        $off = $o.Va - 0x400C00
+        Assert-Bytes $off @(0xCC) 'Umrandung'
+        # Auch ein ausgeschalteter Punkt wird (unveraendert) geschrieben, damit
+        # die Stelle in der Original-Byte-Tabelle landet.
+        if ($on -contains $o.Key) { Patch $off @(0x01) } else { Patch $off @(0xCC) }
+    }
+}
+
+function Get-OutlineOptionsFromExe {
+    $on = @()
+    foreach ($o in $OUTLINE_OPTIONS) {
+        $b = $script:f[$o.Va - 0x400C00]
+        if ($b -eq 1) { $on += $o.Key } elseif ($b -ne 0xCC) { return $null }
+    }
+    return (ConvertTo-OptionValue $OUTLINE_OPTIONS $on)
+}
+
 # ============================================================
 #  Icons im Text pixelgenau (tb, ported by St0ny)
 #  Texte koennen Icons enthalten (|T...|t, z.B. Raidmarker, Waehrungen,
@@ -3530,6 +3584,10 @@ function Get-BubbleRangeFromExe {
 #            gemerkten Wert berechnet (z.B. heutiges Datum)
 #    Normalize - optional: Scriptblock, der einen gueltigen Wert in eine
 #            einheitliche Schreibweise bringt (z.B. Build-Datum mit Uhrzeit)
+#    Questions - optional, statt PromptDe/PromptEn: J/N-Fragen (Key, De, En,
+#            ShortDe, ShortEn, optional BanRisk = rote Warnung, wenn mit J
+#            beantwortet). Der Wert sind die mit J beantworteten Keys durch
+#            Komma getrennt (z.B. "self,party") oder "none"
 #    Code  - Scriptblock mit den Patch-Aufrufen
 #  Die Reihenfolge hier ist die Reihenfolge im Menue und beim Einspielen,
 #  Patches einer Kategorie stehen zusammen.
@@ -4761,86 +4819,17 @@ $patches = @(
        En = 'Outline for target and mouseover [BETA]'
        NoteDe = 'nur gxApi d3d9'
        NoteEn = 'gxApi d3d9 only'
+       Questions = $OUTLINE_OPTIONS
+       Default = 'none'
+       Check = { param($v) Test-OptionValue $OUTLINE_OPTIONS $v }
+       Normalize = { param($v) ConvertTo-OptionValue $OUTLINE_OPTIONS (Get-OptionKeys $OUTLINE_OPTIONS $v) }
+       Decode = { Get-OutlineOptionsFromExe }
        Code = {
-        # Eigene Sektion (.outl), siehe Add-Outline. Ohne die Zusatzoptionen
-        # (Nr. 69-74) nur Ziel und Mouseover, nicht durch Waende.
+        # Eigene Sektion (.outl), siehe Add-Outline. Die Einstellungen (J/N vor
+        # dem Patchen, Standard alles N = nur Ziel und Mouseover, nicht durch
+        # Waende) setzt Set-OutlineOptions.
         Add-Outline
-    }}
-
-    @{ Id = 'outlinewalls'; Cat = 'graphics'; On = $false; Needs = @('outline'); BanRisk = $true; PublicUntested = $true; GameUntested = $true
-       Author = 'St0ny'
-       De = 'Umrandung: auch durch Waende sichtbar [BETA]'
-       En = 'Outline: visible through walls too [BETA]'
-       Code = {
-        # Schalter fuer Add-Outline: CC-Fuellbyte hinter einem ret (VA 0x6AB7DF)
-        # wird 1. Der Rand erscheint dann auch dort, wo die Figur verdeckt ist.
-        Assert-Bytes 0x2AABDF @(0xCC) 'Umrandung durch Waende'
-        Patch 0x2AABDF @(0x01)
-    }}
-
-    @{ Id = 'outlineself'; Cat = 'graphics'; On = $false; Needs = @('outline'); PublicUntested = $true; GameUntested = $true
-       Author = 'St0ny'
-       De = 'Umrandung: eigener Charakter immer umrandet [BETA]'
-       En = 'Outline: own character always outlined [BETA]'
-       Code = {
-        # Schalter fuer Add-Outline: CC-Fuellbyte hinter einem ret (VA 0x6ABAAF)
-        # wird 1. Die eigene Figur bekommt dann immer einen Rand.
-        Assert-Bytes 0x2AAEAF @(0xCC) 'Umrandung eigener Charakter'
-        Patch 0x2AAEAF @(0x01)
-    }}
-
-    @{ Id = 'outlineparty'; Cat = 'graphics'; On = $false; Needs = @('outline'); PublicUntested = $true; GameUntested = $true
-       Author = 'St0ny'
-       De = 'Umrandung: eigene Gruppe immer umrandet [BETA]'
-       En = 'Outline: own party always outlined [BETA]'
-       NoteDe = 'nur 5er-Gruppe'
-       NoteEn = 'party of 5 only'
-       Code = {
-        # Schalter fuer Add-Outline: CC-Fuellbyte hinter einem ret (VA 0x6ABE2F)
-        # wird 1. Die bis zu 4 Mitspieler der Gruppe (GUIDs ab 0xBD1948) bekommen
-        # dann immer einen Rand.
-        Assert-Bytes 0x2AB22F @(0xCC) 'Umrandung Gruppe'
-        Patch 0x2AB22F @(0x01)
-    }}
-
-    @{ Id = 'outlineraid'; Cat = 'graphics'; On = $false; Needs = @('outline'); PublicUntested = $true; GameUntested = $true
-       Author = 'St0ny'
-       De = 'Umrandung: ganzer Schlachtzug immer umrandet [BETA]'
-       En = 'Outline: whole raid always outlined [BETA]'
-       NoteDe = 'kostet im Schlachtzug viele FPS'
-       NoteEn = 'costs a lot of FPS in raids'
-       Code = {
-        # Schalter fuer Add-Outline: CC-Fuellbyte hinter einem ret (VA 0x6ABE8F)
-        # wird 1. Alle Mitglieder des Schlachtzugs (Zeiger ab 0xBEB568, Anzahl
-        # 0xBEB608) und der Gruppe bekommen dann immer einen Rand.
-        Assert-Bytes 0x2AB28F @(0xCC) 'Umrandung Schlachtzug'
-        Patch 0x2AB28F @(0x01)
-    }}
-
-    @{ Id = 'outlinehidden'; Cat = 'graphics'; On = $false; Needs = @('outline'); PublicUntested = $true; GameUntested = $true
-       Author = 'St0ny'
-       De = 'Umrandung: eigener Charakter nur dort, wo er verdeckt ist [BETA]'
-       En = 'Outline: own character only where it is hidden [BETA]'
-       Code = {
-        # Schalter fuer Add-Outline: CC-Fuellbyte hinter einem ret (VA 0x6ABF3F)
-        # wird 1. Die eigene Figur bekommt dann nur dort einen Rand, wo vorher
-        # Gezeichnetes (Gebaeude, Gelaende) vor ihr liegt.
-        Assert-Bytes 0x2AB33F @(0xCC) 'Umrandung nur verdeckt'
-        Patch 0x2AB33F @(0x01)
-    }}
-
-    @{ Id = 'outlinereact'; Cat = 'graphics'; On = $false; Needs = @('outline'); PublicUntested = $true; GameUntested = $true
-       Author = 'St0ny'
-       De = 'Umrandung: Gesinnungsfarbe statt Klassenfarbe [BETA]'
-       En = 'Outline: reaction color instead of class color [BETA]'
-       NoteDe = 'fuer alle Raender von Spielern'
-       NoteEn = 'for all outlines of players'
-       Code = {
-        # Schalter fuer Add-Outline: CC-Fuellbyte hinter einem ret (VA 0x6ABE5F)
-        # wird 1. Alle Raender bekommen dann die Farbe des Auswahlkreises, auch
-        # bei Spielern (sonst Klassenfarbe; feindliche Spieler pulsieren rot).
-        Assert-Bytes 0x2AB25F @(0xCC) 'Umrandung Gesinnungsfarbe'
-        Patch 0x2AB25F @(0x01)
+        Set-OutlineOptions $script:VALUES['outline']
     }}
 
     # --- Interface & Komfort ---
@@ -4976,13 +4965,13 @@ $patches = @(
        Author = 'tb (ported by St0ny)'
        De = 'Echtes Level statt "??" bei Gegnern ab 10 Level ueber dir'
        En = 'Real level instead of "??" for enemies 10+ levels above you'
-       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 83'
-       NoteEn = 'bosses still show "??" - see No. 83'
+       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 77'
+       NoteEn = 'bosses still show "??" - see No. 77'
        Code = {
         # Lua UnitLevel (VA 0x60F9E0), Tooltip (VA 0x620EE0) und Namensplakette
         # (VA 0x98EF10) zeigen "??" (bzw. -1 / Totenkopf), wenn ein feindliches
         # Ziel 10 oder mehr Level ueber dir ist. Diese Pruefung ("jle") faellt
-        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 83 raus).
+        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 77 raus).
         Patch 0x20EEB2 @(0x90, 0x90)
         Patch 0x220B66 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)
         Patch 0x58E3B9 @(0x90, 0x90)
@@ -4990,15 +4979,15 @@ $patches = @(
 
     @{ Id = 'showlevelboss'; Cat = 'ui'; On = $false; Needs = @('showlevel'); PublicUntested = $true
        Author = 'St0ny'
-       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 82)'
-       En = 'Real level for bosses too instead of "??" (extension to No. 82)'
+       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 76)'
+       En = 'Real level for bosses too instead of "??" (extension to No. 76)'
        Code = {
         # Ist eine Kreatur als Boss markiert (Flag 0x4 in den Kreatur-Typflags,
         # Pruefung CGUnit_C::IsBossMob bei VA 0x715D70), zeigen UnitLevel,
         # Tooltip und Namensplakette immer "??" bzw. -1 / Totenkopf. Diese drei
         # Boss-Pruefungen fallen weg; die Beschriftung "Boss" im Tooltip und das
         # Elite-Symbol der Namensplakette bleiben. Gegner 10+ Level ueber dir
-        # zeigen ihr Level erst zusammen mit Nr. 82.
+        # zeigen ihr Level erst zusammen mit Nr. 76.
         Patch 0x20EEBD @(0xEB)                                 # VA 0x60FABD UnitLevel: je -> jmp (kein -1)
         Patch 0x220B78 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)   # VA 0x621778 Tooltip: jne "??" -> nop
         Patch 0x58E358 @(0xEB)                                 # VA 0x98EF58 Namensplakette: je -> jmp (Level statt Totenkopf)
@@ -5043,8 +5032,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus als Standard setzen'
        En = 'Windowed mode by default'
-       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 87'
-       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 87'
+       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 81'
+       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 81'
        Code = {
         Patch 0x369A7D @(0x64, 0x14, 0x9E)
     }}
@@ -5053,8 +5042,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus maximiert als Standard setzen'
        En = 'Maximized window by default'
-       NoteDe = 'wirkt nur zusammen mit Nr. 86'
-       NoteEn = 'only works together with No. 86'
+       NoteDe = 'wirkt nur zusammen mit Nr. 80'
+       NoteEn = 'only works together with No. 80'
        Code = {
         Patch 0x369AB2 @(0x64, 0x14, 0x9E)
     }}
@@ -5454,14 +5443,14 @@ outline;398;00000000000000000000000000000000000000000000000000000000000000000000
 outline;F85E5;E8A6DDFFFF;1
 outline;2A2AC8;8B884801000052FFD1;1
 outline;2A8F10;8B867C390000;1
+outline;2AABDF;CC;1
+outline;2AAEAF;CC;1
+outline;2AB22F;CC;1
+outline;2AB25F;CC;1
+outline;2AB28F;CC;1
+outline;2AB33F;CC;1
 outline;422E81;8BCEE828C9FFFF;1
 outline;62CCBC;4D;1
-outlinewalls;2AABDF;CC;1
-outlineself;2AAEAF;CC;1
-outlineparty;2AB22F;CC;1
-outlineraid;2AB28F;CC;1
-outlinehidden;2AB33F;CC;1
-outlinereact;2AB25F;CC;1
 tracker;11D4C5;A0149E00;1
 worldmap;11D462;A0149E00;1
 castbars;123676;8BCEE8A3181F00;1
@@ -5876,7 +5865,66 @@ function Get-ValueText($p) {
         if ($v -match '\sFR\s*$') { $t += ' FR' }
         return $t
     }
+    if ($p.Questions) { return (Format-OptionValue $p.Questions $v) }
     return $v
+}
+
+# Patches mit Questions (J/N-Fragen statt einer Eingabezeile, z.B. die
+# Umrandung): Der Wert sind die mit J beantworteten Keys, durch Komma getrennt
+# in der Reihenfolge der Fragen, oder "none". Get-OptionKeys liefert die Keys
+# (leeres Array bei "none") oder $null bei einem ungueltigen Wert.
+function Get-OptionKeys($opts, [string]$v) {
+    $keys = @()
+    $t = $v.Trim().ToLowerInvariant()
+    if ($t -eq '' -or $t -eq 'none') { return , $keys }
+    foreach ($k in ($t -split '\s*,\s*')) {
+        if (@($opts | Where-Object { $_.Key -eq $k }).Count -eq 0) { return $null }
+        if ($keys -notcontains $k) { $keys += $k }
+    }
+    return , $keys
+}
+
+function Test-OptionValue($opts, [string]$v) {
+    if ($null -ne (Get-OptionKeys $opts $v)) { return $null }
+    $list = @($opts | ForEach-Object { $_.Key }) -join ','
+    return (L "Erlaubt sind none oder eine Liste aus $list (durch Komma getrennt)." "Allowed are none or a comma-separated list of $list.")
+}
+
+function ConvertTo-OptionValue($opts, $keys) {
+    $out = @()
+    foreach ($o in $opts) { if ($keys -contains $o.Key) { $out += $o.Key } }
+    if ($out.Count -eq 0) { return 'none' }
+    return ($out -join ',')
+}
+
+# Wert fuer die Anzeige: die eingeschalteten Punkte in Kurzform.
+function Format-OptionValue($opts, [string]$v) {
+    $keys = Get-OptionKeys $opts $v
+    if ($null -eq $keys) { return $v }
+    if ($keys.Count -eq 0) { return (T 'OptNone') }
+    $out = @()
+    foreach ($o in $opts) { if ($keys -contains $o.Key) { $out += (L $o.ShortDe $o.ShortEn) } }
+    return ($out -join ', ')
+}
+
+# Fragt jeden Punkt mit J/N ab, ENTER uebernimmt den Vorschlag aus $def.
+function Read-OptionAnswers($opts, [string]$def) {
+    $keys = Get-OptionKeys $opts $def
+    if ($null -eq $keys) { $keys = @() }
+    $on = @()
+    foreach ($o in $opts) {
+        $cur = $keys -contains $o.Key
+        $hint = T 'No'; if ($cur) { $hint = T 'Yes' }
+        while ($true) {
+            $a = (Ask "  $(L $o.De $o.En) $(T 'YesNo') [$hint]").ToUpperInvariant()
+            if ($a -eq '') { $yes = $cur; break }
+            if ($a -eq 'J' -or $a -eq 'Y') { $yes = $true; break }
+            if ($a -eq 'N') { $yes = $false; break }
+            Say (T 'YesNoBad') 'Yellow'
+        }
+        if ($yes) { $on += $o.Key }
+    }
+    return (ConvertTo-OptionValue $opts $on)
 }
 
 function Get-SelectedCount($sel) {
@@ -6389,15 +6437,21 @@ foreach ($p in $chosen) {
     Write-Host ''
     $shown = $def
     if ($useNow) { $shown = T 'ValueAtYes'; if ($def -match '\sFR\s*$') { $shown += ' FR' } }
+    if ($p.Questions) { $shown = Format-OptionValue $p.Questions $def }
     if ($def -ne '') { Say "$(PatchName $p) $(T $label $shown)" } else { Say (PatchName $p) }
-    while ($true) {
-        $hint = ''; if ($def -ne '') { $hint = " [$shown]" }
-        $v = Ask "  $(L $p.PromptDe $p.PromptEn)$hint"
-        $takeNow = $false
-        if ($v -eq '') { $v = $def; $takeNow = $useNow }
-        $err = & $p.Check $v
-        if (-not $err) { break }
-        Say $err 'Yellow'
+    $takeNow = $false
+    if ($p.Questions) {
+        $v = Read-OptionAnswers $p.Questions $def
+    } else {
+        while ($true) {
+            $hint = ''; if ($def -ne '') { $hint = " [$shown]" }
+            $v = Ask "  $(L $p.PromptDe $p.PromptEn)$hint"
+            $takeNow = $false
+            if ($v -eq '') { $v = $def; $takeNow = $useNow }
+            $err = & $p.Check $v
+            if (-not $err) { break }
+            Say $err 'Yellow'
+        }
     }
     if ($p.Normalize) { $v = & $p.Normalize $v }
     if ($takeNow) { $atConfirm += $p.Id }
@@ -6451,7 +6505,7 @@ if (-not $patchedMode) {
     if ($changed.Count -gt 0) {
         Say (T 'SumChange' $changed.Count) 'Cyan'
         foreach ($p in $changed) {
-            $old = $state.Values[$p.Id]; if (-not $old) { $old = '?' }
+            $old = $state.Values[$p.Id]; if (-not $old) { $old = '?' } elseif ($p.Questions) { $old = Format-OptionValue $p.Questions $old }
             Say "  ~ $(PatchName $p): $old -> $(Get-ValueText $p)" 'Green'
         }
     }
@@ -6497,7 +6551,14 @@ foreach ($p in $chosen) {
     }
 }
 $cheat = @()
-foreach ($p in $chosen) { if ($p.BanRisk) { $cheat += PatchRef $p } }
+foreach ($p in $chosen) {
+    if ($p.BanRisk) { $cheat += PatchRef $p; continue }
+    if (-not $p.Questions) { continue }
+    $keys = Get-OptionKeys $p.Questions $VALUES[$p.Id]
+    $risky = @()
+    foreach ($o in $p.Questions) { if ($o.BanRisk -and $keys -contains $o.Key) { $risky += (L $o.ShortDe $o.ShortEn) } }
+    if ($risky.Count -gt 0) { $cheat += "$(PatchRef $p): $($risky -join ', ')" }
+}
 if ($cheat.Count -gt 0) {
     Write-Host ''
     Say (T 'CheatHead') 'Red'

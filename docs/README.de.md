@@ -151,7 +151,8 @@ Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
    letzten Mal bzw. bei einer gepatchten `Wow.exe` die Patches, die gerade
    darin stecken.
 7. Bei Patches mit eigenem Wert (Sprunghöhe, Doppelsprung, Client-Infos) fragt
-   der Patcher die Werte ab; danach speichert er die Auswahl.
+   der Patcher die Werte ab, bei der Umrandung die Einstellungen mit J/N;
+   danach speichert er die Auswahl.
 8. Zusammenfassung der gewählten Patches (bei einer gepatchten `Wow.exe`: was
    neu dazukommt, was zurückgenommen wird), Hinweise (fehlende oder
    überflüssige Ergänzungs-Patches, Warnungen) und Sicherheitsabfrage (J/N).
@@ -248,8 +249,9 @@ Sicherheitsabfrage abgebrochen hast.
   und die neuen Patches starten mit ihrer Standard-Einstellung.
 - Die Datei ist eine einfache Textdatei (`laa=1`, `cache=0`, …) und kann auch
   von Hand bearbeitet werden. Dort stehen auch die eingegebenen Werte der
-  Patches mit eigenem Wert – Client-Infos, Sprunghöhe, Doppelsprung
-  (`value.clientversion=3.3.6` usw.).
+  Patches mit eigenem Wert – Client-Infos, Sprunghöhe, Doppelsprung,
+  Einstellungen der Umrandung (`value.clientversion=3.3.6`,
+  `value.outline=self,party` usw.).
 - Auch die Sprache wird dort gemerkt (`language=de` bzw. `en`), ebenso, ob
   das Startmenü erscheint (`startmenu=on` bzw. `off`).
 - **Zurücksetzen:** im Menü `R` drücken oder `patcher_selection.ini` löschen –
@@ -511,62 +513,56 @@ dem Patchen listet er sie noch einmal auf.
 | [65](PATCHES.de.md#patch-nofade) | Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN *(Server muss das Flag setzen)* | 🟠 **[ungetestet]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
 | [66](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher - Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [67](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟡 **[sicher - Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
-| [68](PATCHES.de.md#patch-outline) | Umrandung für Ziel und Mouseover [BETA] *(nur gxApi d3d9)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
-| [69](PATCHES.de.md#patch-outlinewalls) | Umrandung: auch durch Wände sichtbar [BETA] | 🔴 **[unsicher - ungetestet]** | St0ny | – | – | – |
-| [70](PATCHES.de.md#patch-outlineself) | Umrandung: eigener Charakter immer umrandet [BETA] | 🟠 **[ungetestet]** | St0ny | – | – | – |
-| [71](PATCHES.de.md#patch-outlineparty) | Umrandung: eigene Gruppe immer umrandet [BETA] *(nur 5er-Gruppe)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
-| [72](PATCHES.de.md#patch-outlineraid) | Umrandung: ganzer Schlachtzug immer umrandet [BETA] *(kostet im Schlachtzug viele FPS)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
-| [73](PATCHES.de.md#patch-outlinehidden) | Umrandung: eigener Charakter nur dort, wo er verdeckt ist [BETA] | 🟠 **[ungetestet]** | St0ny | – | – | – |
-| [74](PATCHES.de.md#patch-outlinereact) | Umrandung: Gesinnungsfarbe statt Klassenfarbe [BETA] *(für alle Ränder von Spielern)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
+| [68](PATCHES.de.md#patch-outline) | Umrandung für Ziel und Mouseover [BETA] *(nur gxApi d3d9, fragt die Einstellungen ab)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
 
 > [!WARNING]
-> **Umrandung (Nr. 68–74) auf öffentlichen Servern:** Wenn du den Patch dort
-> verwendest, lass bitte die Standard-Einstellung – nur Nr. 68, ohne die
-> Zusatzoptionen Nr. 69–74. Wird der Patch auf einem Server gebannt, hast du
-> Pech gehabt; daran kann ich nichts ändern. Ab dann ist er nur noch auf eigenen
-> privaten Servern nutzbar. Also pass bitte auf.
+> **Umrandung (Nr. 68) auf öffentlichen Servern:** Wenn du den Patch dort
+> verwendest, lass bitte die Standard-Einstellung – alle Fragen vor dem
+> Patchen mit N beantworten. Wird der Patch auf einem Server gebannt, hast du
+> Pech gehabt; daran kann ich nichts ändern. Ab dann ist er nur noch auf
+> eigenen privaten Servern nutzbar. Also pass bitte auf.
 
 #### Interface & Komfort
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [75](PATCHES.de.md#patch-tracker) | Quest-Tracker automatisch sortieren | 🟢 **[sicher]** | unbekannt | ✅ | – | ✅ |
-| [76](PATCHES.de.md#patch-worldmap) | Erweiterte Weltkarte standardmäßig aktiv | 🟢 **[sicher]** | unbekannt | ✅ | – | ✅ |
-| [77](PATCHES.de.md#patch-castbars) | Cast Bars auf allen Frames | 🟢 **[sicher]** | Kebabstorm | ✅ | ✅ | ✅ |
-| [78](PATCHES.de.md#patch-emblems) | Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert *(benötigt [Patch-G](https://discord.com/channels/407664041016688662/1541873346608889936))* | 🟠 **[online ungetestet]** | MacWarrior | – | – | ✅ |
-| [79](PATCHES.de.md#patch-flash) | FlashWindow Patch *(benötigt [FlashWindow-Addon](https://github.com/noname08662/awesome_wotlk/tree/main/addons/Flash))* | 🟢 **[sicher]** | Kebabstorm | – | ✅ | ✅ |
-| [80](PATCHES.de.md#patch-charrandom) | Charaktererstellung: Aussehen nicht automatisch auswürfeln | 🟢 **[sicher]** | Alyst3r (0x539wowmod) | ✅ | – | – |
-| [81](PATCHES.de.md#patch-lootopen) | Lootfenster bleibt beim Laufen offen | 🟠 **[online ungetestet]** | tb (ported by St0ny) | – | – | – |
-| [82](PATCHES.de.md#patch-showlevel) | Echtes Level statt „??“ bei Gegnern ab 10 Level über dir *(Bosse zeigen weiter „??“ – dafür Nr. 83)* | 🟠 **[online ungetestet]** | tb (ported by St0ny) | – | – | – |
-| [83](PATCHES.de.md#patch-showlevelboss) | Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 82) | 🟠 **[online ungetestet]** | St0ny | – | – | – |
-| [84](PATCHES.de.md#patch-holdrepeat) | Aktionstasten gedrückt halten zum Wiederholen | 🔴 **[unsicher - Exe wird größer]** | tb (ported by St0ny) | – | – | ✅ |
-| [85](PATCHES.de.md#patch-bubblerange) | Sprechblasen-Reichweite erhöhen (Original 25 Meter) *(fragt den Wert ab)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
+| [69](PATCHES.de.md#patch-tracker) | Quest-Tracker automatisch sortieren | 🟢 **[sicher]** | unbekannt | ✅ | – | ✅ |
+| [70](PATCHES.de.md#patch-worldmap) | Erweiterte Weltkarte standardmäßig aktiv | 🟢 **[sicher]** | unbekannt | ✅ | – | ✅ |
+| [71](PATCHES.de.md#patch-castbars) | Cast Bars auf allen Frames | 🟢 **[sicher]** | Kebabstorm | ✅ | ✅ | ✅ |
+| [72](PATCHES.de.md#patch-emblems) | Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert *(benötigt [Patch-G](https://discord.com/channels/407664041016688662/1541873346608889936))* | 🟠 **[online ungetestet]** | MacWarrior | – | – | ✅ |
+| [73](PATCHES.de.md#patch-flash) | FlashWindow Patch *(benötigt [FlashWindow-Addon](https://github.com/noname08662/awesome_wotlk/tree/main/addons/Flash))* | 🟢 **[sicher]** | Kebabstorm | – | ✅ | ✅ |
+| [74](PATCHES.de.md#patch-charrandom) | Charaktererstellung: Aussehen nicht automatisch auswürfeln | 🟢 **[sicher]** | Alyst3r (0x539wowmod) | ✅ | – | – |
+| [75](PATCHES.de.md#patch-lootopen) | Lootfenster bleibt beim Laufen offen | 🟠 **[online ungetestet]** | tb (ported by St0ny) | – | – | – |
+| [76](PATCHES.de.md#patch-showlevel) | Echtes Level statt „??“ bei Gegnern ab 10 Level über dir *(Bosse zeigen weiter „??“ – dafür Nr. 77)* | 🟠 **[online ungetestet]** | tb (ported by St0ny) | – | – | – |
+| [77](PATCHES.de.md#patch-showlevelboss) | Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 76) | 🟠 **[online ungetestet]** | St0ny | – | – | – |
+| [78](PATCHES.de.md#patch-holdrepeat) | Aktionstasten gedrückt halten zum Wiederholen | 🔴 **[unsicher - Exe wird größer]** | tb (ported by St0ny) | – | – | ✅ |
+| [79](PATCHES.de.md#patch-bubblerange) | Sprechblasen-Reichweite erhöhen (Original 25 Meter) *(fragt den Wert ab)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 
 #### Fenster, Maus & Kamera
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [86](PATCHES.de.md#patch-window) | Fenstermodus als Standard setzen *(startet als kleines Fenster mitten auf dem Desktop – maximiert nur zusammen mit Nr. 87)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
-| [87](PATCHES.de.md#patch-maximize) | Fenstermodus maximiert als Standard setzen *(wirkt nur zusammen mit Nr. 86)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
-| [88](PATCHES.de.md#patch-windowfix) | Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
-| [89](PATCHES.de.md#patch-mouse) | Mausflackern / Kamerasprünge Fix | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
-| [90](PATCHES.de.md#patch-visus) | Visus - St0nyCam [BETA]: Schulterkamera und Zoom *(Schulterkamera per `/console visusHeight` und `visusShoulder`, Zoom bis 100 Yards)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
+| [80](PATCHES.de.md#patch-window) | Fenstermodus als Standard setzen *(startet als kleines Fenster mitten auf dem Desktop – maximiert nur zusammen mit Nr. 81)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
+| [81](PATCHES.de.md#patch-maximize) | Fenstermodus maximiert als Standard setzen *(wirkt nur zusammen mit Nr. 80)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
+| [82](PATCHES.de.md#patch-windowfix) | Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
+| [83](PATCHES.de.md#patch-mouse) | Mausflackern / Kamerasprünge Fix | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
+| [84](PATCHES.de.md#patch-visus) | Visus - St0nyCam [BETA]: Schulterkamera und Zoom *(Schulterkamera per `/console visusHeight` und `visusShoulder`, Zoom bis 100 Yards)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
 
 #### Sound
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [91](PATCHES.de.md#patch-sound) | Sound-Einstellungen optimieren *(benötigt [OpenAL](https://github.com/kcat/openal-soft), sonst wirken die Einstellungen nicht)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
+| [85](PATCHES.de.md#patch-sound) | Sound-Einstellungen optimieren *(benötigt [OpenAL](https://github.com/kcat/openal-soft), sonst wirken die Einstellungen nicht)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 
 #### Client-Infos: Version, Build, Titel, Datum, Icon
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [92](PATCHES.de.md#patch-clientversion) | Client-Version ändern (Original 3.3.5) *(fragt den Wert ab)* | 🔴 **[unsicher]** | MacWarrior | – | – | – |
-| [93](PATCHES.de.md#patch-clientbuild) | Build-Nummer ändern (Original 12340) *(fragt den Wert ab)* | 🔴 **[unsicher]** | MacWarrior | – | – | – |
-| [94](PATCHES.de.md#patch-clienttitle) | Programmtitel ändern (Dateieigenschaften und Fenstertitel) *(fragt den Wert ab)* | 🔴 **[unsicher]** | MacWarrior (fixed by St0ny) | – | – | – |
-| [95](PATCHES.de.md#patch-clientdate) | Build-Datum ändern (Original Jun 24 2010) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
-| [96](PATCHES.de.md#patch-clienticon) | Programm-Icon ändern (Symbol der Wow.exe) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
+| [86](PATCHES.de.md#patch-clientversion) | Client-Version ändern (Original 3.3.5) *(fragt den Wert ab)* | 🔴 **[unsicher]** | MacWarrior | – | – | – |
+| [87](PATCHES.de.md#patch-clientbuild) | Build-Nummer ändern (Original 12340) *(fragt den Wert ab)* | 🔴 **[unsicher]** | MacWarrior | – | – | – |
+| [88](PATCHES.de.md#patch-clienttitle) | Programmtitel ändern (Dateieigenschaften und Fenstertitel) *(fragt den Wert ab)* | 🔴 **[unsicher]** | MacWarrior (fixed by St0ny) | – | – | – |
+| [89](PATCHES.de.md#patch-clientdate) | Build-Datum ändern (Original Jun 24 2010) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
+| [90](PATCHES.de.md#patch-clienticon) | Programm-Icon ändern (Symbol der Wow.exe) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
 
 </details>
 
@@ -593,14 +589,14 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   gewählten Patches mit Warnung noch einmal auf:
   - 🟢 **sicher** – im Spiel getestet, im Patcher ohne Warnung.
   - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 4, 10,
-    11, 23–25, 44, 45, 48–53, 69, 84 und 92–96 (rote Warnung).
+    11, 23–25, 44, 45, 48–53, 78 und 86–90 (rote Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
-    kann zu Kick/Bann führen: Nr. 26, 31, 32, 42, 47, 54, 65, 68–74, 78, 81–83 und 90
+    kann zu Kick/Bann führen: Nr. 26, 31, 32, 42, 47, 54, 65, 68, 72, 75–77 und 84
     (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 31, 32, 47, 54, 65, 68–74 und 90 (orange Warnung).
+    möglicherweise verbuggt: Nr. 25, 26, 31, 32, 47, 54, 65, 68 und 84 (orange Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
-    Nr. 9, 53, 66–68, 84 und 90. Das ist keine sichere Bann-Gefahr,
+    Nr. 9, 53, 66–68, 78 und 84. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
     anderen Patches ändern die Dateigröße nicht.
   - 🟡 **DLL riskant** – der Patch selbst ist sicher, er lädt aber eine DLL, die
@@ -612,7 +608,7 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   „Weitere Informationen“ → „Trotzdem ausführen“ startet WoW ganz normal. Eine
   neue Signatur, der Windows vertraut, gibt es nur von Zertifizierungsstellen
   mit Identitätsprüfung – für eine veränderte Blizzard-Datei bekommt man sie
-  nicht. Die Patches, die eine Sektion anhängen (Nr. 9, 53, 66–68, 84 und 90), entfernen
+  nicht. Die Patches, die eine Sektion anhängen (Nr. 9, 53, 66–68, 78 und 84), entfernen
   zusätzlich den Verweis auf die Signatur im Header: Die neue Sektion liegt hinter der
   Signatur, und manche Werkzeuge würden die Datei sonst als beschädigt melden.
   Die Signatur-Bytes selbst bleiben unangetastet, die Rücknahme stellt das

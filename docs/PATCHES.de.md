@@ -522,7 +522,7 @@ startet WoW ganz normal.
 > zweite Aufruf von `LoadLibraryA("LuxShoulderCam.dll")` bekommt nur die schon
 > geladene DLL zurück, ihr Startcode läuft kein zweites Mal.
 
-Nicht zusammen mit Visus - St0nyCam (Nr. 90) verwenden: Beide setzen an
+Nicht zusammen mit Visus - St0nyCam (Nr. 84) verwenden: Beide setzen an
 derselben Stelle der Kamera an (VA `0x6070CB`). Ist Visus eingespielt, hängt
 sich Lux dort nicht ein, Höhe und Versatz von Lux bleiben dann ohne Wirkung.
 
@@ -1234,26 +1234,43 @@ gehören mit zur Figur.
 > `st0ny-main`.
 
 > [!WARNING]
-> **Auf öffentlichen Servern bitte die Standard-Einstellung lassen:** nur
-> Nr. 68, ohne die Zusatzoptionen Nr. 69–74. Wird der Patch auf einem Server
+> **Auf öffentlichen Servern bitte die Standard-Einstellung lassen:** alle
+> Fragen vor dem Patchen mit N beantworten. Wird der Patch auf einem Server
 > gebannt, hast du Pech gehabt – daran kann ich nichts ändern. Ab dann ist er
 > nur noch auf eigenen privaten Servern nutzbar. Also pass bitte auf.
 
-**Zusatzoptionen** – eigene Patches im Menü, die Nr. 68 brauchen; alle sind
-standardmäßig aus:
+**Einstellungen:** Nach der Patch-Auswahl fragt der Patcher sechs Punkte mit
+J/N ab. ENTER übernimmt den Vorschlag in Klammern – beim ersten Mal N, bei
+einer gepatchten `Wow.exe` den aktuellen Stand. Standard ist überall N: nur
+Ziel und Mouseover, nicht durch Wände.
 
-| Nr. | Option | Wirkung |
-|----:|--------|---------|
-| [69](#patch-outlinewalls) | durch Wände sichtbar | Der Rand erscheint auch dort, wo die Figur verdeckt ist. |
-| [70](#patch-outlineself) | eigener Charakter | Deine Figur hat immer einen Rand. |
-| [71](#patch-outlineparty) | eigene Gruppe | Die bis zu 4 Mitspieler deiner 5er-Gruppe haben immer einen Rand. |
-| [72](#patch-outlineraid) | ganzer Schlachtzug | Alle Mitspieler im Schlachtzug haben immer einen Rand – kostet viele FPS. |
-| [73](#patch-outlinehidden) | eigener Charakter nur verdeckt | Deine Figur bekommt nur dort einen Rand, wo sie verdeckt ist. |
-| [74](#patch-outlinereact) | Gesinnungsfarbe | Alle Ränder in der Farbe des Auswahlkreises, auch bei Spielern. |
+| Frage | Wirkung bei J |
+|-------|---------------|
+| Durch Wände sichtbar? | Der Rand erscheint auch dort, wo die Figur verdeckt ist, bei allen Rändern. **Unsicher** – kann als Cheat gewertet werden, der Patcher warnt dann rot. |
+| Eigener Charakter immer umrandet? | Deine Figur hat immer einen Rand. |
+| Eigene 5er-Gruppe immer umrandet? | Die bis zu 4 Mitspieler deiner Gruppe (`party1` bis `party4`) haben immer einen Rand. |
+| Ganzer Schlachtzug immer umrandet? | Alle Mitspieler im Schlachtzug (bis zu 39) haben immer einen Rand, deine Gruppe auch außerhalb eines Schlachtzugs – **kostet viele FPS**. |
+| Eigener Charakter nur dort umrandet, wo er verdeckt ist? | Deine Figur bekommt nur dort einen Rand, wo sie verdeckt ist, etwa hinter einer Hauswand oder einem Hügel. Gilt für dich vor „immer umrandet“ und „durch Wände“. |
+| Gesinnungsfarbe statt Klassenfarbe? | Alle Ränder in der Farbe des Auswahlkreises (bei Spielern meist blau), auch Ziel und Mouseover. Feindliche Spieler sind dann einfach rot und pulsieren nicht. |
 
-Ist eine Figur gerade Ziel oder unter dem Mauszeiger, gilt dieser Rand. Jede
-umrandete Figur wird zehnmal gezeichnet (mit Nr. 69 bzw. 73 neunmal) – viele
-Ränder kosten Leistung, im Schlachtzug mit Nr. 72 deutlich.
+Ist eine Figur gerade Ziel oder unter dem Mauszeiger, gilt dieser Rand.
+Mitspieler außer Sichtweite haben keinen. Die Antworten merkt sich der Patcher
+wie andere Werte in `patcher_selection.ini`, z. B. `value.outline=self,party`
+(`none` = Standard; die Punkte heißen der Reihe nach `walls`, `self`, `party`,
+`raid`, `hidden` und `react`).
+
+> [!WARNING]
+> **Ganzer Schlachtzug kostet viele FPS:** Jede umrandete Figur wird zehnmal
+> gezeichnet. Bei 25 oder 40 Spielern sind das sehr viele zusätzliche
+> Zeichenaufrufe pro Bild. Auf schwächeren Rechnern lieber nur die 5er-Gruppe
+> nehmen.
+
+> [!NOTE]
+> **Nur dort, wo verdeckt:** Erkannt wird nur, was vor deiner Figur gezeichnet
+> wird. Gelände und Gebäude zeichnet das Spiel normalerweise vor den Figuren;
+> ob auch Bäume oder andere Figuren davor erkannt werden, hängt von der
+> Reihenfolge ab, in der das Spiel zeichnet – das muss der Test im Spiel
+> zeigen.
 
 So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
@@ -1272,21 +1289,23 @@ So funktioniert es:
 - Weitere Teile derselben Figur (Umhang, Waffe, Reittier) werden auf ihrem
   eigenen Rand noch einmal ohne Tiefentest gezeichnet, damit kein Rand
   zwischen den Teilen hängen bleibt.
-- Mit Nr. 69 wird die Figur auch dort markiert, wo sie verdeckt ist, und die
-  Kopien laufen ohne Tiefentest. Später Gezeichnetes löscht den Rand dann
-  nicht mehr.
-- Mit Nr. 73 wird deine Figur ebenfalls auch dort markiert, wo sie verdeckt
-  ist; ihre Kopien markieren den Rand aber nur dort, wo bereits Gezeichnetes
-  vor ihnen liegt.
+- Mit „durch Wände“ wird die Figur auch dort markiert, wo sie verdeckt ist,
+  und die Kopien laufen ohne Tiefentest. Später Gezeichnetes löscht den Rand
+  dann nicht mehr.
+- Mit „nur dort, wo verdeckt“ wird deine Figur ebenfalls auch dort markiert,
+  wo sie verdeckt ist; ihre Kopien markieren den Rand aber nur dort, wo
+  bereits Gezeichnetes vor ihnen liegt.
 - Nach den Modellen und vor dem Interface färbt je umrandeter Figur eine
   bildschirmfüllende Fläche nur ihre Rand-Pixel ein; danach wird der Stencil
   geleert und das Spiel setzt alle Grafik-Einstellungen neu.
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x118E Byte). Die
-  Zusatzoptionen setzen je ein einzelnes Füllbyte zwischen zwei Funktionen in
-  `.text` auf 1; der Code liest diese Schalter beim Zeichnen.
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x118E Byte). Jede
+  Einstellung ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`,
+  das bei J auf 1 gesetzt wird; der Code liest diese Schalter beim Zeichnen.
+  Daran erkennt der Patcher die Einstellungen auch in einer gepatchten
+  `Wow.exe`.
 
 > [!NOTE]
 > Nur mit `gxApi d3d9` (Standard) und 24-Bit-Tiefenpuffer (Standard). Mit
@@ -1299,93 +1318,29 @@ So funktioniert es:
 > kein Platz mehr für einen weiteren Sektionseintrag. Dann verlängert der
 > Patcher die zuletzt angehängte Sektion, statt eine neue anzulegen.
 
-<a id="patch-outlinewalls"></a>
-**Umrandung: auch durch Wände sichtbar [BETA]** *(Nr. 69, Autor: St0ny)* 🔴 **[unsicher - ungetestet]**
-
-Zusatzoption zu Nr. 68: Der Rand erscheint auch dort, wo die Figur hinter
-einer Wand, einem Baum oder einer anderen Figur steht – man sieht ihre Umrisse
-durch alles hindurch. Das gilt für alle Ränder: Ziel, Mouseover und die
-dauerhaften aus Nr. 70 bis 72.
-
-> [!WARNING]
-> Durch Wände sehen verschafft einen Vorteil und kann als Cheat gewertet
-> werden – **nur auf eigenen Servern verwenden.**
-
-<a id="patch-outlineself"></a>
-**Umrandung: eigener Charakter immer umrandet [BETA]** *(Nr. 70, Autor: St0ny)* 🟠 **[ungetestet]**
-
-Zusatzoption zu Nr. 68: Deine eigene Figur hat immer einen Rand, in deiner
-Klassenfarbe (mit Nr. 74 in der Farbe des Auswahlkreises). Bist du selbst das
-Ziel oder unter dem Mauszeiger, gilt dieser Rand. Mit Nr. 73 zusammen gilt
-Nr. 73: nur die verdeckten Teile.
-
-<a id="patch-outlineparty"></a>
-**Umrandung: eigene Gruppe immer umrandet [BETA]** *(Nr. 71, Autor: St0ny)* 🟠 **[ungetestet]**
-
-Zusatzoption zu Nr. 68: Die bis zu 4 Mitspieler deiner Gruppe (`party1` bis
-`party4`) haben immer einen Rand, jeder in seiner Klassenfarbe (mit Nr. 74 in
-der Farbe des Auswahlkreises). Wer gerade Ziel oder unter dem Mauszeiger ist,
-bekommt dessen Rand. Mitspieler außer Sichtweite haben keinen.
-
-<a id="patch-outlineraid"></a>
-**Umrandung: ganzer Schlachtzug immer umrandet [BETA]** *(Nr. 72, Autor: St0ny)* 🟠 **[ungetestet]**
-
-Zusatzoption zu Nr. 68: Alle Mitspieler deines Schlachtzugs (bis zu 39) haben
-immer einen Rand, jeder in seiner Klassenfarbe (mit Nr. 74 in der Farbe des
-Auswahlkreises). Deine Gruppe ist dabei, auch außerhalb eines Schlachtzugs –
-Nr. 71 braucht es dann nicht. Dich selbst umrandet nur Nr. 70 bzw. 73.
-
-> [!WARNING]
-> **Kostet viele FPS:** Jede umrandete Figur wird zehnmal gezeichnet. Bei 25
-> oder 40 Spielern sind das sehr viele zusätzliche Zeichenaufrufe pro Bild.
-> Auf schwächeren Rechnern lieber nur Nr. 71 nehmen.
-
-<a id="patch-outlinehidden"></a>
-**Umrandung: eigener Charakter nur dort, wo er verdeckt ist [BETA]** *(Nr. 73, Autor: St0ny)* 🟠 **[ungetestet]**
-
-Zusatzoption zu Nr. 68: Deine Figur bekommt nur dort einen Rand, wo sie
-verdeckt ist – steht etwa eine Hauswand oder ein Hügel zwischen Kamera und
-dir, siehst du deinen Umriss auf der Wand. Sichtbare Teile bekommen keinen
-Rand. Hast du auch Nr. 70 gewählt, gilt diese Option; mit Nr. 69 ebenfalls.
-
-> [!NOTE]
-> Erkannt wird nur, was vor deiner Figur gezeichnet wird. Gelände und Gebäude
-> zeichnet das Spiel normalerweise vor den Figuren; ob auch Bäume oder andere
-> Figuren davor erkannt werden, hängt von der Reihenfolge ab, in der das Spiel
-> zeichnet – das muss der Test im Spiel zeigen.
-
-<a id="patch-outlinereact"></a>
-**Umrandung: Gesinnungsfarbe statt Klassenfarbe [BETA]** *(Nr. 74, Autor: St0ny)* 🟠 **[ungetestet]**
-
-Zusatzoption zu Nr. 68: Alle Ränder bekommen die Farbe des Auswahlkreises
-(bei Spielern meist blau), auch Ziel und Mouseover. Feindliche Spieler sind
-dann einfach rot und pulsieren nicht. Ohne diese Option haben Spieler ihre
-Klassenfarbe (feindliche pulsieren sanft rot), alle anderen die Farbe des
-Auswahlkreises.
-
 ## Interface & Komfort
 
 <a id="patch-tracker"></a>
-**Quest-Tracker automatisch sortieren** *(Nr. 75)* 🟢 **[sicher]**
+**Quest-Tracker automatisch sortieren** *(Nr. 69)* 🟢 **[sicher]**
 
 Setzt das CVar `trackerSorting` standardmäßig auf 1. Quests im Tracker werden
 automatisch sortiert.
 
 <a id="patch-worldmap"></a>
-**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 76)* 🟢 **[sicher]**
+**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 70)* 🟢 **[sicher]**
 
 Setzt das CVar `advancedWorldMap` standardmäßig auf 1. Die erweiterte
 Kartenansicht ist von Anfang an aktiviert.
 
 <a id="patch-castbars"></a>
-**Cast Bars auf allen Frames** *(Nr. 77, Autor: Kebabstorm)* 🟢 **[sicher]**
+**Cast Bars auf allen Frames** *(Nr. 71, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Ermöglicht die Anzeige von Zauberbalken auf allen Unit-Frames (Party, Arena,
 Boss etc.), nicht nur auf Target und Focus, sowie auf allen
 Standard-Nameplates. Entspricht dem Verhalten ab Cataclysm.
 
 <a id="patch-emblems"></a>
-**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 78, Autor: MacWarrior)* 🟠 **[online ungetestet]**
+**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 72, Autor: MacWarrior)* 🟠 **[online ungetestet]**
 
 Der Client hält die Anzahl der wählbaren Tabard-Varianten in einer kleinen
 Tabelle (VA `0xA14908`, Datei-Offset `0x613108`): 170 Embleme, 17 Emblemfarben,
@@ -1418,7 +1373,7 @@ ist frei wählbar (`patch-*.MPQ`), dafür sorgt der Patch
 „Erweiterte MPQ-Namen erlauben“ (Nr. 21).
 
 <a id="patch-flash"></a>
-**FlashWindow Patch** *(Nr. 79, Autor: Kebabstorm)* 🟢 **[sicher]**
+**FlashWindow Patch** *(Nr. 73, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Lässt das WoW-Fenster in der Taskleiste blinken, wenn ein relevantes Ereignis
 eintritt und das Spiel im Hintergrund läuft. Dafür wird die in 3.3.5a
@@ -1431,7 +1386,7 @@ das braucht zusätzlich `IsWindowFocused()` aus der `AwesomeWotlkLib.dll`
 (Nr. 28).
 
 <a id="patch-charrandom"></a>
-**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 80, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
+**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 74, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
 
 Beim Öffnen der Charaktererstellung (Klick auf „Neuer Charakter“) und beim
 Wechsel von Volk oder Geschlecht würfelt der Client Gesicht, Haut, Frisur usw.
@@ -1439,7 +1394,7 @@ nicht mehr automatisch aus, man startet mit dem Standard-Aussehen. Der
 Zufall-Knopf funktioniert weiter – er nutzt im Client einen eigenen Weg.
 
 <a id="patch-lootopen"></a>
-**Lootfenster bleibt beim Laufen offen** *(Nr. 81, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Lootfenster bleibt beim Laufen offen** *(Nr. 75, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 Im Original schließt sich das Lootfenster, sobald du läufst, seitwärts gehst
 oder dich drehst. Mit dem Patch bleibt es offen. Die zehn Stellen in den
@@ -1447,16 +1402,16 @@ Bewegungs-Handlern, die das Fenster schließen, werden übersprungen (je ein
 Byte).
 
 <a id="patch-showlevel"></a>
-**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 82, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 76, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 Ist ein feindliches Ziel 10 oder mehr Level über dir, zeigt der Client statt
 des Levels „??“ (bzw. einen Totenkopf auf der Namensplakette, `UnitLevel`
 liefert -1). Mit dem Patch zeigen Tooltip, Namensplakette und `UnitLevel` das
 echte Level. Bosse zeigen weiterhin „??“ – diese Prüfung bleibt erhalten, sie
-nimmt Nr. 83 heraus.
+nimmt Nr. 77 heraus.
 
 <a id="patch-showlevelboss"></a>
-**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 82)** *(Nr. 83, Autor: St0ny)* 🟠 **[online ungetestet]**
+**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 76)** *(Nr. 77, Autor: St0ny)* 🟠 **[online ungetestet]**
 
 Kreaturen, die als Boss markiert sind (Flag in den Kreaturdaten, z. B.
 Schlachtzug- und Dungeonbosse), zeigen im Original immer „??“ – im Tooltip,
@@ -1467,11 +1422,11 @@ steht dort das Level, das der Server für den Boss schickt. Die Beschriftung
 
 > [!NOTE]
 > Ist ein Boss 10 oder mehr Level über dir, greift zusätzlich die
-> Level-Prüfung – deren „??“ entfernt Nr. 82. Für alle Bosse daher zusammen mit
-> Nr. 82 einspielen; der Patcher weist darauf hin, wenn Nr. 82 fehlt.
+> Level-Prüfung – deren „??“ entfernt Nr. 76. Für alle Bosse daher zusammen mit
+> Nr. 76 einspielen; der Patcher weist darauf hin, wenn Nr. 76 fehlt.
 
 <a id="patch-holdrepeat"></a>
-**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 84, Autor: tb (ported by St0ny))* 🔴 **[unsicher - Exe wird größer]**
+**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 78, Autor: tb (ported by St0ny))* 🔴 **[unsicher - Exe wird größer]**
 
 Hältst du die Taste einer Aktionsleisten-Belegung gedrückt (die Hauptleiste,
 `ACTIONBUTTON1`–`12`, mit Seiten-, Haltungs- und Gestaltleisten), löst der
@@ -1499,7 +1454,7 @@ werden.
 > Server verbieten „ein Tastendruck = mehrere Aktionen“.
 
 <a id="patch-bubblerange"></a>
-**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 85, Autor: St0ny)* 🟢 **[sicher]**
+**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 79, Autor: St0ny)* 🟢 **[sicher]**
 
 Der Client zeigt Sprechblasen (Sagen, Gruppe, Schreien, NPC-Sagen und
 NPC-Schreien) nur für Sprecher bis 25 Meter Entfernung. Schickt der Server
@@ -1526,37 +1481,37 @@ PE-Header bleiben unverändert.
 ## Fenster, Maus & Kamera
 
 <a id="patch-window"></a>
-**Fenstermodus als Standard setzen** *(Nr. 86, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus als Standard setzen** *(Nr. 80, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxWindow` standardmäßig auf 1. Das Spiel startet im
 Fenstermodus statt im Vollbild.
 
 > [!TIP]
-> **Nr. 86 und Nr. 87 gehören zusammen:** Nr. 86 schaltet den Fenstermodus ein,
-> Nr. 87 maximiert das Fenster.
+> **Nr. 80 und Nr. 81 gehören zusammen:** Nr. 80 schaltet den Fenstermodus ein,
+> Nr. 81 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 86:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 87:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 80:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 81:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-maximize"></a>
-**Fenstermodus maximiert als Standard setzen** *(Nr. 87, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus maximiert als Standard setzen** *(Nr. 81, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxMaximize` standardmäßig auf 1. Das Fenster wird beim Start
 automatisch maximiert.
 
 > [!TIP]
-> **Nr. 86 und Nr. 87 gehören zusammen:** Nr. 86 schaltet den Fenstermodus ein,
-> Nr. 87 maximiert das Fenster.
+> **Nr. 80 und Nr. 81 gehören zusammen:** Nr. 80 schaltet den Fenstermodus ein,
+> Nr. 81 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 86:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 87:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 80:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 81:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-windowfix"></a>
-**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 88, Autor: Robinsch)* 🟢 **[sicher]**
+**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 82, Autor: Robinsch)* 🟢 **[sicher]**
 
 Wer im laufenden Spiel in den Fenstermodus wechselt, bekommt danach keinen
 schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
@@ -1564,14 +1519,14 @@ schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
 damit das CVar `DesktopGamma` sind ohne Wirkung.
 
 <a id="patch-mouse"></a>
-**Mausflackern / Kamerasprünge Fix** *(Nr. 89, Autor: Robinsch)* 🟢 **[sicher]**
+**Mausflackern / Kamerasprünge Fix** *(Nr. 83, Autor: Robinsch)* 🟢 **[sicher]**
 
 Ein umfangreicher Patch (4 Teile), der Probleme mit Mäusen behebt, die eine
 hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
 <a id="patch-visus"></a>
-**Visus - St0nyCam [BETA]: Schulterkamera und Zoom** *(Nr. 90, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
+**Visus - St0nyCam [BETA]: Schulterkamera und Zoom** *(Nr. 84, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
 
 Eine eigene Schulterkamera und mehr Zoom direkt in der `Wow.exe`, ohne DLL.
 Vorlage für die Schulterkamera ist [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) von
@@ -1642,7 +1597,7 @@ und beschreibbar) und hängt sich an drei Stellen ein:
 ## Sound
 
 <a id="patch-sound"></a>
-**Sound-Einstellungen optimieren** *(Nr. 91, Autor: St0ny)* 🟢 **[sicher]**
+**Sound-Einstellungen optimieren** *(Nr. 85, Autor: St0ny)* 🟢 **[sicher]**
 
 Umfasst folgende Änderungen:
 
@@ -1671,7 +1626,7 @@ einer Meldung neu abgefragt, und alle Werte werden geprüft, bevor irgendetwas
 geschrieben wird. Die Werte merkt sich der Patcher in `patcher_selection.ini`
 (`value.<Id>=…`); mit `-Unattended` gelten die gemerkten Werte, ohne gemerkten
 Wert die Originalwerte – Ausnahmen: Build-Datum (aktueller Zeitpunkt) und Icon
-(Abbruch), siehe Nr. 95 und 96. Steckt ein Patch schon in der `Wow.exe`, ist
+(Abbruch), siehe Nr. 89 und 90. Steckt ein Patch schon in der `Wow.exe`, ist
 sein aktueller Wert der Vorschlag.
 Bei der Abfrage steht er auch hinter dem Patchnamen (`-> Vorschlag: …`, bei einem
 bereits eingespielten Patch `-> aktuell: …`).
@@ -1681,7 +1636,7 @@ bereits eingespielten Patch `-> aktuell: …`).
 > muss also zum Server passen.
 
 <a id="patch-clientversion"></a>
-**Client-Version ändern (Original 3.3.5)** *(Nr. 92, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Client-Version ändern (Original 3.3.5)** *(Nr. 86, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Version im Format `x.y.z` (z. B. `3.3.6` oder `3.3.123`, höchstens
 7 Zeichen). Geändert werden die Version, die der Client im Spiel anzeigt, die
@@ -1691,7 +1646,7 @@ FileVersion-Text (`3, 3, 5, 12340`) wird zur reinen Version (`3.3.6`). Haupt-
 und Nebenversion müssen zusammen in das ProductVersion-Feld passen (z. B. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Build-Nummer ändern (Original 12340)** *(Nr. 93, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Build-Nummer ändern (Original 12340)** *(Nr. 87, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Build-Nummer (6142 bis 65535, Original `12340`): die interne
 Build-Nummer, die sichtbare Build-Nummer und den vierten Teil der FileVersion
@@ -1720,7 +1675,7 @@ den Server.
 > offline.
 
 <a id="patch-clienttitle"></a>
-**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 94, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
+**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 88, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
 
 Setzt FileDescription, InternalName und ProductName der Versionsressource, also
 das, was Windows z. B. in den Dateieigenschaften und im Task-Manager anzeigt.
@@ -1738,7 +1693,7 @@ ab, damit er stehen bleibt.
 > Titel.
 
 <a id="patch-clientdate"></a>
-**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 95, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 89, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Setzt das Build-Datum (Original `Jun 24 2010`) an allen drei Stellen in der EXE
 und das Jahr im Copyright-Vermerk, dazu die Uhrzeit. Die steht an zwei Stellen:
@@ -1758,7 +1713,7 @@ Patchens. Ist der Patch schon eingespielt, steht dort das aktuelle Datum samt
 Uhrzeit der `Wow.exe`.
 
 <a id="patch-clienticon"></a>
-**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 96, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 90, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Tauscht das Icon aus, das Windows für die `Wow.exe` anzeigt (Explorer,
 Taskleiste, Verknüpfungen). Der Patcher fragt nach dem Pfad einer `.ico`-
