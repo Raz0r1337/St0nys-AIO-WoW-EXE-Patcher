@@ -475,7 +475,7 @@ dem Patchen listet er sie noch einmal auf.
 | [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom | – | ✅ | ✅ |
 | [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.de.md#patch-lexara) | Lexara.dll beim Start laden (HD-Schriften von Stormhand) *(benötigt [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – `dinput8.dll` in `Lexara.dll` umbenennen)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
-| [31](PATCHES.de.md#patch-lux) | LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) [BETA] *(benötigt [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – mit Lexara (Nr. 30) nicht nötig)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
+| [31](PATCHES.de.md#patch-lux) | LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) *(benötigt [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – mit Lexara (Nr. 30) nicht nötig)* | 🟡 **[sicher - DLL riskant]** | St0ny | – | – | – |
 | [32](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (Voice-Chat von St0ny) [BETA] *(benötigt [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat) – Modul noch unfertig)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
 #### Gameplay-Fixes
@@ -609,7 +609,7 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
     anderen Patches ändern die Dateigröße nicht.
   - 🟡 **DLL riskant** – der Patch selbst ist sicher, er lädt aber eine DLL, die
-    auf öffentlichen Servern erkannt oder blockiert werden kann: Nr. 27–30
+    auf öffentlichen Servern erkannt oder blockiert werden kann: Nr. 27–31
     (gelber Hinweis). Nur dort einsetzen, wo die DLL erlaubt ist.
 - **Signatur:** Die originale `Wow.exe` ist von Blizzard digital signiert. Jeder
   Patch macht diese Signatur ungültig. Windows warnt deshalb wahrscheinlich

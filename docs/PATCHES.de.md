@@ -501,7 +501,7 @@ dem Lux-Lader (Nr. 31) und dem voice.dll-Lader (Nr. 32), die nur spätere
 Sprünge im Startcode ändern.
 
 <a id="patch-lux"></a>
-**LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) [BETA]** *(Nr. 31, Autor: St0ny)* 🟠 **[ungetestet]**
+**LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand)** *(Nr. 31, Autor: St0ny)* 🟡 **[sicher - DLL riskant]**
 
 Lädt beim Start die `LuxShoulderCam.dll` aus dem WoW-Ordner –
 [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) von Stormhand ist eine
@@ -511,9 +511,10 @@ Addon `LuxShoulderCam`, das in `Interface\AddOns` liegen muss. Fehlt die DLL,
 startet WoW ganz normal.
 
 > [!WARNING]
-> **BETA** – dieser Lader ist noch ungetestet, online wie im Spiel. Deshalb ist
-> er standardmäßig abgewählt und vorerst nur in den dev-Zweigen, nicht in
-> `st0ny-main`.
+> Der Patch selbst ist sicher, er lädt nur eine DLL, die hier nicht enthalten
+> ist. Die geladene `LuxShoulderCam.dll` kann aber auf öffentlichen Servern
+> erkannt oder blockiert werden – also nur dort einsetzen, wo LuxShoulderCam
+> erlaubt ist.
 
 > [!NOTE]
 > **Man braucht nur einen von beiden:** Lexara lädt die `LuxShoulderCam.dll`

@@ -486,7 +486,7 @@ patch works together with the Lux loader (No. 31) and the voice.dll loader
 (No. 32), which only change later jumps in the startup code.
 
 <a id="patch-lux"></a>
-**Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) [BETA]** *(No. 31, Author: St0ny)* 🟠 **[untested]**
+**Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand)** *(No. 31, Author: St0ny)* 🟡 **[safe - DLL risky]**
 
 Loads `LuxShoulderCam.dll` from the WoW folder at startup –
 [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) by Stormhand is an
@@ -496,9 +496,9 @@ the addon `LuxShoulderCam`, which has to be in `Interface\AddOns`. If the DLL is
 missing, WoW starts normally.
 
 > [!WARNING]
-> **BETA** – this loader is still untested, online and in game. That is why it
-> is deselected by default and only in the dev branches for now, not in
-> `st0ny-main`.
+> The patch itself is safe, it only loads a DLL that is not included here.
+> The loaded `LuxShoulderCam.dll`, however, may be detected or blocked on
+> public servers – so use it only where LuxShoulderCam is allowed.
 
 > [!NOTE]
 > **You only need one of the two:** Lexara loads `LuxShoulderCam.dll` by itself

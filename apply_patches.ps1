@@ -4093,15 +4093,15 @@ $patches = @(
         Patch 0x2DB4E0 @(0x4C, 0x65, 0x78, 0x61, 0x72, 0x61, 0x2E, 0x64, 0x6C, 0x6C, 0x00)   # "Lexara.dll"
     }}
 
-    @{ Id = 'lux'; Cat = 'dll'; On = $false; PublicUntested = $true; GameUntested = $true
+    @{ Id = 'lux'; Cat = 'dll'; On = $false; DllRisky = $true
        Author = 'St0ny'
-       De = 'LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) [BETA]'
-       En = 'Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) [BETA]'
+       De = 'LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand)'
+       En = 'Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand)'
        NoteDe = 'benoetigt LuxShoulderCam - mit Lexara (Nr. 30) nicht noetig'
        NoteEn = 'requires LuxShoulderCam - not needed with Lexara (No. 30)'
        Url = 'https://github.com/Stormhand-dev/Lux-Shoulder-Cam'
        Code = {
-        # BETA - noch ungetestet. Laedt beim Start LuxShoulderCam.dll
+        # Laedt beim Start LuxShoulderCam.dll
         # (Schulterkamera von Stormhand) aus dem WoW-Ordner - genau wie Lexara,
         # das die DLL in seinem DllMain direkt nach dem eigenen Start per
         # LoadLibraryA("LuxShoulderCam.dll") nachlaedt. Wer Lexara nutzt, braucht

@@ -458,7 +458,7 @@ name, and before patching it lists them once more.
 | [28](PATCHES.en.md#patch-awesome) | Load AwesomeWotlkLib.dll at startup (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom | – | ✅ | ✅ |
 | [29](PATCHES.en.md#patch-wotlkext) | Load WotLKExtensions.dll at startup (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
-| [31](PATCHES.en.md#patch-lux) | Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) [BETA] *(requires [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – not needed with Lexara (No. 30))* | 🟠 **[untested]** | St0ny | – | – | – |
+| [31](PATCHES.en.md#patch-lux) | Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) *(requires [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – not needed with Lexara (No. 30))* | 🟡 **[safe - DLL risky]** | St0ny | – | – | – |
 | [32](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (voice chat by St0ny) [BETA] *(requires [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat) – module not finished yet)* | 🟠 **[untested]** | St0ny | – | – | – |
 
 #### Gameplay fixes
@@ -592,7 +592,7 @@ clicking the number of a patch takes you straight to its description.
     servers check the file size (yellow note). All other patches do not change
     the file size.
   - 🟡 **DLL risky** – the patch itself is safe, but it loads a DLL that may be
-    detected or blocked on public servers: No. 27–30 (yellow note). Only
+    detected or blocked on public servers: No. 27–31 (yellow note). Only
     use it where the DLL is allowed.
 - **Signature:** the original `Wow.exe` is digitally signed by Blizzard. Every
   patch invalidates this signature. Windows will therefore probably warn about
