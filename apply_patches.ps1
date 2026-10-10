@@ -381,7 +381,7 @@ trap {
 #  Haengt eine neue PE-Sektion ".hdp" an die EXE an (256x256-Alphamaske
 #  + Code-Caves + Detour des Masken-Builders). Originalgetreuer Port von
 #  apply_hd_portraits.py, byte-fuer-byte gegen dessen Ausgabe verifiziert.
-#  Wie CameraReforged veraendert dieser Patch die Dateigroesse/PE-Struktur.
+#  Dieser Patch veraendert die Dateigroesse/PE-Struktur.
 # ============================================================
 function RU32([byte[]]$a, [int]$o) { return [int64][BitConverter]::ToUInt32($a, $o) }
 function RU16([byte[]]$a, [int]$o) { return [int][BitConverter]::ToUInt16($a, $o) }
@@ -525,233 +525,6 @@ function Add-HdPortraits([int]$SIZE) {
     [Array]::Copy([BitConverter]::GetBytes([int32]($det_va - ($MASKFN + 5))), 0, $hook, 1, 4)
     $hook[5] = 0x90; $hook[6] = 0x90; $hook[7] = 0x90; $hook[8] = 0x90
     Patch $toMF $hook
-}
-
-# ============================================================
-#  Helfer fuer den CameraReforged-Patch
-#  Portierung von CameraReforged (Stormhand) in die Patch-Engine dieses Tools,
-#  eingebaut mit seiner ausdruecklichen Erlaubnis.
-#  Quelle: https://github.com/Zendevve/CameraReforged
-#  BETA: funktioniert noch nicht zu 100 Prozent.
-#
-#  Haengt eine eigene Sektion ".camr" an (RWX, etwa +1 KB), registriert darin
-#  beim Start test_cameraHeight und test_cameraOverShoulder als echte CVars
-#  und biegt die Kamera-Lesestellen darauf um. Anders als alle uebrigen Patches
-#  ausser Add-HdPortraits veraendert dieser die Dateigroesse und die
-#  PE-Struktur. Beide vertragen sich: die Sektionsdaten werden bei jedem Aufruf
-#  frisch aus dem aktuellen Header berechnet, die Reihenfolge spielt keine Rolle.
-#
-#  ZWEI ABWEICHUNGEN VON DER VORLAGE, BEIDE NOTWENDIG
-#
-#  1. EIGENE SEKTION STATT .rdata-PADDING
-#  Der Original-Patcher legt Code und Daten ins ungenutzte Padding am Ende der
-#  .rdata-Sektion und hebt diese dafuer im PE-Header auf ausfuehrbar. Genau das
-#  laesst diesen Client beim Start mit dem MSVC-Runtimefehler R6002
-#  ("floating point support not loaded") abbrechen - nachgewiesen mit einem
-#  Build, der NUR dieses eine Byte aenderte und sonst nichts. Umgekehrt liefen
-#  Builds, die die Cave-Bytes ins Padding schrieben ohne die Sektion
-#  umzuflaggen, einwandfrei. Das Padding traegt also Daten, laesst sich aber
-#  nicht ausfuehrbar machen. Eine angehaengte Sektion umgeht das vollstaendig
-#  und ist auch der Fallback, den die Vorlage selbst vorsieht.
-#
-#  2. ZEIGER STATT CALLBACK
-#  Die Vorlage haengt an jedes CVar einen Callback, der den geparsten float aus
-#  dem CVar-Objekt (+0x2C) in den Datenblock kopieren soll. Das kann nicht
-#  funktionieren: der Callback bei VA 0x7668EC ist ein PRUEF-Callback und laeuft,
-#  BEVOR der neue Wert gespeichert wird - er sieht also immer noch den alten.
-#  Bei der Anlage steht dort ausserdem eine glatte 0 (fldz/fstp bei 0x76812B),
-#  der eingebackene Startwert wird beim Start also sofort ueberschrieben. In der
-#  Praxis hinkt der Wert damit jeder Aenderung um einen Schritt hinterher, was
-#  sich wie eine willkuerlich reagierende Kamera anfuehlt.
-#  Hier merkt sich der Init-Hook stattdessen den Zeiger auf das CVar-Objekt, den
-#  CVars_Register in eax zurueckgibt, und der Kamera-Hook liest den float bei
-#  jedem Bild frisch von dort. Damit wirkt /console sofort und exakt.
-# ============================================================
-function Add-CameraReforged([double]$Height, [double]$Shoulder, [double]$MaxFactor, [double]$ZoomSpeed) {
-
-    # Grenzen wie in der Vorlage. Sie sichern nebenbei ab, dass die als Text
-    # abgelegten Vorgabewerte in ihre Slots passen (siehe Feldlage unten).
-    if ($Height    -lt  0.0 -or $Height    -gt   3.0) { throw 'CameraReforged: Height muss zwischen 0.0 und 3.0 liegen.' }
-    if ($Shoulder  -lt -2.0 -or $Shoulder  -gt   2.0) { throw 'CameraReforged: Shoulder muss zwischen -2.0 und 2.0 liegen.' }
-    if ($MaxFactor -lt  1.0 -or $MaxFactor -gt   5.0) { throw 'CameraReforged: MaxFactor muss zwischen 1.0 und 5.0 liegen.' }
-    if ($ZoomSpeed -lt  1.0 -or $ZoomSpeed -gt 100.0) { throw 'CameraReforged: ZoomSpeed muss zwischen 1.0 und 100.0 liegen.' }
-
-    # --- Engine-Adressen (VA, build 12340) ---
-    $REGISTER    = 0x767FC0   # CVars_Register(name, desc, flags, default, callback, 0,0,0,0) - cdecl, 9 Argumente
-    $INIT_VA     = 0x51D9B0   # CVars_Initialize, Prolog (push ebp / mov ebp,esp / sub esp,80h)
-    $INIT_CONT   = 0x51D9B9   # dahinter, dort steht schon die erste eigene Registrierung
-    $HEIGHT_VA   = 0x6070CB   # fld [0x9F1670] im Kamera-Fokuspfad
-    $HEIGHT_CONT = 0x6070D1   # dahinter
-    $IB          = 0x400000
-
-    # --- Platz fuer die neue Sektion hinter der letzten vorhandenen suchen ---
-    $e = RU32 $script:f 0x3C
-    $nsec = RU16 $script:f ($e + 6)
-    $opt = RU16 $script:f ($e + 20)
-    $SA = RU32 $script:f ($e + 24 + 32)
-    $FA = RU32 $script:f ($e + 24 + 36)
-    $sectBase = $e + 24 + $opt
-    $lastSo = $sectBase + 40 * ($nsec - 1)
-    $new_rva = AlignUp ((RU32 $script:f ($lastSo + 12)) + (RU32 $script:f ($lastSo + 8))) $SA
-    $new_sva = $IB + $new_rva
-
-    $SEC_SIZE = 0x200         # 512 Byte: Code ab +0, Daten ab +0x100
-    $CODE_VA  = $new_sva
-    $DATA_VA  = $new_sva + 0x100
-
-    # --- Feldlage im Datenblock (Byte-Offsets ab $DATA_VA) ---
-    #   0x00 dword    Zeiger auf das CVar-Objekt test_cameraHeight
-    #   0x04 dword    Zeiger auf das CVar-Objekt test_cameraOverShoulder
-    #   0x08 float    Schulterversatz, vom Kamera-Hook je Bild aufgefrischt
-    #   0x0C char[8]  Vorgabetext cameraDistanceMaxFactor
-    #   0x14 char[8]  Vorgabetext cameraDistanceMoveSpeed
-    #   0x20 char[18] "test_cameraHeight"
-    #   0x32 char[5]  Vorgabetext Hoehe      -> max. 4 Zeichen, daher Height <= 3.0
-    #   0x37 char[24] "test_cameraOverShoulder"
-    #   0x4F char[9]  Vorgabetext Schulter   -> "-2.00" passt
-    $P_HEIGHT = 0x00; $P_SHOULDER = 0x04; $O_SHOULDER = 0x08
-    $O_MAXF = 0x0C; $O_ZOOM = 0x14
-    $O_HNAME = 0x20; $O_HDEF = 0x32; $O_SNAME = 0x37; $O_SDEF = 0x4F
-
-    $c = New-Object System.Collections.Generic.List[byte]
-
-    # --- cvar_init_hook ---
-    # Haengt sich vor CVars_Initialize, meldet beide CVars an und legt die
-    # zurueckgegebenen Objektzeiger im Datenblock ab. Der Zeitpunkt ist
-    # unkritisch - CVars_Initialize registriert direkt hinter dem Prolog selbst
-    # ihr erstes CVar ueber genau diese Funktion, die Registry steht also.
-    $initHook = $CODE_VA + $c.Count
-    AddRaw $c @(0x60)                                                 # pushad
-    $regs = @( ,@($O_HNAME, $O_HDEF, $P_HEIGHT) ) + @( ,@($O_SNAME, $O_SDEF, $P_SHOULDER) )
-    foreach ($r in $regs) {
-        AddRaw $c @(0x6A, 0x00, 0x6A, 0x00, 0x6A, 0x00, 0x6A, 0x00)   # push 0 x4 (Argumente 6 bis 9)
-        AddRaw $c @(0x6A, 0x00)                                       # push callback = 0, siehe Kopf
-        AddRaw $c @(0x68); AddLE32 $c ($DATA_VA + $r[1])              # push default (Text)
-        AddRaw $c @(0x6A, 0x10, 0x6A, 0x00)                           # push flags=0x10 ; push desc=0
-        #  ^^^^ Die Flags landen im CVar-Objekt bei +0x1C, Bits 4 und 5 bilden
-        #  darin eine Kategorie. Der Client schreibt beim Beenden nur die
-        #  Kategorien 0x10 und 0x20 in die Config.wtf, Blizzards eigene CVars
-        #  werden mit 0x10 registriert. Mit der 1 der Vorlage waere die Kategorie
-        #  0 und der Wert nach jedem Neustart wieder auf dem Startwert.
-        AddRaw $c @(0x68); AddLE32 $c ($DATA_VA + $r[0])              # push name
-        $site = $CODE_VA + $c.Count
-        AddRaw $c @(0xE8); AddLE32 $c ($REGISTER - ($site + 5))       # call CVars_Register -> eax = CVar*
-        AddRaw $c @(0x83, 0xC4, 0x24)                                 # add esp,24h (9 Argumente, cdecl)
-        AddRaw $c @(0xA3); AddLE32 $c ($DATA_VA + $r[2])              # mov [zeiger], eax
-    }
-    AddRaw $c @(0x61)                                                 # popad - die FPU bleibt unberuehrt:
-                                                                      # der Hook nutzt sie nicht, und
-                                                                      # CVars_Register (cdecl) laesst den
-                                                                      # x87-Stack leer zurueck. Ein fninit
-                                                                      # wuerde auch das Steuerwort (Genauig-
-                                                                      # keit, Rundung) zuruecksetzen.
-    AddRaw $c @(0x55, 0x8B, 0xEC, 0x81, 0xEC, 0x80, 0x00, 0x00, 0x00) # verschobener Prolog
-    $site = $CODE_VA + $c.Count
-    AddRaw $c @(0xE9); AddLE32 $c ($INIT_CONT - ($site + 5))
-
-    # --- camera_height_hook ---
-    # Sitzt im Kamera-Fokuspfad. [ebp-2Ch] ist dort die Z-Koordinate des Punkts,
-    # auf den die Kamera zielt (der Vektor beginnt bei [ebp-34h], gefuellt von
-    # call 0x603090 kurz davor). Der Client legt ihn auf Brusthoehe.
-    #
-    # Zuerst wird der Schulterversatz aufgefrischt: die vier Lesestellen weiter
-    # unten koennen nur ein festes "fld [adresse]" aufnehmen (6 Byte), fuer eine
-    # Zeiger-Dereferenzierung ist dort kein Platz. Also holt der Hook den Wert
-    # hier je Bild aus dem CVar-Objekt und legt ihn an der festen Adresse ab.
-    # Danach kommt die Hoehe auf [ebp-2Ch]. Beide Zugriffe sind gegen einen
-    # Nullzeiger abgesichert, falls eine Registrierung fehlschlagen sollte.
-    $heightHook = $CODE_VA + $c.Count
-    AddRaw $c @(0xA1); AddLE32 $c ($DATA_VA + $P_SHOULDER)            # mov eax,[zeiger schulter]
-    AddRaw $c @(0x85, 0xC0, 0x74, 0x09)                               # test eax,eax ; je ueberspringen
-    AddRaw $c @(0xD9, 0x40, 0x2C)                                     # fld [eax+2Ch]
-    AddRaw $c @(0xD9, 0x1D); AddLE32 $c ($DATA_VA + $O_SHOULDER)      # fstp [schulterwert]
-    AddRaw $c @(0xA1); AddLE32 $c ($DATA_VA + $P_HEIGHT)              # mov eax,[zeiger hoehe]
-    AddRaw $c @(0x85, 0xC0, 0x74, 0x09)                               # test eax,eax ; je ueberspringen
-    AddRaw $c @(0xD9, 0x40, 0x2C)                                     # fld [eax+2Ch]
-    AddRaw $c @(0xD8, 0x45, 0xD4, 0xD9, 0x5D, 0xD4)                   # fadd [ebp-2Ch] ; fstp [ebp-2Ch]
-    AddRaw $c @(0xD9, 0x05, 0x70, 0x16, 0x9F, 0x00)                   # verschobene fld [0x9F1670]
-    $site = $CODE_VA + $c.Count
-    AddRaw $c @(0xE9); AddLE32 $c ($HEIGHT_CONT - ($site + 5))
-
-    if ($c.Count -gt 0x100) { throw "CameraReforged: Code-Cave zu gross ($($c.Count) Byte, Platz bis 0x100)." }
-
-    # --- Sektionsinhalt: [code][pad bis 0x100][daten] ---
-    $sec = New-Object byte[] $SEC_SIZE
-    [Array]::Copy($c.ToArray(), 0, $sec, 0, $c.Count)
-    # Startwert des Schulterversatzes, bis der Hook ihn das erste Mal auffrischt
-    [Array]::Copy([BitConverter]::GetBytes([float]$Shoulder), 0, $sec, (0x100 + $O_SHOULDER), 4)
-    $inv = [System.Globalization.CultureInfo]::InvariantCulture
-    $strings = @(
-        ,@($O_MAXF,  $MaxFactor.ToString('0.00', $inv))
-        ,@($O_ZOOM,  $ZoomSpeed.ToString('0.00', $inv))
-        ,@($O_HNAME, 'test_cameraHeight')
-        ,@($O_HDEF,  $Height.ToString('0.00', $inv))
-        ,@($O_SNAME, 'test_cameraOverShoulder')
-        ,@($O_SDEF,  $Shoulder.ToString('0.00', $inv))
-    )
-    foreach ($s in $strings) {
-        $b = [System.Text.Encoding]::ASCII.GetBytes([string]$s[1])
-        [Array]::Copy($b, 0, $sec, (0x100 + [int]$s[0]), $b.Length)   # Terminator: Array ist genullt
-    }
-
-    # --- Datei vergroessern: padding bis FileAlignment, dann Sektion anhaengen ---
-    $hoff = $sectBase + 40 * $nsec
-    if (($hoff + 40) -gt (RU32 $script:f ($sectBase + 20))) { throw 'CameraReforged: kein Platz im PE-Header fuer einen weiteren Sektionseintrag.' }
-    $raw_size = AlignUp $SEC_SIZE $FA
-    $oldLen = $script:f.Length
-    $new_raw = AlignUp $oldLen $FA
-    $nf = New-Object byte[] ($new_raw + $raw_size)
-    [Array]::Copy($script:f, 0, $nf, 0, $oldLen)
-    [Array]::Copy($sec, 0, $nf, $new_raw, $sec.Length)
-    $script:f = $nf
-
-    # --- PE-Header anpassen (NumberOfSections, SizeOfImage, neuer Sektionsheader) ---
-    Patch ($e + 6) ([BitConverter]::GetBytes([uint16]($nsec + 1)))
-    Patch ($e + 24 + 56) ([BitConverter]::GetBytes([uint32](AlignUp ($new_rva + $SEC_SIZE) $SA)))
-    Clear-CertificateTable
-    $sh = New-Object byte[] 40
-    [Array]::Copy([System.Text.Encoding]::ASCII.GetBytes('.camr'), 0, $sh, 0, 5)
-    [Array]::Copy([BitConverter]::GetBytes([uint32]$SEC_SIZE), 0, $sh, 8, 4)
-    [Array]::Copy([BitConverter]::GetBytes([uint32]$new_rva), 0, $sh, 12, 4)
-    [Array]::Copy([BitConverter]::GetBytes([uint32]$raw_size), 0, $sh, 16, 4)
-    [Array]::Copy([BitConverter]::GetBytes([uint32]$new_raw), 0, $sh, 20, 4)
-    [Array]::Copy([byte[]](0x40, 0x00, 0x00, 0xE0), 0, $sh, 36, 4)     # 0xE0000040 = init data | RWX
-    Patch $hoff $sh
-
-    # --- Detour auf CVars_Initialize (VA 0x51D9B0 -> Datei 0x11CDB0) ---
-    $j = New-Object byte[] 9
-    $j[0] = 0xE9
-    [Array]::Copy([BitConverter]::GetBytes([int32]($initHook - ($INIT_VA + 5))), 0, $j, 1, 4)
-    $j[5] = 0x90; $j[6] = 0x90; $j[7] = 0x90; $j[8] = 0x90
-    Patch 0x11CDB0 $j
-
-    # --- Detour auf den Kamera-Fokuspfad (VA 0x6070CB -> Datei 0x2064CB) ---
-    $j = New-Object byte[] 6
-    $j[0] = 0xE9
-    [Array]::Copy([BitConverter]::GetBytes([int32]($heightHook - ($HEIGHT_VA + 5))), 0, $j, 1, 4)
-    $j[5] = 0x90
-    Patch 0x2064CB $j
-
-    # --- Vorgabewerte der beiden vorhandenen Kamera-CVars umbiegen ---
-    # Beide Registrierungen bekommen ihren Standardwert als Textzeiger. Statt
-    # der Blizzard-Strings ("1.0" bei VA 0x9E1340, "8.33" bei VA 0xA1E7E0)
-    # zeigen sie jetzt auf die Texte im Datenblock. Die CVars selbst existieren
-    # im Client, bleiben also unabhaengig davon per /console regelbar.
-    $j = New-Object byte[] 5; $j[0] = 0x68
-    [Array]::Copy([BitConverter]::GetBytes([int32]($DATA_VA + $O_MAXF)), 0, $j, 1, 4)
-    Patch 0x1FD5B2 $j                                  # cameraDistanceMaxFactor, VA 0x5FE1B2
-    [Array]::Copy([BitConverter]::GetBytes([int32]($DATA_VA + $O_ZOOM)), 0, $j, 1, 4)
-    Patch 0x1FCE36 $j                                  # cameraDistanceMoveSpeed, VA 0x5FDA36
-
-    # --- Schulterversatz: NICHT umgesetzt ---
-    # Die Vorlage biegt vier "fld [reg+2E4h]"-Lesestellen (VA 0x969392,
-    # 0x96944F, 0x96AAE1, 0x9739D8) auf den Schulterwert um. Diese Stellen
-    # gehoeren aber nicht zur Kamera, sondern zum Chat-Fenster
-    # (CSimpleMessageScrollFrame: +0x2E4 = timeVisible, +0x2E8 = fadeDuration;
-    # 0x9739D8 liegt in der Lua-Methode GetTimeVisible). Umgebogen bekaeme jede
-    # Chat-Nachricht den Schulterwert als Anzeigedauer. Darum bleiben diese vier
-    # Stellen hier unangetastet; das CVar test_cameraOverShoulder wird zwar
-    # registriert und vom Kamera-Hook gelesen, hat aber noch keine Wirkung.
 }
 
 # ============================================================
@@ -1381,7 +1154,7 @@ function Add-VoiceLoader([string]$DllName) {
 
 # ============================================================
 #  Eigene Code-Sektion fuer kleine Code-Hoehlen
-#  Wie HD-Portraits und CameraReforged: Padding bis FileAlignment, Sektion
+#  Wie HD-Portraits: Padding bis FileAlignment, Sektion
 #  am Dateiende anhaengen, PE-Header anpassen (NumberOfSections, SizeOfImage,
 #  neuer Sektionsheader, ausfuehrbar, mit -Writable auch beschreibbar).
 #  Genutzt vom Doppelsprung, der beschreibbaren Speicher braucht.
@@ -3988,63 +3761,6 @@ $patches = @(
         Patch 0x469183 @(0x83, 0xF8, 0x32, 0x7D, 0x03, 0x83, 0xC0, 0x01, 0x83, 0xF9, 0x32, 0xEB, 0x31)
     }}
 
-    @{ Id = 'camera'; Cat = 'window'; On = $false; GrowsExe = $true; PublicUntested = $true
-       Author = 'Stormhand (fixed by St0ny)'
-       De = 'CameraReforged [BETA]: Kamerahoehe und Zoom-Grenzen'
-       En = 'CameraReforged [BETA]: camera height and zoom limits'
-       NoteDe = 'Schulterversatz noch ohne Wirkung'
-       NoteEn = 'shoulder offset has no effect yet'
-       Code = {
-        # BETA - funktioniert noch nicht zu 100 Prozent, hier fliesst noch Arbeit rein.
-        #
-        # Portierung von CameraReforged (Stormhand), mit seiner Erlaubnis eingebaut.
-        # Der Original-Patcher ist ein eigenstaendiges Tool mit GUI; hier steckt
-        # nur seine Patch-Logik, damit alles in einem Durchgang laeuft.
-        #
-        # WAS DER PATCH TUT
-        # 1. Er registriert beim Start zwei neue CVars direkt im Client, die es
-        #    in 3.3.5a gar nicht gibt. Bisher brauchte man dafuer ConsoleXP.dll
-        #    samt Injector - das faellt damit weg.
-        #      test_cameraHeight        Hoehe des Fokuspunkts in Yards. Der Client
-        #                               zielt auf die Brust; der Wert hebt die
-        #                               Kamera auf Kopfhoehe an. Bereich 0.0 - 3.0.
-        #      test_cameraOverShoulder  Seitlicher Versatz in Yards, negativ =
-        #                               links. Bereich -2.0 - 2.0. NOCH OHNE
-        #                               WIRKUNG - die Lesestellen der Vorlage
-        #                               waren falsch, siehe Add-CameraReforged.
-        # 2. Er tauscht die Vorgabewerte zweier vorhandener CVars aus:
-        #      cameraDistanceMaxFactor  max. Zoom-Faktor, Blizzard 1.0  -> 2.6
-        #      cameraDistanceMoveSpeed  Zoom-Tempo,      Blizzard 8.33 -> 20.0
-        #
-        # Alle vier sind zur Laufzeit ueber /console <name> <wert> erreichbar und
-        # wirken sofort, also auch aus Makros und Addons wie DynamicCam heraus.
-        # Die hier gesetzten Werte sind die Startwerte; alle vier werden mit
-        # Flag 0x10 registriert und landen damit in der Config.wtf, eine
-        # Aenderung per /console ueberlebt also den Neustart.
-        #
-        # WERTE AENDERN
-        # Einfach die vier Zahlen unten anpassen und neu patchen. Die Funktion
-        # baut Texte, Zeiger und Sprungziele daraus neu auf und prueft die
-        # Bereiche; ausserhalb bricht sie mit Meldung ab.
-        #
-        # WO DAS IM BINARY LANDET
-        # Eine eigene, angehaengte Sektion ".camr" (RWX) mit Code und Daten,
-        # Detours auf CVars_Initialize und den Kamera-Fokuspfad, dazu zwei
-        # umgebogene Vorgabewerte. Details stehen bei Add-CameraReforged oben.
-        #
-        # EINE EINSCHRAENKUNG
-        # Dieser Patch veraendert wie die HD-Portraits die
-        # Dateigroesse und die PE-Struktur (etwa +1 KB), weil er eine Sektion
-        # anhaengt. Das ist unvermeidbar: der Weg der Vorlage - Caves ins
-        # .rdata-Padding und die Sektion dafuer ausfuehrbar machen - laesst
-        # diesen Client beim Start mit R6002 abbrechen, nachgewiesen mit einem
-        # Build, der nur dieses eine Header-Byte aenderte. Auf Servern, die den
-        # Client auf Groesse oder Sektionsaufbau pruefen, kann das auffallen.
-        # Die SHA256-Pruefung des Patchers betrifft nur die Eingabe und bleibt
-        # davon unberuehrt.
-        Add-CameraReforged -Height 0.5 -Shoulder 0.0 -MaxFactor 2.6 -ZoomSpeed 20.0
-    }}
-
     # --- Sound ---
 
     @{ Id = 'sound'; Cat = 'sound'; On = $false
@@ -4436,15 +4152,6 @@ mouse;469183;CCCCCCCCCCCCCCCCCCCCCCCCCC;1
 mouse;4691B1;8BEC83EC108D45F0506A00E8DF28000083C40450FF150CF69D008B45F8992BC28BC88B45FC992BC2D1F8D1F95051890DEC13D400A3F013D400E881EEFFFF83C4088BE55DC3CCCCCCCCCCCCCCCCCCCC;1
 mouse;469A2C;8B45F08B15EC13D4008B1DF0;1
 mouse;528AA2;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
-camera;116;0600;0
-camera;160;00D09F00;0
-camera;1A8;007C750098120000;0
-camera;2F8;00000000000000000000000000000000000000000000000000000000000000000000000000000000;0
-camera;3C0;00000000000000000000000000000000000000000000000000000000000000000000000000000000;0
-camera;11CDB0;558BEC81EC80000000;1
-camera;1FCE36;68E0E7A100;1
-camera;1FD5B2;6840139E00;1
-camera;2064CB;D90570169F00;1
 sound;C77C2;85C074068B40308945F8;1
 sound;D0604;6864149E00;1
 sound;D0624;68DC219E00;1

@@ -1275,75 +1275,10 @@ have no effect.
 A larger patch (4 parts) that fixes problems with mice using a high polling
 rate. Prevents cursor flicker and uncontrolled camera movement.
 
-<a id="patch-camera"></a>
-**CameraReforged [BETA]: camera height and zoom limits** *(No. 80, Author: Stormhand (fixed by St0ny))* 🟠 **[untested online - exe grows]**
-
-Port of [CameraReforged](https://github.com/Zendevve/CameraReforged) by
-**Stormhand** into this patcher, so everything
-runs in one pass – included with his explicit permission ("Of course! Take
-whatever you need. I appreciate your work."). The port and its adjustments were
-made by St0ny. The client gets two brand-new CVars and new default values for
-two existing ones.
-
-> [!WARNING]
-> **BETA** – this patch does not work 100% yet, more work is going into it.
-> That is why it is deselected by default. The shoulder offset
-> (`test_cameraOverShoulder`) currently has no effect: the four read sites the
-> original redirects for it do not belong to the camera but to the chat frame
-> (display time of messages). They are left untouched here.
-
-| CVar                      | Blizzard  | here  | Range         |
-|---------------------------|-----------|-------|---------------|
-| `test_cameraHeight`       | (missing) | 0.50  | 0.0 to 3.0    |
-| `test_cameraOverShoulder` | (missing) | 0.00  | -2.0 to 2.0 (no effect) |
-| `cameraDistanceMaxFactor` | 1.0       | 2.60  | 1.0 to 5.0    |
-| `cameraDistanceMoveSpeed` | 8.33      | 20.00 | 1.0 to 100.0  |
-
-- `test_cameraHeight` raises the point the camera aims at. The client puts it
-  at chest height; 0.5 yards brings it to head height.
-- `test_cameraOverShoulder` is meant to shift the camera sideways, negative
-  values to the left – currently without effect (see above).
-- `cameraDistanceMaxFactor` is the factor by which you can zoom out beyond the
-  normal limit, `cameraDistanceMoveSpeed` the zoom speed.
-
-In 3.3.5a both new CVars were previously only available through
-`ConsoleXP.dll` plus an injector – the patch registers them directly in the
-EXE. All four are reachable via the console in-game and take effect
-immediately, so they also work from macros and addons such as DynamicCam, e.g.
-`/console test_cameraHeight 0.8`. They are registered with flag `0x10` and
-saved to `Config.wtf`, so changes survive a restart. The default values can be
-changed in the call
-`Add-CameraReforged -Height 0.5 -Shoulder 0.0 -MaxFactor 2.6 -ZoomSpeed 20.0`
-in `apply_patches.ps1`; values outside the ranges are rejected.
-
-<details>
-<summary><b>Background: how the patch is wired in</b></summary>
-
-The patch appends its own section `.camr` to the EXE (about +1 KB,
-read/write/execute) with code and data. It is wired up via a detour on
-`CVars_Initialize` (where the new CVars are registered), a detour on the camera
-focus path (where the height is added) and two redirected default-value
-pointers.
-
-Two deviations from the original tool, both necessary:
-
-1. *Own section instead of `.rdata` padding.* The original puts code and data
-   into the `.rdata` padding and makes that section executable – exactly that
-   makes this client abort on start with runtime error R6002.
-2. *Pointer instead of callback.* The original's callback is a validation
-   callback that runs before the new value is stored, so the value lags behind
-   every change. Here the init hook stores the pointer to the CVar object and
-   the camera hook reads the value fresh every frame.
-
-Do not run `CameraReforged.exe` in addition: it brings back the R6002 crash and
-overwrites the table of the slider patch.
-
-</details>
-
 ## Sound
 
 <a id="patch-sound"></a>
-**Optimize sound settings** *(No. 81, Author: St0ny)* 🟢 **[safe]**
+**Optimize sound settings** *(No. 80, Author: St0ny)* 🟢 **[safe]**
 
 Includes the following changes:
 
@@ -1372,7 +1307,7 @@ message and asked for again, and all values are checked before anything is
 written. The patcher remembers the values in `patcher_selection.ini`
 (`value.<Id>=…`); with `-Unattended` the remembered values are used, otherwise
 the original values – exceptions: build date (current time) and icon (the
-patcher aborts), see No. 85 and 86. If a patch is already in `Wow.exe`, its
+patcher aborts), see No. 84 and 85. If a patch is already in `Wow.exe`, its
 current value is the suggestion. When asking, it is also shown after the patch
 name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 
@@ -1381,7 +1316,7 @@ name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 > to match the server.
 
 <a id="patch-clientversion"></a>
-**Change client version (original 3.3.5)** *(No. 82, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change client version (original 3.3.5)** *(No. 81, Author: MacWarrior)* 🔴 **[unsafe]**
 
 Sets a new version in the format `x.y.z` (e.g. `3.3.6` or `3.3.123`, at most 7
 characters). Changes the version the client shows in-game, the FileVersion and
@@ -1391,7 +1326,7 @@ The build number in `VS_FIXEDFILEINFO` is kept; the FileVersion text
 together must fit into the ProductVersion field (e.g. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Change build number (original 12340)** *(No. 83, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change build number (original 12340)** *(No. 82, Author: MacWarrior)* 🔴 **[unsafe]**
 
 Sets a new build number (6142 to 65535, original `12340`): the internal build
 number, the visible build number and the fourth part of the FileVersion in
@@ -1419,7 +1354,7 @@ different login protocol – a 3.3.5 client can no longer get onto the server.
 > it as offline.
 
 <a id="patch-clienttitle"></a>
-**Change program title (file properties and window title)** *(No. 84, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
+**Change program title (file properties and window title)** *(No. 83, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
 
 Sets FileDescription, InternalName and ProductName of the version resource,
 i.e. what Windows shows in the file properties and the Task Manager. At most 17
@@ -1435,7 +1370,7 @@ custom title to the first place and disables the two calls so that it stays.
 > as the title of error messages – the custom title appears there as well.
 
 <a id="patch-clientdate"></a>
-**Change build date (original Jun 24 2010)** *(No. 85, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change build date (original Jun 24 2010)** *(No. 84, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 Sets the build date (original `Jun 24 2010`) at all three places in the EXE and
 the year in the copyright notice, plus the time. The time is stored in two
@@ -1454,7 +1389,7 @@ the time of patching if nothing is remembered. If the patch is already applied,
 the current date and time of `Wow.exe` are suggested.
 
 <a id="patch-clienticon"></a>
-**Change program icon (icon of Wow.exe)** *(No. 86, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change program icon (icon of Wow.exe)** *(No. 85, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 Replaces the icon Windows shows for `Wow.exe` (Explorer, taskbar, shortcuts).
 The patcher asks for the path of an `.ico` or `.png` file, absolute or
@@ -1485,7 +1420,7 @@ patcher aborts with a message.
 > shortcuts or restart Explorer. The icon in the game itself (window title)
 > comes from these resources as well.
 <a id="patch-y38fix"></a>
-**Year 2038 fix: show dates shifted by N years [BETA]** *(No. 87, Author: St0ny)* 🟠 **[untested]**
+**Year 2038 fix: show dates shifted by N years [BETA]** *(No. 86, Author: St0ny)* 🟠 **[untested]**
 
 The 3.3.5 client stores dates packed with a 5-bit year from 2000 – which only
 reaches 2031 – and uses 32-bit Unix times (until 2038). The idea: a server
