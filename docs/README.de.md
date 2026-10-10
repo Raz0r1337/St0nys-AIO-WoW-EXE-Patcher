@@ -138,7 +138,9 @@ Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
 2. **Sprachauswahl:** `1` = Deutsch, `2` = English. Nur beim ersten Start – danach
    ist die Sprache gemerkt und lässt sich im Menü mit `L` umschalten.
 3. Begrüßung, ENTER zum Starten.
-4. Prüfung, ob eine `Wow.exe` im Ordner vorhanden ist.
+4. Prüfung, ob eine `Wow.exe` im Ordner vorhanden ist. Fehlt sie, liegen aber
+   noch Sicherungen im Ordner, bietet der Patcher an, sie neu zu bauen oder
+   wiederherzustellen (siehe [Wenn die Wow.exe fehlt](#wenn-die-wowexe-fehlt)).
 5. Prüfung der `Wow.exe`: Beim ersten Start muss sie original und unmodifiziert
    sein (SHA256). Danach erkennt der Patcher eine von ihm gepatchte `Wow.exe` am
    Wasserzeichen und ermittelt, welche Patches darin stecken. Alles andere führt
@@ -292,6 +294,26 @@ So funktioniert es:
 > Ein Patch mit einem Wert, der genau dem Original entspricht (z. B. die
 > Sprunghöhe `-7.9555473`), ändert keine Bytes und wird bei der Prüfung der Exe
 > deshalb nicht als eingespielt erkannt – er ist dann ja auch wirkungslos.
+
+### Wenn die Wow.exe fehlt
+
+Liegt im Patcher-Ordner keine `Wow.exe` mehr, aber noch die Sicherungen
+`Wow.exe.ORI` und/oder `Wow.exe.BAK` – etwa weil du die gepatchte Exe in den
+WoW-Ordner verschoben statt kopiert hast –, bietet der Patcher beim Start an:
+
+1. **Neue Wow.exe aus dem Original bauen:** Das Menü startet mit den Patches
+   und Werten, die zuletzt eingespielt waren. Du kannst sie übernehmen, ändern
+   oder mit `R`, `B` oder `S` ein Preset laden. Ohne Änderung entsteht genau die
+   zuletzt gepatchte `Wow.exe` neu.
+2. **Vorherige Wow.exe wiederherstellen:** Der Patcher kopiert `Wow.exe.BAK`
+   zurück, also den Stand vor dem letzten Patchen.
+3. **Original wiederherstellen:** Der Patcher kopiert `Wow.exe.ORI` zurück.
+
+`Q` bricht ab. Die Sicherungen bleiben in jedem Fall erhalten. Angeboten wird
+nur, was sich verwenden lässt: Das Original muss laut SHA256 wirklich das
+Original sein, das Backup original oder mit diesem Patcher gepatcht. Mit
+`-Unattended` gibt es kein Menü; der Patcher bricht dann ab und weist auf die
+Sicherungen hin.
 
 ## Parameter für den unbeaufsichtigten Betrieb
 
@@ -569,9 +591,10 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   mit `findstr /m /c:"St0nys AIO" Wow.exe` (gibt den Dateinamen aus, wenn er drin
   ist).
 - **Original wiederherstellen:** Patcher starten, `N` und ENTER drücken – mit
-  oder ohne `patcher_state.ini`. Alternativ gepatchte `Wow.exe` löschen und
-  `Wow.exe.ORI` in `Wow.exe` umbenennen. `Wow.exe.BAK` ist dagegen die `Wow.exe`
-  von vor dem letzten Lauf.
+  oder ohne `patcher_state.ini`. Alternativ die gepatchte `Wow.exe` löschen und
+  den Patcher starten: Er bietet dann an, das Original wiederherzustellen
+  (siehe [Wenn die Wow.exe fehlt](#wenn-die-wowexe-fehlt)). `Wow.exe.BAK` ist
+  dagegen die `Wow.exe` von vor dem letzten Lauf.
 - **Für Entwickler:** Die Original-Byte-Tabelle im Skript wird mit
   `apply_patches.ps1 -BuildTable -Path <originale Wow.exe>` neu erzeugt. Das ist
   nach jeder Änderung an einem Patch nötig; passt sie nicht mehr, weist der
