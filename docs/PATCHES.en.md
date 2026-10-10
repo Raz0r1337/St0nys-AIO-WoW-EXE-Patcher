@@ -396,7 +396,7 @@ the stack. The patch works together with the Lexara loader (No. 30) and the
 voice.dll loader (No. 31).
 
 <a id="patch-awesome"></a>
-**Enable AwesomeWotlkLib.dll support (client extensions by noname08662)** *(No. 28, Author: FrostAtom)* 🟡 **[safe - DLL risky]**
+**Load AwesomeWotlkLib.dll at startup (client extensions by noname08662)** *(No. 28, Author: FrostAtom)* 🟡 **[safe - DLL risky]**
 
 Allows `AwesomeWotlkLib.dll` to be loaded on client start. This DLL extends
 the client with additional features and improvements for private servers.
@@ -421,7 +421,7 @@ set to "passed". As a side effect the patch disables the Scan.dll mechanism
 > wins.
 
 <a id="patch-wotlkext"></a>
-**Enable WotLKExtensions.dll support (client extensions by Alyst3r)** *(No. 29, Author: St0ny (original by Alyst3r))* 🟡 **[safe - DLL risky]**
+**Load WotLKExtensions.dll at startup (client extensions by Alyst3r)** *(No. 29, Author: St0ny (original by Alyst3r))* 🟡 **[safe - DLL risky]**
 
 Loads `WotLKExtensions.dll` from the WoW folder when the client starts. The DLL
 from [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions) by Alyst3r
@@ -482,15 +482,16 @@ patch works together with the voice.dll loader (No. 31), which only changes
 the jump right after it.
 
 <a id="patch-voicedll"></a>
-**Load voice.dll at startup (mod-voicechat) [ALPHA]** *(No. 31, Author: St0ny)* 🟠 **[untested]**
+**Load voice.dll at startup (voice chat by St0ny) [BETA]** *(No. 31, Author: St0ny)* 🟠 **[untested]**
 
 Loads `voice.dll` from the WoW folder at startup – the client part of
 [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat), a voice chat
 module for AzerothCore. If the DLL is missing, WoW starts normally.
 
-> [!CAUTION]
-> **ALPHA** – the mod-voicechat module is not finished yet. That is why this
-> patch is deselected by default.
+> [!WARNING]
+> **BETA** – the mod-voicechat module is not finished yet. That is why this
+> patch is deselected by default and only in the dev branches for now, not in
+> `st0ny-main`.
 
 File size and PE header stay unchanged: the jump at the entry point (VA
 `0x401005`) is redirected into a free 27-byte gap between two functions (VA

@@ -403,7 +403,7 @@ den DLL-Namen legt der Thread auf dem Stack ab. Der Patch verträgt sich mit dem
 Lexara-Lader (Nr. 30) und dem voice.dll-Lader (Nr. 31).
 
 <a id="patch-awesome"></a>
-**AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662)** *(Nr. 28, Autor: FrostAtom)* 🟡 **[sicher - DLL riskant]**
+**AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662)** *(Nr. 28, Autor: FrostAtom)* 🟡 **[sicher - DLL riskant]**
 
 Ermöglicht das Laden der `AwesomeWotlkLib.dll` beim Client-Start. Diese DLL
 erweitert den Client um zusätzliche Funktionen und Verbesserungen für private
@@ -430,7 +430,7 @@ Fehlt die DLL, startet WoW normal weiter.
 > Auflösung des Exe-Patches.
 
 <a id="patch-wotlkext"></a>
-**WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r)** *(Nr. 29, Autor: St0ny (original by Alyst3r))* 🟡 **[sicher - DLL riskant]**
+**WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r)** *(Nr. 29, Autor: St0ny (original by Alyst3r))* 🟡 **[sicher - DLL riskant]**
 
 Lädt beim Client-Start die `WotLKExtensions.dll` aus dem WoW-Ordner. Die DLL aus
 [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions) von Alyst3r
@@ -494,15 +494,16 @@ Einstiegspunkt geladen, der Zeitpunkt passt also. Der Patch verträgt sich mit
 dem voice.dll-Lader (Nr. 31), der nur den Sprung direkt danach ändert.
 
 <a id="patch-voicedll"></a>
-**voice.dll beim Start laden (mod-voicechat) [ALPHA]** *(Nr. 31, Autor: St0ny)* 🟠 **[ungetestet]**
+**voice.dll beim Start laden (Voice-Chat von St0ny) [BETA]** *(Nr. 31, Autor: St0ny)* 🟠 **[ungetestet]**
 
 Lädt beim Start die `voice.dll` aus dem WoW-Ordner – den Client-Teil von
 [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat), einem
 Voice-Chat-Modul für AzerothCore. Fehlt die DLL, startet WoW ganz normal.
 
-> [!CAUTION]
-> **ALPHA** – das Modul mod-voicechat ist noch nicht fertig. Deshalb ist dieser
-> Patch standardmäßig abgewählt.
+> [!WARNING]
+> **BETA** – das Modul mod-voicechat ist noch nicht fertig. Deshalb ist dieser
+> Patch standardmäßig abgewählt und vorerst nur in den dev-Zweigen, nicht in
+> `st0ny-main`.
 
 Dateigröße und PE-Header bleiben unverändert: Der Sprung am Einstiegspunkt
 (VA `0x401005`) wird in eine freie 27-Byte-Lücke zwischen zwei Funktionen

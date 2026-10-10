@@ -1376,7 +1376,7 @@ function Set-ClientIcon([string]$v) {
 }
 
 # ============================================================
-#  Helfer fuer den voice.dll-Loader (mod-voicechat, ALPHA)
+#  Helfer fuer den voice.dll-Loader (mod-voicechat, BETA)
 #  Uebernommen aus Add-VoiceLoader.ps1 aus https://github.com/Raz0r1337/mod-voicechat
 #  Dateigroesse und PE-Header bleiben unveraendert. Genutzt wird eine
 #  27-Byte-int3-Luecke zwischen zwei Funktionen (VA 0x944B45, Datei 0x543F45);
@@ -2992,8 +2992,8 @@ $patches = @(
 
     @{ Id = 'awesome'; Cat = 'dll'; On = $true; Needs = @('laa'); DllRisky = $true
        Author = 'FrostAtom'
-       De = 'AwesomeWotlkLib.dll Unterstuetzung aktivieren (Client-Erweiterungen von noname08662)'
-       En = 'Enable AwesomeWotlkLib.dll support (client extensions by noname08662)'
+       De = 'AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662)'
+       En = 'Load AwesomeWotlkLib.dll at startup (client extensions by noname08662)'
        NoteDe = 'benoetigt awesome_wotlk'
        NoteEn = 'requires awesome_wotlk'
        Url = 'https://github.com/noname08662/awesome_wotlk'
@@ -3013,8 +3013,8 @@ $patches = @(
 
     @{ Id = 'wotlkext'; Cat = 'dll'; On = $false; Needs = @('laa'); DllRisky = $true
        Author = 'St0ny (original by Alyst3r)'
-       De = 'WotLKExtensions.dll Unterstuetzung aktivieren (Client-Erweiterungen von Alyst3r)'
-       En = 'Enable WotLKExtensions.dll support (client extensions by Alyst3r)'
+       De = 'WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r)'
+       En = 'Load WotLKExtensions.dll at startup (client extensions by Alyst3r)'
        NoteDe = 'benoetigt WotLK-Extensions'
        NoteEn = 'requires WotLK-Extensions'
        Url = 'https://github.com/Alyst3r/WotLK-Extensions'
@@ -3069,13 +3069,13 @@ $patches = @(
 
     @{ Id = 'voicedll'; Cat = 'dll'; On = $false; PublicUntested = $true; GameUntested = $true
        Author = 'St0ny'
-       De = 'voice.dll beim Start laden (mod-voicechat) [ALPHA]'
-       En = 'Load voice.dll at startup (mod-voicechat) [ALPHA]'
-       NoteDe = 'Modul noch unfertig'
-       NoteEn = 'module not finished yet'
+       De = 'voice.dll beim Start laden (Voice-Chat von St0ny) [BETA]'
+       En = 'Load voice.dll at startup (voice chat by St0ny) [BETA]'
+       NoteDe = 'benoetigt mod-voicechat'
+       NoteEn = 'requires mod-voicechat'
        Url = 'https://github.com/Raz0r1337/mod-voicechat'
        Code = {
-        # ALPHA - das Modul mod-voicechat ist noch nicht fertig. Laedt
+        # BETA - das Modul mod-voicechat ist noch nicht fertig. Laedt
         # beim Start die voice.dll aus dem WoW-Ordner; fehlt sie,
         # startet WoW ganz normal. Dateigroesse und PE-Header bleiben gleich.
         Add-VoiceLoader 'voice.dll'
