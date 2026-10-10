@@ -508,7 +508,7 @@ missing, WoW starts normally.
 > `LoadLibraryA("LuxShoulderCam.dll")` just gets the already loaded DLL back,
 > its startup code does not run a second time.
 
-Do not use it together with Visus - St0nyCam (No. 84): both hook the same spot
+Do not use it together with Visus - St0nyCam (No. 90): both hook the same spot
 of the camera (VA `0x6070CB`). If Visus is applied, Lux does not hook in there,
 and Lux's height and offset have no effect.
 
@@ -1178,17 +1178,43 @@ which does it in its DLL. Icons at the font's original size stay unchanged.
 The code lives in a small section of its own (`.isnap`, 179 bytes).
 
 <a id="patch-outline"></a>
-**Outline for target and mouseover [BETA]** *(No. 68, Author: St0ny)* 🟠 **[untested online - exe grows]**
+**Outline for target and mouseover [BETA]** *(No. 68, Author: St0ny)* 🟠 **[untested - exe grows]**
 
 Like in retail, the 3D figure of your target and the figure under the mouse
-cursor get a thin outline (about 2 pixels) in their reaction color – the same
-color as the selection circle: red hostile, yellow neutral, green friendly. The
-outline only appears where the figure is visible; where a wall stands in front
-of it, there is no outline. Weapons, helmet and mount belong to the figure.
+cursor get a thin outline (about 2 pixels). Players get their class color like
+in the raid frames, everyone else the color of the selection circle: red
+hostile, yellow neutral, green friendly. Hostile players gently pulse between
+their class color and red, so you still recognize them as enemies despite the
+class color. The outline only appears where the figure is visible; where a
+wall stands in front of it, there is no outline. Weapons, helmet and mount
+belong to the figure.
 
 > [!WARNING]
-> **BETA** – this patch is still being tested and is therefore only in the dev
-> branches for now, not in `st0ny-main`.
+> **BETA** – still untested, online and in game. That is why the patch is
+> deselected by default and only in the dev branches for now, not in
+> `st0ny-main`.
+
+> [!WARNING]
+> **On public servers please keep the default setting:** only No. 68, without
+> the extra options No. 69–74. If the patch gets banned on a server, that is
+> bad luck – there is nothing I can do about it. From then on it can only be
+> used on your own private servers. So please be careful.
+
+**Extra options** – patches of their own in the menu that need No. 68; all of
+them are off by default:
+
+| No. | Option | Effect |
+|----:|--------|--------|
+| [69](#patch-outlinewalls) | through walls | The outline also appears where the figure is hidden. |
+| [70](#patch-outlineself) | own character | Your figure always has an outline. |
+| [71](#patch-outlineparty) | own party | The up to 4 other players of your party of 5 always have an outline. |
+| [72](#patch-outlineraid) | whole raid | All other players in the raid always have an outline – costs a lot of FPS. |
+| [73](#patch-outlinehidden) | own character only hidden | Your figure only gets an outline where it is hidden. |
+| [74](#patch-outlinereact) | reaction color | All outlines in the color of the selection circle, players too. |
+
+If a figure is the target or under the mouse cursor, that outline applies.
+Every outlined figure is drawn ten times (nine times with No. 69 or 73) – so
+many outlines cost performance, noticeably in raids with No. 72.
 
 How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
@@ -1196,7 +1222,9 @@ How it works:
 - While the figure is drawn, its visible pixels are marked in the stencil.
   Then it is drawn eight more times invisibly, each shifted by 2 pixels in
   every direction (via the shader's projection matrix), with depth test –
-  these copies mark the outline and store the figure's depth there.
+  these copies mark the outline and store the figure's depth there. Every
+  outlined figure (target, mouseover, you, every party and raid member, up to
+  48) gets a value of its own and so a color of its own.
 - Whatever is drawn afterwards in front of the figure (e.g. bushes,
   mushrooms, grass) clears the mark at its pixels and so hides the outline as
   well. Things behind stay behind the outline thanks to the stored depth.
@@ -1204,15 +1232,25 @@ How it works:
 - Further parts of the same figure (cloak, weapon, mount) are drawn once more
   on their own outline without depth test, so no outline is left between the
   parts.
-- After the models and before the interface, a full-screen quad colors only
-  the outline pixels; then the stencil is cleared and the game sends all its
-  graphics states again.
-- Code and data live in a section of their own (`.outl`, 0x9DA bytes).
+- With No. 69 the figure is also marked where it is hidden, and the copies run
+  without depth test. Things drawn later no longer clear the outline then.
+- With No. 73 your figure is also marked where it is hidden as well; its
+  copies, however, only mark the outline where something already drawn lies in
+  front of them.
+- After the models and before the interface, a full-screen quad per outlined
+  figure colors only its outline pixels; then the stencil is cleared and the
+  game sends all its graphics states again.
+- Hostile means: the player's selection circle would be red. Then the quad
+  mixes their class color with red; the share of red rises and falls smoothly
+  (cosine), one pulse takes 1.5 seconds.
+- Code and data live in a section of their own (`.outl`, 0x118E bytes). The
+  extra options each set a single padding byte between two functions in
+  `.text` to 1; the code reads these switches while drawing.
 
 > [!NOTE]
 > Only with `gxApi d3d9` (default) and a 24-bit depth buffer (default). With
-> D3D9Ex, OpenGL or `gxDepthBits` 16/32 the patch switches itself off. It
-> works with DXVK as well (tested in game), because WoW uses Direct3D 9 there
+> D3D9Ex, OpenGL or `gxDepthBits` 16/32 the patch switches itself off. The
+> first version also ran in game with DXVK, because WoW uses Direct3D 9 there
 > as well.
 
 > [!NOTE]
@@ -1220,29 +1258,93 @@ How it works:
 > there is no room left in the PE header for another section entry. Then the
 > patcher extends the last appended section instead of adding a new one.
 
+<a id="patch-outlinewalls"></a>
+**Outline: visible through walls too [BETA]** *(No. 69, Author: St0ny)* 🔴 **[unsafe - untested]**
+
+Extra option for No. 68: the outline also appears where the figure stands
+behind a wall, a tree or another figure – you see its contours through
+everything. This applies to all outlines: target, mouseover and the permanent
+ones of No. 70 to 72.
+
+> [!WARNING]
+> Seeing through walls gives an advantage and may be considered cheating –
+> **use it on your own servers only.**
+
+<a id="patch-outlineself"></a>
+**Outline: own character always outlined [BETA]** *(No. 70, Author: St0ny)* 🟠 **[untested]**
+
+Extra option for No. 68: your own figure always has an outline, in your class
+color (with No. 74 in the color of the selection circle). If you are the
+target or under the mouse cursor yourself, that outline applies. Together with
+No. 73, No. 73 applies: only the hidden parts.
+
+<a id="patch-outlineparty"></a>
+**Outline: own party always outlined [BETA]** *(No. 71, Author: St0ny)* 🟠 **[untested]**
+
+Extra option for No. 68: the up to 4 other players of your party (`party1` to
+`party4`) always have an outline, each in their class color (with No. 74 in
+the color of the selection circle). Whoever is the target or under the mouse
+cursor gets that outline. Players out of sight have none.
+
+<a id="patch-outlineraid"></a>
+**Outline: whole raid always outlined [BETA]** *(No. 72, Author: St0ny)* 🟠 **[untested]**
+
+Extra option for No. 68: all other players of your raid (up to 39) always
+have an outline, each in their class color (with No. 74 in the color of the
+selection circle). Your party is included, also outside of a raid – No. 71 is
+not needed then. You yourself are only outlined by No. 70 or 73.
+
+> [!WARNING]
+> **Costs a lot of FPS:** every outlined figure is drawn ten times. With 25 or
+> 40 players that is a lot of extra draw calls per frame. On weaker computers
+> better use only No. 71.
+
+<a id="patch-outlinehidden"></a>
+**Outline: own character only where it is hidden [BETA]** *(No. 73, Author: St0ny)* 🟠 **[untested]**
+
+Extra option for No. 68: your figure only gets an outline where it is hidden
+– if, for example, a house wall or a hill stands between the camera and you,
+you see your contour on the wall. Visible parts get no outline. If you also
+chose No. 70, this option applies; with No. 69 as well.
+
+> [!NOTE]
+> Only what is drawn before your figure is detected. The game normally draws
+> terrain and buildings before the figures; whether trees or other figures in
+> front are detected as well depends on the order in which the game draws –
+> the test in game has to show that.
+
+<a id="patch-outlinereact"></a>
+**Outline: reaction color instead of class color [BETA]** *(No. 74, Author: St0ny)* 🟠 **[untested]**
+
+Extra option for No. 68: all outlines get the color of the selection circle
+(mostly blue for players), target and mouseover too. Hostile players are
+then simply red and do not pulse. Without this option players have their
+class color (hostile ones gently pulse red), everyone else the color of the
+selection circle.
+
 ## Interface & comfort
 
 <a id="patch-tracker"></a>
-**Auto-sort quest tracker** *(No. 69)* 🟢 **[safe]**
+**Auto-sort quest tracker** *(No. 75)* 🟢 **[safe]**
 
 Sets the CVar `trackerSorting` to 1 by default. Quests in the tracker are
 sorted automatically.
 
 <a id="patch-worldmap"></a>
-**Advanced world map enabled by default** *(No. 70)* 🟢 **[safe]**
+**Advanced world map enabled by default** *(No. 76)* 🟢 **[safe]**
 
 Sets the CVar `advancedWorldMap` to 1 by default. The advanced map view is
 enabled from the start.
 
 <a id="patch-castbars"></a>
-**Cast bars on all frames** *(No. 71, Author: Kebabstorm)* 🟢 **[safe]**
+**Cast bars on all frames** *(No. 77, Author: Kebabstorm)* 🟢 **[safe]**
 
 Shows cast bars on all unit frames (party, arena, boss etc.), not just target
 and focus, as well as on all default nameplates. Matches the behavior from
 Cataclysm onwards.
 
 <a id="patch-emblems"></a>
-**Retail guild emblems: selection extended from 170 to 196** *(No. 72, Author: MacWarrior)* 🟠 **[untested online]**
+**Retail guild emblems: selection extended from 170 to 196** *(No. 78, Author: MacWarrior)* 🟠 **[untested online]**
 
 The client keeps the number of selectable tabard variants in a small table
 (VA `0xA14908`, file offset `0x613108`): 170 emblems, 17 emblem colors,
@@ -1275,7 +1377,7 @@ up to you (`patch-*.MPQ`), thanks to the patch "Allow extended MPQ names"
 (No. 21).
 
 <a id="patch-flash"></a>
-**FlashWindow patch** *(No. 73, Author: Kebabstorm)* 🟢 **[safe]**
+**FlashWindow patch** *(No. 79, Author: Kebabstorm)* 🟢 **[safe]**
 
 Makes the WoW window flash in the taskbar when a relevant event occurs while
 the game is in the background. For this the Lua function `BNRemoveFriend`,
@@ -1288,7 +1390,7 @@ which additionally needs `IsWindowFocused()` from `AwesomeWotlkLib.dll`
 (No. 28).
 
 <a id="patch-charrandom"></a>
-**Character creation: do not randomize the appearance automatically** *(No. 74, Author: Alyst3r (0x539wowmod))* 🟢 **[safe]**
+**Character creation: do not randomize the appearance automatically** *(No. 80, Author: Alyst3r (0x539wowmod))* 🟢 **[safe]**
 
 When opening character creation (clicking "Create New Character") and when
 changing race or gender, the client no longer randomizes face, skin, hair style
@@ -1296,22 +1398,22 @@ etc. automatically; you start with the default appearance. The randomize button
 keeps working – it uses a separate path in the client.
 
 <a id="patch-lootopen"></a>
-**Loot window stays open while moving** *(No. 75, Author: tb (ported by St0ny))* 🟠 **[untested online]**
+**Loot window stays open while moving** *(No. 81, Author: tb (ported by St0ny))* 🟠 **[untested online]**
 
 In the original the loot window closes as soon as you walk, strafe or turn.
 With the patch it stays open. The ten places in the movement handlers that
 close the window are skipped (one byte each).
 
 <a id="patch-showlevel"></a>
-**Real level instead of "??" for enemies 10+ levels above you** *(No. 76, Author: tb (ported by St0ny))* 🟠 **[untested online]**
+**Real level instead of "??" for enemies 10+ levels above you** *(No. 82, Author: tb (ported by St0ny))* 🟠 **[untested online]**
 
 If a hostile target is 10 or more levels above you, the client shows "??"
 instead of the level (or a skull on the nameplate, `UnitLevel` returns -1).
 With the patch, tooltip, nameplate and `UnitLevel` show the real level. Bosses
-still show "??" – that check is kept; No. 77 removes it.
+still show "??" – that check is kept; No. 83 removes it.
 
 <a id="patch-showlevelboss"></a>
-**Real level for bosses too instead of "??" (extension to No. 76)** *(No. 77, Author: St0ny)* 🟠 **[untested online]**
+**Real level for bosses too instead of "??" (extension to No. 82)** *(No. 83, Author: St0ny)* 🟠 **[untested online]**
 
 Creatures marked as boss (a flag in the creature data, e.g. raid and dungeon
 bosses) always show "??" in the original – in the tooltip, on the nameplate
@@ -1322,11 +1424,11 @@ nameplate stay.
 
 > [!NOTE]
 > If a boss is 10 or more levels above you, the level check applies as well –
-> No. 76 removes its "??". For all bosses, apply it together with No. 76; the
-> patcher points it out if No. 76 is missing.
+> No. 82 removes its "??". For all bosses, apply it together with No. 82; the
+> patcher points it out if No. 82 is missing.
 
 <a id="patch-holdrepeat"></a>
-**Hold action buttons to repeat** *(No. 78, Author: tb (ported by St0ny))* 🔴 **[unsafe - exe grows]**
+**Hold action buttons to repeat** *(No. 84, Author: tb (ported by St0ny))* 🔴 **[unsafe - exe grows]**
 
 When you hold the key of an action bar binding (the main bar,
 `ACTIONBUTTON1`–`12`, with page, stance and form bars), the client triggers the
@@ -1351,7 +1453,7 @@ their own (`.hrep`). Up to 8 keys can be held at the same time.
 > servers forbid "one key press = several actions".
 
 <a id="patch-bubblerange"></a>
-**Increase the chat bubble range (original 25 yards)** *(No. 79, Author: St0ny)* 🟢 **[safe]**
+**Increase the chat bubble range (original 25 yards)** *(No. 85, Author: St0ny)* 🟢 **[safe]**
 
 The client shows chat bubbles (say, party, yell, NPC say and NPC yell) only for
 speakers up to 25 yards away. If the server sends a yell from 100 yards, for
@@ -1376,36 +1478,36 @@ unchanged.
 ## Window, mouse & camera
 
 <a id="patch-window"></a>
-**Windowed mode by default** *(No. 80, Author: St0ny)* 🟢 **[safe]**
+**Windowed mode by default** *(No. 86, Author: St0ny)* 🟢 **[safe]**
 
 Sets the CVar `gxWindow` to 1 by default. The game starts in windowed mode
 instead of fullscreen.
 
 > [!TIP]
-> **No. 80 and No. 81 belong together:** No. 80 enables windowed mode, No. 81
+> **No. 86 and No. 87 belong together:** No. 86 enables windowed mode, No. 87
 > maximizes the window.
 > - **Both selected:** WoW starts as a maximized window covering the whole
 >   screen.
-> - **Only No. 80:** WoW starts as a small window in the middle of the desktop.
-> - **Only No. 81:** no effect, WoW starts in fullscreen. The option "Maximize
+> - **Only No. 86:** WoW starts as a small window in the middle of the desktop.
+> - **Only No. 87:** no effect, WoW starts in fullscreen. The option "Maximize
 >   window" is active, but greyed out.
 
 <a id="patch-maximize"></a>
-**Maximized window by default** *(No. 81, Author: St0ny)* 🟢 **[safe]**
+**Maximized window by default** *(No. 87, Author: St0ny)* 🟢 **[safe]**
 
 Sets the CVar `gxMaximize` to 1 by default. The window is maximized on start.
 
 > [!TIP]
-> **No. 80 and No. 81 belong together:** No. 80 enables windowed mode, No. 81
+> **No. 86 and No. 87 belong together:** No. 86 enables windowed mode, No. 87
 > maximizes the window.
 > - **Both selected:** WoW starts as a maximized window covering the whole
 >   screen.
-> - **Only No. 80:** WoW starts as a small window in the middle of the desktop.
-> - **Only No. 81:** no effect, WoW starts in fullscreen. The option "Maximize
+> - **Only No. 86:** WoW starts as a small window in the middle of the desktop.
+> - **Only No. 87:** no effect, WoW starts in fullscreen. The option "Maximize
 >   window" is active, but greyed out.
 
 <a id="patch-windowfix"></a>
-**No black screen when switching to windowed mode** *(No. 82, Author: Robinsch)* 🟢 **[safe]**
+**No black screen when switching to windowed mode** *(No. 88, Author: Robinsch)* 🟢 **[safe]**
 
 Switching to windowed mode while in-game no longer results in a black
 screen. Technically the callback of the CVar `DesktopGamma` always takes the
@@ -1413,13 +1515,13 @@ game-gamma path; the desktop-gamma path and with it the CVar `DesktopGamma`
 have no effect.
 
 <a id="patch-mouse"></a>
-**Mouse flicker / camera jump fix** *(No. 83, Author: Robinsch)* 🟢 **[safe]**
+**Mouse flicker / camera jump fix** *(No. 89, Author: Robinsch)* 🟢 **[safe]**
 
 A larger patch (4 parts) that fixes problems with mice using a high polling
 rate. Prevents cursor flicker and uncontrolled camera movement.
 
 <a id="patch-visus"></a>
-**Visus - St0nyCam [BETA]: shoulder camera and zoom** *(No. 84, Author: St0ny)* 🟠 **[untested - exe grows]**
+**Visus - St0nyCam [BETA]: shoulder camera and zoom** *(No. 90, Author: St0ny)* 🟠 **[untested - exe grows]**
 
 A shoulder camera of its own and more zoom directly in `Wow.exe`, without a
 DLL. The template for the shoulder camera is [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam)
@@ -1489,7 +1591,7 @@ and writable) and hooks in at three places:
 ## Sound
 
 <a id="patch-sound"></a>
-**Optimize sound settings** *(No. 85, Author: St0ny)* 🟢 **[safe]**
+**Optimize sound settings** *(No. 91, Author: St0ny)* 🟢 **[safe]**
 
 Includes the following changes:
 
@@ -1518,7 +1620,7 @@ message and asked for again, and all values are checked before anything is
 written. The patcher remembers the values in `patcher_selection.ini`
 (`value.<Id>=…`); with `-Unattended` the remembered values are used, otherwise
 the original values – exceptions: build date (current time) and icon (the
-patcher aborts), see No. 89 and 90. If a patch is already in `Wow.exe`, its
+patcher aborts), see No. 95 and 96. If a patch is already in `Wow.exe`, its
 current value is the suggestion. When asking, it is also shown after the patch
 name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 
@@ -1527,7 +1629,7 @@ name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 > to match the server.
 
 <a id="patch-clientversion"></a>
-**Change client version (original 3.3.5)** *(No. 86, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change client version (original 3.3.5)** *(No. 92, Author: MacWarrior)* 🔴 **[unsafe]**
 
 Sets a new version in the format `x.y.z` (e.g. `3.3.6` or `3.3.123`, at most 7
 characters). Changes the version the client shows in-game, the FileVersion and
@@ -1537,7 +1639,7 @@ The build number in `VS_FIXEDFILEINFO` is kept; the FileVersion text
 together must fit into the ProductVersion field (e.g. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Change build number (original 12340)** *(No. 87, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change build number (original 12340)** *(No. 93, Author: MacWarrior)* 🔴 **[unsafe]**
 
 Sets a new build number (6142 to 65535, original `12340`): the internal build
 number, the visible build number and the fourth part of the FileVersion in
@@ -1565,7 +1667,7 @@ different login protocol – a 3.3.5 client can no longer get onto the server.
 > it as offline.
 
 <a id="patch-clienttitle"></a>
-**Change program title (file properties and window title)** *(No. 88, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
+**Change program title (file properties and window title)** *(No. 94, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
 
 Sets FileDescription, InternalName and ProductName of the version resource,
 i.e. what Windows shows in the file properties and the Task Manager. At most 17
@@ -1581,7 +1683,7 @@ custom title to the first place and disables the two calls so that it stays.
 > as the title of error messages – the custom title appears there as well.
 
 <a id="patch-clientdate"></a>
-**Change build date (original Jun 24 2010)** *(No. 89, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change build date (original Jun 24 2010)** *(No. 95, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 Sets the build date (original `Jun 24 2010`) at all three places in the EXE and
 the year in the copyright notice, plus the time. The time is stored in two
@@ -1600,7 +1702,7 @@ the time of patching if nothing is remembered. If the patch is already applied,
 the current date and time of `Wow.exe` are suggested.
 
 <a id="patch-clienticon"></a>
-**Change program icon (icon of Wow.exe)** *(No. 90, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change program icon (icon of Wow.exe)** *(No. 96, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 Replaces the icon Windows shows for `Wow.exe` (Explorer, taskbar, shortcuts).
 The patcher asks for the path of an `.ico` or `.png` file, absolute or
