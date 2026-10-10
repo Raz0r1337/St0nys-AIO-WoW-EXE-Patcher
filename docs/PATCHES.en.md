@@ -1196,45 +1196,44 @@ belong to the figure.
 
 > [!WARNING]
 > **On public servers please keep the default setting:** before patching,
-> answer only "Own character outlined only where it is hidden?" with Y and all
-> other questions with N. If the patch gets banned on a server, that is bad
+> press ENTER for every point (own character only where hidden, everything
+> else off or never). If the patch gets banned on a server, that is bad
 > luck – there is nothing I can do about it. From then on it can only be used
 > on your own private servers. So please be careful.
 
-**Settings:** After the patch selection the patcher asks six questions with
-Y/N. ENTER takes the suggestion in brackets – the default the first time, the
-current state for a patched `Wow.exe`. By default only "Own character outlined
-only where it is hidden" is Y, everything else N: target and mouseover
-outlined, not through walls, and your figure only where it is hidden.
+**Settings:** After the patch selection the patcher asks four points as
+switches, one number per point. ENTER takes the suggestion in brackets – the
+default (bold) the first time, the current state for a patched `Wow.exe`.
 
-| Question | Effect with Y |
-|----------|---------------|
-| Visible through walls? | The outline also appears where the figure is hidden, for all outlines. **Unsafe** – may be considered cheating, the patcher then warns in red. |
-| Own character outlined only where it is hidden? | Your figure only gets an outline where it is hidden, for example behind a house wall or a hill; visible parts get no outline. For you it takes precedence over "always outlined" and "through walls". **Default: Y** |
-| Own character always outlined? | Your figure always has an outline. |
-| Own party of 5 always outlined? | The up to 4 other players of your party (`party1` to `party4`) always have an outline. |
-| Whole raid always outlined? | All other players in the raid (up to 39) always have an outline, your party also outside of a raid – **costs a lot of FPS**. |
-| Reaction color instead of class color? | All outlines in the color of the selection circle (mostly blue for players), target and mouseover too. Hostile players are then simply red and do not pulse. |
+| Point | Choices |
+|-------|---------|
+| Own character | 1 = off · **2 = only where hidden:** an outline only where your figure is hidden, for example behind a house wall or a hill; visible parts get no outline · 3 = always |
+| Party / raid always outlined | **1 = off** · 2 = party of 5: the up to 4 other players (`party1` to `party4`) · 3 = whole raid: all other players in the raid (up to 39), your party outside of a raid – **costs a lot of FPS** |
+| Visible through walls | **1 = never** · 2 = party/raid only: the other players from the point before also where they are hidden; if that one is "off", party or raid get an outline only where they are hidden, like your character · 3 = all: every outline, target and mouseover too – **unsafe**, may be considered cheating, the patcher then warns in red |
+| Color | **1 = class color** · 2 = reaction color: all outlines in the color of the selection circle (mostly blue for players), target and mouseover too; hostile players are then simply red and do not pulse |
 
 If a figure is the target or under the mouse cursor, that outline applies.
-Players out of sight have none. The patcher remembers the answers like other
-values in `patcher_selection.ini`, e.g. `value.outline=self,party` (the
-default is `hidden`, `none` means all N; in order, the settings are called
-`walls`, `hidden`, `self`, `party`, `raid` and `react`).
+Players out of sight have none. The patcher remembers the settings like other
+values in `patcher_selection.ini` as a list of the switches that are on, e.g.
+`value.outline=hidden,party` (the default is `hidden`, `none` means all off;
+the switches are called `hidden`, `self`, `party`, `raid`, `wallsgroup`,
+`walls` and `react`).
 
 > [!WARNING]
 > **Whole raid costs a lot of FPS:** every outlined figure is drawn ten times.
 > With 25 or 40 players that is a lot of extra draw calls per frame. On weaker
-> computers better use only the party of 5.
+> computers better use only the party of 5. This also applies to "through
+> walls: party/raid only" with party/raid set to "off": then all other players
+> in the raid are drawn that way.
 
 > [!NOTE]
-> **Only where hidden:** only what is drawn before your figure is detected.
-> The game normally draws terrain and buildings before the figures. Whatever
-> comes afterwards – a plate on the table in front of you, say – hides your
-> figure without an outline appearing there. Also, whatever hides it has to
-> lie a bit in front of the figure, otherwise there would be a line on the
-> ground right under the feet: about 0.1 yards at 10 yards camera distance,
-> 0.2 yards at 15 and almost 1 yard at 30.
+> **Only where hidden** (also for party/raid): only what is drawn before your
+> figure is detected. The game normally draws terrain and buildings before the
+> figures. Whatever comes afterwards – a plate on the table in front of you,
+> say – hides your figure without an outline appearing there. Also, whatever
+> hides it has to lie a bit in front of the figure, otherwise there would be a
+> line on the ground right under the feet: about 0.1 yards at 10 yards camera
+> distance, 0.2 yards at 15 and almost 1 yard at 30.
 
 How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
@@ -1255,6 +1254,11 @@ How it works:
 - With "through walls" the figure is also marked where it is hidden, and the
   copies run without depth test. Things drawn later no longer clear the
   outline then.
+- With "through walls: party/raid only" this applies to the other players
+  only: they come first in the list of outlined figures, and things drawn
+  later then only clear the outlines of the others. If party/raid is set to
+  "off", party or raid are still put on the list and are outlined only where
+  they are hidden, like your character.
 - With "only where hidden" your figure is also marked where it is hidden as
   well; its copies, however, only mark the outline where something already
   drawn lies clearly in front of them. For that, the projection matrix pulls
@@ -1265,9 +1269,9 @@ How it works:
 - Hostile means: the player's selection circle would be red. Then the quad
   mixes their class color with red; the share of red rises and falls smoothly
   (cosine), one pulse takes 1.5 seconds.
-- Code and data live in a section of their own (`.outl`, 0x118E bytes). Each
-  setting is a single padding byte between two functions in `.text` that is
-  set to 1 with Y; the code reads these switches while drawing. This is also
+- Code and data live in a section of their own (`.outl`, 0x1310 bytes). Each
+  switch is a single padding byte between two functions in `.text` that the
+  chosen setting sets to 1; the code reads these switches while drawing. This is also
   how the patcher recognizes the settings in a patched `Wow.exe`.
 
 > [!NOTE]

@@ -253,10 +253,9 @@ $TEXT = @{
         TagDll        = 'DLL riskant'
         Confirm       = 'Patchen jetzt starten? (J/N)'
         Yes           = 'J'
-        No            = 'N'
-        YesNo         = '(J/N)'
-        YesNoBad      = 'Bitte J oder N eingeben (ENTER = Vorschlag in Klammern).'
-        OptNone       = 'alles N'
+        ChoiceHint    = 'Je Punkt eine Zahl eingeben, ENTER = Vorschlag in Klammern.'
+        ChoiceBad     = 'Bitte eine Zahl von 1 bis {0} eingeben (ENTER = Vorschlag in Klammern).'
+        OptNone       = 'alles aus'
         Aborted       = 'Abgebrochen. Die Wow.exe wurde nicht veraendert.'
         BackupFail    = '[FEHLER] Konnte Wow.exe nicht sichern. Abbruch.'
         BackupOk      = 'Original gesichert als: {0}'
@@ -401,10 +400,9 @@ $TEXT = @{
         TagDll        = 'DLL risky'
         Confirm       = 'Start patching now? (Y/N)'
         Yes           = 'Y'
-        No            = 'N'
-        YesNo         = '(Y/N)'
-        YesNoBad      = 'Please enter Y or N (ENTER = suggestion in brackets).'
-        OptNone       = 'all N'
+        ChoiceHint    = 'Enter a number for each point, ENTER = suggestion in brackets.'
+        ChoiceBad     = 'Please enter a number from 1 to {0} (ENTER = suggestion in brackets).'
+        OptNone       = 'all off'
         Aborted       = 'Aborted. Wow.exe has not been modified.'
         BackupFail    = '[ERROR] Could not back up Wow.exe. Aborting.'
         BackupOk      = 'Original saved as: {0}'
@@ -2214,13 +2212,14 @@ function Add-HoldRepeat {
 #  Mauszeiger eine duenne Umrandung. Nur fuer gxApi d3d9 mit 24-Bit-
 #  Tiefenpuffer; sonst schaltet sich der Patch ab. Eigene beschreibbare
 #  Sektion (.outl).
-#  Einstellungen ($OUTLINE_OPTIONS, J/N-Fragen vor dem Patchen) setzen je ein
-#  CC-Fuellbyte nach einem ret in .text auf 1, der Code liest sie zur
-#  Laufzeit: 0x6AB7DF durch Waende, 0x6ABAAF eigener Charakter, 0x6ABE2F
-#  5er-Gruppe (GUIDs ab 0xBD1948), 0x6ABE8F Schlachtzug (Zeiger ab 0xBEB568,
-#  Anzahl 0xBEB608), 0x6ABF3F eigener Charakter nur wo verdeckt, 0x6ABE5F
-#  Gesinnungs- statt Klassenfarbe. Standard: nur "eigener Charakter nur wo
-#  verdeckt" an, sonst Ziel und Mouseover, nicht durch Waende.
+#  Einstellungen ($OUTLINE_OPTIONS, Umschalter vor dem Patchen) setzen je ein
+#  CC-Fuellbyte nach einem ret in .text auf 1 ($OUTLINE_FLAGS), der Code liest
+#  sie zur Laufzeit: 0x6AB7DF durch Waende, 0x6AC02F durch Waende nur Gruppe/
+#  Schlachtzug, 0x6ABAAF eigener Charakter, 0x6ABF3F eigener Charakter nur wo
+#  verdeckt, 0x6ABE2F 5er-Gruppe (GUIDs ab 0xBD1948), 0x6ABE8F Schlachtzug
+#  (Zeiger ab 0xBEB568, Anzahl 0xBEB608), 0x6ABE5F Gesinnungs- statt
+#  Klassenfarbe. Standard: nur "eigener Charakter nur wo verdeckt" an, sonst
+#  Ziel und Mouseover, nicht durch Waende.
 #  - Pro Bild eine Tabelle der umrandeten Einheiten (bis 48): Schlachtzug,
 #    Gruppe, eigener Charakter, Ziel, Mouseover - jede nur einmal. Ihr
 #    Index + 1 ist ihr Stencil-Wert (Rand), die Figur selbst bekommt 0x80.
@@ -2251,7 +2250,13 @@ function Add-HoldRepeat {
 #  - Durch Waende: die Figur bekommt Stencil 0x80 auch dort, wo sie verdeckt
 #    ist, die Kopien laufen ohne Tiefentest und ohne Tiefe, der zweite
 #    Durchgang und das Verdecken durch spaeter Gezeichnetes entfallen.
-#  - Nur wo verdeckt (eigener Charakter): die Figur bekommt Stencil 0x80 auch
+#  - Durch Waende nur Gruppe/Schlachtzug: Gruppe und Schlachtzug stehen zuerst
+#    in der Tabelle (Kategorien 1 bis GRPN). Mit Gruppen-Umrandung laufen sie
+#    wie durch Waende, spaeter Gezeichnetes loescht dann nur Raender ueber
+#    GRPN (Stencil-Test "kleiner" gegen WPROT, ZERO). Ohne Gruppen-Umrandung
+#    kommen Gruppe und Schlachtzug trotzdem in die Tabelle und werden wie der
+#    eigene Charakter nur wo verdeckt umrandet (GMODE 2).
+#  - Nur wo verdeckt (eigener Charakter bzw. Gruppe, s.o.): die Figur bekommt Stencil 0x80 auch
 #    dort, wo sie verdeckt ist. Die Kopien laufen ohne Tiefe mit Tiefentest
 #    "groesser" (bei nicht bestandenem Test bleibt der Stencil) und markieren
 #    den Rand nur dort, wo vorher Gezeichnetes deutlich vor ihnen liegt: Ihre
@@ -2271,10 +2276,10 @@ function Add-Outline {
     Assert-Bytes ($DIPSITE - 0x400C00) @(0x8B, 0x88, 0x48, 0x01, 0x00, 0x00, 0x52, 0xFF, 0xD1) 'Umrandung'
     Assert-Bytes ($POSTSITE - 0x400C00) @(0xE8, 0xA6, 0xDD, 0xFF, 0xFF) 'Umrandung'
     Assert-Bytes 0x62CCBC @(0x4D) 'Umrandung'
-    $loc = Add-CodeSection '.outl' 0x1273 -Writable
+    $loc = Add-CodeSection '.outl' 0x1310 -Writable
     $CAVE = $loc[0]
     $c = New-Object System.Collections.Generic.List[byte]
-    for ($i = 0; $i -lt 0x610; $i++) { $c.Add([byte]0) }                 # Daten, beginnen bei 0
+    for ($i = 0; $i -lt 0x620; $i++) { $c.Add([byte]0) }                 # Daten, beginnen bei 0
     # Konstanten 2.0, -2.0, 0.5
     $i = 0x40; foreach ($b in [byte[]]@(0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x00, 0x3F)) { $c[$i] = $b; $i++ }
     # Viereck (4 Ecken: x, y, z=0, rhw=1, Farbe)
@@ -2302,23 +2307,23 @@ function Add-Outline {
     AddRaw $c @(0x5F)                                          # pop edi
     AddRaw $c @(0x5E)                                          # pop esi
     AddRaw $c @(0x8B, 0x86, 0x7C, 0x39, 0x00, 0x00)            # mov eax,[esi+0x397c]
-    AddRaw $c @(0xE9); AddLE32 $c (0x6A9B16 - ($CAVE + 0x631)) # jmp 0x6A9B16
+    AddRaw $c @(0xE9); AddLE32 $c (0x6A9B16 - ($CAVE + 0x641)) # jmp 0x6A9B16
     # batch:
     AddRaw $c @(0x8B, 0x46, 0x40)                              # mov eax,[esi+0x40]
     AddRaw $c @(0x3B, 0x05, 0x4C, 0x75, 0xCD, 0x00)            # cmp eax,dword ptr [WSCENE]
     AddRaw $c @(0x75, 0x28)                                    # jne b_plain
     AddRaw $c @(0xE8, 0x5A, 0x00, 0x00, 0x00)                  # call ensure
     AddRaw $c @(0x8B, 0x46, 0x60)                              # mov eax,[esi+0x60]
-    AddRaw $c @(0xE8, 0xA0, 0x02, 0x00, 0x00)                  # call classify
+    AddRaw $c @(0xE8, 0x17, 0x03, 0x00, 0x00)                  # call classify
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x18)               # mov dword ptr [CUR],eax
     AddRaw $c @(0x89, 0xF1)                                    # mov ecx,esi
-    AddRaw $c @(0xE8); AddLE32 $c (0x8203B0 - ($CAVE + 0x655)) # call 0x8203B0
+    AddRaw $c @(0xE8); AddLE32 $c (0x8203B0 - ($CAVE + 0x665)) # call 0x8203B0
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x18); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [CUR],0
-    AddRaw $c @(0xE9); AddLE32 $c (0x823AD3 - ($CAVE + 0x664)) # jmp 0x823AD3
+    AddRaw $c @(0xE9); AddLE32 $c (0x823AD3 - ($CAVE + 0x674)) # jmp 0x823AD3
     # b_plain:
     AddRaw $c @(0x89, 0xF1)                                    # mov ecx,esi
-    AddRaw $c @(0xE8); AddLE32 $c (0x8203B0 - ($CAVE + 0x66B)) # call 0x8203B0
-    AddRaw $c @(0xE9); AddLE32 $c (0x823AD3 - ($CAVE + 0x670)) # jmp 0x823AD3
+    AddRaw $c @(0xE8); AddLE32 $c (0x8203B0 - ($CAVE + 0x67B)) # call 0x8203B0
+    AddRaw $c @(0xE9); AddLE32 $c (0x823AD3 - ($CAVE + 0x680)) # jmp 0x823AD3
     # okdev:
     AddRaw $c @(0x8B, 0x0D, 0x88, 0xDF, 0xC5, 0x00)            # mov ecx,dword ptr [DEVPTR]
     AddRaw $c @(0x31, 0xC0)                                    # xor eax,eax
@@ -2336,21 +2341,37 @@ function Add-Outline {
     AddRaw $c @(0xC3)                                          # ret
     # ensure:
     AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x1C); AddRaw $c @(0x00) # cmp dword ptr [VALID],0
-    AddRaw $c @(0x0F, 0x85, 0xEB, 0x00, 0x00, 0x00)            # jne e_ret
+    AddRaw $c @(0x0F, 0x85, 0x62, 0x01, 0x00, 0x00)            # jne e_ret
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x1C); AddRaw $c @(0x01, 0x00, 0x00, 0x00) # mov dword ptr [VALID],1
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x140); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [NUNITS],0
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x144); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [SELFCAT],0
-    AddRaw $c @(0xE8, 0xA5, 0xFF, 0xFF, 0xFF)                  # call okdev
+    AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x610); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [GRPN],0
+    AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x618); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [WPROT],0
+    AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x614); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [GMODE],0
+    AddRaw $c @(0x80, 0x3D, 0x2F, 0xC0, 0x6A, 0x00, 0x01)      # cmp byte ptr [FWALLSGRP],1
+    AddRaw $c @(0x75, 0x26)                                    # jne e_gm
+    AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x614); AddRaw $c @(0x02, 0x00, 0x00, 0x00) # mov dword ptr [GMODE],2
+    AddRaw $c @(0x80, 0x3D, 0x2F, 0xBE, 0x6A, 0x00, 0x01)      # cmp byte ptr [FPARTY],1
+    AddRaw $c @(0x74, 0x09)                                    # je e_g1
+    AddRaw $c @(0x80, 0x3D, 0x8F, 0xBE, 0x6A, 0x00, 0x01)      # cmp byte ptr [FRAID],1
+    AddRaw $c @(0x75, 0x0A)                                    # jne e_gm
+    # e_g1:
+    AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x614); AddRaw $c @(0x01, 0x00, 0x00, 0x00) # mov dword ptr [GMODE],1
+    # e_gm:
+    AddRaw $c @(0xE8, 0x58, 0xFF, 0xFF, 0xFF)                  # call okdev
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
-    AddRaw $c @(0x0F, 0x84, 0xC0, 0x00, 0x00, 0x00)            # jz e_ret
+    AddRaw $c @(0x0F, 0x84, 0xEA, 0x00, 0x00, 0x00)            # jz e_ret
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x57)                                          # push edi
     AddRaw $c @(0x53)                                          # push ebx
-    AddRaw $c @(0xE8); AddLE32 $c (0x4D3790 - ($CAVE + 0x6DB)) # call 0x4D3790
+    AddRaw $c @(0xE8); AddLE32 $c (0x4D3790 - ($CAVE + 0x738)) # call 0x4D3790
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x138)              # mov dword ptr [PGUID],eax
     AddRaw $c @(0x89, 0x15); AddLE32 $c ($CAVE + 0x13C)        # mov dword ptr [PGUID+4],edx
     AddRaw $c @(0x80, 0x3D, 0x8F, 0xBE, 0x6A, 0x00, 0x01)      # cmp byte ptr [FRAID],1
+    AddRaw $c @(0x74, 0x09)                                    # je e_r
+    AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x614); AddRaw $c @(0x02) # cmp dword ptr [GMODE],2
     AddRaw $c @(0x75, 0x30)                                    # jne e_party
+    # e_r:
     AddRaw $c @(0x8B, 0x1D, 0x08, 0xB6, 0xBE, 0x00)            # mov ebx,dword ptr [RAIDCNT]
     AddRaw $c @(0x83, 0xFB, 0x28)                              # cmp ebx,40
     AddRaw $c @(0x76, 0x05)                                    # jbe e_rok
@@ -2363,29 +2384,37 @@ function Add-Outline {
     AddRaw $c @(0x8B, 0x34, 0xBD, 0x68, 0xB5, 0xBE, 0x00)      # mov esi,dword ptr [RAIDARR+edi*4]
     AddRaw $c @(0x85, 0xF6)                                    # test esi,esi
     AddRaw $c @(0x74, 0x0C)                                    # jz e_rnext
-    AddRaw $c @(0xE8, 0xAE, 0x00, 0x00, 0x00)                  # call same_tms
+    AddRaw $c @(0xE8, 0xCF, 0x00, 0x00, 0x00)                  # call same_tms
     AddRaw $c @(0x74, 0x05)                                    # je e_rnext
-    AddRaw $c @(0xE8, 0xC2, 0x00, 0x00, 0x00)                  # call add_unit
+    AddRaw $c @(0xE8, 0xE3, 0x00, 0x00, 0x00)                  # call add_unit
     # e_rnext:
     AddRaw $c @(0x47)                                          # inc edi
     AddRaw $c @(0xEB, 0xE2)                                    # jmp e_rloop
     # e_party:
     AddRaw $c @(0x80, 0x3D, 0x2F, 0xBE, 0x6A, 0x00, 0x01)      # cmp byte ptr [FPARTY],1
-    AddRaw $c @(0x74, 0x09)                                    # je e_p
+    AddRaw $c @(0x74, 0x12)                                    # je e_p
     AddRaw $c @(0x80, 0x3D, 0x8F, 0xBE, 0x6A, 0x00, 0x01)      # cmp byte ptr [FRAID],1
+    AddRaw $c @(0x74, 0x09)                                    # je e_p
+    AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x614); AddRaw $c @(0x02) # cmp dword ptr [GMODE],2
     AddRaw $c @(0x75, 0x1C)                                    # jne e_self
     # e_p:
     AddRaw $c @(0xBE, 0x48, 0x19, 0xBD, 0x00)                  # mov esi,PARTY
     AddRaw $c @(0xBF, 0x04, 0x00, 0x00, 0x00)                  # mov edi,4
     # e_ploop:
-    AddRaw $c @(0xE8, 0x83, 0x00, 0x00, 0x00)                  # call same_tms
+    AddRaw $c @(0xE8, 0x9B, 0x00, 0x00, 0x00)                  # call same_tms
     AddRaw $c @(0x74, 0x05)                                    # je e_pnext
-    AddRaw $c @(0xE8, 0x97, 0x00, 0x00, 0x00)                  # call add_unit
+    AddRaw $c @(0xE8, 0xAF, 0x00, 0x00, 0x00)                  # call add_unit
     # e_pnext:
     AddRaw $c @(0x83, 0xC6, 0x08)                              # add esi,8
     AddRaw $c @(0x4F)                                          # dec edi
     AddRaw $c @(0x75, 0xEE)                                    # jnz e_ploop
     # e_self:
+    AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x140)              # mov eax,dword ptr [NUNITS]
+    AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x610)              # mov dword ptr [GRPN],eax
+    AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x614); AddRaw $c @(0x01) # cmp dword ptr [GMODE],1
+    AddRaw $c @(0x75, 0x05)                                    # jne e_wp
+    AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x618)              # mov dword ptr [WPROT],eax
+    # e_wp:
     AddRaw $c @(0x80, 0x3D, 0xAF, 0xBA, 0x6A, 0x00, 0x01)      # cmp byte ptr [FSELF],1
     AddRaw $c @(0x74, 0x09)                                    # je e_s
     AddRaw $c @(0x80, 0x3D, 0x3F, 0xBF, 0x6A, 0x00, 0x01)      # cmp byte ptr [FHIDDEN],1
@@ -2466,7 +2495,7 @@ function Add-Outline {
     AddRaw $c @(0x6A, 0x18)                                    # push 0x18
     AddRaw $c @(0xFF, 0x76, 0x04)                              # push dword ptr [esi+4]
     AddRaw $c @(0xFF, 0x36)                                    # push dword ptr [esi]
-    AddRaw $c @(0xE8); AddLE32 $c (0x4D4DB0 - ($CAVE + 0x832)) # call 0x4D4DB0
+    AddRaw $c @(0xE8); AddLE32 $c (0x4D4DB0 - ($CAVE + 0x8B9)) # call 0x4D4DB0
     AddRaw $c @(0x83, 0xC4, 0x14)                              # add esp,0x14
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
     AddRaw $c @(0x0F, 0x84, 0xA7, 0x00, 0x00, 0x00)            # jz au_none
@@ -2487,7 +2516,7 @@ function Add-Outline {
     AddRaw $c @(0x6A, 0x10)                                    # push 0x10
     AddRaw $c @(0xFF, 0x76, 0x04)                              # push dword ptr [esi+4]
     AddRaw $c @(0xFF, 0x36)                                    # push dword ptr [esi]
-    AddRaw $c @(0xE8); AddLE32 $c (0x4D4DB0 - ($CAVE + 0x87E)) # call 0x4D4DB0
+    AddRaw $c @(0xE8); AddLE32 $c (0x4D4DB0 - ($CAVE + 0x905)) # call 0x4D4DB0
     AddRaw $c @(0x83, 0xC4, 0x14)                              # add esp,0x14
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
     AddRaw $c @(0x74, 0x42)                                    # jz au_sel
@@ -2505,7 +2534,7 @@ function Add-Outline {
     AddRaw $c @(0x6A, 0x01)                                    # push 1
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0x56)                                          # push esi
-    AddRaw $c @(0xE8); AddLE32 $c (0x521BF0 - ($CAVE + 0x8B2)) # call 0x521BF0
+    AddRaw $c @(0xE8); AddLE32 $c (0x521BF0 - ($CAVE + 0x939)) # call 0x521BF0
     AddRaw $c @(0x83, 0xC4, 0x0C)                              # add esp,0xC
     AddRaw $c @(0x81, 0x7F, 0x14, 0x00, 0x00, 0xFF, 0xFF)      # cmp dword ptr [edi+20],0xFFFF0000
     AddRaw $c @(0x74, 0x18)                                    # je au_ok
@@ -2516,7 +2545,7 @@ function Add-Outline {
     AddRaw $c @(0x6A, 0x01)                                    # push 1
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0x56)                                          # push esi
-    AddRaw $c @(0xE8); AddLE32 $c (0x521BF0 - ($CAVE + 0x8D3)) # call 0x521BF0
+    AddRaw $c @(0xE8); AddLE32 $c (0x521BF0 - ($CAVE + 0x95A)) # call 0x521BF0
     AddRaw $c @(0x83, 0xC4, 0x0C)                              # add esp,0xC
     # au_ok:
     AddRaw $c @(0xFF, 0x05); AddLE32 $c ($CAVE + 0x140)        # inc dword ptr [NUNITS]
@@ -2566,11 +2595,11 @@ function Add-Outline {
     # dip:
     AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x18)               # mov eax,dword ptr [CUR]
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
-    AddRaw $c @(0x0F, 0x85, 0xD0, 0x00, 0x00, 0x00)            # jnz d_mark
+    AddRaw $c @(0x0F, 0x85, 0xD4, 0x00, 0x00, 0x00)            # jnz d_mark
     AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x20); AddRaw $c @(0x00) # cmp dword ptr [MARKED],0
-    AddRaw $c @(0x0F, 0x84, 0xB7, 0x00, 0x00, 0x00)            # je d_fast
+    AddRaw $c @(0x0F, 0x84, 0xBB, 0x00, 0x00, 0x00)            # je d_fast
     AddRaw $c @(0x80, 0x3D, 0xDF, 0xB7, 0x6A, 0x00, 0x01)      # cmp byte ptr [FWALLS],1
-    AddRaw $c @(0x0F, 0x84, 0xAA, 0x00, 0x00, 0x00)            # je d_fast
+    AddRaw $c @(0x0F, 0x84, 0xAE, 0x00, 0x00, 0x00)            # je d_fast
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x8B, 0x74, 0x24, 0x08)                        # mov esi,[esp+8]
     AddRaw $c @(0x8B, 0x0D, 0x88, 0xDF, 0xC5, 0x00)            # mov ecx,dword ptr [DEVPTR]
@@ -2578,26 +2607,26 @@ function Add-Outline {
     AddRaw $c @(0x83, 0xB9, 0x70, 0x3E, 0x00, 0x00, 0x00)      # cmp dword ptr [ecx+0x3E70],0
     AddRaw $c @(0x0F, 0x95, 0xC0)                              # setne al
     AddRaw $c @(0x3B, 0x05); AddLE32 $c ($CAVE + 0x24)         # cmp eax,dword ptr [SMODE]
-    AddRaw $c @(0x0F, 0x84, 0x86, 0x00, 0x00, 0x00)            # je d_cl_done
+    AddRaw $c @(0x0F, 0x84, 0x8A, 0x00, 0x00, 0x00)            # je d_cl_done
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x24)               # mov dword ptr [SMODE],eax
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
-    AddRaw $c @(0x74, 0x70)                                    # jz d_cl_off
+    AddRaw $c @(0x74, 0x74)                                    # jz d_cl_off
     AddRaw $c @(0x6A, 0x01)                                    # push 0x1
     AddRaw $c @(0x6A, 0x34)                                    # push 52
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x8B, 0x06)                                    # mov eax,[esi]
     AddRaw $c @(0xFF, 0x90, 0xE4, 0x00, 0x00, 0x00)            # call dword ptr [eax+0xE4]
-    AddRaw $c @(0x6A, 0x08)                                    # push 0x8
+    AddRaw $c @(0x6A, 0x02)                                    # push 0x2
     AddRaw $c @(0x6A, 0x38)                                    # push 56
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x8B, 0x06)                                    # mov eax,[esi]
     AddRaw $c @(0xFF, 0x90, 0xE4, 0x00, 0x00, 0x00)            # call dword ptr [eax+0xE4]
-    AddRaw $c @(0x6A, 0x00)                                    # push 0x0
+    AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x618)        # push dword ptr [WPROT]
     AddRaw $c @(0x6A, 0x39)                                    # push 57
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x8B, 0x06)                                    # mov eax,[esi]
     AddRaw $c @(0xFF, 0x90, 0xE4, 0x00, 0x00, 0x00)            # call dword ptr [eax+0xE4]
-    AddRaw $c @(0x6A, 0x03)                                    # push 0x3
+    AddRaw $c @(0x6A, 0x02)                                    # push 0x2
     AddRaw $c @(0x6A, 0x37)                                    # push 55
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x8B, 0x06)                                    # mov eax,[esi]
@@ -2653,15 +2682,21 @@ function Add-Outline {
     # d_nosm:
     AddRaw $c @(0x8B, 0x0D, 0x88, 0xDF, 0xC5, 0x00)            # mov ecx,dword ptr [DEVPTR]
     AddRaw $c @(0x83, 0xB9, 0x60, 0x3E, 0x00, 0x00, 0x00)      # cmp dword ptr [ecx+0x3E60],0
-    AddRaw $c @(0x0F, 0x85, 0xE6, 0x04, 0x00, 0x00)            # jne d_plain
+    AddRaw $c @(0x0F, 0x85, 0xF8, 0x04, 0x00, 0x00)            # jne d_plain
     AddRaw $c @(0x31, 0xFF)                                    # xor edi,edi
-    AddRaw $c @(0x80, 0x3D, 0x3F, 0xBF, 0x6A, 0x00, 0x01)      # cmp byte ptr [FHIDDEN],1
-    AddRaw $c @(0x75, 0x14)                                    # jne d_m1
     AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x18)               # mov eax,dword ptr [CUR]
+    AddRaw $c @(0x80, 0x3D, 0x3F, 0xBF, 0x6A, 0x00, 0x01)      # cmp byte ptr [FHIDDEN],1
+    AddRaw $c @(0x75, 0x0F)                                    # jne d_mg
     AddRaw $c @(0x3B, 0x05); AddLE32 $c ($CAVE + 0x144)        # cmp eax,dword ptr [SELFCAT]
-    AddRaw $c @(0x75, 0x07)                                    # jne d_m1
+    AddRaw $c @(0x75, 0x07)                                    # jne d_mg
     AddRaw $c @(0xBF, 0x02, 0x00, 0x00, 0x00)                  # mov edi,2
-    AddRaw $c @(0xEB, 0x0E)                                    # jmp d_m2
+    AddRaw $c @(0xEB, 0x20)                                    # jmp d_m2
+    # d_mg:
+    AddRaw $c @(0x3B, 0x05); AddLE32 $c ($CAVE + 0x610)        # cmp eax,dword ptr [GRPN]
+    AddRaw $c @(0x77, 0x0A)                                    # ja d_m1
+    AddRaw $c @(0x8B, 0x3D); AddLE32 $c ($CAVE + 0x614)        # mov edi,dword ptr [GMODE]
+    AddRaw $c @(0x85, 0xFF)                                    # test edi,edi
+    AddRaw $c @(0x75, 0x0E)                                    # jnz d_m2
     # d_m1:
     AddRaw $c @(0x80, 0x3D, 0xDF, 0xB7, 0x6A, 0x00, 0x01)      # cmp byte ptr [FWALLS],1
     AddRaw $c @(0x75, 0x05)                                    # jne d_m2
@@ -2942,10 +2977,10 @@ function Add-Outline {
     AddRaw $c @(0xC7, 0x80, 0xF0, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF) # mov dword ptr [eax+0xF0],0xFFFFFFFE
     AddRaw $c @(0xC7, 0x80, 0x00, 0x01, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF) # mov dword ptr [eax+0x100],0xFFFFFFFE
     AddRaw $c @(0x6A, 0x0F)                                    # push 15
-    AddRaw $c @(0xE8); AddLE32 $c (0x685970 - ($CAVE + 0xEDD)) # call 0x685970
+    AddRaw $c @(0xE8); AddLE32 $c (0x685970 - ($CAVE + 0xF7A)) # call 0x685970
     AddRaw $c @(0x8B, 0x0D, 0x88, 0xDF, 0xC5, 0x00)            # mov ecx,dword ptr [DEVPTR]
     AddRaw $c @(0x6A, 0x10)                                    # push 16
-    AddRaw $c @(0xE8); AddLE32 $c (0x685970 - ($CAVE + 0xEEA)) # call 0x685970
+    AddRaw $c @(0xE8); AddLE32 $c (0x685970 - ($CAVE + 0xF87)) # call 0x685970
     AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x4C); AddRaw $c @(0x00) # cmp dword ptr [MODE],0
     AddRaw $c @(0x74, 0x0C)                                    # je d_end
     AddRaw $c @(0x53)                                          # push ebx
@@ -2992,7 +3027,7 @@ function Add-Outline {
     AddRaw $c @(0x60)                                          # pushad
     AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x20); AddRaw $c @(0x00) # cmp dword ptr [MARKED],0
     AddRaw $c @(0x0F, 0x84, 0x34, 0x02, 0x00, 0x00)            # je p_clear
-    AddRaw $c @(0xE8, 0x0F, 0xF7, 0xFF, 0xFF)                  # call okdev
+    AddRaw $c @(0xE8, 0x82, 0xF6, 0xFF, 0xFF)                  # call okdev
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
     AddRaw $c @(0x0F, 0x84, 0x57, 0x02, 0x00, 0x00)            # jz p_reset
     AddRaw $c @(0x89, 0xC6)                                    # mov esi,eax
@@ -3132,7 +3167,7 @@ function Add-Outline {
     AddRaw $c @(0xEB, 0xDA)                                    # jmp p_loop
     # p_done:
     AddRaw $c @(0x8B, 0x0D, 0x88, 0xDF, 0xC5, 0x00)            # mov ecx,dword ptr [DEVPTR]
-    AddRaw $c @(0xE8); AddLE32 $c (0x685A70 - ($CAVE + 0x114F)) # call 0x685A70
+    AddRaw $c @(0xE8); AddLE32 $c (0x685A70 - ($CAVE + 0x11EC)) # call 0x685A70
     AddRaw $c @(0x8B, 0x15, 0x88, 0xDF, 0xC5, 0x00)            # mov edx,dword ptr [DEVPTR]
     AddRaw $c @(0x8D, 0xBA, 0xC4, 0x3B, 0x00, 0x00)            # lea edi,[edx+0x3BC4]
     AddRaw $c @(0xB9, 0xB6, 0x00, 0x00, 0x00)                  # mov ecx,0xB6
@@ -3144,7 +3179,7 @@ function Add-Outline {
     AddRaw $c @(0xC7, 0x82, 0x84, 0x3B, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF) # mov dword ptr [edx+0x3B84],0xFFFFFFFF
     AddRaw $c @(0xC7, 0x82, 0xA4, 0x3B, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF) # mov dword ptr [edx+0x3BA4],0xFFFFFFFF
     # p_clear:
-    AddRaw $c @(0xE8, 0xDB, 0xF4, 0xFF, 0xFF)                  # call okdev
+    AddRaw $c @(0xE8, 0x4E, 0xF4, 0xFF, 0xFF)                  # call okdev
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
     AddRaw $c @(0x74, 0x27)                                    # jz p_reset
     AddRaw $c @(0x89, 0xC6)                                    # mov esi,eax
@@ -3167,7 +3202,7 @@ function Add-Outline {
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x20); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [MARKED],0
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x1C); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [VALID],0
     AddRaw $c @(0x61)                                          # popad
-    AddRaw $c @(0xE9); AddLE32 $c (0x4F6F90 - ($CAVE + 0x11E4)) # jmp 0x4F6F90
+    AddRaw $c @(0xE9); AddLE32 $c (0x4F6F90 - ($CAVE + 0x1281)) # jmp 0x4F6F90
     # quad:
     AddRaw $c @(0x89, 0x15); AddLE32 $c ($CAVE + 0xA0)         # mov dword ptr [VERTS+16],edx
     AddRaw $c @(0x89, 0x15); AddLE32 $c ($CAVE + 0xB4)         # mov dword ptr [VERTS+36],edx
@@ -3214,56 +3249,72 @@ function Add-Outline {
     AddRaw $c @(0x5F)                                          # pop edi
     AddRaw $c @(0x5E)                                          # pop esi
     AddRaw $c @(0xC3)                                          # ret
-    if ($c.Count -ne 0x1273) { throw 'Umrandung: Sektion hat die falsche Groesse.' }
+    if ($c.Count -ne 0x1310) { throw 'Umrandung: Sektion hat die falsche Groesse.' }
     Patch $loc[1] $c.ToArray()
-    Patch ($VPSITE - 0x400C00) ([byte[]]((Get-Rel32 @(0xE9) $VPSITE ($CAVE + 0x610)) + [byte[]](0x90)))
-    Patch ($BATCH - 0x400C00) ([byte[]]((Get-Rel32 @(0xE9) $BATCH ($CAVE + 0x631)) + [byte[]](0x90, 0x90)))
-    Patch ($DIPSITE - 0x400C00) ([byte[]]([byte[]](0x52) + (Get-Rel32 @(0xE8) ($DIPSITE + 1) ($CAVE + 0x925)) + [byte[]](0x90, 0x90, 0x90)))
-    Patch ($POSTSITE - 0x400C00) (Get-Rel32 @(0xE8) $POSTSITE ($CAVE + 0xF4E))
+    Patch ($VPSITE - 0x400C00) ([byte[]]((Get-Rel32 @(0xE9) $VPSITE ($CAVE + 0x620)) + [byte[]](0x90)))
+    Patch ($BATCH - 0x400C00) ([byte[]]((Get-Rel32 @(0xE9) $BATCH ($CAVE + 0x641)) + [byte[]](0x90, 0x90)))
+    Patch ($DIPSITE - 0x400C00) ([byte[]]([byte[]](0x52) + (Get-Rel32 @(0xE8) ($DIPSITE + 1) ($CAVE + 0x9AC)) + [byte[]](0x90, 0x90, 0x90)))
+    Patch ($POSTSITE - 0x400C00) (Get-Rel32 @(0xE8) $POSTSITE ($CAVE + 0xFEB))
     Patch 0x62CCBC @(0x4B)                                     # Tiefenpuffer D24X8 -> D24S8 (mit Stencil)
 }
 
-# Einstellungen der Umrandung: J/N-Fragen vor dem Patchen (Questions). Der Wert
-# sind die eingeschalteten Punkte durch Komma getrennt (z.B. "self,party")
-# oder "none". Jeder Punkt ist ein CC-Fuellbyte hinter einem ret in .text
-# (Va), 1 = an.
+# Einstellungen der Umrandung: Umschalter vor dem Patchen (Questions), je Punkt
+# eine Zahl. Jede Wahl schaltet bestimmte Schalter (Keys) ein; die erste Wahl
+# eines Punkts ist immer "aus". Der Wert sind die eingeschalteten Keys durch
+# Komma getrennt (z.B. "hidden,party") oder "none". Jeder Key ist ein
+# CC-Fuellbyte hinter einem ret in .text ($OUTLINE_FLAGS), 1 = an. Passen
+# mehrere Wahlen eines Punkts (aeltere Werte), gilt die mit der hoechsten
+# Prio - so wie im Code der Umrandung.
+$OUTLINE_FLAGS = [ordered]@{ walls = 0x6AB7DF; wallsgroup = 0x6AC02F; self = 0x6ABAAF; hidden = 0x6ABF3F
+    party = 0x6ABE2F; raid = 0x6ABE8F; react = 0x6ABE5F }
 $OUTLINE_OPTIONS = @(
-    @{ Key = 'walls'; Va = 0x6AB7DF; BanRisk = $true
-       De = 'Durch Waende sichtbar? (unsicher, Bann-Gefahr)'; En = 'Visible through walls? (unsafe, ban risk)'
-       ShortDe = 'durch Waende'; ShortEn = 'through walls' }
-    @{ Key = 'hidden'; Va = 0x6ABF3F
-       De = 'Eigener Charakter nur dort umrandet, wo er verdeckt ist?'; En = 'Own character outlined only where it is hidden?'
-       ShortDe = 'eigener Charakter nur verdeckt'; ShortEn = 'own character only hidden' }
-    @{ Key = 'self'; Va = 0x6ABAAF
-       De = 'Eigener Charakter immer umrandet?'; En = 'Own character always outlined?'
-       ShortDe = 'eigener Charakter'; ShortEn = 'own character' }
-    @{ Key = 'party'; Va = 0x6ABE2F
-       De = 'Eigene 5er-Gruppe immer umrandet?'; En = 'Own party of 5 always outlined?'
-       ShortDe = '5er-Gruppe'; ShortEn = 'party' }
-    @{ Key = 'raid'; Va = 0x6ABE8F
-       De = 'Ganzer Schlachtzug immer umrandet? (kostet viele FPS)'; En = 'Whole raid always outlined? (costs a lot of FPS)'
-       ShortDe = 'Schlachtzug'; ShortEn = 'raid' }
-    @{ Key = 'react'; Va = 0x6ABE5F
-       De = 'Gesinnungsfarbe statt Klassenfarbe?'; En = 'Reaction color instead of class color?'
-       ShortDe = 'Gesinnungsfarbe'; ShortEn = 'reaction color' }
+    @{ De = 'Eigener Charakter'; En = 'Own character'
+       Choices = @(
+        @{ Keys = @(); De = 'aus'; En = 'off' }
+        @{ Keys = @('hidden'); Prio = 2; De = 'nur wo verdeckt'; En = 'only where hidden'
+           ShortDe = 'eigener Charakter nur verdeckt'; ShortEn = 'own character only hidden' }
+        @{ Keys = @('self'); Prio = 1; De = 'immer'; En = 'always'
+           ShortDe = 'eigener Charakter'; ShortEn = 'own character' }) }
+    @{ De = 'Gruppe / Schlachtzug immer umrandet'; En = 'Party / raid always outlined'
+       NoteDe = '(Schlachtzug kostet viele FPS)'; NoteEn = '(raid costs a lot of FPS)'
+       Choices = @(
+        @{ Keys = @(); De = 'aus'; En = 'off' }
+        @{ Keys = @('party'); Prio = 1; De = '5er-Gruppe'; En = 'party of 5'
+           ShortDe = '5er-Gruppe'; ShortEn = 'party' }
+        @{ Keys = @('raid'); Prio = 2; De = 'ganzer Schlachtzug'; En = 'whole raid'
+           ShortDe = 'Schlachtzug'; ShortEn = 'raid' }) }
+    @{ De = 'Durch Waende sichtbar'; En = 'Visible through walls'
+       NoteDe = '(nur Gruppe/Schlachtzug: steht die Gruppe oben auf aus, nur wo verdeckt)'
+       NoteEn = '(party/raid only: with party/raid off above, only where hidden)'
+       Choices = @(
+        @{ Keys = @(); De = 'nie'; En = 'never' }
+        @{ Keys = @('wallsgroup'); Prio = 1; De = 'nur Gruppe/Schlachtzug'; En = 'party/raid only'
+           ShortDe = 'durch Waende nur Gruppe/Schlachtzug'; ShortEn = 'through walls party/raid only' }
+        @{ Keys = @('walls'); Prio = 2; BanRisk = $true; De = 'alle (unsicher, Bann-Gefahr)'; En = 'all (unsafe, ban risk)'
+           ShortDe = 'durch Waende'; ShortEn = 'through walls' }) }
+    @{ De = 'Farbe'; En = 'Color'
+       Choices = @(
+        @{ Keys = @(); De = 'Klassenfarbe'; En = 'class color' }
+        @{ Keys = @('react'); Prio = 1; De = 'Gesinnungsfarbe'; En = 'reaction color'
+           ShortDe = 'Gesinnungsfarbe'; ShortEn = 'reaction color' }) }
 )
 
 function Set-OutlineOptions([string]$v) {
     $on = Get-OptionKeys $OUTLINE_OPTIONS $v
-    foreach ($o in $OUTLINE_OPTIONS) {
-        $off = $o.Va - 0x400C00
+    foreach ($k in $OUTLINE_FLAGS.Keys) {
+        $off = $OUTLINE_FLAGS[$k] - 0x400C00
         Assert-Bytes $off @(0xCC) 'Umrandung'
-        # Auch ein ausgeschalteter Punkt wird (unveraendert) geschrieben, damit
-        # die Stelle in der Original-Byte-Tabelle landet.
-        if ($on -contains $o.Key) { Patch $off @(0x01) } else { Patch $off @(0xCC) }
+        # Auch ein ausgeschalteter Schalter wird (unveraendert) geschrieben,
+        # damit die Stelle in der Original-Byte-Tabelle landet.
+        if ($on -contains $k) { Patch $off @(0x01) } else { Patch $off @(0xCC) }
     }
 }
 
 function Get-OutlineOptionsFromExe {
     $on = @()
-    foreach ($o in $OUTLINE_OPTIONS) {
-        $b = $script:f[$o.Va - 0x400C00]
-        if ($b -eq 1) { $on += $o.Key } elseif ($b -ne 0xCC) { return $null }
+    foreach ($k in $OUTLINE_FLAGS.Keys) {
+        $b = $script:f[$OUTLINE_FLAGS[$k] - 0x400C00]
+        if ($b -eq 1) { $on += $k } elseif ($b -ne 0xCC) { return $null }
     }
     return (ConvertTo-OptionValue $OUTLINE_OPTIONS $on)
 }
@@ -3679,10 +3730,11 @@ function Get-BubbleRangeFromExe {
 #            gemerkten Wert berechnet (z.B. heutiges Datum)
 #    Normalize - optional: Scriptblock, der einen gueltigen Wert in eine
 #            einheitliche Schreibweise bringt (z.B. Build-Datum mit Uhrzeit)
-#    Questions - optional, statt PromptDe/PromptEn: J/N-Fragen (Key, De, En,
-#            ShortDe, ShortEn, optional BanRisk = rote Warnung, wenn mit J
-#            beantwortet). Der Wert sind die mit J beantworteten Keys durch
-#            Komma getrennt (z.B. "self,party") oder "none"
+#    Questions - optional, statt PromptDe/PromptEn: Umschalter (je Punkt De,
+#            En, optional NoteDe/NoteEn und Choices = Wahlen mit Keys, De,
+#            En, ShortDe, ShortEn, Prio, optional BanRisk = rote Warnung).
+#            Der Wert sind die eingeschalteten Keys durch Komma getrennt
+#            (z.B. "hidden,party") oder "none"
 #    Code  - Scriptblock mit den Patch-Aufrufen
 #  Die Reihenfolge hier ist die Reihenfolge im Menue und beim Einspielen,
 #  Patches einer Kategorie stehen zusammen.
@@ -4920,9 +4972,9 @@ $patches = @(
        Normalize = { param($v) ConvertTo-OptionValue $OUTLINE_OPTIONS (Get-OptionKeys $OUTLINE_OPTIONS $v) }
        Decode = { Get-OutlineOptionsFromExe }
        Code = {
-        # Eigene Sektion (.outl), siehe Add-Outline. Die Einstellungen (J/N vor
-        # dem Patchen, Standard: nur "eigener Charakter nur wo verdeckt" = J)
-        # setzt Set-OutlineOptions.
+        # Eigene Sektion (.outl), siehe Add-Outline. Die Einstellungen
+        # (Umschalter vor dem Patchen, Standard: eigener Charakter nur wo
+        # verdeckt) setzt Set-OutlineOptions.
         Add-Outline
         Set-OutlineOptions $script:VALUES['outline']
     }}
@@ -5544,6 +5596,7 @@ outline;2AB22F;CC;1
 outline;2AB25F;CC;1
 outline;2AB28F;CC;1
 outline;2AB33F;CC;1
+outline;2AB42F;CC;1
 outline;422E81;8BCEE828C9FFFF;1
 outline;62CCBC;4D;1
 tracker;11D4C5;A0149E00;1
@@ -5892,8 +5945,9 @@ function Read-State {
         }
     }
     if ($st.Values.ContainsKey('clientdate')) { $st.Values['clientdate'] = ConvertTo-ClientDate $st.Values['clientdate'] }   # aeltere Versionen: ohne Uhrzeit
-    # J/N-Werte (z.B. Umrandung) in die Reihenfolge der Fragen bringen - die
-    # kann sich zwischen Versionen aendern, gleiche Antworten sind keine Aenderung.
+    # Werte der Umschalter (z.B. Umrandung) vereinheitlichen - die Reihenfolge
+    # kann sich zwischen Versionen aendern, gleiche Einstellungen sind keine
+    # Aenderung.
     foreach ($p in $patches) {
         if (-not $p.Questions -or -not $st.Values.ContainsKey($p.Id)) { continue }
         $k = Get-OptionKeys $p.Questions $st.Values[$p.Id]
@@ -6018,60 +6072,94 @@ function Get-ValueText($p) {
     return $v
 }
 
-# Patches mit Questions (J/N-Fragen statt einer Eingabezeile, z.B. die
-# Umrandung): Der Wert sind die mit J beantworteten Keys, durch Komma getrennt
-# in der Reihenfolge der Fragen, oder "none". Get-OptionKeys liefert die Keys
-# (leeres Array bei "none") oder $null bei einem ungueltigen Wert.
+# Patches mit Questions (Umschalter statt einer Eingabezeile, z.B. die
+# Umrandung): Jeder Punkt hat mehrere Wahlen (Choices), die erste ist "aus",
+# jede andere schaltet bestimmte Keys ein. Der Wert sind die eingeschalteten
+# Keys, durch Komma getrennt in der Reihenfolge der Punkte, oder "none".
+# Get-OptionKeys liefert die Keys (leeres Array bei "none") oder $null bei
+# einem ungueltigen Wert.
 function Get-OptionKeys($opts, [string]$v) {
+    $all = @(); foreach ($q in $opts) { foreach ($c in $q.Choices) { $all += $c.Keys } }
     $keys = @()
     $t = $v.Trim().ToLowerInvariant()
     if ($t -eq '' -or $t -eq 'none') { return , $keys }
     foreach ($k in ($t -split '\s*,\s*')) {
-        if (@($opts | Where-Object { $_.Key -eq $k }).Count -eq 0) { return $null }
+        if ($all -notcontains $k) { return $null }
         if ($keys -notcontains $k) { $keys += $k }
     }
     return , $keys
 }
 
+# Gewaehlte Wahl eines Punkts (Index) zu den Keys: von den passenden die mit
+# der hoechsten Prio, sonst die erste ("aus").
+function Get-OptionChoice($q, $keys) {
+    $pick = 0; $prio = -1
+    for ($i = 1; $i -lt $q.Choices.Count; $i++) {
+        $c = $q.Choices[$i]
+        $all = $true; foreach ($k in $c.Keys) { if ($keys -notcontains $k) { $all = $false } }
+        if ($all -and [int]$c.Prio -gt $prio) { $pick = $i; $prio = [int]$c.Prio }
+    }
+    return $pick
+}
+
 function Test-OptionValue($opts, [string]$v) {
     if ($null -ne (Get-OptionKeys $opts $v)) { return $null }
-    $list = @($opts | ForEach-Object { $_.Key }) -join ','
+    $all = @(); foreach ($q in $opts) { foreach ($c in $q.Choices) { $all += $c.Keys } }
+    $list = $all -join ','
     return (L "Erlaubt sind none oder eine Liste aus $list (durch Komma getrennt)." "Allowed are none or a comma-separated list of $list.")
 }
 
+# Einheitlicher Wert: je Punkt die Keys der gewaehlten Wahl.
 function ConvertTo-OptionValue($opts, $keys) {
     $out = @()
-    foreach ($o in $opts) { if ($keys -contains $o.Key) { $out += $o.Key } }
+    foreach ($q in $opts) { $out += @($q.Choices[(Get-OptionChoice $q $keys)].Keys) }
     if ($out.Count -eq 0) { return 'none' }
     return ($out -join ',')
 }
 
-# Wert fuer die Anzeige: die eingeschalteten Punkte in Kurzform.
+# Wert fuer die Anzeige: die eingeschalteten Wahlen in Kurzform.
 function Format-OptionValue($opts, [string]$v) {
     $keys = Get-OptionKeys $opts $v
     if ($null -eq $keys) { return $v }
-    if ($keys.Count -eq 0) { return (T 'OptNone') }
     $out = @()
-    foreach ($o in $opts) { if ($keys -contains $o.Key) { $out += (L $o.ShortDe $o.ShortEn) } }
+    foreach ($q in $opts) {
+        $c = $q.Choices[(Get-OptionChoice $q $keys)]
+        if (@($c.Keys).Count -gt 0) { $out += (L $c.ShortDe $c.ShortEn) }
+    }
+    if ($out.Count -eq 0) { return (T 'OptNone') }
     return ($out -join ', ')
 }
 
-# Fragt jeden Punkt mit J/N ab, ENTER uebernimmt den Vorschlag aus $def.
+# Fragt jeden Punkt als Umschalter ab: die Wahlen nummeriert (in Zeilen bis
+# etwa 64 Zeichen, die letzte Zeile ist die Eingabe), ENTER uebernimmt den
+# Vorschlag aus $def.
 function Read-OptionAnswers($opts, [string]$def) {
     $keys = Get-OptionKeys $opts $def
     if ($null -eq $keys) { $keys = @() }
+    Say (T 'ChoiceHint') 'DarkGray'
     $on = @()
-    foreach ($o in $opts) {
-        $cur = $keys -contains $o.Key
-        $hint = T 'No'; if ($cur) { $hint = T 'Yes' }
-        while ($true) {
-            $a = (Ask "  $(L $o.De $o.En) $(T 'YesNo') [$hint]").ToUpperInvariant()
-            if ($a -eq '') { $yes = $cur; break }
-            if ($a -eq 'J' -or $a -eq 'Y') { $yes = $true; break }
-            if ($a -eq 'N') { $yes = $false; break }
-            Say (T 'YesNoBad') 'Yellow'
+    foreach ($q in $opts) {
+        $cur = Get-OptionChoice $q $keys
+        $lines = @(); $line = ''
+        for ($i = 0; $i -lt $q.Choices.Count; $i++) {
+            $x = "$($i + 1) = $(L $q.Choices[$i].De $q.Choices[$i].En)"
+            if ($line -and ($line.Length + 3 + $x.Length) -gt 64) { $lines += $line; $line = $x }
+            elseif ($line) { $line += "   $x" }
+            else { $line = $x }
         }
-        if ($yes) { $on += $o.Key }
+        $lines += $line
+        Write-Host ''
+        Say "$(L $q.De $q.En):"
+        if ($q.NoteDe) { Say "  $(L $q.NoteDe $q.NoteEn)" 'DarkGray' }
+        for ($i = 0; $i -lt $lines.Count - 1; $i++) { Say "  $($lines[$i])" }
+        while ($true) {
+            $a = Ask "    $($lines[$lines.Count - 1]) [$($cur + 1)]"
+            if ($a -eq '') { $n = $cur; break }
+            $n = 0
+            if ([int]::TryParse($a, [ref]$n) -and $n -ge 1 -and $n -le $q.Choices.Count) { $n--; break }
+            Say (T 'ChoiceBad' $q.Choices.Count) 'Yellow'
+        }
+        $on += @($q.Choices[$n].Keys)
     }
     return (ConvertTo-OptionValue $opts $on)
 }
@@ -6769,7 +6857,7 @@ foreach ($p in $chosen) {
     if (-not $p.Questions) { continue }
     $keys = Get-OptionKeys $p.Questions $VALUES[$p.Id]
     $risky = @()
-    foreach ($o in $p.Questions) { if ($o.BanRisk -and $keys -contains $o.Key) { $risky += (L $o.ShortDe $o.ShortEn) } }
+    foreach ($q in $p.Questions) { $c = $q.Choices[(Get-OptionChoice $q $keys)]; if ($c.BanRisk) { $risky += (L $c.ShortDe $c.ShortEn) } }
     if ($risky.Count -gt 0) { $cheat += "$(PatchRef $p): $($risky -join ', ')" }
 }
 if ($cheat.Count -gt 0) {

@@ -1236,47 +1236,46 @@ gehören mit zur Figur.
 
 > [!WARNING]
 > **Auf öffentlichen Servern bitte die Standard-Einstellung lassen:** vor dem
-> Patchen nur „Eigener Charakter nur dort umrandet, wo er verdeckt ist?“ mit J
-> beantworten, alle anderen Fragen mit N. Wird der Patch auf einem Server
+> Patchen bei allen Punkten ENTER drücken (eigener Charakter nur wo verdeckt,
+> alles andere aus bzw. nie). Wird der Patch auf einem Server
 > gebannt, hast du Pech gehabt – daran kann ich nichts ändern. Ab dann ist er
 > nur noch auf eigenen privaten Servern nutzbar. Also pass bitte auf.
 
-**Einstellungen:** Nach der Patch-Auswahl fragt der Patcher sechs Punkte mit
-J/N ab. ENTER übernimmt den Vorschlag in Klammern – beim ersten Mal den
-Standard, bei einer gepatchten `Wow.exe` den aktuellen Stand. Standard ist nur
-„Eigener Charakter nur dort umrandet, wo er verdeckt ist“ mit J, alles andere
-N: Ziel und Mouseover umrandet, nicht durch Wände, und deine Figur nur dort, wo
-sie verdeckt ist.
+**Einstellungen:** Nach der Patch-Auswahl fragt der Patcher vier Punkte als
+Umschalter ab, je Punkt eine Zahl. ENTER übernimmt den Vorschlag in Klammern –
+beim ersten Mal den Standard (fett), bei einer gepatchten `Wow.exe` den
+aktuellen Stand.
 
-| Frage | Wirkung bei J |
-|-------|---------------|
-| Durch Wände sichtbar? | Der Rand erscheint auch dort, wo die Figur verdeckt ist, bei allen Rändern. **Unsicher** – kann als Cheat gewertet werden, der Patcher warnt dann rot. |
-| Eigener Charakter nur dort umrandet, wo er verdeckt ist? | Deine Figur bekommt nur dort einen Rand, wo sie verdeckt ist, etwa hinter einer Hauswand oder einem Hügel; sichtbare Teile bleiben ohne Rand. Gilt für dich vor „immer umrandet“ und „durch Wände“. **Standard: J** |
-| Eigener Charakter immer umrandet? | Deine Figur hat immer einen Rand. |
-| Eigene 5er-Gruppe immer umrandet? | Die bis zu 4 Mitspieler deiner Gruppe (`party1` bis `party4`) haben immer einen Rand. |
-| Ganzer Schlachtzug immer umrandet? | Alle Mitspieler im Schlachtzug (bis zu 39) haben immer einen Rand, deine Gruppe auch außerhalb eines Schlachtzugs – **kostet viele FPS**. |
-| Gesinnungsfarbe statt Klassenfarbe? | Alle Ränder in der Farbe des Auswahlkreises (bei Spielern meist blau), auch Ziel und Mouseover. Feindliche Spieler sind dann einfach rot und pulsieren nicht. |
+| Punkt | Wahlen |
+|-------|--------|
+| Eigener Charakter | 1 = aus · **2 = nur wo verdeckt:** Rand nur dort, wo deine Figur verdeckt ist, etwa hinter einer Hauswand oder einem Hügel; sichtbare Teile bleiben ohne Rand · 3 = immer |
+| Gruppe / Schlachtzug immer umrandet | **1 = aus** · 2 = 5er-Gruppe: die bis zu 4 Mitspieler (`party1` bis `party4`) · 3 = ganzer Schlachtzug: alle Mitspieler im Schlachtzug (bis zu 39), außerhalb eines Schlachtzugs deine Gruppe – **kostet viele FPS** |
+| Durch Wände sichtbar | **1 = nie** · 2 = nur Gruppe/Schlachtzug: die Mitspieler aus dem Punkt davor auch dort, wo sie verdeckt sind; steht der auf „aus“, bekommen Gruppe bzw. Schlachtzug wie dein Charakter nur dort einen Rand, wo sie verdeckt sind · 3 = alle: jeder Rand, auch Ziel und Mouseover – **unsicher**, kann als Cheat gewertet werden, der Patcher warnt dann rot |
+| Farbe | **1 = Klassenfarbe** · 2 = Gesinnungsfarbe: alle Ränder in der Farbe des Auswahlkreises (bei Spielern meist blau), auch Ziel und Mouseover; feindliche Spieler sind dann einfach rot und pulsieren nicht |
 
 Ist eine Figur gerade Ziel oder unter dem Mauszeiger, gilt dieser Rand.
-Mitspieler außer Sichtweite haben keinen. Die Antworten merkt sich der Patcher
-wie andere Werte in `patcher_selection.ini`, z. B. `value.outline=self,party`
-(Standard ist `hidden`, `none` heißt alles N; die Punkte heißen der Reihe nach
-`walls`, `hidden`, `self`, `party`, `raid` und `react`).
+Mitspieler außer Sichtweite haben keinen. Die Einstellungen merkt sich der
+Patcher wie andere Werte in `patcher_selection.ini` als Liste der
+eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
+`hidden`, `none` heißt alles aus; die Schalter heißen `hidden`, `self`,
+`party`, `raid`, `wallsgroup`, `walls` und `react`).
 
 > [!WARNING]
 > **Ganzer Schlachtzug kostet viele FPS:** Jede umrandete Figur wird zehnmal
 > gezeichnet. Bei 25 oder 40 Spielern sind das sehr viele zusätzliche
 > Zeichenaufrufe pro Bild. Auf schwächeren Rechnern lieber nur die 5er-Gruppe
-> nehmen.
+> nehmen. Das gilt auch für „durch Wände: nur Gruppe/Schlachtzug“, wenn die
+> Gruppe auf „aus“ steht: Dann werden im Schlachtzug alle Mitspieler so
+> gezeichnet.
 
 > [!NOTE]
-> **Nur dort, wo verdeckt:** Erkannt wird nur, was vor deiner Figur gezeichnet
-> wird. Gelände und Gebäude zeichnet das Spiel normalerweise vor den Figuren.
-> Was erst danach kommt – etwa ein Teller auf dem Tisch vor dir –, verdeckt
-> deine Figur, ohne dass dort ein Rand erscheint. Außerdem muss das
-> Verdeckende ein Stück vor der Figur liegen, sonst gäbe es direkt unter den
-> Füßen eine Linie am Boden: rund 0,1 Yards bei 10 Yards Kameraabstand,
-> 0,2 Yards bei 15 und knapp 1 Yard bei 30.
+> **Nur dort, wo verdeckt** (auch für Gruppe/Schlachtzug): Erkannt wird nur,
+> was vor deiner Figur gezeichnet wird. Gelände und Gebäude zeichnet das Spiel
+> normalerweise vor den Figuren. Was erst danach kommt – etwa ein Teller auf
+> dem Tisch vor dir –, verdeckt deine Figur, ohne dass dort ein Rand erscheint.
+> Außerdem muss das Verdeckende ein Stück vor der Figur liegen, sonst gäbe es
+> direkt unter den Füßen eine Linie am Boden: rund 0,1 Yards bei 10 Yards
+> Kameraabstand, 0,2 Yards bei 15 und knapp 1 Yard bei 30.
 
 So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
@@ -1298,6 +1297,11 @@ So funktioniert es:
 - Mit „durch Wände“ wird die Figur auch dort markiert, wo sie verdeckt ist,
   und die Kopien laufen ohne Tiefentest. Später Gezeichnetes löscht den Rand
   dann nicht mehr.
+- Mit „durch Wände: nur Gruppe/Schlachtzug“ gilt das nur für die Mitspieler:
+  Sie stehen zuerst in der Liste der umrandeten Figuren, später Gezeichnetes
+  löscht dann nur die Ränder der anderen. Steht die Gruppe auf „aus“, kommen
+  Gruppe bzw. Schlachtzug trotzdem in die Liste und werden wie dein Charakter
+  nur dort umrandet, wo sie verdeckt sind.
 - Mit „nur dort, wo verdeckt“ wird deine Figur ebenfalls auch dort markiert,
   wo sie verdeckt ist; ihre Kopien markieren den Rand aber nur dort, wo
   bereits Gezeichnetes deutlich vor ihnen liegt. Dafür zieht die
@@ -1308,9 +1312,10 @@ So funktioniert es:
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x118E Byte). Jede
-  Einstellung ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`,
-  das bei J auf 1 gesetzt wird; der Code liest diese Schalter beim Zeichnen.
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x1310 Byte). Jeder
+  Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
+  die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
+  Zeichnen.
   Daran erkennt der Patcher die Einstellungen auch in einer gepatchten
   `Wow.exe`.
 

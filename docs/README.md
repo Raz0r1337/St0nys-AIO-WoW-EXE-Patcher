@@ -149,8 +149,8 @@ Everything else works as on Windows: wherever this guide says
 6. **Patch selection** menu (see below). Your selection from last time is
    preselected, or for a patched `Wow.exe` the patches currently in it.
 7. For patches with their own value (jump height, double jump, client info) the
-   patcher asks for the values, for the outline the settings with Y/N; then it
-   saves the selection.
+   patcher asks for the values, for the outline the settings (switches, one
+   number per point); then it saves the selection.
 8. Summary of the selected patches (for a patched `Wow.exe`: what is added and
    what is removed), notes (missing or redundant companion patches, warnings)
    and a confirmation prompt (Y/N).
@@ -525,8 +525,8 @@ name, and before patching it lists them once more.
 
 > [!WARNING]
 > **Outline (No. 68) on public servers:** if you use the patch there, please
-> keep the default setting – before patching, answer only "Own character
-> outlined only where it is hidden?" with Y and all other questions with N. If
+> keep the default setting – before patching, press ENTER for every point (own
+> character only where hidden, everything else off or never). If
 > the patch gets banned on a server, that is bad luck; there is nothing I can
 > do about it. From then on it can only be used on your own private servers.
 > So please be careful.
