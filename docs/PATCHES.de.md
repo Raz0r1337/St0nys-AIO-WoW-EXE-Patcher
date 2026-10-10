@@ -522,10 +522,6 @@ startet WoW ganz normal.
 > zweite Aufruf von `LoadLibraryA("LuxShoulderCam.dll")` bekommt nur die schon
 > geladene DLL zurück, ihr Startcode läuft kein zweites Mal.
 
-Nicht zusammen mit CameraReforged (Nr. 83) verwenden: Beide setzen an derselben
-Stelle der Kamera an (VA `0x6070CB`). Ist CameraReforged eingespielt, hängt sich
-Lux dort nicht ein, Höhe und Versatz von Lux bleiben dann ohne Wirkung.
-
 Dateigröße und PE-Header bleiben unverändert: Beim Start läuft einmalig der
 Sprung bei VA `0x76E495` (zu einem bloßen `ret`) – nach dem Lexara- und dem
 wow_optimize-Lader, vor dem voice.dll-Lader. Er führt jetzt durch drei freie
@@ -1423,78 +1419,10 @@ Ein umfangreicher Patch (4 Teile), der Probleme mit Mäusen behebt, die eine
 hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
-<a id="patch-camera"></a>
-**CameraReforged [BETA]: Kamerahöhe und Zoom-Grenzen** *(Nr. 83, Autor: Zendevve (fixed by St0ny))* 🟠 **[online ungetestet - Exe wird größer]**
-
-Portierung von [CameraReforged](https://github.com/Zendevve/CameraReforged)
-von **Zendevve** in diesen Patcher, damit alles in einem Durchgang läuft. Die
-Portierung und ihre Anpassungen stammen von St0ny. Der Client bekommt zwei
-komplett neue CVars eingebaut, zwei vorhandene bekommen neue Startwerte.
-
-> [!WARNING]
-> **BETA** – dieser Patch funktioniert noch nicht zu 100 %, hier fließt noch
-> Arbeit hinein. Deshalb ist er standardmäßig abgewählt. Der Schulterversatz
-> (`test_cameraOverShoulder`) hat derzeit keine Wirkung: Die vier Lesestellen,
-> die die Vorlage dafür umbiegt, gehören nicht zur Kamera, sondern zum
-> Chat-Fenster (Anzeigedauer der Nachrichten). Sie bleiben hier unangetastet.
-
-> [!NOTE]
-> Nicht zusammen mit LuxShoulderCam verwenden (Lux-Lader Nr. 31 oder über
-> Lexara): Beide setzen an derselben Stelle der Kamera an (VA `0x6070CB`). Ist
-> dieser Patch eingespielt, hängt sich Lux dort nicht ein und bleibt ohne
-> Wirkung.
-
-| CVar                      | Blizzard | hier  | Bereich       |
-|---------------------------|----------|-------|---------------|
-| `test_cameraHeight`       | (fehlt)  | 0.50  | 0.0 bis 3.0   |
-| `test_cameraOverShoulder` | (fehlt)  | 0.00  | -2.0 bis 2.0 (ohne Wirkung) |
-| `cameraDistanceMaxFactor` | 1.0      | 2.60  | 1.0 bis 5.0   |
-| `cameraDistanceMoveSpeed` | 8.33     | 20.00 | 1.0 bis 100.0 |
-
-- `test_cameraHeight` hebt den Punkt an, auf den die Kamera zielt. Der Client
-  legt ihn auf Brusthöhe; 0.5 Yards bringen ihn auf Kopfhöhe.
-- `test_cameraOverShoulder` soll die Kamera seitlich verschieben, negative
-  Werte nach links – derzeit ohne Wirkung (siehe oben).
-- `cameraDistanceMaxFactor` ist der Faktor, um den man über die normale
-  Zoomgrenze hinaus herausfahren kann, `cameraDistanceMoveSpeed` das Zoom-Tempo.
-
-Beide neuen CVars gab es in 3.3.5a bisher nur über `ConsoleXP.dll` samt
-Injector – der Patch registriert sie direkt in der EXE. Alle vier sind im Spiel
-über die Konsole erreichbar und wirken sofort, also auch aus Makros und Addons
-wie DynamicCam, z. B. `/console test_cameraHeight 0.8`. Sie werden mit Flag
-`0x10` registriert und landen in der `Config.wtf`, eine Änderung überlebt also
-den Neustart. Die Startwerte lassen sich im Aufruf
-`Add-CameraReforged -Height 0.5 -Shoulder 0.0 -MaxFactor 2.6 -ZoomSpeed 20.0`
-in `apply_patches.ps1` ändern; Werte außerhalb der Bereiche lehnt der Patcher ab.
-
-<details>
-<summary><b>Hintergrund: Wie der Patch eingebaut ist</b></summary>
-
-Der Patch hängt eine eigene Sektion `.camr` an die EXE an (etwa +1 KB,
-lesen/schreiben/ausführen) mit Code und Daten. Angebunden wird das über einen
-Detour auf `CVars_Initialize` (dort werden die neuen CVars angemeldet), einen
-Detour auf den Kamera-Fokuspfad (dort kommt die Höhe drauf) und zwei umgebogene
-Vorgabewert-Zeiger.
-
-Zwei Abweichungen vom Original-Tool, beide notwendig:
-
-1. *Eigene Sektion statt `.rdata`-Padding.* Das Original legt Code und Daten
-   ins Padding der `.rdata`-Sektion und macht diese ausführbar – genau das lässt
-   diesen Client beim Start mit dem Runtimefehler R6002 abbrechen.
-2. *Zeiger statt Callback.* Der Callback des Originals ist ein Prüf-Callback und
-   läuft, bevor der neue Wert gespeichert ist; der Wert hinkt dadurch jeder
-   Änderung hinterher. Hier merkt sich der Init-Hook den Zeiger auf das
-   CVar-Objekt, und der Kamera-Hook liest den Wert bei jedem Bild frisch.
-
-Nicht zusätzlich `CameraReforged.exe` laufen lassen: Das holt den
-R6002-Absturz zurück und überschreibt die Tabelle des Slider-Patches.
-
-</details>
-
 ## Sound
 
 <a id="patch-sound"></a>
-**Sound-Einstellungen optimieren** *(Nr. 84, Autor: St0ny)* 🟢 **[sicher]**
+**Sound-Einstellungen optimieren** *(Nr. 83, Autor: St0ny)* 🟢 **[sicher]**
 
 Umfasst folgende Änderungen:
 
@@ -1523,7 +1451,7 @@ einer Meldung neu abgefragt, und alle Werte werden geprüft, bevor irgendetwas
 geschrieben wird. Die Werte merkt sich der Patcher in `patcher_selection.ini`
 (`value.<Id>=…`); mit `-Unattended` gelten die gemerkten Werte, ohne gemerkten
 Wert die Originalwerte – Ausnahmen: Build-Datum (aktueller Zeitpunkt) und Icon
-(Abbruch), siehe Nr. 88 und 89. Steckt ein Patch schon in der `Wow.exe`, ist
+(Abbruch), siehe Nr. 87 und 88. Steckt ein Patch schon in der `Wow.exe`, ist
 sein aktueller Wert der Vorschlag.
 Bei der Abfrage steht er auch hinter dem Patchnamen (`-> Vorschlag: …`, bei einem
 bereits eingespielten Patch `-> aktuell: …`).
@@ -1533,7 +1461,7 @@ bereits eingespielten Patch `-> aktuell: …`).
 > muss also zum Server passen.
 
 <a id="patch-clientversion"></a>
-**Client-Version ändern (Original 3.3.5)** *(Nr. 85, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Client-Version ändern (Original 3.3.5)** *(Nr. 84, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Version im Format `x.y.z` (z. B. `3.3.6` oder `3.3.123`, höchstens
 7 Zeichen). Geändert werden die Version, die der Client im Spiel anzeigt, die
@@ -1543,7 +1471,7 @@ FileVersion-Text (`3, 3, 5, 12340`) wird zur reinen Version (`3.3.6`). Haupt-
 und Nebenversion müssen zusammen in das ProductVersion-Feld passen (z. B. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Build-Nummer ändern (Original 12340)** *(Nr. 86, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Build-Nummer ändern (Original 12340)** *(Nr. 85, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Build-Nummer (6142 bis 65535, Original `12340`): die interne
 Build-Nummer, die sichtbare Build-Nummer und den vierten Teil der FileVersion
@@ -1572,7 +1500,7 @@ den Server.
 > offline.
 
 <a id="patch-clienttitle"></a>
-**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 87, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
+**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 86, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
 
 Setzt FileDescription, InternalName und ProductName der Versionsressource, also
 das, was Windows z. B. in den Dateieigenschaften und im Task-Manager anzeigt.
@@ -1590,7 +1518,7 @@ ab, damit er stehen bleibt.
 > Titel.
 
 <a id="patch-clientdate"></a>
-**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 88, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 87, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Setzt das Build-Datum (Original `Jun 24 2010`) an allen drei Stellen in der EXE
 und das Jahr im Copyright-Vermerk, dazu die Uhrzeit. Die steht an zwei Stellen:
@@ -1610,7 +1538,7 @@ Patchens. Ist der Patch schon eingespielt, steht dort das aktuelle Datum samt
 Uhrzeit der `Wow.exe`.
 
 <a id="patch-clienticon"></a>
-**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 89, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 88, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Tauscht das Icon aus, das Windows für die `Wow.exe` anzeigt (Explorer,
 Taskleiste, Verknüpfungen). Der Patcher fragt nach dem Pfad einer `.ico`-
