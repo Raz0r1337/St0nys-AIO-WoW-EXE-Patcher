@@ -213,12 +213,11 @@ other servers may check the file size. On top of that comes the Lexara loader
 (No. 30) for Stormhand's HD fonts. The patch itself is safe, but `Lexara.dll`
 may be detected or blocked on public servers; without `Lexara.dll` in the WoW
 folder it does nothing. The "Reforged" column in the
-[patch overview](#patch-overview) shows which patches belong to it; in the
-script the list is `$PRESET_REFORGED`.
+[patch overview](#patch-overview) shows which patches belong to it.
 
-The preset "Billy's_Wow.exe" (key `B`) is Billy Hoyle's patch set. It is
-defined in `apply_patches.ps1`: every patch has an entry
-`On = $true` (in the preset) or `On = $false` (not in the preset).
+The preset "Billy's_Wow.exe" (key `B`) is Billy Hoyle's patch set. The
+"Billy" column in the [patch overview](#patch-overview) shows which patches
+belong to it.
 
 It is based on Billy's `Wow.exe`, which was in use on public servers for a long
 time. Some of its patches have since been fixed because they could crash the
@@ -234,10 +233,10 @@ via an issue as well.
 The second preset "St0nys_Wow.exe" (key `S`) is St0ny's own selection for
 private servers. It also contains patches with a ban risk and patches that make
 `Wow.exe` larger – **use it only on your own servers**. The "St0ny" column in
-the [patch overview](#patch-overview) shows which patches belong to it; in the
-script the list is `$PRESET_STONY`. **Warning: this preset should never be used on
-public servers under any circumstances – it will most likely get you banned!**
-The patcher shows this as a yellow note when you load it with `S`.
+the [patch overview](#patch-overview) shows which patches belong to it.
+**Warning: this preset should never be used on public servers under any
+circumstances – it will most likely get you banned!** The patcher shows this
+as a yellow note when you load it with `S`.
 
 ## Changing or removing patches
 

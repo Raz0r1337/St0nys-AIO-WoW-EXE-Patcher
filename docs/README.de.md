@@ -224,12 +224,11 @@ Dazu kommt der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften. Der Patch
 selbst ist sicher, die `Lexara.dll` kann auf öffentlichen Servern aber erkannt
 oder blockiert werden; ohne `Lexara.dll` im WoW-Ordner bewirkt er nichts.
 Welche Patches dazugehören, zeigt die Spalte „Reforged“ in der
-[Patch-Übersicht](#patch-übersicht); im Skript steht die Liste unter
-`$PRESET_REFORGED`.
+[Patch-Übersicht](#patch-übersicht).
 
 Das Preset „Billy's_Wow.exe“ (Taste `B`) ist das Patch-Set von Billy Hoyle.
-Es ist in `apply_patches.ps1` festgelegt: Jeder Patch hat dort
-einen Eintrag `On = $true` (im Preset) bzw. `On = $false` (nicht im Preset).
+Welche Patches dazugehören, zeigt die Spalte „Billy“ in der
+[Patch-Übersicht](#patch-übersicht).
 
 Es basiert auf Billys `Wow.exe`, die lange auf öffentlichen Servern im Einsatz
 war. Einige Patches daraus wurden inzwischen korrigiert, weil sie Abstürze des
@@ -246,10 +245,10 @@ Das zweite Preset „St0nys_Wow.exe“ (Taste `S`) ist St0nys eigene Auswahl fü
 eigene Server. Es enthält auch Patches mit Bann-Gefahr und solche, die die
 `Wow.exe` vergrößern – **nur auf eigenen Servern verwenden**. Welche Patches
 dazugehören, zeigt die Spalte „St0ny“ in der
-[Patch-Übersicht](#patch-übersicht); im Skript steht die Liste unter
-`$PRESET_STONY`. **Achtung: Dieses Preset sollte unter keinen Umständen
-auf öffentlichen Servern verwendet werden – das führt wahrscheinlich zu einem
-Bann!** Der Patcher zeigt das beim Laden mit `S` als gelben Hinweis an.
+[Patch-Übersicht](#patch-übersicht). **Achtung: Dieses Preset sollte unter
+keinen Umständen auf öffentlichen Servern verwendet werden – das führt
+wahrscheinlich zu einem Bann!** Der Patcher zeigt das beim Laden mit `S` als
+gelben Hinweis an.
 
 ## Patches ändern oder zurücknehmen
 
