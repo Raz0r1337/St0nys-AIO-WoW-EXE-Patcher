@@ -31,6 +31,7 @@ extended** at any time later – all the way back to the original `Wow.exe`.
 - [Requirements](#requirements)
 - [Usage](#usage)
 - [Workflow](#workflow)
+- [Start menu](#start-menu)
 - [Patch selection](#patch-selection)
 - [Changing or removing patches](#changing-or-removing-patches)
 - [Parameters for unattended use](#parameters-for-unattended-use)
@@ -57,7 +58,8 @@ extended** at any time later – all the way back to the original `Wow.exe`.
    contains the folder `St0nys-AIO-WoW-EXE-Patcher`.
 2. Copy your original `Wow.exe` from your WoW folder into that folder.
 3. Double-click `patcher.bat`.
-4. Choose the language (first start only), select patches, confirm.
+4. Choose the language (first start only), `1` in the [start menu](#start-menu)
+   for the patch menu, select patches, confirm.
 5. Close WoW and copy the patched `Wow.exe` back into your WoW folder,
    replacing the old one.
 
@@ -79,12 +81,12 @@ again and copy `Wow.exe` back into your WoW folder afterwards, see
 2. **Language selection:** `1` = Deutsch, `2` = English. First start only – after
    that the language is remembered and can be switched with `L` in the menu.
 3. Welcome message, press ENTER to start.
-4. Check that a `Wow.exe` exists in the folder. If it is missing but backups
-   are still there, the patcher offers to rebuild or restore it (see
-   [If Wow.exe is missing](#if-wowexe-is-missing)).
-5. Checking `Wow.exe`: on the first start it must be original and unmodified
+4. Checking `Wow.exe`: on the first start it must be original and unmodified
    (SHA256). After that the patcher recognizes a `Wow.exe` it patched itself
-   by the watermark and determines which patches are in it. Anything else
+   by the watermark and determines which patches are in it.
+5. **Start menu:** open the patch menu or restore `Wow.exe` from a backup (see
+   [Start menu](#start-menu)). If `Wow.exe` is missing or cannot be used, it
+   can also build it anew from the original; without backups the patcher
    aborts.
 6. **Patch selection** menu (see below). Your selection from last time is
    preselected, or for a patched `Wow.exe` the patches currently in it.
@@ -101,6 +103,43 @@ again and copy `Wow.exe` back into your WoW folder afterwards, see
 11. The patcher remembers the hash of the new `Wow.exe` together with the
     original bytes in `patcher_state.ini` (for a faster next start) and shows a
     final message.
+
+## Start menu
+
+After checking `Wow.exe` the patcher shows a small menu on every start. Above
+it, it lists the backups in the folder.
+
+| Input | Effect |
+|-------|--------|
+| `1`   | open the patch menu (see [Patch selection](#patch-selection)) |
+| `2`   | restore the previous `Wow.exe`: the patcher copies `Wow.exe.BAK` back, i.e. the state before the last patching |
+| `3`   | restore the original: the patcher copies `Wow.exe.ORI` back |
+| `M`   | open the patch menu and skip the start menu from now on (remembered) |
+| `Q`   | cancel, change nothing |
+
+If `2` or `3` replaces an existing `Wow.exe`, the patcher asks first (Y/N).
+The backups are kept in every case. Only usable options are offered: the
+original must really be the original according to SHA256, the backup original
+or patched with this patcher.
+
+**Turning the start menu off:** with `M` the patch menu opens directly from
+the next start on. Like the language, this is remembered in
+`patcher_selection.ini` (`startmenu=off`), and a grey line points it out at
+startup. In the patch menu `M` turns the start menu back on and off again.
+
+**If Wow.exe is missing or cannot be used:** if there is no `Wow.exe` in the
+patcher folder any more – e.g. because you moved the patched exe into your
+WoW folder instead of copying it – or if it is neither original nor patched
+with this patcher, the start menu appears even when it is turned off. `1` then
+builds a new `Wow.exe` from the original: the patch menu starts with the
+patches and values applied last time. You can keep them, change them or load
+a preset with `R`, `B` or `S`. Without changes you get exactly the last patched
+`Wow.exe` again; a `Wow.exe` that cannot be used is replaced. Without backups
+the patcher aborts.
+
+With `-Select` (if `Wow.exe` can be used) and with `-Unattended` there is no
+start menu. If `Wow.exe` is missing or cannot be used with `-Unattended`, the
+patcher aborts and points to the backups.
 
 ## Patch selection
 
@@ -122,6 +161,7 @@ after their name, with the link right below.
 | `A`                | all patches on                             |
 | `N`                | all patches off (patched `Wow.exe` + ENTER: restore the original) |
 | `L`                | switch language (Deutsch ↔ English)        |
+| `M`                | turn the start menu on or off (remembered, see [Start menu](#start-menu)) |
 | `R`                | load preset "Reforged" (= default) (**Safe** – official preset of [Project Reforged](https://projectreforged.github.io/wotlk/)) |
 | `B`                | load preset "Billy's_Wow.exe" (**Safe** – based on Billy's proven exe) |
 | `S`                | load preset "St0nys_Wow.exe" (**Not safe**, use only on your own servers) |
@@ -148,10 +188,12 @@ prompt.
 - The file is plain text (`laa=1`, `cache=0`, …) and can also be edited by
   hand. It also holds the entered values of the value patches – client info,
   jump height, double jump (`value.clientversion=3.3.6` etc.).
-- The language is remembered there as well (`language=de` or `en`).
+- The language is remembered there as well (`language=de` or `en`), and so
+  is whether the start menu appears (`startmenu=on` or `off`).
 - **Reset:** press `R` in the menu or delete `patcher_selection.ini` – then
   the preset "Reforged" applies again (deleting the file also forgets the
-  language and the remembered values, they are asked for again).
+  language and the remembered values, they are asked for again, and the start
+  menu is on again).
 
 The preset "Reforged" (key `R`) is the official preset of the
 [Project Reforged](https://projectreforged.github.io/wotlk/) project, put
@@ -187,13 +229,13 @@ The patcher shows this as a yellow note when you load it with `S`.
 
 ## Changing or removing patches
 
-Applied patches are not final. Just run `patcher.bat` again: the menu then has
-exactly the patches checked that are currently in `Wow.exe`. Newly checked
-patches are marked **(new)**, deselected ones **(will be removed)**. This way
-you can add patches, deselect them or change values (jump height, double
-jump, client info) as you like. `N` plus ENTER removes every patch – afterwards
-`Wow.exe` is **byte-for-byte the original** again. Afterwards copy `Wow.exe`
-back into your WoW folder.
+Applied patches are not final. Just run `patcher.bat` again: the patch menu
+(start menu `1`) then has exactly the patches checked that are currently in
+`Wow.exe`. Newly checked patches are marked **(new)**, deselected ones **(will
+be removed)**. This way you can add patches, deselect them or change values
+(jump height, double jump, client info) as you like. `N` plus ENTER removes
+every patch – afterwards `Wow.exe` is **byte-for-byte the original** again.
+Afterwards copy `Wow.exe` back into your WoW folder.
 
 How it works:
 
@@ -201,8 +243,10 @@ How it works:
   patcher aborts. Patching saves the original as `Wow.exe.ORI`, and every
   patched `Wow.exe` gets a [watermark](#notes).
 - **Every later start:** the patcher recognizes a `Wow.exe` it patched itself
-  by the watermark. If it is missing (and the file is not original), it aborts
-  – e.g. for an exe patched with another tool.
+  by the watermark. If it is missing (and the file is not original), the
+  `Wow.exe` cannot be used – e.g. for an exe patched with another tool. The
+  [start menu](#start-menu) then offers to restore it from a backup or to build
+  it anew from the original; without backups the patcher aborts.
 - **Determining the patch state:** if the hash in `patcher_state.ini` matches
   (the patcher stores hash, patches, values and original bytes there after
   every run), it uses that file – the fast way. Otherwise, e.g. if the file is
@@ -215,7 +259,7 @@ How it works:
 - **Restoring the original:** from the patched exe the patcher rebuilds the
   original in memory, verifies it by SHA256 and applies the new selection on
   top. If that does not work exactly – e.g. because the exe was changed in
-  some other way after patching – it aborts.
+  some other way after patching – it cannot be used (see above).
 - Before writing, the patcher also checks that the new result can be reverted
   cleanly to the original.
 - `Wow.exe.ORI` is not touched on later runs and is always the original. If
@@ -228,26 +272,6 @@ How it works:
 > `-7.9555473`) changes no bytes and is therefore not detected as applied when
 > the exe is checked – it has no effect then anyway.
 
-### If Wow.exe is missing
-
-If there is no `Wow.exe` in the patcher folder any more, but the backups
-`Wow.exe.ORI` and/or `Wow.exe.BAK` are still there – e.g. because you moved the
-patched exe into your WoW folder instead of copying it –, the patcher offers at
-startup:
-
-1. **Build a new Wow.exe from the original:** the menu starts with the patches
-   and values applied last time. You can keep them, change them or load a
-   preset with `R`, `B` or `S`. Without changes you get exactly the last
-   patched `Wow.exe` again.
-2. **Restore the previous Wow.exe:** the patcher copies `Wow.exe.BAK` back,
-   i.e. the state before the last patching.
-3. **Restore the original:** the patcher copies `Wow.exe.ORI` back.
-
-`Q` cancels. The backups are kept in every case. Only usable options are
-offered: the original must really be the original according to SHA256, the
-backup original or patched with this patcher. With `-Unattended` there is no
-menu; the patcher then aborts and points to the backups.
-
 ## Parameters for unattended use
 
 All parameters are optional and are passed through from `patcher.bat` to
@@ -256,8 +280,8 @@ All parameters are optional and are passed through from `patcher.bat` to
 | Parameter              | Meaning                                                                    |
 |------------------------|----------------------------------------------------------------------------|
 | `-Language de\|en`     | set the language for this run. Together with `-Select` the remembered language stays unchanged; if you accept a selection in the menu with ENTER, it is saved along with it. |
-| `-Select <selection>`  | skip the selection menu: `saved` (saved selection), `reforged` (preset "Reforged", also `default`), `billy` (preset "Billy's_Wow.exe"), `stony` (preset "St0nys_Wow.exe"), `all`, `none` (remove all patches, restore the original) or numbers/ranges like `"1,3,5-8"`. The selection completely replaces the patches in `Wow.exe`. Using `-Select` does not change the saved selection. |
-| `-Unattended`          | no prompts and no pauses. Without `-Language` the remembered language or German is used, without `-Select` the saved selection or the preset "Reforged". |
+| `-Select <selection>`  | skip the selection menu and, if `Wow.exe` can be used, the start menu: `saved` (saved selection), `reforged` (preset "Reforged", also `default`), `billy` (preset "Billy's_Wow.exe"), `stony` (preset "St0nys_Wow.exe"), `all`, `none` (remove all patches, restore the original) or numbers/ranges like `"1,3,5-8"`. The selection completely replaces the patches in `Wow.exe`. Using `-Select` does not change the saved selection. |
+| `-Unattended`          | no prompts, no pauses and no start menu. Without `-Language` the remembered language or German is used, without `-Select` the saved selection or the preset "Reforged". |
 | `-Path <file>`         | patch a `Wow.exe` other than the one next to the script                    |
 
 Example:
@@ -279,7 +303,7 @@ the user or because no more input is possible).
 | `docs/README.de.md` | German documentation |
 | `docs/PATCHES.de.md` | Detailed patch descriptions in German |
 | `docs/PATCHES.en.md` | Detailed descriptions of all patches |
-| `patcher_selection.ini` | Created on the first start (remembered language), stores the accepted selection and the entered values |
+| `patcher_selection.ini` | Created on the first start (remembered language), stores the accepted selection, the entered values and the start menu setting |
 | `patcher_state.ini` | Created when patching: hash of the patched `Wow.exe`, applied patches, values and original bytes – speeds up the next start, but is not strictly required |
 | `Wow.exe.ORI`       | Backup of the original `Wow.exe`, created on the first patch run |
 | `Wow.exe.BAK`       | Backup of the previous `Wow.exe` from before the last run |
@@ -516,11 +540,11 @@ clicking the number of a patch takes you straight to its description.
   check whether a `Wow.exe` was made with this patcher – e.g. with a hex editor
   or in the command prompt with `findstr /m /c:"St0nys AIO" Wow.exe` (prints the
   file name if it is there).
-- **Restoring the original:** run the patcher, press `N` and ENTER – with or
-  without `patcher_state.ini`. Alternatively delete the patched `Wow.exe` and
-  start the patcher: it then offers to restore the original (see
-  [If Wow.exe is missing](#if-wowexe-is-missing)). `Wow.exe.BAK`, on the other
-  hand, is the `Wow.exe` from before the last run.
+- **Restoring the original:** run the patcher and choose `3` in the
+  [start menu](#start-menu) – the patcher copies `Wow.exe.ORI` back. Or press
+  `N` and ENTER in the patch menu – with or without `patcher_state.ini`.
+  `Wow.exe.BAK`, on the other hand, is the `Wow.exe` from before the last run
+  (start menu `2`).
 - **For developers:** the original bytes table in the script is regenerated
   with `apply_patches.ps1 -BuildTable -Path <original Wow.exe>`. This is needed
   after every change to a patch; if it no longer matches, the patcher points it
