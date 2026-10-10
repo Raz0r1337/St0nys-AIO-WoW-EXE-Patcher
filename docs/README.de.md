@@ -526,10 +526,11 @@ dem Patchen listet er sie noch einmal auf.
 
 > [!WARNING]
 > **Umrandung (Nr. 68) auf öffentlichen Servern:** Wenn du den Patch dort
-> verwendest, lass bitte die Standard-Einstellung – alle Fragen vor dem
-> Patchen mit N beantworten. Wird der Patch auf einem Server gebannt, hast du
-> Pech gehabt; daran kann ich nichts ändern. Ab dann ist er nur noch auf
-> eigenen privaten Servern nutzbar. Also pass bitte auf.
+> verwendest, lass bitte die Standard-Einstellung – vor dem Patchen nur
+> „Eigener Charakter nur dort umrandet, wo er verdeckt ist?“ mit J
+> beantworten, alle anderen Fragen mit N. Wird der Patch auf einem Server
+> gebannt, hast du Pech gehabt; daran kann ich nichts ändern. Ab dann ist er
+> nur noch auf eigenen privaten Servern nutzbar. Also pass bitte auf.
 
 #### Interface & Komfort
 

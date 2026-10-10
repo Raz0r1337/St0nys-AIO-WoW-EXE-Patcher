@@ -1196,15 +1196,17 @@ belong to the figure.
 > `st0ny-main`.
 
 > [!WARNING]
-> **On public servers please keep the default setting:** answer all questions
-> before patching with N. If the patch gets banned on a server, that is bad
+> **On public servers please keep the default setting:** before patching,
+> answer only "Own character outlined only where it is hidden?" with Y and all
+> other questions with N. If the patch gets banned on a server, that is bad
 > luck – there is nothing I can do about it. From then on it can only be used
 > on your own private servers. So please be careful.
 
 **Settings:** After the patch selection the patcher asks six questions with
-Y/N. ENTER takes the suggestion in brackets – N the first time, the current
-state for a patched `Wow.exe`. The default is N everywhere: only target and
-mouseover, not through walls.
+Y/N. ENTER takes the suggestion in brackets – the default the first time, the
+current state for a patched `Wow.exe`. By default only "Own character outlined
+only where it is hidden" is Y, everything else N: target and mouseover
+outlined, not through walls, and your figure only where it is hidden.
 
 | Question | Effect with Y |
 |----------|---------------|
@@ -1212,14 +1214,14 @@ mouseover, not through walls.
 | Own character always outlined? | Your figure always has an outline. |
 | Own party of 5 always outlined? | The up to 4 other players of your party (`party1` to `party4`) always have an outline. |
 | Whole raid always outlined? | All other players in the raid (up to 39) always have an outline, your party also outside of a raid – **costs a lot of FPS**. |
-| Own character outlined only where it is hidden? | Your figure only gets an outline where it is hidden, for example behind a house wall or a hill. For you it takes precedence over "always outlined" and "through walls". |
+| Own character outlined only where it is hidden? | Your figure only gets an outline where it is hidden, for example behind a house wall or a hill; visible parts get no outline. For you it takes precedence over "always outlined" and "through walls". **Default: Y** |
 | Reaction color instead of class color? | All outlines in the color of the selection circle (mostly blue for players), target and mouseover too. Hostile players are then simply red and do not pulse. |
 
 If a figure is the target or under the mouse cursor, that outline applies.
 Players out of sight have none. The patcher remembers the answers like other
-values in `patcher_selection.ini`, e.g. `value.outline=self,party` (`none` =
-default; in order, the settings are called `walls`, `self`, `party`, `raid`,
-`hidden` and `react`).
+values in `patcher_selection.ini`, e.g. `value.outline=self,party` (the
+default is `hidden`, `none` means all N; in order, the settings are called
+`walls`, `self`, `party`, `raid`, `hidden` and `react`).
 
 > [!WARNING]
 > **Whole raid costs a lot of FPS:** every outlined figure is drawn ten times.
@@ -1228,9 +1230,12 @@ default; in order, the settings are called `walls`, `self`, `party`, `raid`,
 
 > [!NOTE]
 > **Only where hidden:** only what is drawn before your figure is detected.
-> The game normally draws terrain and buildings before the figures; whether
-> trees or other figures in front are detected as well depends on the order in
-> which the game draws – the test in game has to show that.
+> The game normally draws terrain and buildings before the figures. Whatever
+> comes afterwards – a plate on the table in front of you, say – hides your
+> figure without an outline appearing there. Also, whatever hides it has to
+> lie a bit in front of the figure, otherwise there would be a line on the
+> ground right under the feet: about 0.1 yards at 10 yards camera distance,
+> 0.2 yards at 15 and almost 1 yard at 30.
 
 How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
@@ -1253,7 +1258,8 @@ How it works:
   outline then.
 - With "only where hidden" your figure is also marked where it is hidden as
   well; its copies, however, only mark the outline where something already
-  drawn lies in front of them.
+  drawn lies clearly in front of them. For that, the projection matrix pulls
+  their depth forward a bit (see above).
 - After the models and before the interface, a full-screen quad per outlined
   figure colors only its outline pixels; then the stencil is cleared and the
   game sends all its graphics states again.

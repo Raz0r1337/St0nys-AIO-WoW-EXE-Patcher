@@ -1237,15 +1237,18 @@ gehören mit zur Figur.
 > `st0ny-main`.
 
 > [!WARNING]
-> **Auf öffentlichen Servern bitte die Standard-Einstellung lassen:** alle
-> Fragen vor dem Patchen mit N beantworten. Wird der Patch auf einem Server
+> **Auf öffentlichen Servern bitte die Standard-Einstellung lassen:** vor dem
+> Patchen nur „Eigener Charakter nur dort umrandet, wo er verdeckt ist?“ mit J
+> beantworten, alle anderen Fragen mit N. Wird der Patch auf einem Server
 > gebannt, hast du Pech gehabt – daran kann ich nichts ändern. Ab dann ist er
 > nur noch auf eigenen privaten Servern nutzbar. Also pass bitte auf.
 
 **Einstellungen:** Nach der Patch-Auswahl fragt der Patcher sechs Punkte mit
-J/N ab. ENTER übernimmt den Vorschlag in Klammern – beim ersten Mal N, bei
-einer gepatchten `Wow.exe` den aktuellen Stand. Standard ist überall N: nur
-Ziel und Mouseover, nicht durch Wände.
+J/N ab. ENTER übernimmt den Vorschlag in Klammern – beim ersten Mal den
+Standard, bei einer gepatchten `Wow.exe` den aktuellen Stand. Standard ist nur
+„Eigener Charakter nur dort umrandet, wo er verdeckt ist“ mit J, alles andere
+N: Ziel und Mouseover umrandet, nicht durch Wände, und deine Figur nur dort, wo
+sie verdeckt ist.
 
 | Frage | Wirkung bei J |
 |-------|---------------|
@@ -1253,14 +1256,14 @@ Ziel und Mouseover, nicht durch Wände.
 | Eigener Charakter immer umrandet? | Deine Figur hat immer einen Rand. |
 | Eigene 5er-Gruppe immer umrandet? | Die bis zu 4 Mitspieler deiner Gruppe (`party1` bis `party4`) haben immer einen Rand. |
 | Ganzer Schlachtzug immer umrandet? | Alle Mitspieler im Schlachtzug (bis zu 39) haben immer einen Rand, deine Gruppe auch außerhalb eines Schlachtzugs – **kostet viele FPS**. |
-| Eigener Charakter nur dort umrandet, wo er verdeckt ist? | Deine Figur bekommt nur dort einen Rand, wo sie verdeckt ist, etwa hinter einer Hauswand oder einem Hügel. Gilt für dich vor „immer umrandet“ und „durch Wände“. |
+| Eigener Charakter nur dort umrandet, wo er verdeckt ist? | Deine Figur bekommt nur dort einen Rand, wo sie verdeckt ist, etwa hinter einer Hauswand oder einem Hügel; sichtbare Teile bleiben ohne Rand. Gilt für dich vor „immer umrandet“ und „durch Wände“. **Standard: J** |
 | Gesinnungsfarbe statt Klassenfarbe? | Alle Ränder in der Farbe des Auswahlkreises (bei Spielern meist blau), auch Ziel und Mouseover. Feindliche Spieler sind dann einfach rot und pulsieren nicht. |
 
 Ist eine Figur gerade Ziel oder unter dem Mauszeiger, gilt dieser Rand.
 Mitspieler außer Sichtweite haben keinen. Die Antworten merkt sich der Patcher
 wie andere Werte in `patcher_selection.ini`, z. B. `value.outline=self,party`
-(`none` = Standard; die Punkte heißen der Reihe nach `walls`, `self`, `party`,
-`raid`, `hidden` und `react`).
+(Standard ist `hidden`, `none` heißt alles N; die Punkte heißen der Reihe nach
+`walls`, `self`, `party`, `raid`, `hidden` und `react`).
 
 > [!WARNING]
 > **Ganzer Schlachtzug kostet viele FPS:** Jede umrandete Figur wird zehnmal
@@ -1270,10 +1273,12 @@ wie andere Werte in `patcher_selection.ini`, z. B. `value.outline=self,party`
 
 > [!NOTE]
 > **Nur dort, wo verdeckt:** Erkannt wird nur, was vor deiner Figur gezeichnet
-> wird. Gelände und Gebäude zeichnet das Spiel normalerweise vor den Figuren;
-> ob auch Bäume oder andere Figuren davor erkannt werden, hängt von der
-> Reihenfolge ab, in der das Spiel zeichnet – das muss der Test im Spiel
-> zeigen.
+> wird. Gelände und Gebäude zeichnet das Spiel normalerweise vor den Figuren.
+> Was erst danach kommt – etwa ein Teller auf dem Tisch vor dir –, verdeckt
+> deine Figur, ohne dass dort ein Rand erscheint. Außerdem muss das
+> Verdeckende ein Stück vor der Figur liegen, sonst gäbe es direkt unter den
+> Füßen eine Linie am Boden: rund 0,1 Yards bei 10 Yards Kameraabstand,
+> 0,2 Yards bei 15 und knapp 1 Yard bei 30.
 
 So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
@@ -1297,7 +1302,8 @@ So funktioniert es:
   dann nicht mehr.
 - Mit „nur dort, wo verdeckt“ wird deine Figur ebenfalls auch dort markiert,
   wo sie verdeckt ist; ihre Kopien markieren den Rand aber nur dort, wo
-  bereits Gezeichnetes vor ihnen liegt.
+  bereits Gezeichnetes deutlich vor ihnen liegt. Dafür zieht die
+  Projektionsmatrix ihre Tiefe ein Stück nach vorn (siehe oben).
 - Nach den Modellen und vor dem Interface färbt je umrandeter Figur eine
   bildschirmfüllende Fläche nur ihre Rand-Pixel ein; danach wird der Stencil
   geleert und das Spiel setzt alle Grafik-Einstellungen neu.

@@ -509,7 +509,8 @@ name, and before patching it lists them once more.
 
 > [!WARNING]
 > **Outline (No. 68) on public servers:** if you use the patch there, please
-> keep the default setting – answer all questions before patching with N. If
+> keep the default setting – before patching, answer only "Own character
+> outlined only where it is hidden?" with Y and all other questions with N. If
 > the patch gets banned on a server, that is bad luck; there is nothing I can
 > do about it. From then on it can only be used on your own private servers.
 > So please be careful.
