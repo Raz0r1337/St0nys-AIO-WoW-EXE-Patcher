@@ -299,7 +299,7 @@ prints an error. No. 24 unlocks these and all others.
 > this can lead to a ban.
 
 <a id="patch-luaunlockfull"></a>
-**LUA unlock (complete): allow all protected functions** *(No. 24, Author: St0ny)* 🔴 **[unsafe]**
+**LUA unlock (complete): allow all protected functions** *(No. 24, Author: St0ny (original by Alastor StrixEfuartus))* 🔴 **[unsafe]**
 
 Extends No. 23 to all protected functions. The client's central protection
 check knows 24 protection types in three classes (always forbidden, allowed only
