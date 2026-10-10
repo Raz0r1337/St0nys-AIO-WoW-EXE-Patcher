@@ -71,6 +71,12 @@ To **change or remove** patches just run `patcher-win.bat` in the patcher folder
 again and copy `Wow.exe` back into your WoW folder afterwards, see
 [Changing or removing patches](#changing-or-removing-patches).
 
+> [!TIP]
+> **Without copying:** instead of copying `Wow.exe` back and forth, you can set
+> the path to the `Wow.exe` in your WoW folder with `P` in the
+> [start menu](#start-menu). The patcher remembers the path and then patches the
+> exe right there; the backups stay in the patcher folder. WoW has to be closed.
+
 > [!NOTE]
 > Windows will probably warn about an unsigned, potentially harmful app when
 > you start the patched `Wow.exe`. This happens with every modified `Wow.exe`:
@@ -170,6 +176,7 @@ it, it lists the backups in the folder.
 | `2`   | restore the previous `Wow.exe`: the patcher copies `Wow.exe.BAK` back, i.e. the state before the last patching |
 | `3`   | restore the original: the patcher copies `Wow.exe.ORI` back |
 | `M`   | open the patch menu and skip the start menu from now on (remembered) |
+| `P`   | set the path to `Wow.exe` (remembered, see below) |
 | `Q`   | cancel, change nothing |
 
 If `2` or `3` replaces an existing `Wow.exe`, the patcher asks first (Y/N).
@@ -178,20 +185,29 @@ original must really be the original according to SHA256, the backup original
 or patched with this patcher. If `Wow.exe.BAK` has the same state as
 `Wow.exe` – e.g. because the patcher has just created it – `2` is left out.
 
+**Path to Wow.exe:** with `P` you set which `Wow.exe` the patcher uses – the
+exe itself or the folder it is in, e.g. your WoW folder. You can also just drag
+the file or folder into the window. ENTER without input switches back to the
+`Wow.exe` in the patcher folder. The path is remembered in
+`patcher_selection.ini` (`wowpath=`); the patcher then checks the new exe right
+away and shows the start menu again, and at startup the path is shown in grey
+above the check. `Wow.exe.ORI`, `Wow.exe.BAK` and `patcher_state.ini` stay in
+the patcher folder, `2` and `3` restore directly at the path.
+
 **Turning the start menu off:** with `M` the patch menu opens directly from
 the next start on. Like the language, this is remembered in
 `patcher_selection.ini` (`startmenu=off`), and a grey line points it out at
 startup. In the patch menu `M` turns the start menu back on and off again.
 
 **If Wow.exe is missing or cannot be used:** if there is no `Wow.exe` in the
-patcher folder any more – e.g. because you moved the patched exe into your
-WoW folder instead of copying it – or if it is neither original nor patched
-with this patcher, the start menu appears even when it is turned off. `1` then
-builds a new `Wow.exe` from the original: the patch menu starts with the
-patches and values applied last time. You can keep them, change them or load
-a preset with `R`, `B` or `S`. Without changes you get exactly the last patched
-`Wow.exe` again; a `Wow.exe` that cannot be used is replaced. Without backups
-the patcher aborts.
+patcher folder (or at the remembered path) any more – e.g. because you moved
+the patched exe into your WoW folder instead of copying it – or if it is
+neither original nor patched with this patcher, the start menu appears even
+when it is turned off. `1` then builds a new `Wow.exe` from the original: the
+patch menu starts with the patches and values applied last time. You can keep
+them, change them or load a preset with `R`, `B` or `S`. Without changes you
+get exactly the last patched `Wow.exe` again; a `Wow.exe` that cannot be used
+is replaced. Without backups the start menu only offers `P` and `Q`.
 
 With `-Select` (if `Wow.exe` can be used) and with `-Unattended` there is no
 start menu. If `Wow.exe` is missing or cannot be used with `-Unattended`, the
@@ -346,7 +362,7 @@ All parameters are optional and are passed through from `patcher-win.bat` to
 | `-Language de\|en`     | set the language for this run. Together with `-Select` the remembered language stays unchanged; if you accept a selection in the menu with ENTER, it is saved along with it. |
 | `-Select <selection>`  | skip the selection menu and, if `Wow.exe` can be used, the start menu: `saved` (saved selection), `reforged` (preset "Reforged", also `default`), `billy` (preset "Billy's_Wow.exe"), `stony` (preset "St0nys_Wow.exe"), `all`, `none` (remove all patches, restore the original) or numbers/ranges like `"1,3,5-8"`. The selection completely replaces the patches in `Wow.exe`. Using `-Select` does not change the saved selection. |
 | `-Unattended`          | no prompts, no pauses and no start menu. Without `-Language` the remembered language or German is used, without `-Select` the saved selection or the preset "Reforged". |
-| `-Path <file>`         | patch a `Wow.exe` other than the one next to the script                    |
+| `-Path <file>`         | patch a `Wow.exe` other than the one next to the script – for this run only, takes precedence over the remembered path; the backups stay in the patcher folder |
 
 Example:
 
@@ -368,9 +384,9 @@ the user or because no more input is possible).
 | `docs/README.de.md` | German documentation |
 | `docs/PATCHES.de.md` | Detailed patch descriptions in German |
 | `docs/PATCHES.en.md` | Detailed descriptions of all patches |
-| `patcher_selection.ini` | Created on the first start (remembered language), stores the accepted selection, the entered values and the start menu setting |
+| `patcher_selection.ini` | Created on the first start (remembered language), stores the accepted selection, the entered values, the start menu setting and the path to `Wow.exe` |
 | `patcher_state.ini` | Created when patching: hash of the patched `Wow.exe`, applied patches, values and original bytes – speeds up the next start, but is not strictly required |
-| `Wow.exe.ORI`       | Backup of the original `Wow.exe`, created on the first start |
+| `Wow.exe.ORI`       | Backup of the original `Wow.exe`, created on the first start – always in the patcher folder, also with a path |
 | `Wow.exe.BAK`       | Backup of the previous `Wow.exe` from before the last run |
 | `LICENSE`           | MIT license |
 

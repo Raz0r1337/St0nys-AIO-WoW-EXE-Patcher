@@ -74,6 +74,12 @@ Patches **ändern oder zurücknehmen:** `patcher-win.bat` im Patcher-Ordner einf
 erneut starten und die `Wow.exe` danach wieder in den WoW-Ordner kopieren,
 siehe [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen).
 
+> [!TIP]
+> **Ohne Kopieren:** Statt die `Wow.exe` hin und her zu kopieren, kannst du im
+> [Startmenü](#startmenü) mit `P` den Pfad zur `Wow.exe` in deinem WoW-Ordner
+> angeben. Der Patcher merkt sich den Pfad und patcht die Exe dann direkt dort;
+> die Sicherungen bleiben im Patcher-Ordner. WoW muss dabei beendet sein.
+
 > [!NOTE]
 > Windows warnt beim Start der gepatchten `Wow.exe` wahrscheinlich vor einer
 > nicht signierten, möglicherweise schädlichen App. Das ist bei jeder
@@ -178,6 +184,7 @@ Menü. Darüber stehen die Sicherungen, die im Ordner liegen.
 | `2`     | vorherige `Wow.exe` wiederherstellen: Der Patcher kopiert `Wow.exe.BAK` zurück, also den Stand vor dem letzten Patchen |
 | `3`     | Original wiederherstellen: Der Patcher kopiert `Wow.exe.ORI` zurück |
 | `M`     | Patch-Menü öffnen und das Startmenü künftig überspringen (wird gemerkt) |
+| `P`     | Pfad zur `Wow.exe` festlegen (wird gemerkt, siehe unten) |
 | `Q`     | abbrechen, nichts ändern |
 
 Ersetzt `2` oder `3` eine vorhandene `Wow.exe`, fragt der Patcher vorher nach
@@ -187,20 +194,31 @@ das Backup original oder mit diesem Patcher gepatcht. Hat `Wow.exe.BAK`
 denselben Stand wie die `Wow.exe` – etwa weil der Patcher sie gerade erst
 angelegt hat –, entfällt `2`.
 
+**Pfad zur Wow.exe:** Mit `P` gibst du an, welche `Wow.exe` der Patcher
+nimmt – die Exe selbst oder den Ordner, in dem sie liegt, z. B. deinen
+WoW-Ordner. Du kannst die Datei oder den Ordner auch einfach ins Fenster
+ziehen. ENTER ohne Eingabe stellt wieder die `Wow.exe` im Patcher-Ordner ein.
+Der Pfad wird in `patcher_selection.ini` gemerkt (`wowpath=`), danach prüft der
+Patcher gleich die neue Exe und zeigt das Startmenü neu; beim Start steht der
+Pfad grau über der Prüfung. `Wow.exe.ORI`, `Wow.exe.BAK` und
+`patcher_state.ini` bleiben im Patcher-Ordner, `2` und `3` stellen direkt am
+Pfad wieder her.
+
 **Startmenü abschalten:** Mit `M` geht es ab dem nächsten Start direkt ins
 Patch-Menü. Wie die Sprache wird das in `patcher_selection.ini` gemerkt
 (`startmenu=off`), beim Start erinnert eine graue Zeile daran. Im Patch-Menü
 schaltet `M` das Startmenü wieder ein und auch wieder aus.
 
 **Wenn die Wow.exe fehlt oder nicht verwendbar ist:** Liegt im Patcher-Ordner
-keine `Wow.exe` mehr – etwa weil du die gepatchte Exe in den WoW-Ordner
-verschoben statt kopiert hast – oder ist sie weder original noch mit diesem
-Patcher gepatcht, erscheint das Startmenü auch dann, wenn es abgeschaltet ist.
-`1` baut dann eine neue `Wow.exe` aus dem Original: Das Patch-Menü startet mit
-den Patches und Werten, die zuletzt eingespielt waren. Du kannst sie
-übernehmen, ändern oder mit `R`, `B` oder `S` ein Preset laden. Ohne Änderung
-entsteht genau die zuletzt gepatchte `Wow.exe` neu; eine nicht verwendbare
-`Wow.exe` wird dabei ersetzt. Gibt es keine Sicherungen, bricht der Patcher ab.
+(bzw. am gemerkten Pfad) keine `Wow.exe` mehr – etwa weil du die gepatchte Exe
+in den WoW-Ordner verschoben statt kopiert hast – oder ist sie weder original
+noch mit diesem Patcher gepatcht, erscheint das Startmenü auch dann, wenn es
+abgeschaltet ist. `1` baut dann eine neue `Wow.exe` aus dem Original: Das
+Patch-Menü startet mit den Patches und Werten, die zuletzt eingespielt waren.
+Du kannst sie übernehmen, ändern oder mit `R`, `B` oder `S` ein Preset laden.
+Ohne Änderung entsteht genau die zuletzt gepatchte `Wow.exe` neu; eine nicht
+verwendbare `Wow.exe` wird dabei ersetzt. Gibt es keine Sicherungen, bietet das
+Startmenü nur `P` und `Q` an.
 
 Mit `-Select` (bei verwendbarer `Wow.exe`) und mit `-Unattended` gibt es kein
 Startmenü. Fehlt die `Wow.exe` bei `-Unattended` oder ist sie nicht
@@ -363,7 +381,7 @@ Alle Parameter sind optional und werden von `patcher-win.bat` an
 | `-Language de\|en`     | Sprache für diesen Lauf festlegen. Zusammen mit `-Select` bleibt die gemerkte Sprache unverändert; wird die Auswahl im Menü mit ENTER übernommen, wird sie mitgespeichert. |
 | `-Select <Auswahl>`    | Auswahlmenü überspringen, bei verwendbarer `Wow.exe` auch das Startmenü: `saved` (gespeicherte Auswahl), `reforged` (Preset „Reforged“, auch `default`), `billy` (Preset „Billy's_Wow.exe“), `stony` (Preset „St0nys_Wow.exe“), `all`, `none` (alle Patches zurücknehmen, Original wiederherstellen) oder Nummern/Bereiche wie `"1,3,5-8"`. Die Auswahl ersetzt die Patches in der `Wow.exe` komplett. Mit `-Select` wird die gespeicherte Auswahl nicht verändert. |
 | `-Unattended`          | keine Rückfragen, keine Pausen und kein Startmenü. Ohne `-Language` gilt die gemerkte Sprache bzw. Deutsch, ohne `-Select` die gespeicherte Auswahl bzw. das Preset „Reforged“. |
-| `-Path <Datei>`        | eine andere `Wow.exe` als die im Skriptordner patchen                        |
+| `-Path <Datei>`        | eine andere `Wow.exe` als die im Skriptordner patchen – nur für diesen Lauf, geht dem gemerkten Pfad vor; die Sicherungen bleiben im Patcher-Ordner |
 
 Beispiel:
 
@@ -385,9 +403,9 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 | `docs/README.de.md` | Diese Datei |
 | `docs/PATCHES.de.md` | Ausführliche Beschreibungen aller Patches |
 | `docs/PATCHES.en.md` | Patch-Beschreibungen auf Englisch |
-| `patcher_selection.ini` | Wird beim ersten Start angelegt (gemerkte Sprache) und speichert die übernommene Auswahl samt eingegebenen Werten sowie die Einstellung für das Startmenü |
+| `patcher_selection.ini` | Wird beim ersten Start angelegt (gemerkte Sprache) und speichert die übernommene Auswahl samt eingegebenen Werten sowie die Einstellung für das Startmenü und den Pfad zur `Wow.exe` |
 | `patcher_state.ini` | Wird beim Patchen angelegt: Hash der gepatchten `Wow.exe`, eingespielte Patches, Werte und Original-Bytes – beschleunigt den nächsten Start, ist aber nicht zwingend nötig |
-| `Wow.exe.ORI`       | Sicherung der originalen `Wow.exe`, angelegt beim ersten Start |
+| `Wow.exe.ORI`       | Sicherung der originalen `Wow.exe`, angelegt beim ersten Start – immer im Patcher-Ordner, auch mit Pfad |
 | `Wow.exe.BAK`       | Sicherung der bisherigen `Wow.exe` vor dem letzten Lauf |
 | `LICENSE`           | MIT-Lizenz |
 
