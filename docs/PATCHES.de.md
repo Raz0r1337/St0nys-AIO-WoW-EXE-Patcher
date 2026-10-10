@@ -1251,17 +1251,17 @@ sie verdeckt ist.
 | Frage | Wirkung bei J |
 |-------|---------------|
 | Durch Wände sichtbar? | Der Rand erscheint auch dort, wo die Figur verdeckt ist, bei allen Rändern. **Unsicher** – kann als Cheat gewertet werden, der Patcher warnt dann rot. |
+| Eigener Charakter nur dort umrandet, wo er verdeckt ist? | Deine Figur bekommt nur dort einen Rand, wo sie verdeckt ist, etwa hinter einer Hauswand oder einem Hügel; sichtbare Teile bleiben ohne Rand. Gilt für dich vor „immer umrandet“ und „durch Wände“. **Standard: J** |
 | Eigener Charakter immer umrandet? | Deine Figur hat immer einen Rand. |
 | Eigene 5er-Gruppe immer umrandet? | Die bis zu 4 Mitspieler deiner Gruppe (`party1` bis `party4`) haben immer einen Rand. |
 | Ganzer Schlachtzug immer umrandet? | Alle Mitspieler im Schlachtzug (bis zu 39) haben immer einen Rand, deine Gruppe auch außerhalb eines Schlachtzugs – **kostet viele FPS**. |
-| Eigener Charakter nur dort umrandet, wo er verdeckt ist? | Deine Figur bekommt nur dort einen Rand, wo sie verdeckt ist, etwa hinter einer Hauswand oder einem Hügel; sichtbare Teile bleiben ohne Rand. Gilt für dich vor „immer umrandet“ und „durch Wände“. **Standard: J** |
 | Gesinnungsfarbe statt Klassenfarbe? | Alle Ränder in der Farbe des Auswahlkreises (bei Spielern meist blau), auch Ziel und Mouseover. Feindliche Spieler sind dann einfach rot und pulsieren nicht. |
 
 Ist eine Figur gerade Ziel oder unter dem Mauszeiger, gilt dieser Rand.
 Mitspieler außer Sichtweite haben keinen. Die Antworten merkt sich der Patcher
 wie andere Werte in `patcher_selection.ini`, z. B. `value.outline=self,party`
 (Standard ist `hidden`, `none` heißt alles N; die Punkte heißen der Reihe nach
-`walls`, `self`, `party`, `raid`, `hidden` und `react`).
+`walls`, `hidden`, `self`, `party`, `raid` und `react`).
 
 > [!WARNING]
 > **Ganzer Schlachtzug kostet viele FPS:** Jede umrandete Figur wird zehnmal

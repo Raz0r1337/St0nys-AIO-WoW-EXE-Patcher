@@ -3192,6 +3192,9 @@ $OUTLINE_OPTIONS = @(
     @{ Key = 'walls'; Va = 0x6AB7DF; BanRisk = $true
        De = 'Durch Waende sichtbar? (unsicher, Bann-Gefahr)'; En = 'Visible through walls? (unsafe, ban risk)'
        ShortDe = 'durch Waende'; ShortEn = 'through walls' }
+    @{ Key = 'hidden'; Va = 0x6ABF3F
+       De = 'Eigener Charakter nur dort umrandet, wo er verdeckt ist?'; En = 'Own character outlined only where it is hidden?'
+       ShortDe = 'eigener Charakter nur verdeckt'; ShortEn = 'own character only hidden' }
     @{ Key = 'self'; Va = 0x6ABAAF
        De = 'Eigener Charakter immer umrandet?'; En = 'Own character always outlined?'
        ShortDe = 'eigener Charakter'; ShortEn = 'own character' }
@@ -3201,9 +3204,6 @@ $OUTLINE_OPTIONS = @(
     @{ Key = 'raid'; Va = 0x6ABE8F
        De = 'Ganzer Schlachtzug immer umrandet? (kostet viele FPS)'; En = 'Whole raid always outlined? (costs a lot of FPS)'
        ShortDe = 'Schlachtzug'; ShortEn = 'raid' }
-    @{ Key = 'hidden'; Va = 0x6ABF3F
-       De = 'Eigener Charakter nur dort umrandet, wo er verdeckt ist?'; En = 'Own character outlined only where it is hidden?'
-       ShortDe = 'eigener Charakter nur verdeckt'; ShortEn = 'own character only hidden' }
     @{ Key = 'react'; Va = 0x6ABE5F
        De = 'Gesinnungsfarbe statt Klassenfarbe?'; En = 'Reaction color instead of class color?'
        ShortDe = 'Gesinnungsfarbe'; ShortEn = 'reaction color' }
@@ -5806,6 +5806,13 @@ function Read-State {
         }
     }
     if ($st.Values.ContainsKey('clientdate')) { $st.Values['clientdate'] = ConvertTo-ClientDate $st.Values['clientdate'] }   # aeltere Versionen: ohne Uhrzeit
+    # J/N-Werte (z.B. Umrandung) in die Reihenfolge der Fragen bringen - die
+    # kann sich zwischen Versionen aendern, gleiche Antworten sind keine Aenderung.
+    foreach ($p in $patches) {
+        if (-not $p.Questions -or -not $st.Values.ContainsKey($p.Id)) { continue }
+        $k = Get-OptionKeys $p.Questions $st.Values[$p.Id]
+        if ($null -ne $k) { $st.Values[$p.Id] = ConvertTo-OptionValue $p.Questions $k }
+    }
     if (-not $st.Hash -or $st.Size -le 0) { return $null }
     return $st
 }

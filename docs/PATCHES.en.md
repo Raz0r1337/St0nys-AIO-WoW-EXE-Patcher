@@ -1210,17 +1210,17 @@ outlined, not through walls, and your figure only where it is hidden.
 | Question | Effect with Y |
 |----------|---------------|
 | Visible through walls? | The outline also appears where the figure is hidden, for all outlines. **Unsafe** – may be considered cheating, the patcher then warns in red. |
+| Own character outlined only where it is hidden? | Your figure only gets an outline where it is hidden, for example behind a house wall or a hill; visible parts get no outline. For you it takes precedence over "always outlined" and "through walls". **Default: Y** |
 | Own character always outlined? | Your figure always has an outline. |
 | Own party of 5 always outlined? | The up to 4 other players of your party (`party1` to `party4`) always have an outline. |
 | Whole raid always outlined? | All other players in the raid (up to 39) always have an outline, your party also outside of a raid – **costs a lot of FPS**. |
-| Own character outlined only where it is hidden? | Your figure only gets an outline where it is hidden, for example behind a house wall or a hill; visible parts get no outline. For you it takes precedence over "always outlined" and "through walls". **Default: Y** |
 | Reaction color instead of class color? | All outlines in the color of the selection circle (mostly blue for players), target and mouseover too. Hostile players are then simply red and do not pulse. |
 
 If a figure is the target or under the mouse cursor, that outline applies.
 Players out of sight have none. The patcher remembers the answers like other
 values in `patcher_selection.ini`, e.g. `value.outline=self,party` (the
 default is `hidden`, `none` means all N; in order, the settings are called
-`walls`, `self`, `party`, `raid`, `hidden` and `react`).
+`walls`, `hidden`, `self`, `party`, `raid` and `react`).
 
 > [!WARNING]
 > **Whole raid costs a lot of FPS:** every outlined figure is drawn ten times.
