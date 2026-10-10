@@ -50,8 +50,7 @@ triangle inside the loop; a triangle with an invalid index is skipped, the
 others are processed normally.
 The original (0x539wowmod) only checks the first triangle of each call, once
 before the loop, and has miscalculated jump distances; here the check sits in
-the loop body, with the same code size. A `Wow.exe` with the version up to
-2026-10-09 (jump at VA `0x81D51B`) is recognized as well and can be reverted.
+the loop body, with the same code size.
 
 > [!NOTE]
 > The code lives in the free gap at the end of `.text`, which No. 65 uses as

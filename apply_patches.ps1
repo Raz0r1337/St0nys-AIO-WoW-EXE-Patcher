@@ -1548,12 +1548,6 @@ function Add-WorldFrameCrashFix {
     if ($c.Count -ne 38) { throw 'WorldFrame-Absturzfix: Hoehle hat die falsche Groesse.' }
     Patch $loc[1] $c.ToArray()
     Patch ($HOOK_VA - 0x400C00) ([byte[]](Get-Rel32 @(0xE9) $HOOK_VA $CAVE))
-    # Die Fassung bis 9.10.2026 sprang schon bei VA 0x81D51B ab (6 Byte, jae).
-    # Die Stelle bleibt unveraendert, wird aber mit ihren Original-Bytes
-    # geschrieben, damit sie in der Original-Byte-Tabelle steht: So erkennt der
-    # Patcher auch Exes mit der alten Fassung und kann sie zuruecknehmen.
-    Assert-Bytes 0x41C91B @(0x0F, 0x83, 0x4D, 0x01, 0x00, 0x00) 'WorldFrame-Absturzfix'
-    Patch 0x41C91B @(0x0F, 0x83, 0x4D, 0x01, 0x00, 0x00)
 }
 
 # ============================================================
@@ -5293,7 +5287,6 @@ laa;126;03;1
 cache;61BE58;4361;1
 itemcache;2689FD;3075;1
 worldcrash;210;B3D35D00;0
-worldcrash;41C91B;0F834D010000;1
 worldcrash;41C936;0FB7072BC3;1
 worldcrash;5DD7B3;0000000000000000000000000000000000000000000000000000000000000000000000000000;1
 timer;46A08E;0F8582000000;1
