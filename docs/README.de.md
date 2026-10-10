@@ -613,9 +613,7 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
 - Danke auch an **MacWarrior**, der ebenfalls beim Zusammentragen der Patches
   geholfen und einige eigene Patches beigesteuert hat.
 - Danke auch an **Stormhand** für die Erlaubnis, seine LuxShoulderCam
-  einzubinden und als Vorlage für Visus – St0nyCam zu nutzen. Das offizielle
-  Preset seines Projekts [Project Reforged](https://projectreforged.github.io/wotlk/)
-  steckt als Preset „Reforged“ in diesem Patcher und ist die Standard-Auswahl.
+  einzubinden und als Vorlage für Visus – St0nyCam zu nutzen.
 - Ein großes Dankeschön an **Stormhand**, **MacWarrior** und **Billy Hoyle** für
   die vielen Tests im Spiel – und an Stormhand ganz besonders dafür, den eigenen
   Warmane-Account riskiert zu haben, um herauszufinden, welche Patches „sicher“
