@@ -3071,8 +3071,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'voice.dll beim Start laden (Voice-Chat von St0ny) [BETA]'
        En = 'Load voice.dll at startup (voice chat by St0ny) [BETA]'
-       NoteDe = 'benoetigt mod-voicechat'
-       NoteEn = 'requires mod-voicechat'
+       NoteDe = 'benoetigt mod-voicechat - Modul noch unfertig'
+       NoteEn = 'requires mod-voicechat - module not finished yet'
        Url = 'https://github.com/Raz0r1337/mod-voicechat'
        Code = {
         # BETA - das Modul mod-voicechat ist noch nicht fertig. Laedt

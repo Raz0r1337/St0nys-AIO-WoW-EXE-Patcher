@@ -437,7 +437,7 @@ dem Patchen listet er sie noch einmal auf.
 | [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom | – | ✅ | ✅ |
 | [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.de.md#patch-lexara) | Lexara.dll beim Start laden (HD-Schriften von Stormhand) *(benötigt [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – `dinput8.dll` in `Lexara.dll` umbenennen)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
-| [31](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (Voice-Chat von St0ny) [BETA] *(benötigt [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[ungetestet]** | St0ny | – | – | – |
+| [31](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (Voice-Chat von St0ny) [BETA] *(benötigt [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat) – Modul noch unfertig)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
 #### Gameplay-Fixes
 
