@@ -395,7 +395,7 @@ over eight free gaps between functions, and the thread builds the DLL name on
 the stack. The patch works together with the Lexara loader (No. 30).
 
 <a id="patch-awesome"></a>
-**Enable AwesomeWotlkLib.dll support (client extensions by noname08662)** *(No. 28, Author: FrostAtom)* 🟡 **[safe - DLL risky]**
+**Load AwesomeWotlkLib.dll at startup (client extensions by noname08662)** *(No. 28, Author: FrostAtom)* 🟡 **[safe - DLL risky]**
 
 Allows `AwesomeWotlkLib.dll` to be loaded on client start. This DLL extends
 the client with additional features and improvements for private servers.
@@ -420,7 +420,7 @@ set to "passed". As a side effect the patch disables the Scan.dll mechanism
 > wins.
 
 <a id="patch-wotlkext"></a>
-**Enable WotLKExtensions.dll support (client extensions by Alyst3r)** *(No. 29, Author: St0ny (original by Alyst3r))* 🟡 **[safe - DLL risky]**
+**Load WotLKExtensions.dll at startup (client extensions by Alyst3r)** *(No. 29, Author: St0ny (original by Alyst3r))* 🟡 **[safe - DLL risky]**
 
 Loads `WotLKExtensions.dll` from the WoW folder when the client starts. The DLL
 from [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions) by Alyst3r

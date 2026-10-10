@@ -2716,8 +2716,8 @@ $patches = @(
 
     @{ Id = 'awesome'; Cat = 'dll'; On = $true; Needs = @('laa'); DllRisky = $true
        Author = 'FrostAtom'
-       De = 'AwesomeWotlkLib.dll Unterstuetzung aktivieren (Client-Erweiterungen von noname08662)'
-       En = 'Enable AwesomeWotlkLib.dll support (client extensions by noname08662)'
+       De = 'AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662)'
+       En = 'Load AwesomeWotlkLib.dll at startup (client extensions by noname08662)'
        NoteDe = 'benoetigt awesome_wotlk'
        NoteEn = 'requires awesome_wotlk'
        Url = 'https://github.com/noname08662/awesome_wotlk'
@@ -2737,8 +2737,8 @@ $patches = @(
 
     @{ Id = 'wotlkext'; Cat = 'dll'; On = $false; Needs = @('laa'); DllRisky = $true
        Author = 'St0ny (original by Alyst3r)'
-       De = 'WotLKExtensions.dll Unterstuetzung aktivieren (Client-Erweiterungen von Alyst3r)'
-       En = 'Enable WotLKExtensions.dll support (client extensions by Alyst3r)'
+       De = 'WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r)'
+       En = 'Load WotLKExtensions.dll at startup (client extensions by Alyst3r)'
        NoteDe = 'benoetigt WotLK-Extensions'
        NoteEn = 'requires WotLK-Extensions'
        Url = 'https://github.com/Alyst3r/WotLK-Extensions'

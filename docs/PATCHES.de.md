@@ -403,7 +403,7 @@ den DLL-Namen legt der Thread auf dem Stack ab. Der Patch verträgt sich mit dem
 Lexara-Lader (Nr. 30).
 
 <a id="patch-awesome"></a>
-**AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662)** *(Nr. 28, Autor: FrostAtom)* 🟡 **[sicher - DLL riskant]**
+**AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662)** *(Nr. 28, Autor: FrostAtom)* 🟡 **[sicher - DLL riskant]**
 
 Ermöglicht das Laden der `AwesomeWotlkLib.dll` beim Client-Start. Diese DLL
 erweitert den Client um zusätzliche Funktionen und Verbesserungen für private
@@ -430,7 +430,7 @@ Fehlt die DLL, startet WoW normal weiter.
 > Auflösung des Exe-Patches.
 
 <a id="patch-wotlkext"></a>
-**WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r)** *(Nr. 29, Autor: St0ny (original by Alyst3r))* 🟡 **[sicher - DLL riskant]**
+**WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r)** *(Nr. 29, Autor: St0ny (original by Alyst3r))* 🟡 **[sicher - DLL riskant]**
 
 Lädt beim Client-Start die `WotLKExtensions.dll` aus dem WoW-Ordner. Die DLL aus
 [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions) von Alyst3r
