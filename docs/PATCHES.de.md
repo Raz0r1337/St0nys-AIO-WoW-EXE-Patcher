@@ -522,7 +522,7 @@ startet WoW ganz normal.
 > zweite Aufruf von `LoadLibraryA("LuxShoulderCam.dll")` bekommt nur die schon
 > geladene DLL zurück, ihr Startcode läuft kein zweites Mal.
 
-Nicht zusammen mit Visus - St0nyCam (Nr. 83) verwenden: Beide setzen an
+Nicht zusammen mit Visus - St0nyCam (Nr. 84) verwenden: Beide setzen an
 derselben Stelle der Kamera an (VA `0x6070CB`). Ist Visus eingespielt, hängt
 sich Lux dort nicht ein, Höhe und Versatz von Lux bleiben dann ohne Wirkung.
 
@@ -1216,29 +1216,74 @@ unverändert.
 
 Der Code liegt in einer eigenen kleinen Sektion (`.isnap`, 179 Byte).
 
+<a id="patch-outline"></a>
+**Umrandung für Ziel und Mouseover [BETA]** *(Nr. 68, Autor: St0ny)* 🟠 **[online ungetestet - Exe wird größer]**
+
+Wie in Retail bekommt die 3D-Figur des markierten Ziels und die Figur unter
+dem Mauszeiger eine dünne Umrandung (etwa 2 Pixel) in ihrer Gesinnungsfarbe –
+dieselbe Farbe wie der Auswahlkreis: rot feindlich, gelb neutral, grün
+freundlich. Der Rand erscheint nur dort, wo die Figur sichtbar ist; steht eine
+Wand davor, bekommt sie dort keinen Rand. Waffen, Helm und Reittier gehören
+mit zur Figur.
+
+> [!WARNING]
+> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
+> den dev-Zweigen, nicht in `st0ny-main`.
+
+So funktioniert es:
+- Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
+  selbst nutzt Stencil nirgends.
+- Beim Zeichnen der Figur werden ihre sichtbaren Pixel im Stencil markiert.
+  Danach wird sie noch achtmal unsichtbar gezeichnet, je um 2 Pixel in alle
+  Richtungen verschoben (über die Projektionsmatrix des Shaders), mit
+  Tiefentest – diese Kopien markieren den Rand und tragen dort die Tiefe der
+  Figur ein.
+- Was danach gezeichnet wird und vor der Figur liegt (z. B. Büsche, Pilze,
+  Gras), löscht die Markierung an seinen Pixeln und verdeckt so auch den Rand.
+  Dinge dahinter bleiben dank der eingetragenen Tiefe hinter dem Rand.
+  Durchsichtiges wie Wasser oder Zaubereffekte lässt den Rand stehen.
+- Weitere Teile derselben Figur (Umhang, Waffe, Reittier) werden auf ihrem
+  eigenen Rand noch einmal ohne Tiefentest gezeichnet, damit kein Rand
+  zwischen den Teilen hängen bleibt.
+- Nach den Modellen und vor dem Interface färbt eine bildschirmfüllende Fläche
+  nur die Rand-Pixel ein; danach wird der Stencil geleert und das Spiel setzt
+  alle Grafik-Einstellungen neu.
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x9DA Byte).
+
+> [!NOTE]
+> Nur mit `gxApi d3d9` (Standard) und 24-Bit-Tiefenpuffer (Standard). Mit
+> D3D9Ex, OpenGL oder `gxDepthBits` 16/32 schaltet sich der Patch ab. Mit
+> DXVK funktioniert er ebenfalls (im Spiel getestet), weil WoW auch dort
+> Direct3D 9 nutzt.
+
+> [!NOTE]
+> Sind alle Patches mit eigener Sektion gleichzeitig aktiv, ist im PE-Header
+> kein Platz mehr für einen weiteren Sektionseintrag. Dann verlängert der
+> Patcher die zuletzt angehängte Sektion, statt eine neue anzulegen.
+
 ## Interface & Komfort
 
 <a id="patch-tracker"></a>
-**Quest-Tracker automatisch sortieren** *(Nr. 68)* 🟢 **[sicher]**
+**Quest-Tracker automatisch sortieren** *(Nr. 69)* 🟢 **[sicher]**
 
 Setzt das CVar `trackerSorting` standardmäßig auf 1. Quests im Tracker werden
 automatisch sortiert.
 
 <a id="patch-worldmap"></a>
-**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 69)* 🟢 **[sicher]**
+**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 70)* 🟢 **[sicher]**
 
 Setzt das CVar `advancedWorldMap` standardmäßig auf 1. Die erweiterte
 Kartenansicht ist von Anfang an aktiviert.
 
 <a id="patch-castbars"></a>
-**Cast Bars auf allen Frames** *(Nr. 70, Autor: Kebabstorm)* 🟢 **[sicher]**
+**Cast Bars auf allen Frames** *(Nr. 71, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Ermöglicht die Anzeige von Zauberbalken auf allen Unit-Frames (Party, Arena,
 Boss etc.), nicht nur auf Target und Focus, sowie auf allen
 Standard-Nameplates. Entspricht dem Verhalten ab Cataclysm.
 
 <a id="patch-emblems"></a>
-**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 71, Autor: MacWarrior)* 🟠 **[online ungetestet]**
+**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 72, Autor: MacWarrior)* 🟠 **[online ungetestet]**
 
 Der Client hält die Anzahl der wählbaren Tabard-Varianten in einer kleinen
 Tabelle (VA `0xA14908`, Datei-Offset `0x613108`): 170 Embleme, 17 Emblemfarben,
@@ -1271,7 +1316,7 @@ ist frei wählbar (`patch-*.MPQ`), dafür sorgt der Patch
 „Erweiterte MPQ-Namen erlauben“ (Nr. 21).
 
 <a id="patch-flash"></a>
-**FlashWindow Patch** *(Nr. 72, Autor: Kebabstorm)* 🟢 **[sicher]**
+**FlashWindow Patch** *(Nr. 73, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Lässt das WoW-Fenster in der Taskleiste blinken, wenn ein relevantes Ereignis
 eintritt und das Spiel im Hintergrund läuft. Dafür wird die in 3.3.5a
@@ -1284,7 +1329,7 @@ das braucht zusätzlich `IsWindowFocused()` aus der `AwesomeWotlkLib.dll`
 (Nr. 28).
 
 <a id="patch-charrandom"></a>
-**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 73, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
+**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 74, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
 
 Beim Öffnen der Charaktererstellung (Klick auf „Neuer Charakter“) und beim
 Wechsel von Volk oder Geschlecht würfelt der Client Gesicht, Haut, Frisur usw.
@@ -1292,7 +1337,7 @@ nicht mehr automatisch aus, man startet mit dem Standard-Aussehen. Der
 Zufall-Knopf funktioniert weiter – er nutzt im Client einen eigenen Weg.
 
 <a id="patch-lootopen"></a>
-**Lootfenster bleibt beim Laufen offen** *(Nr. 74, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Lootfenster bleibt beim Laufen offen** *(Nr. 75, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 Im Original schließt sich das Lootfenster, sobald du läufst, seitwärts gehst
 oder dich drehst. Mit dem Patch bleibt es offen. Die zehn Stellen in den
@@ -1300,16 +1345,16 @@ Bewegungs-Handlern, die das Fenster schließen, werden übersprungen (je ein
 Byte).
 
 <a id="patch-showlevel"></a>
-**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 75, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 76, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 Ist ein feindliches Ziel 10 oder mehr Level über dir, zeigt der Client statt
 des Levels „??“ (bzw. einen Totenkopf auf der Namensplakette, `UnitLevel`
 liefert -1). Mit dem Patch zeigen Tooltip, Namensplakette und `UnitLevel` das
 echte Level. Bosse zeigen weiterhin „??“ – diese Prüfung bleibt erhalten, sie
-nimmt Nr. 76 heraus.
+nimmt Nr. 77 heraus.
 
 <a id="patch-showlevelboss"></a>
-**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 75)** *(Nr. 76, Autor: St0ny)* 🟠 **[online ungetestet]**
+**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 76)** *(Nr. 77, Autor: St0ny)* 🟠 **[online ungetestet]**
 
 Kreaturen, die als Boss markiert sind (Flag in den Kreaturdaten, z. B.
 Schlachtzug- und Dungeonbosse), zeigen im Original immer „??“ – im Tooltip,
@@ -1320,11 +1365,11 @@ steht dort das Level, das der Server für den Boss schickt. Die Beschriftung
 
 > [!NOTE]
 > Ist ein Boss 10 oder mehr Level über dir, greift zusätzlich die
-> Level-Prüfung – deren „??“ entfernt Nr. 75. Für alle Bosse daher zusammen mit
-> Nr. 75 einspielen; der Patcher weist darauf hin, wenn Nr. 75 fehlt.
+> Level-Prüfung – deren „??“ entfernt Nr. 76. Für alle Bosse daher zusammen mit
+> Nr. 76 einspielen; der Patcher weist darauf hin, wenn Nr. 76 fehlt.
 
 <a id="patch-holdrepeat"></a>
-**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 77, Autor: tb (ported by St0ny))* 🔴 **[unsicher - Exe wird größer]**
+**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 78, Autor: tb (ported by St0ny))* 🔴 **[unsicher - Exe wird größer]**
 
 Hältst du die Taste einer Aktionsleisten-Belegung gedrückt (die Hauptleiste,
 `ACTIONBUTTON1`–`12`, mit Seiten-, Haltungs- und Gestaltleisten), löst der
@@ -1352,7 +1397,7 @@ werden.
 > Server verbieten „ein Tastendruck = mehrere Aktionen“.
 
 <a id="patch-bubblerange"></a>
-**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 78, Autor: St0ny)* 🟢 **[sicher]**
+**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 79, Autor: St0ny)* 🟢 **[sicher]**
 
 Der Client zeigt Sprechblasen (Sagen, Gruppe, Schreien, NPC-Sagen und
 NPC-Schreien) nur für Sprecher bis 25 Meter Entfernung. Schickt der Server
@@ -1379,37 +1424,37 @@ PE-Header bleiben unverändert.
 ## Fenster, Maus & Kamera
 
 <a id="patch-window"></a>
-**Fenstermodus als Standard setzen** *(Nr. 79, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus als Standard setzen** *(Nr. 80, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxWindow` standardmäßig auf 1. Das Spiel startet im
 Fenstermodus statt im Vollbild.
 
 > [!TIP]
-> **Nr. 79 und Nr. 80 gehören zusammen:** Nr. 79 schaltet den Fenstermodus ein,
-> Nr. 80 maximiert das Fenster.
+> **Nr. 80 und Nr. 81 gehören zusammen:** Nr. 80 schaltet den Fenstermodus ein,
+> Nr. 81 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 79:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 80:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 80:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 81:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-maximize"></a>
-**Fenstermodus maximiert als Standard setzen** *(Nr. 80, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus maximiert als Standard setzen** *(Nr. 81, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxMaximize` standardmäßig auf 1. Das Fenster wird beim Start
 automatisch maximiert.
 
 > [!TIP]
-> **Nr. 79 und Nr. 80 gehören zusammen:** Nr. 79 schaltet den Fenstermodus ein,
-> Nr. 80 maximiert das Fenster.
+> **Nr. 80 und Nr. 81 gehören zusammen:** Nr. 80 schaltet den Fenstermodus ein,
+> Nr. 81 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 79:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 80:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 80:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 81:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-windowfix"></a>
-**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 81, Autor: Robinsch)* 🟢 **[sicher]**
+**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 82, Autor: Robinsch)* 🟢 **[sicher]**
 
 Wer im laufenden Spiel in den Fenstermodus wechselt, bekommt danach keinen
 schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
@@ -1417,14 +1462,14 @@ schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
 damit das CVar `DesktopGamma` sind ohne Wirkung.
 
 <a id="patch-mouse"></a>
-**Mausflackern / Kamerasprünge Fix** *(Nr. 82, Autor: Robinsch)* 🟢 **[sicher]**
+**Mausflackern / Kamerasprünge Fix** *(Nr. 83, Autor: Robinsch)* 🟢 **[sicher]**
 
 Ein umfangreicher Patch (4 Teile), der Probleme mit Mäusen behebt, die eine
 hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
 <a id="patch-visus"></a>
-**Visus - St0nyCam [BETA]: Schulterkamera und Zoom** *(Nr. 83, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
+**Visus - St0nyCam [BETA]: Schulterkamera und Zoom** *(Nr. 84, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
 
 Eine eigene Schulterkamera und mehr Zoom direkt in der `Wow.exe`, ohne DLL.
 Vorlage für die Schulterkamera ist [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) von
@@ -1495,7 +1540,7 @@ und beschreibbar) und hängt sich an drei Stellen ein:
 ## Sound
 
 <a id="patch-sound"></a>
-**Sound-Einstellungen optimieren** *(Nr. 84, Autor: St0ny)* 🟢 **[sicher]**
+**Sound-Einstellungen optimieren** *(Nr. 85, Autor: St0ny)* 🟢 **[sicher]**
 
 Umfasst folgende Änderungen:
 
@@ -1524,7 +1569,7 @@ einer Meldung neu abgefragt, und alle Werte werden geprüft, bevor irgendetwas
 geschrieben wird. Die Werte merkt sich der Patcher in `patcher_selection.ini`
 (`value.<Id>=…`); mit `-Unattended` gelten die gemerkten Werte, ohne gemerkten
 Wert die Originalwerte – Ausnahmen: Build-Datum (aktueller Zeitpunkt) und Icon
-(Abbruch), siehe Nr. 88 und 89. Steckt ein Patch schon in der `Wow.exe`, ist
+(Abbruch), siehe Nr. 89 und 90. Steckt ein Patch schon in der `Wow.exe`, ist
 sein aktueller Wert der Vorschlag.
 Bei der Abfrage steht er auch hinter dem Patchnamen (`-> Vorschlag: …`, bei einem
 bereits eingespielten Patch `-> aktuell: …`).
@@ -1534,7 +1579,7 @@ bereits eingespielten Patch `-> aktuell: …`).
 > muss also zum Server passen.
 
 <a id="patch-clientversion"></a>
-**Client-Version ändern (Original 3.3.5)** *(Nr. 85, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Client-Version ändern (Original 3.3.5)** *(Nr. 86, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Version im Format `x.y.z` (z. B. `3.3.6` oder `3.3.123`, höchstens
 7 Zeichen). Geändert werden die Version, die der Client im Spiel anzeigt, die
@@ -1544,7 +1589,7 @@ FileVersion-Text (`3, 3, 5, 12340`) wird zur reinen Version (`3.3.6`). Haupt-
 und Nebenversion müssen zusammen in das ProductVersion-Feld passen (z. B. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Build-Nummer ändern (Original 12340)** *(Nr. 86, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Build-Nummer ändern (Original 12340)** *(Nr. 87, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Build-Nummer (6142 bis 65535, Original `12340`): die interne
 Build-Nummer, die sichtbare Build-Nummer und den vierten Teil der FileVersion
@@ -1573,7 +1618,7 @@ den Server.
 > offline.
 
 <a id="patch-clienttitle"></a>
-**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 87, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
+**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 88, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
 
 Setzt FileDescription, InternalName und ProductName der Versionsressource, also
 das, was Windows z. B. in den Dateieigenschaften und im Task-Manager anzeigt.
@@ -1591,7 +1636,7 @@ ab, damit er stehen bleibt.
 > Titel.
 
 <a id="patch-clientdate"></a>
-**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 88, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 89, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Setzt das Build-Datum (Original `Jun 24 2010`) an allen drei Stellen in der EXE
 und das Jahr im Copyright-Vermerk, dazu die Uhrzeit. Die steht an zwei Stellen:
@@ -1611,7 +1656,7 @@ Patchens. Ist der Patch schon eingespielt, steht dort das aktuelle Datum samt
 Uhrzeit der `Wow.exe`.
 
 <a id="patch-clienticon"></a>
-**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 89, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 90, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Tauscht das Icon aus, das Windows für die `Wow.exe` anzeigt (Explorer,
 Taskleiste, Verknüpfungen). Der Patcher fragt nach dem Pfad einer `.ico`-
