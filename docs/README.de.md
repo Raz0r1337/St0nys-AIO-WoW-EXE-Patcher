@@ -36,6 +36,7 @@ originalen `Wow.exe`.
   - [Unter Linux](#unter-linux)
   - [Auf dem Mac](#auf-dem-mac)
 - [Ablauf](#ablauf)
+- [Startmenü](#startmenü)
 - [Patch-Auswahl](#patch-auswahl)
 - [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen)
 - [Parameter für den unbeaufsichtigten Betrieb](#parameter-für-den-unbeaufsichtigten-betrieb)
@@ -64,7 +65,8 @@ originalen `Wow.exe`.
    Darin liegt der Ordner `St0nys-AIO-WoW-EXE-Patcher`.
 2. Die originale `Wow.exe` aus dem WoW-Ordner in diesen Ordner kopieren.
 3. `patcher-win.bat` per Doppelklick starten.
-4. Sprache wählen (nur beim ersten Start), Patches auswählen, bestätigen.
+4. Sprache wählen (nur beim ersten Start), im [Startmenü](#startmenü) `1` für das
+   Patch-Menü, Patches auswählen, bestätigen.
 5. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
    den WoW-Ordner, dort ersetzt sie die alte.
 
@@ -138,13 +140,13 @@ Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
 2. **Sprachauswahl:** `1` = Deutsch, `2` = English. Nur beim ersten Start – danach
    ist die Sprache gemerkt und lässt sich im Menü mit `L` umschalten.
 3. Begrüßung, ENTER zum Starten.
-4. Prüfung, ob eine `Wow.exe` im Ordner vorhanden ist. Fehlt sie, liegen aber
-   noch Sicherungen im Ordner, bietet der Patcher an, sie neu zu bauen oder
-   wiederherzustellen (siehe [Wenn die Wow.exe fehlt](#wenn-die-wowexe-fehlt)).
-5. Prüfung der `Wow.exe`: Beim ersten Start muss sie original und unmodifiziert
+4. Prüfung der `Wow.exe`: Beim ersten Start muss sie original und unmodifiziert
    sein (SHA256). Danach erkennt der Patcher eine von ihm gepatchte `Wow.exe` am
-   Wasserzeichen und ermittelt, welche Patches darin stecken. Alles andere führt
-   zum Abbruch.
+   Wasserzeichen und ermittelt, welche Patches darin stecken.
+5. **Startmenü:** Patch-Menü öffnen oder die `Wow.exe` aus einer Sicherung
+   wiederherstellen (siehe [Startmenü](#startmenü)). Fehlt die `Wow.exe` oder
+   ist sie nicht verwendbar, kann es sie auch neu aus dem Original bauen; ohne
+   Sicherungen bricht der Patcher dann ab.
 6. **Patch-Auswahl** im Menü (siehe unten). Vorausgewählt ist die Auswahl vom
    letzten Mal bzw. bei einer gepatchten `Wow.exe` die Patches, die gerade
    darin stecken.
@@ -161,6 +163,43 @@ Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
 11. Der Patcher merkt sich den Hash der neuen `Wow.exe` samt Original-Bytes in
     `patcher_state.ini` (für einen schnelleren nächsten Start) und zeigt eine
     Abschlussmeldung.
+
+## Startmenü
+
+Nach der Prüfung der `Wow.exe` zeigt der Patcher bei jedem Start ein kleines
+Menü. Darüber stehen die Sicherungen, die im Ordner liegen.
+
+| Eingabe | Wirkung |
+|---------|---------|
+| `1`     | Patch-Menü öffnen (siehe [Patch-Auswahl](#patch-auswahl)) |
+| `2`     | vorherige `Wow.exe` wiederherstellen: Der Patcher kopiert `Wow.exe.BAK` zurück, also den Stand vor dem letzten Patchen |
+| `3`     | Original wiederherstellen: Der Patcher kopiert `Wow.exe.ORI` zurück |
+| `M`     | Patch-Menü öffnen und das Startmenü künftig überspringen (wird gemerkt) |
+| `Q`     | abbrechen, nichts ändern |
+
+Ersetzt `2` oder `3` eine vorhandene `Wow.exe`, fragt der Patcher vorher nach
+(J/N). Die Sicherungen bleiben in jedem Fall erhalten. Angeboten wird nur, was
+sich verwenden lässt: Das Original muss laut SHA256 wirklich das Original sein,
+das Backup original oder mit diesem Patcher gepatcht.
+
+**Startmenü abschalten:** Mit `M` geht es ab dem nächsten Start direkt ins
+Patch-Menü. Wie die Sprache wird das in `patcher_selection.ini` gemerkt
+(`startmenu=off`), beim Start erinnert eine graue Zeile daran. Im Patch-Menü
+schaltet `M` das Startmenü wieder ein und auch wieder aus.
+
+**Wenn die Wow.exe fehlt oder nicht verwendbar ist:** Liegt im Patcher-Ordner
+keine `Wow.exe` mehr – etwa weil du die gepatchte Exe in den WoW-Ordner
+verschoben statt kopiert hast – oder ist sie weder original noch mit diesem
+Patcher gepatcht, erscheint das Startmenü auch dann, wenn es abgeschaltet ist.
+`1` baut dann eine neue `Wow.exe` aus dem Original: Das Patch-Menü startet mit
+den Patches und Werten, die zuletzt eingespielt waren. Du kannst sie
+übernehmen, ändern oder mit `R`, `B` oder `S` ein Preset laden. Ohne Änderung
+entsteht genau die zuletzt gepatchte `Wow.exe` neu; eine nicht verwendbare
+`Wow.exe` wird dabei ersetzt. Gibt es keine Sicherungen, bricht der Patcher ab.
+
+Mit `-Select` (bei verwendbarer `Wow.exe`) und mit `-Unattended` gibt es kein
+Startmenü. Fehlt die `Wow.exe` bei `-Unattended` oder ist sie nicht
+verwendbar, bricht der Patcher ab und weist auf die Sicherungen hin.
 
 ## Patch-Auswahl
 
@@ -182,6 +221,7 @@ Link dazu steht direkt darunter.
 | `A`                | alle Patches an                             |
 | `N`                | alle Patches aus (bei gepatchter `Wow.exe` + ENTER: Original wiederherstellen) |
 | `L`                | Sprache umschalten (Deutsch ↔ English)      |
+| `M`                | Startmenü ein- bzw. ausschalten (gemerkt, siehe [Startmenü](#startmenü)) |
 | `R`                | Preset „Reforged“ laden (= Standard) (**Sicher** – offizielles Preset von [Project Reforged](https://projectreforged.github.io/wotlk/)) |
 | `B`                | Preset „Billy's_Wow.exe“ laden (**Sicher** – basiert auf Billys erprobter Exe) |
 | `S`                | Preset „St0nys_Wow.exe“ laden (**Nicht sicher**, nur auf eigenen Servern verwenden) |
@@ -210,10 +250,12 @@ Sicherheitsabfrage abgebrochen hast.
   von Hand bearbeitet werden. Dort stehen auch die eingegebenen Werte der
   Patches mit eigenem Wert – Client-Infos, Sprunghöhe, Doppelsprung
   (`value.clientversion=3.3.6` usw.).
-- Auch die Sprache wird dort gemerkt (`language=de` bzw. `en`).
+- Auch die Sprache wird dort gemerkt (`language=de` bzw. `en`), ebenso, ob
+  das Startmenü erscheint (`startmenu=on` bzw. `off`).
 - **Zurücksetzen:** im Menü `R` drücken oder `patcher_selection.ini` löschen –
   dann gilt wieder das Preset „Reforged“ (beim Löschen der Datei werden
-  auch Sprache und gemerkte Werte wieder abgefragt).
+  auch Sprache und gemerkte Werte wieder abgefragt, und das Startmenü ist
+  wieder an).
 
 Das Preset „Reforged“ (Taste `R`) ist das offizielle Preset des
 Projekts [Project Reforged](https://projectreforged.github.io/wotlk/),
@@ -254,13 +296,14 @@ gelben Hinweis an.
 
 ## Patches ändern oder zurücknehmen
 
-Eingespielte Patches sind nicht endgültig. Starte `patcher-win.bat` einfach erneut:
-Im Menü sind dann genau die Patches angehakt, die gerade in der `Wow.exe`
-stecken. Neu angehakte Patches sind mit **(neu)** markiert, abgewählte mit
-**(wird zurückgenommen)**. So kannst du beliebig Patches dazunehmen, abwählen
-oder Werte ändern (Sprunghöhe, Doppelsprung, Client-Infos). Mit `N` und ENTER
-nimmst du alle Patches zurück – danach ist die `Wow.exe` wieder **byte-genau
-das Original**. Danach kopierst du die `Wow.exe` wieder in deinen WoW-Ordner.
+Eingespielte Patches sind nicht endgültig. Starte `patcher-win.bat` einfach
+erneut: Im Patch-Menü (Startmenü `1`) sind dann genau die Patches angehakt, die
+gerade in der `Wow.exe` stecken. Neu angehakte Patches sind mit **(neu)**
+markiert, abgewählte mit **(wird zurückgenommen)**. So kannst du beliebig
+Patches dazunehmen, abwählen oder Werte ändern (Sprunghöhe, Doppelsprung,
+Client-Infos). Mit `N` und ENTER nimmst du alle Patches zurück – danach ist die
+`Wow.exe` wieder **byte-genau das Original**. Danach kopierst du die `Wow.exe`
+wieder in deinen WoW-Ordner.
 
 So funktioniert es:
 
@@ -268,8 +311,11 @@ So funktioniert es:
   bricht der Patcher ab. Beim Patchen wird das Original als `Wow.exe.ORI`
   gesichert, und jede gepatchte `Wow.exe` bekommt ein [Wasserzeichen](#hinweise).
 - **Jeder weitere Start:** Ob die `Wow.exe` mit diesem Patcher gepatcht wurde,
-  erkennt er am Wasserzeichen. Fehlt es (und ist die Datei nicht original),
-  bricht er ab – etwa bei einer Exe, die mit einem anderen Tool gepatcht wurde.
+  erkennt er am Wasserzeichen. Fehlt es (und ist die Datei nicht original), ist
+  die `Wow.exe` nicht verwendbar – etwa bei einer Exe, die mit einem anderen
+  Tool gepatcht wurde. Dann bietet das [Startmenü](#startmenü) an, sie aus einer
+  Sicherung wiederherzustellen oder neu aus dem Original zu bauen; ohne
+  Sicherungen bricht der Patcher ab.
 - **Patchstand ermitteln:** Passt der Hash aus `patcher_state.ini` (dort merkt
   sich der Patcher nach jedem Lauf Hash, Patches, Werte und Original-Bytes),
   geht es über diese Datei – das ist der schnelle Weg. Sonst, z. B. wenn die
@@ -282,7 +328,8 @@ So funktioniert es:
 - **Original wiederherstellen:** Aus der gepatchten Exe baut der Patcher im
   Speicher das Original wieder auf, prüft es per SHA256 und spielt darauf die
   neue Auswahl ein. Klappt das nicht exakt – etwa weil die Exe nach dem
-  Patchen noch anderweitig verändert wurde –, bricht er ab.
+  Patchen noch anderweitig verändert wurde –, ist sie nicht verwendbar (siehe
+  oben).
 - Vor dem Schreiben prüft der Patcher außerdem, dass sich das neue Ergebnis
   wieder sauber zum Original zurücknehmen lässt.
 - `Wow.exe.ORI` bleibt bei weiteren Läufen unangetastet und ist immer das
@@ -295,26 +342,6 @@ So funktioniert es:
 > Sprunghöhe `-7.9555473`), ändert keine Bytes und wird bei der Prüfung der Exe
 > deshalb nicht als eingespielt erkannt – er ist dann ja auch wirkungslos.
 
-### Wenn die Wow.exe fehlt
-
-Liegt im Patcher-Ordner keine `Wow.exe` mehr, aber noch die Sicherungen
-`Wow.exe.ORI` und/oder `Wow.exe.BAK` – etwa weil du die gepatchte Exe in den
-WoW-Ordner verschoben statt kopiert hast –, bietet der Patcher beim Start an:
-
-1. **Neue Wow.exe aus dem Original bauen:** Das Menü startet mit den Patches
-   und Werten, die zuletzt eingespielt waren. Du kannst sie übernehmen, ändern
-   oder mit `R`, `B` oder `S` ein Preset laden. Ohne Änderung entsteht genau die
-   zuletzt gepatchte `Wow.exe` neu.
-2. **Vorherige Wow.exe wiederherstellen:** Der Patcher kopiert `Wow.exe.BAK`
-   zurück, also den Stand vor dem letzten Patchen.
-3. **Original wiederherstellen:** Der Patcher kopiert `Wow.exe.ORI` zurück.
-
-`Q` bricht ab. Die Sicherungen bleiben in jedem Fall erhalten. Angeboten wird
-nur, was sich verwenden lässt: Das Original muss laut SHA256 wirklich das
-Original sein, das Backup original oder mit diesem Patcher gepatcht. Mit
-`-Unattended` gibt es kein Menü; der Patcher bricht dann ab und weist auf die
-Sicherungen hin.
-
 ## Parameter für den unbeaufsichtigten Betrieb
 
 Alle Parameter sind optional und werden von `patcher-win.bat` an
@@ -323,8 +350,8 @@ Alle Parameter sind optional und werden von `patcher-win.bat` an
 | Parameter              | Bedeutung                                                                   |
 |------------------------|-----------------------------------------------------------------------------|
 | `-Language de\|en`     | Sprache für diesen Lauf festlegen. Zusammen mit `-Select` bleibt die gemerkte Sprache unverändert; wird die Auswahl im Menü mit ENTER übernommen, wird sie mitgespeichert. |
-| `-Select <Auswahl>`    | Auswahlmenü überspringen: `saved` (gespeicherte Auswahl), `reforged` (Preset „Reforged“, auch `default`), `billy` (Preset „Billy's_Wow.exe“), `stony` (Preset „St0nys_Wow.exe“), `all`, `none` (alle Patches zurücknehmen, Original wiederherstellen) oder Nummern/Bereiche wie `"1,3,5-8"`. Die Auswahl ersetzt die Patches in der `Wow.exe` komplett. Mit `-Select` wird die gespeicherte Auswahl nicht verändert. |
-| `-Unattended`          | keine Rückfragen und keine Pausen. Ohne `-Language` gilt die gemerkte Sprache bzw. Deutsch, ohne `-Select` die gespeicherte Auswahl bzw. das Preset „Reforged“. |
+| `-Select <Auswahl>`    | Auswahlmenü überspringen, bei verwendbarer `Wow.exe` auch das Startmenü: `saved` (gespeicherte Auswahl), `reforged` (Preset „Reforged“, auch `default`), `billy` (Preset „Billy's_Wow.exe“), `stony` (Preset „St0nys_Wow.exe“), `all`, `none` (alle Patches zurücknehmen, Original wiederherstellen) oder Nummern/Bereiche wie `"1,3,5-8"`. Die Auswahl ersetzt die Patches in der `Wow.exe` komplett. Mit `-Select` wird die gespeicherte Auswahl nicht verändert. |
+| `-Unattended`          | keine Rückfragen, keine Pausen und kein Startmenü. Ohne `-Language` gilt die gemerkte Sprache bzw. Deutsch, ohne `-Select` die gespeicherte Auswahl bzw. das Preset „Reforged“. |
 | `-Path <Datei>`        | eine andere `Wow.exe` als die im Skriptordner patchen                        |
 
 Beispiel:
@@ -347,7 +374,7 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 | `docs/README.de.md` | Diese Datei |
 | `docs/PATCHES.de.md` | Ausführliche Beschreibungen aller Patches |
 | `docs/PATCHES.en.md` | Patch-Beschreibungen auf Englisch |
-| `patcher_selection.ini` | Wird beim ersten Start angelegt (gemerkte Sprache) und speichert die übernommene Auswahl samt eingegebenen Werten |
+| `patcher_selection.ini` | Wird beim ersten Start angelegt (gemerkte Sprache) und speichert die übernommene Auswahl samt eingegebenen Werten sowie die Einstellung für das Startmenü |
 | `patcher_state.ini` | Wird beim Patchen angelegt: Hash der gepatchten `Wow.exe`, eingespielte Patches, Werte und Original-Bytes – beschleunigt den nächsten Start, ist aber nicht zwingend nötig |
 | `Wow.exe.ORI`       | Sicherung der originalen `Wow.exe`, angelegt beim ersten Patchen |
 | `Wow.exe.BAK`       | Sicherung der bisherigen `Wow.exe` vor dem letzten Lauf |
@@ -592,11 +619,11 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   Patcher erstellt wurde – z. B. per Hex-Editor oder in der Eingabeaufforderung
   mit `findstr /m /c:"St0nys AIO" Wow.exe` (gibt den Dateinamen aus, wenn er drin
   ist).
-- **Original wiederherstellen:** Patcher starten, `N` und ENTER drücken – mit
-  oder ohne `patcher_state.ini`. Alternativ die gepatchte `Wow.exe` löschen und
-  den Patcher starten: Er bietet dann an, das Original wiederherzustellen
-  (siehe [Wenn die Wow.exe fehlt](#wenn-die-wowexe-fehlt)). `Wow.exe.BAK` ist
-  dagegen die `Wow.exe` von vor dem letzten Lauf.
+- **Original wiederherstellen:** Patcher starten und im
+  [Startmenü](#startmenü) `3` wählen – der Patcher kopiert `Wow.exe.ORI` zurück.
+  Oder im Patch-Menü `N` und ENTER drücken – mit oder ohne
+  `patcher_state.ini`. `Wow.exe.BAK` ist dagegen die `Wow.exe` von vor dem
+  letzten Lauf (im Startmenü `2`).
 - **Für Entwickler:** Die Original-Byte-Tabelle im Skript wird mit
   `apply_patches.ps1 -BuildTable -Path <originale Wow.exe>` neu erzeugt. Das ist
   nach jeder Änderung an einem Patch nötig; passt sie nicht mehr, weist der
