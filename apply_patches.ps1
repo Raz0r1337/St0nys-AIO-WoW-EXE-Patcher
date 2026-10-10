@@ -409,7 +409,7 @@ function PatchTags($p) {
     return $tags
 }
 
-# Name mit Patch-Nummer davor ("Nr. 64 ..."), fuer Hinweise auf andere Patches
+# Name mit Patch-Nummer davor ("Nr. 65 ..."), fuer Hinweise auf andere Patches
 # (ohne Warnungen - die Hinweisliste nennt sie schon).
 function PatchRef($p) {
     $nr = [array]::IndexOf($patches, $p) + 1
@@ -2718,7 +2718,8 @@ $patches = @(
         # DLL, startet WoW ganz normal. Laut wow_optimize bannen manche
         # oeffentlichen Server dafuer.
         # Eingehaengt ist das in den einmaligen Aufruf call 0x7755F0 bei VA
-        # 0x76E490, den nur der Einstiegspunkt erreicht (nach dem Lexara-Lader).
+        # 0x76E490, den nur der Einstiegspunkt erreicht (nach dem Lexara-Lader,
+        # vor dem Lux-Lader).
         # Der Code steht in acht freien Luecken zwischen Funktionen, den
         # DLL-Namen baut der Thread auf dem Stack. Dateigroesse und PE-Header
         # bleiben unveraendert.
@@ -2807,13 +2808,50 @@ $patches = @(
         # zurueckkehrt): push "Lexara.dll" / call [LoadLibraryA] / jmp 0x76E490.
         # Der Name steht in einer zweiten Luecke (VA 0x6DC0E0). Eine Proxy-DLL
         # wird ebenfalls vor dem Einstiegspunkt geladen, der Zeitpunkt passt.
-        # Fehlt die DLL, startet WoW ganz normal.
+        # Fehlt die DLL, startet WoW ganz normal. Lexara laedt selbst die
+        # LuxShoulderCam.dll mit, wenn sie im WoW-Ordner liegt (siehe Lux-Lader).
         Assert-Bytes 0x400 @(0xE8, 0x8B, 0xD4, 0x36, 0x00) 'Lexara-Lader'
         Assert-Bytes 0x2DBCC0 @(0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC) 'Lexara-Lader'
         Assert-Bytes 0x2DB4E0 @(0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC) 'Lexara-Lader'
         Patch 0x401 @(0xBB, 0xB8, 0x2D, 0x00)                   # call __security_init_cookie -> call Lader
         Patch 0x2DBCC0 @(0x68, 0xE0, 0xC0, 0x6D, 0x00, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0xE9, 0xC0, 0x1B, 0x09, 0x00)
         Patch 0x2DB4E0 @(0x4C, 0x65, 0x78, 0x61, 0x72, 0x61, 0x2E, 0x64, 0x6C, 0x6C, 0x00)   # "Lexara.dll"
+    }}
+
+    @{ Id = 'lux'; Cat = 'dll'; On = $false; DllRisky = $true
+       Author = 'St0ny'
+       De = 'LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand)'
+       En = 'Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand)'
+       NoteDe = 'benoetigt LuxShoulderCam - mit Lexara (Nr. 30) nicht noetig'
+       NoteEn = 'requires LuxShoulderCam - not needed with Lexara (No. 30)'
+       Url = 'https://github.com/Stormhand-dev/Lux-Shoulder-Cam'
+       Code = {
+        # Laedt beim Start LuxShoulderCam.dll
+        # (Schulterkamera von Stormhand) aus dem WoW-Ordner - genau wie Lexara,
+        # das die DLL in seinem DllMain direkt nach dem eigenen Start per
+        # LoadLibraryA("LuxShoulderCam.dll") nachlaedt. Wer Lexara nutzt, braucht
+        # diesen Patch nicht; beide zusammen schaden nicht, weil Windows eine DLL
+        # mit demselben Namen nur einmal laedt (zweiter Aufruf = nur Referenz).
+        # Fehlt die DLL, startet WoW ganz normal.
+        # Eingehaengt ist das in den Sprung bei VA 0x76E495 (jmp 0x5EEB70, dort
+        # steht nur ein ret). Ihn erreicht nur der Einstiegspunkt, einmalig nach
+        # dem Lexara- und dem wow_optimize-Lader. Der Code steht in drei freien
+        # 16-Byte-Luecken hinter Aufrufen, die nie zurueckkehren (wie beim
+        # Lexara-Lader), den DLL-Namen legt er auf den Stack. Dateigroesse und
+        # PE-Header bleiben unveraendert.
+        #   A (VA 0x6B68A0): push "ll" / push "am.d" / jmp B
+        #   B (VA 0x6B69C0): push "derC" / push "houl" / jmp C
+        #   C (VA 0x6B6AE0): push "LuxS" / push esp / call [LoadLibraryA] /
+        #                    add esp, 14h / ret
+        # Lux selbst setzt zur Laufzeit einen Sprung in die erste freie Luecke
+        # ab 24 Byte im Code; die drei Luecken hier sind kleiner, Lux waehlt also
+        # dieselbe Stelle wie beim Laden ueber Lexara.
+        Assert-Bytes 0x36D895 @(0xE9, 0xD6, 0x06, 0xE8, 0xFF) 'Lux-Lader'
+        foreach ($o in @(0x2B5CA0, 0x2B5DC0, 0x2B5EE0)) { Assert-Bytes $o (@(0xCC) * 16) 'Lux-Lader' }
+        Patch 0x36D896 @(0x06, 0x84, 0xF4, 0xFF)                       # jmp 0x5EEB70 -> jmp A
+        Patch 0x2B5CA0 @(0x68, 0x6C, 0x6C, 0x00, 0x00, 0x68, 0x61, 0x6D, 0x2E, 0x64, 0xE9, 0x11, 0x01, 0x00, 0x00)   # A
+        Patch 0x2B5DC0 @(0x68, 0x64, 0x65, 0x72, 0x43, 0x68, 0x68, 0x6F, 0x75, 0x6C, 0xE9, 0x11, 0x01, 0x00, 0x00)   # B
+        Patch 0x2B5EE0 @(0x68, 0x4C, 0x75, 0x78, 0x53, 0x54, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0x83, 0xC4, 0x14, 0xC3)   # C
     }}
 
     # --- Gameplay-Fixes ---
@@ -3630,13 +3668,13 @@ $patches = @(
        Author = 'tb (ported by St0ny)'
        De = 'Echtes Level statt "??" bei Gegnern ab 10 Level ueber dir'
        En = 'Real level instead of "??" for enemies 10+ levels above you'
-       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 74'
-       NoteEn = 'bosses still show "??" - see No. 74'
+       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 75'
+       NoteEn = 'bosses still show "??" - see No. 75'
        Code = {
         # Lua UnitLevel (VA 0x60F9E0), Tooltip (VA 0x620EE0) und Namensplakette
         # (VA 0x98EF10) zeigen "??" (bzw. -1 / Totenkopf), wenn ein feindliches
         # Ziel 10 oder mehr Level ueber dir ist. Diese Pruefung ("jle") faellt
-        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 74 raus).
+        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 75 raus).
         Patch 0x20EEB2 @(0x90, 0x90)
         Patch 0x220B66 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)
         Patch 0x58E3B9 @(0x90, 0x90)
@@ -3644,15 +3682,15 @@ $patches = @(
 
     @{ Id = 'showlevelboss'; Cat = 'ui'; On = $false; Needs = @('showlevel'); PublicUntested = $true
        Author = 'St0ny'
-       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 73)'
-       En = 'Real level for bosses too instead of "??" (extension to No. 73)'
+       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 74)'
+       En = 'Real level for bosses too instead of "??" (extension to No. 74)'
        Code = {
         # Ist eine Kreatur als Boss markiert (Flag 0x4 in den Kreatur-Typflags,
         # Pruefung CGUnit_C::IsBossMob bei VA 0x715D70), zeigen UnitLevel,
         # Tooltip und Namensplakette immer "??" bzw. -1 / Totenkopf. Diese drei
         # Boss-Pruefungen fallen weg; die Beschriftung "Boss" im Tooltip und das
         # Elite-Symbol der Namensplakette bleiben. Gegner 10+ Level ueber dir
-        # zeigen ihr Level erst zusammen mit Nr. 73.
+        # zeigen ihr Level erst zusammen mit Nr. 74.
         Patch 0x20EEBD @(0xEB)                                 # VA 0x60FABD UnitLevel: je -> jmp (kein -1)
         Patch 0x220B78 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)   # VA 0x621778 Tooltip: jne "??" -> nop
         Patch 0x58E358 @(0xEB)                                 # VA 0x98EF58 Namensplakette: je -> jmp (Level statt Totenkopf)
@@ -3697,8 +3735,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus als Standard setzen'
        En = 'Windowed mode by default'
-       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 78'
-       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 78'
+       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 79'
+       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 79'
        Code = {
         Patch 0x369A7D @(0x64, 0x14, 0x9E)
     }}
@@ -3707,8 +3745,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus maximiert als Standard setzen'
        En = 'Maximized window by default'
-       NoteDe = 'wirkt nur zusammen mit Nr. 77'
-       NoteEn = 'only works together with No. 77'
+       NoteDe = 'wirkt nur zusammen mit Nr. 78'
+       NoteEn = 'only works together with No. 78'
        Code = {
         Patch 0x369AB2 @(0x64, 0x14, 0x9E)
     }}
@@ -3839,7 +3877,7 @@ $patches = @(
 # Standard-Preset "Reforged" - das offizielle Preset des Projekts
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
-# Warmane getestet (Nr. 9, 64 und 65 vergroessern die Wow.exe); dazu der
+# Warmane getestet (Nr. 9, 65 und 66 vergroessern die Wow.exe); dazu der
 # Lexara-Lader (Nr. 30, Patch sicher, DLL riskant). Im Menue mit R, ueber
 # -Select reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
@@ -3954,6 +3992,10 @@ wotlkext;E5100;B6006A18526860659F00E881561D0083C40C84C074206854659F00E8C0BFF7FF6
 lexara;401;8BD43600;1
 lexara;2DB4E0;CCCCCCCCCCCCCCCCCCCCCC;1
 lexara;2DBCC0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+lux;2B5CA0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+lux;2B5DC0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+lux;2B5EE0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+lux;36D896;D606E8FF;1
 areatrigger;2DB241;64;1
 swing;2E1C67;6AFF6A408BCEE8BE830500;1
 npcanim;33D785;75308B96380A0000F7C2000800007522F6C1207516F7C200100000750E83F80B740583F80C752A33C9EB0CB90C000000EB05B90B0000003BC174168BCEE8C9FAFDFF85C0740B6AFF6A008BCEE85AC8FFFF;1
