@@ -1227,13 +1227,14 @@ the switches are called `hidden`, `self`, `party`, `raid`, `wallsgroup`,
 > in the raid are drawn that way.
 
 > [!NOTE]
-> **Only where hidden** (also for party/raid): only what is drawn before your
-> figure is detected. The game normally draws terrain and buildings before the
-> figures. Whatever comes afterwards – a plate on the table in front of you,
-> say – hides your figure without an outline appearing there. Also, whatever
-> hides it has to lie a bit in front of the figure, otherwise there would be a
-> line on the ground right under the feet: about 0.1 yards at 10 yards camera
-> distance, 0.2 yards at 15 and almost 1 yard at 30.
+> **Only where hidden** (also for party/raid): what is drawn before your
+> figure is detected. The game normally draws terrain and buildings first; all
+> other figures and objects – a lantern, a mailbox or a plate on the table in
+> front of you, say – are drawn before the outlined figures by the patch as
+> well. Transparent things like water or spell effects do not hide anything.
+> Also, whatever hides it has to lie a bit in front of the figure, otherwise
+> there would be a line on the ground right under the feet: about 0.1 yards at
+> 10 yards camera distance, 0.2 yards at 15 and almost 1 yard at 30.
 
 How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
@@ -1244,10 +1245,15 @@ How it works:
   these copies mark the outline and store the figure's depth there. Every
   outlined figure (target, mouseover, you, every party and raid member, up to
   48) gets a value of its own and so a color of its own.
-- Whatever is drawn afterwards in front of the figure (e.g. bushes,
-  mushrooms, grass) clears the mark at its pixels and so hides the outline as
-  well. Things behind stay behind the outline thanks to the stored depth.
-  Transparent things like water or spell effects leave the outline in place.
+- The game sorts opaque models by model and texture, not by distance, and
+  draws batched doodads (`M2BatchDoodads`) after them. The patch moves the
+  parts of outlined figures to the end of this order; among themselves it
+  stays as it was. So everything else is already in the depth buffer when the
+  outlined figures are drawn.
+- Whatever is still drawn afterwards in front of the figure clears the mark at
+  its pixels and so hides the outline as well. Things behind stay behind the
+  outline thanks to the stored depth. Transparent things like water or spell
+  effects leave the outline in place.
 - Further parts of the same figure (cloak, weapon, mount) are drawn once more
   on their own outline without depth test, so no outline is left between the
   parts.
@@ -1269,7 +1275,7 @@ How it works:
 - Hostile means: the player's selection circle would be red. Then the quad
   mixes their class color with red; the share of red rises and falls smoothly
   (cosine), one pulse takes 1.5 seconds.
-- Code and data live in a section of their own (`.outl`, 0x1310 bytes). Each
+- Code and data live in a section of their own (`.outl`, 0x14F0 bytes). Each
   switch is a single padding byte between two functions in `.text` that the
   chosen setting sets to 1; the code reads these switches while drawing. This is also
   how the patcher recognizes the settings in a patched `Wow.exe`.

@@ -1269,13 +1269,15 @@ eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
 > gezeichnet.
 
 > [!NOTE]
-> **Nur dort, wo verdeckt** (auch für Gruppe/Schlachtzug): Erkannt wird nur,
-> was vor deiner Figur gezeichnet wird. Gelände und Gebäude zeichnet das Spiel
-> normalerweise vor den Figuren. Was erst danach kommt – etwa ein Teller auf
-> dem Tisch vor dir –, verdeckt deine Figur, ohne dass dort ein Rand erscheint.
-> Außerdem muss das Verdeckende ein Stück vor der Figur liegen, sonst gäbe es
-> direkt unter den Füßen eine Linie am Boden: rund 0,1 Yards bei 10 Yards
-> Kameraabstand, 0,2 Yards bei 15 und knapp 1 Yard bei 30.
+> **Nur dort, wo verdeckt** (auch für Gruppe/Schlachtzug): Erkannt wird, was
+> vor deiner Figur gezeichnet wird. Gelände und Gebäude zeichnet das Spiel
+> normalerweise zuerst; alle anderen Figuren und Objekte – etwa eine Laterne,
+> ein Briefkasten oder ein Teller auf dem Tisch vor dir – zeichnet der Patch
+> ebenfalls vor den umrandeten Figuren. Durchsichtiges wie Wasser oder
+> Zaubereffekte verdeckt nicht. Außerdem muss das Verdeckende ein Stück vor
+> der Figur liegen, sonst gäbe es direkt unter den Füßen eine Linie am Boden:
+> rund 0,1 Yards bei 10 Yards Kameraabstand, 0,2 Yards bei 15 und knapp
+> 1 Yard bei 30.
 
 So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
@@ -1287,10 +1289,15 @@ So funktioniert es:
   Figur ein. Jede umrandete Figur (Ziel, Mouseover, du, jedes Gruppen- und
   Schlachtzug-Mitglied, bis zu 48) bekommt dabei ihren eigenen Wert und so
   ihre eigene Farbe.
-- Was danach gezeichnet wird und vor der Figur liegt (z. B. Büsche, Pilze,
-  Gras), löscht die Markierung an seinen Pixeln und verdeckt so auch den Rand.
-  Dinge dahinter bleiben dank der eingetragenen Tiefe hinter dem Rand.
-  Durchsichtiges wie Wasser oder Zaubereffekte lässt den Rand stehen.
+- Undurchsichtige Modelle sortiert das Spiel nach Modell und Textur, nicht nach
+  Entfernung, und zeichnet gebündelte Deko-Objekte (`M2BatchDoodads`) erst
+  danach. Der Patch stellt die Teile umrandeter Figuren ans Ende dieser
+  Reihenfolge, untereinander bleibt sie, wie sie war. So liegt alles andere
+  schon im Tiefenpuffer, wenn die umrandeten Figuren gezeichnet werden.
+- Was danach noch gezeichnet wird und vor der Figur liegt, löscht die
+  Markierung an seinen Pixeln und verdeckt so auch den Rand. Dinge dahinter
+  bleiben dank der eingetragenen Tiefe hinter dem Rand. Durchsichtiges wie
+  Wasser oder Zaubereffekte lässt den Rand stehen.
 - Weitere Teile derselben Figur (Umhang, Waffe, Reittier) werden auf ihrem
   eigenen Rand noch einmal ohne Tiefentest gezeichnet, damit kein Rand
   zwischen den Teilen hängen bleibt.
@@ -1312,7 +1319,7 @@ So funktioniert es:
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x1310 Byte). Jeder
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x14F0 Byte). Jeder
   Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
   die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
   Zeichnen.
