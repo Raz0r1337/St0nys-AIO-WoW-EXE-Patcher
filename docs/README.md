@@ -512,9 +512,6 @@ clicking the number of a patch takes you straight to its description.
   patches. His patch set is included as the preset "Billy's_Wow.exe".
 - Thanks also to **MacWarrior**, who also helped collect the patches and
   contributed some of his own.
-- Thanks also to **Stormhand** for the official preset of his project
-  [Project Reforged](https://projectreforged.github.io/wotlk/): it is included
-  as the preset "Reforged" and is the default selection.
 - A big thank you to **Stormhand**, **MacWarrior** and **Billy Hoyle** for all
   the testing in game – and to Stormhand in particular for risking their own
   Warmane account to find out which patches are "safe" to use. 😄
