@@ -32,8 +32,9 @@ originalen `Wow.exe`.
 ## Inhalt
 
 - [Voraussetzungen](#voraussetzungen)
-- [Benutzung](#benutzung)
+- [Benutzung unter Windows](#benutzung-unter-windows)
   - [Unter Linux](#unter-linux)
+  - [Auf dem Mac](#auf-dem-mac)
 - [Ablauf](#ablauf)
 - [Patch-Auswahl](#patch-auswahl)
 - [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen)
@@ -49,22 +50,23 @@ originalen `Wow.exe`.
 
 ## Voraussetzungen
 
-- Windows mit PowerShell (Windows PowerShell 5.1 ist ab Windows 10 vorinstalliert) –
-  Linux: siehe [Unter Linux](#unter-linux)
+- Windows mit PowerShell (Windows PowerShell 5.1 ist ab Windows 10 vorinstalliert),
+  Linux oder Mac mit PowerShell 7 – siehe [Unter Linux](#unter-linux) und
+  [Auf dem Mac](#auf-dem-mac)
 - Eine **originale, unmodifizierte** `Wow.exe` 3.3.5a, Build 12340 mit
   SHA256 `AA63A5750D60EF16746C686B3D5E26876D98953EAB08B1C026CD0FAF78E88CB8`
   (nur beim ersten Start; danach genügt eine mit diesem Patcher gepatchte
   `Wow.exe`)
 
-## Benutzung
+## Benutzung unter Windows
 
 1. Das ZIP vom [neuesten Release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) herunterladen und entpacken.
    Darin liegt der Ordner `St0nys-AIO-WoW-EXE-Patcher`.
 2. Die originale `Wow.exe` aus dem WoW-Ordner in diesen Ordner kopieren.
 3. `patcher-win.bat` per Doppelklick starten.
 4. Sprache wählen (nur beim ersten Start), Patches auswählen, bestätigen.
-5. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren,
-   dort ersetzt sie die alte.
+5. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
+   den WoW-Ordner, dort ersetzt sie die alte.
 
 Patches **ändern oder zurücknehmen:** `patcher-win.bat` im Patcher-Ordner einfach
 erneut starten und die `Wow.exe` danach wieder in den WoW-Ordner kopieren,
@@ -98,11 +100,37 @@ Ubuntu 24.04.
 3. Im Terminal in diesem Ordner `./patcher-lin.sh` starten. Falls das nicht
    startet (z. B. weil beim Entpacken das Ausführungsrecht verloren ging):
    `sh patcher-lin.sh`.
-4. WoW beenden und die gepatchte `Wow.exe` zurück in den WoW-Ordner kopieren.
+4. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
+   den WoW-Ordner.
 
 Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
-`patcher-win.bat` steht, nimmst du `./patcher-lin.sh`. Auf einem Mac kann der
-Patcher mit PowerShell 7 ebenfalls funktionieren, das ist aber ungetestet.
+`patcher-win.bat` steht, nimmst du `./patcher-lin.sh`.
+
+### Auf dem Mac
+
+> [!NOTE]
+> Ich habe keinen Mac und kann den Patcher dort nicht testen. Die Anleitung
+> sollte funktionieren, weil es PowerShell 7 auch für macOS gibt – eine
+> Garantie gibt es aber nicht. Wenn du es ausprobierst, freue ich mich über
+> eine Rückmeldung als [Issue](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/issues).
+
+Der Patcher verändert die Windows-`Wow.exe`, den Mac-Client selbst kann er
+nicht patchen. Auf dem Mac ist das die `Wow.exe`, die du z. B. mit CrossOver
+oder Wine startest.
+
+1. PowerShell 7 installieren, z. B. mit [Homebrew](https://brew.sh):
+   `brew install --cask powershell`. Alternativ gibt es ein
+   Installationspaket von Microsoft ([Anleitung](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-macos)).
+2. Das ZIP entpacken und die originale `Wow.exe` in den Ordner
+   `St0nys-AIO-WoW-EXE-Patcher` kopieren – wie unter Windows.
+3. Das Terminal öffnen und in diesen Ordner wechseln, z. B. `cd ` eingeben und
+   den Ordner ins Terminal-Fenster ziehen. Dann `sh patcher-lin.sh` starten –
+   die Linux-Startdatei sollte auch auf dem Mac funktionieren.
+4. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
+   den WoW-Ordner.
+
+Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
+`patcher-win.bat` steht, nimmst du `sh patcher-lin.sh`.
 
 ## Ablauf
 
@@ -292,7 +320,7 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 | Datei               | Zweck |
 |---------------------|-------|
 | `patcher-win.bat`   | Startdatei für Windows, ruft `apply_patches.ps1` auf |
-| `patcher-lin.sh`    | Startdatei für Linux |
+| `patcher-lin.sh`    | Startdatei für Linux, auch für den Mac |
 | `apply_patches.ps1` | Patch-Engine: Sprachwahl, Prüfungen, Auswahlmenü, Backup; liest die EXE einmal, patcht im Speicher, schreibt einmal zurück |
 | `docs/README.md`    | Englische Anleitung |
 | `docs/README.de.md` | Diese Datei |
