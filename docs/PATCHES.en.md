@@ -508,6 +508,10 @@ missing, WoW starts normally.
 > `LoadLibraryA("LuxShoulderCam.dll")` just gets the already loaded DLL back,
 > its startup code does not run a second time.
 
+Do not use it together with Visus - St0nyCam (No. 83): both hook the same spot
+of the camera (VA `0x6070CB`). If Visus is applied, Lux does not hook in there,
+and Lux's height and offset have no effect.
+
 File size and PE header stay unchanged: at startup the jump at VA `0x76E495`
 (to a plain `ret`) runs once – after the Lexara and wow_optimize loaders,
 before the voice.dll loader. It now leads through three free 16-byte gaps (VA
@@ -1371,10 +1375,78 @@ have no effect.
 A larger patch (4 parts) that fixes problems with mice using a high polling
 rate. Prevents cursor flicker and uncontrolled camera movement.
 
+<a id="patch-visus"></a>
+**Visus - St0nyCam [BETA]: shoulder camera and zoom** *(No. 83, Author: St0ny)* 🟠 **[untested - exe grows]**
+
+A shoulder camera of its own and more zoom directly in `Wow.exe`, without a
+DLL. The template for the shoulder camera is [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam)
+by Stormhand – with his permission. The code is new and based on our own
+analysis of the exe.
+
+> [!WARNING]
+> **BETA** – still untested, online and in game. That is why the patch is
+> deselected by default and only in the dev branches for now, not in
+> `st0ny-main`.
+
+**Shoulder camera** – two new console variables:
+
+| CVar            | Default | Range        | Effect |
+|-----------------|---------|--------------|--------|
+| `visusHeight`   | 0       | -1.0 to 1.0  | raises or lowers the point the camera orbits around (in yards) |
+| `visusShoulder` | 0       | -2.0 to 2.0  | shifts it sideways to the view direction: positive to the right (look over the right shoulder, the character stands on the left of the screen), negative to the left |
+
+The offset turns with the camera; in first person there is none. Values
+outside the ranges are set to the limit. Both values take effect at once and
+are saved in `Config.wtf` like the other camera settings. Examples for the
+chat or a macro:
+
+```
+/console visusShoulder 1
+/console visusHeight 0.5
+/run SetCVar("visusShoulder", GetCVar("visusShoulder") == "0" and 1 or 0)
+```
+
+The last line switches the shoulder camera on and off – put it on a key as a
+macro.
+
+**Zoom** – WoW limits the camera distance to a fixed 50 yards, Visus raises the
+limit to 100 yards. It is set as usual: maximum distance = `cameraDistanceMax`
+(default 15, now allowed up to 100) × `cameraDistanceMaxFactor` (also set by
+the camera distance slider in the interface options), e.g.
+`/console cameraDistanceMaxFactor 4` for 60 yards. The zoom speed
+`cameraDistanceMoveSpeed` now defaults to 20 instead of 8.33 and can still be
+set up to 50. Values you already have in `Config.wtf` are kept.
+
+> [!NOTE]
+> Do not use it together with LuxShoulderCam (Lux loader No. 31 or via Lexara):
+> both hook the same spot of the camera. With Visus, Lux does not hook in
+> there, and Lux's height and offset have no effect.
+
+<details>
+<summary><b>Background: how the patch is built in</b></summary>
+
+Visus appends a section `.visus` of its own to the exe (512 bytes, executable
+and writable) and hooks in at three places:
+
+- **New variables:** The function that creates all camera variables (VA
+  `0x5FD910`) jumps into the section at its end (VA `0x5FE2AF`). There
+  `visusHeight` and `visusShoulder` are created with the same settings as the
+  client's camera variables.
+- **Camera:** At VA `0x6070CB` the camera function has just computed the
+  focus point. Visus adds the height and shifts the point sideways to the view
+  direction. The direction comes from the camera position and the focus point
+  shifted in the last frame – so the offset always stays exactly sideways to
+  the camera.
+- **Zoom:** Eight places of the camera read the fixed limit of 50 yards; they
+  now point to 100 in the section. The limit of the zoom speed (also 50) stays
+  unchanged, the default of the speed is in the section.
+
+</details>
+
 ## Sound
 
 <a id="patch-sound"></a>
-**Optimize sound settings** *(No. 83, Author: St0ny)* 🟢 **[safe]**
+**Optimize sound settings** *(No. 84, Author: St0ny)* 🟢 **[safe]**
 
 Includes the following changes:
 
@@ -1403,7 +1475,7 @@ message and asked for again, and all values are checked before anything is
 written. The patcher remembers the values in `patcher_selection.ini`
 (`value.<Id>=…`); with `-Unattended` the remembered values are used, otherwise
 the original values – exceptions: build date (current time) and icon (the
-patcher aborts), see No. 87 and 88. If a patch is already in `Wow.exe`, its
+patcher aborts), see No. 88 and 89. If a patch is already in `Wow.exe`, its
 current value is the suggestion. When asking, it is also shown after the patch
 name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 
@@ -1412,7 +1484,7 @@ name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 > to match the server.
 
 <a id="patch-clientversion"></a>
-**Change client version (original 3.3.5)** *(No. 84, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change client version (original 3.3.5)** *(No. 85, Author: MacWarrior)* 🔴 **[unsafe]**
 
 Sets a new version in the format `x.y.z` (e.g. `3.3.6` or `3.3.123`, at most 7
 characters). Changes the version the client shows in-game, the FileVersion and
@@ -1422,7 +1494,7 @@ The build number in `VS_FIXEDFILEINFO` is kept; the FileVersion text
 together must fit into the ProductVersion field (e.g. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Change build number (original 12340)** *(No. 85, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change build number (original 12340)** *(No. 86, Author: MacWarrior)* 🔴 **[unsafe]**
 
 Sets a new build number (6142 to 65535, original `12340`): the internal build
 number, the visible build number and the fourth part of the FileVersion in
@@ -1450,7 +1522,7 @@ different login protocol – a 3.3.5 client can no longer get onto the server.
 > it as offline.
 
 <a id="patch-clienttitle"></a>
-**Change program title (file properties and window title)** *(No. 86, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
+**Change program title (file properties and window title)** *(No. 87, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
 
 Sets FileDescription, InternalName and ProductName of the version resource,
 i.e. what Windows shows in the file properties and the Task Manager. At most 17
@@ -1466,7 +1538,7 @@ custom title to the first place and disables the two calls so that it stays.
 > as the title of error messages – the custom title appears there as well.
 
 <a id="patch-clientdate"></a>
-**Change build date (original Jun 24 2010)** *(No. 87, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change build date (original Jun 24 2010)** *(No. 88, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 Sets the build date (original `Jun 24 2010`) at all three places in the EXE and
 the year in the copyright notice, plus the time. The time is stored in two
@@ -1485,7 +1557,7 @@ the time of patching if nothing is remembered. If the patch is already applied,
 the current date and time of `Wow.exe` are suggested.
 
 <a id="patch-clienticon"></a>
-**Change program icon (icon of Wow.exe)** *(No. 88, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change program icon (icon of Wow.exe)** *(No. 89, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 Replaces the icon Windows shows for `Wow.exe` (Explorer, taskbar, shortcuts).
 The patcher asks for the path of an `.ico` or `.png` file, absolute or

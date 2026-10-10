@@ -573,6 +573,186 @@ function Add-HdPortraits([int]$SIZE) {
 }
 
 # ============================================================
+#  Helfer fuer Visus - St0nyCam (Schulterkamera und Zoom, BETA)
+#  Eigene Umsetzung aus eigener Analyse dieser Exe. Vorlage fuer die
+#  Schulterkamera ist LuxShoulderCam von Stormhand (mit seiner Erlaubnis):
+#  Blickpunkt der Kamera anheben und quer zur Blickrichtung verschieben.
+#
+#  1. CVars: Am Ende der Funktion, die alle Kamera-CVars anlegt (VA
+#     0x5FD910), zeigt der letzte Befehl vor dem Epilog (mov [0xC24970], eax
+#     bei VA 0x5FE2AF) auf einen Sprung in die Sektion. Dort werden mit
+#     CVar_Register (VA 0x767FC0, cdecl, 9 Argumente) visusHeight und
+#     visusShoulder angelegt - Flags 0x10, Kategorie 5, Vorgabe "0", wie die
+#     Kamera-CVars. Die Zeiger auf die CVar-Objekte merkt sich die Sektion,
+#     den Zahlenwert liest der Kamera-Haken bei jedem Bild frisch (+2Ch).
+#  2. Kamera-Haken: Die Kamera-Funktion (VA 0x606F90) hat bei VA 0x6070CB
+#     gerade den Blickpunkt berechnet (X/Y/Z in [ebp-34h]/[ebp-30h]/[ebp-2Ch],
+#     esi = Kamera, Position X/Y bei +8/+0Ch). Statt fld [0x9F1670] springt
+#     sie in die Sektion:
+#       - Z += visusHeight, begrenzt auf -1 .. 1.
+#       - X/Y werden um visusShoulder (-2 .. 2) quer zur Blickrichtung
+#         verschoben, positiv = nach rechts (die Figur steht dann links im
+#         Bild). Die Blickrichtung kommt aus der Kameraposition minus dem im
+#         letzten Bild verschobenen Blickpunkt (gleiche Kamera), sonst minus
+#         dem aktuellen Blickpunkt - so dreht der Versatz exakt mit der Kamera.
+#         Ist die Kamera naeher als 0.01 am Blickpunkt (Ich-Perspektive), gibt
+#         es keinen Seitenversatz.
+#       - Danach der ueberschriebene Befehl und zurueck nach VA 0x6070D1.
+#  3. Zoom: Die feste Grenze der Kamera von 50 Yards (float bei 0xA1E2FC)
+#     lesen acht Stellen: Pruefung von cameraDistanceMax, maximale Entfernung,
+#     gespeicherte Fahrzeug-Entfernung, Zoom-Funktion. Sie zeigen jetzt auf
+#     100.0 in der Sektion. Die Pruefung von cameraDistanceMoveSpeed (VA
+#     0x5FD87B) liest dieselbe Konstante als Tempo-Grenze - die bleibt bei 50.
+#     Vorgabe von cameraDistanceMoveSpeed: 8.33 -> 20.
+#  Sektion ".visus" (0x200 Byte, ausfuehrbar + beschreibbar):
+#     +0x000 Registrierung, +0x060 Kamera-Haken, +0x180 Daten,
+#     +0x1A0 Konstanten 1.0/-1.0/2.0/-2.0/0.01/100.0, +0x1C0 Texte.
+# ============================================================
+function Add-Visus {
+    $TEXT_DIFF  = 0x400C00
+    $REG_HOOK   = 0x5FE2AF          # mov [0xC24970], eax (Ende der Kamera-CVars)
+    $CAM_HOOK   = 0x6070CB          # fld dword [0x9F1670] (Blickpunkt fertig)
+    $SPEED_PUSH = 0x5FDA37          # push "8.33" (Vorgabe cameraDistanceMoveSpeed)
+    $CAP_SITES  = @(0x5FD699, 0x5FE572, 0x5FF3F7, 0x600137, 0x60015F, 0x6005E0, 0x6005FE, 0x600922)
+    Assert-Bytes ($REG_HOOK - $TEXT_DIFF) @(0xA3, 0x70, 0x49, 0xC2, 0x00) 'Visus'
+    Assert-Bytes ($CAM_HOOK - $TEXT_DIFF) @(0xD9, 0x05, 0x70, 0x16, 0x9F, 0x00) 'Visus'
+    Assert-Bytes ($SPEED_PUSH - $TEXT_DIFF) @(0xE0, 0xE7, 0xA1, 0x00) 'Visus'
+    foreach ($a in $CAP_SITES) { Assert-Bytes ($a - $TEXT_DIFF) @(0xFC, 0xE2, 0xA1, 0x00) 'Visus' }
+
+    $sec = Add-CodeSection '.visus' 0x200 -Writable
+    $V = $sec[0]
+    $blk = New-Object byte[] 0x200
+    for ($i = 0; $i -lt $blk.Length; $i++) { $blk[$i] = 0xCC }
+
+    $c = New-Object System.Collections.Generic.List[byte]
+    AddRaw $c @(0xA3, 0x70, 0x49, 0xC2, 0x00)                 # mov dword ptr [0xc24970], eax
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x6A, 0x05)                                   # push 5
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x68); AddLE32 $c ($V + 0x1C0)                # push [V+0x1C0]  ("0")
+    AddRaw $c @(0x6A, 0x10)                                   # push 0x10
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x68); AddLE32 $c ($V + 0x1C8)                # push [V+0x1C8]  ("visusHeight")
+    AddRaw $c @(0xE8); AddLE32 $c (0x767FC0 - ($V + 0x022))   # call 0x767fc0
+    AddRaw $c @(0xA3); AddLE32 $c ($V + 0x180)                # mov dword ptr [V+0x180], eax  (CVar visusHeight)
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x6A, 0x05)                                   # push 5
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x68); AddLE32 $c ($V + 0x1C0)                # push [V+0x1C0]  ("0")
+    AddRaw $c @(0x6A, 0x10)                                   # push 0x10
+    AddRaw $c @(0x6A, 0x00)                                   # push 0
+    AddRaw $c @(0x68); AddLE32 $c ($V + 0x1D8)                # push [V+0x1D8]  ("visusShoulder")
+    AddRaw $c @(0xE8); AddLE32 $c (0x767FC0 - ($V + 0x044))   # call 0x767fc0
+    AddRaw $c @(0x83, 0xC4, 0x48)                             # add esp, 0x48
+    AddRaw $c @(0xA3); AddLE32 $c ($V + 0x184)                # mov dword ptr [V+0x184], eax  (CVar visusShoulder)
+    AddRaw $c @(0xE9); AddLE32 $c (0x5FE2B4 - ($V + 0x051))   # jmp 0x5fe2b4
+    [Array]::Copy($c.ToArray(), 0, $blk, 0x000, $c.Count)
+
+    $c = New-Object System.Collections.Generic.List[byte]
+    AddRaw $c @(0xA1); AddLE32 $c ($V + 0x180)                                              # mov eax, dword ptr [V+0x180]  (CVar visusHeight)
+    AddRaw $c @(0x85, 0xC0)                                                                 # test eax, eax
+    AddRaw $c @(0x74, 0x21)                                                                 # je V+0x08A
+    AddRaw $c @(0xD9, 0x40, 0x2C)                                                           # fld dword ptr [eax + 0x2c]
+    AddRaw $c @(0xD9, 0x05); AddLE32 $c ($V + 0x1A0)                                        # fld dword ptr [V+0x1A0]  (1.0)
+    AddRaw $c @(0xDB, 0xF1)                                                                 # fcomi st(1)
+    AddRaw $c @(0xDB, 0xC1)                                                                 # fcmovnb st(0), st(1)
+    AddRaw $c @(0xDD, 0xD9)                                                                 # fstp st(1)
+    AddRaw $c @(0xD9, 0x05); AddLE32 $c ($V + 0x1A4)                                        # fld dword ptr [V+0x1A4]  (-1.0)
+    AddRaw $c @(0xDB, 0xF1)                                                                 # fcomi st(1)
+    AddRaw $c @(0xDA, 0xC1)                                                                 # fcmovb st(0), st(1)
+    AddRaw $c @(0xDD, 0xD9)                                                                 # fstp st(1)
+    AddRaw $c @(0xD8, 0x45, 0xD4)                                                           # fadd dword ptr [ebp - 0x2c]
+    AddRaw $c @(0xD9, 0x5D, 0xD4)                                                           # fstp dword ptr [ebp - 0x2c]
+    AddRaw $c @(0xA1); AddLE32 $c ($V + 0x184)                                              # mov eax, dword ptr [V+0x184]  (CVar visusShoulder)
+    AddRaw $c @(0x85, 0xC0)                                                                 # test eax, eax
+    AddRaw $c @(0x0F, 0x84, 0x8E, 0x00, 0x00, 0x00)                                         # je V+0x125
+    AddRaw $c @(0xD9, 0x40, 0x2C)                                                           # fld dword ptr [eax + 0x2c]
+    AddRaw $c @(0xD9, 0x05); AddLE32 $c ($V + 0x1A8)                                        # fld dword ptr [V+0x1A8]  (2.0)
+    AddRaw $c @(0xDB, 0xF1)                                                                 # fcomi st(1)
+    AddRaw $c @(0xDB, 0xC1)                                                                 # fcmovnb st(0), st(1)
+    AddRaw $c @(0xDD, 0xD9)                                                                 # fstp st(1)
+    AddRaw $c @(0xD9, 0x05); AddLE32 $c ($V + 0x1AC)                                        # fld dword ptr [V+0x1AC]  (-2.0)
+    AddRaw $c @(0xDB, 0xF1)                                                                 # fcomi st(1)
+    AddRaw $c @(0xDA, 0xC1)                                                                 # fcmovb st(0), st(1)
+    AddRaw $c @(0xDD, 0xD9)                                                                 # fstp st(1)
+    AddRaw $c @(0xD9, 0xEE)                                                                 # fldz
+    AddRaw $c @(0xDF, 0xF1)                                                                 # fcompi st(1)
+    AddRaw $c @(0x74, 0x6B)                                                                 # je V+0x123
+    AddRaw $c @(0x3B, 0x35); AddLE32 $c ($V + 0x190)                                        # cmp esi, dword ptr [V+0x190]  (letzte Kamera)
+    AddRaw $c @(0x75, 0x1D)                                                                 # jne V+0x0DD
+    AddRaw $c @(0x83, 0x3D); AddLE32 $c ($V + 0x194); AddRaw $c @(0x00)                     # cmp dword ptr [V+0x194], 0  (gemerkt)
+    AddRaw $c @(0x74, 0x14)                                                                 # je V+0x0DD
+    AddRaw $c @(0xD9, 0x46, 0x0C)                                                           # fld dword ptr [esi + 0xc]
+    AddRaw $c @(0xD8, 0x25); AddLE32 $c ($V + 0x18C)                                        # fsub dword ptr [V+0x18C]  (letztes Y)
+    AddRaw $c @(0xD9, 0x46, 0x08)                                                           # fld dword ptr [esi + 8]
+    AddRaw $c @(0xD8, 0x25); AddLE32 $c ($V + 0x188)                                        # fsub dword ptr [V+0x188]  (letztes X)
+    AddRaw $c @(0xEB, 0x0C)                                                                 # jmp V+0x0E9
+    AddRaw $c @(0xD9, 0x46, 0x0C)                                                           # fld dword ptr [esi + 0xc]
+    AddRaw $c @(0xD8, 0x65, 0xD0)                                                           # fsub dword ptr [ebp - 0x30]
+    AddRaw $c @(0xD9, 0x46, 0x08)                                                           # fld dword ptr [esi + 8]
+    AddRaw $c @(0xD8, 0x65, 0xCC)                                                           # fsub dword ptr [ebp - 0x34]
+    AddRaw $c @(0xD9, 0xC0)                                                                 # fld st(0)
+    AddRaw $c @(0xD8, 0xC8)                                                                 # fmul st(0)
+    AddRaw $c @(0xD9, 0xC2)                                                                 # fld st(2)
+    AddRaw $c @(0xD8, 0xC8)                                                                 # fmul st(0)
+    AddRaw $c @(0xDE, 0xC1)                                                                 # faddp st(1)
+    AddRaw $c @(0xD9, 0xFA)                                                                 # fsqrt
+    AddRaw $c @(0xD9, 0x05); AddLE32 $c ($V + 0x1B0)                                        # fld dword ptr [V+0x1B0]  (0.01)
+    AddRaw $c @(0xDF, 0xF1)                                                                 # fcompi st(1)
+    AddRaw $c @(0x7A, 0x1E)                                                                 # jp V+0x11D
+    AddRaw $c @(0x73, 0x1C)                                                                 # jae V+0x11D
+    AddRaw $c @(0xD8, 0xFB)                                                                 # fdivr st(3)
+    AddRaw $c @(0xD9, 0xC2)                                                                 # fld st(2)
+    AddRaw $c @(0xD8, 0xC9)                                                                 # fmul st(1)
+    AddRaw $c @(0xD8, 0x6D, 0xCC)                                                           # fsubr dword ptr [ebp - 0x34]
+    AddRaw $c @(0xD9, 0x5D, 0xCC)                                                           # fstp dword ptr [ebp - 0x34]
+    AddRaw $c @(0xD8, 0xC9)                                                                 # fmul st(1)
+    AddRaw $c @(0xD8, 0x45, 0xD0)                                                           # fadd dword ptr [ebp - 0x30]
+    AddRaw $c @(0xD9, 0x5D, 0xD0)                                                           # fstp dword ptr [ebp - 0x30]
+    AddRaw $c @(0xDD, 0xD8)                                                                 # fstp st(0)
+    AddRaw $c @(0xDD, 0xD8)                                                                 # fstp st(0)
+    AddRaw $c @(0xDD, 0xD8)                                                                 # fstp st(0)
+    AddRaw $c @(0xEB, 0x08)                                                                 # jmp V+0x125
+    AddRaw $c @(0xDD, 0xD8)                                                                 # fstp st(0)
+    AddRaw $c @(0xDD, 0xD8)                                                                 # fstp st(0)
+    AddRaw $c @(0xDD, 0xD8)                                                                 # fstp st(0)
+    AddRaw $c @(0xDD, 0xD8)                                                                 # fstp st(0)
+    AddRaw $c @(0x8B, 0x45, 0xCC)                                                           # mov eax, dword ptr [ebp - 0x34]
+    AddRaw $c @(0xA3); AddLE32 $c ($V + 0x188)                                              # mov dword ptr [V+0x188], eax  (letztes X)
+    AddRaw $c @(0x8B, 0x45, 0xD0)                                                           # mov eax, dword ptr [ebp - 0x30]
+    AddRaw $c @(0xA3); AddLE32 $c ($V + 0x18C)                                              # mov dword ptr [V+0x18C], eax  (letztes Y)
+    AddRaw $c @(0x89, 0x35); AddLE32 $c ($V + 0x190)                                        # mov dword ptr [V+0x190], esi  (letzte Kamera)
+    AddRaw $c @(0xC7, 0x05); AddLE32 $c ($V + 0x194); AddRaw $c @(0x01, 0x00, 0x00, 0x00)   # mov dword ptr [V+0x194], 1  (gemerkt)
+    AddRaw $c @(0xD9, 0x05, 0x70, 0x16, 0x9F, 0x00)                                         # fld dword ptr [0x9f1670]
+    AddRaw $c @(0xE9); AddLE32 $c (0x6070D1 - ($V + 0x150))                                 # jmp 0x6070d1
+    if ($c.Count -gt 0x120) { throw 'Visus: Kamera-Haken zu gross.' }
+    [Array]::Copy($c.ToArray(), 0, $blk, 0x060, $c.Count)
+
+    # Daten +0x180: CVar visusHeight, CVar visusShoulder, letztes X, letztes Y,
+    # letzte Kamera, gemerkt (alles 0)
+    for ($i = 0x180; $i -lt 0x198; $i++) { $blk[$i] = 0 }
+    $k = 0x1A0
+    foreach ($fl in @(1.0, -1.0, 2.0, -2.0, 0.01, 100.0)) {
+        [Array]::Copy([BitConverter]::GetBytes([single]$fl), 0, $blk, $k, 4); $k += 4
+    }
+    foreach ($t in @(@(0x1C0, '0'), @(0x1C4, '20'), @(0x1C8, 'visusHeight'), @(0x1D8, 'visusShoulder'))) {
+        $b = [System.Text.Encoding]::ASCII.GetBytes($t[1] + [char]0)
+        [Array]::Copy($b, 0, $blk, $t[0], $b.Length)
+    }
+    Patch $sec[1] $blk
+
+    # Spruenge in die Sektion, Zoom-Grenze, Zoom-Tempo
+    Patch ($REG_HOOK - $TEXT_DIFF) ([byte[]](@(0xE9) + [BitConverter]::GetBytes([int32](($V + 0x000) - ($REG_HOOK + 5)))))
+    Patch ($CAM_HOOK - $TEXT_DIFF) ([byte[]](@(0xE9) + [BitConverter]::GetBytes([int32](($V + 0x060) - ($CAM_HOOK + 5))) + @(0x90)))
+    foreach ($a in $CAP_SITES) { Patch ($a - $TEXT_DIFF) ([BitConverter]::GetBytes([uint32]($V + 0x1B4))) }
+    Patch ($SPEED_PUSH - $TEXT_DIFF) ([BitConverter]::GetBytes([uint32]($V + 0x1C4)))
+}
+
+# ============================================================
 #  Helfer fuer die Client-Info-Patches von MacWarrior
 #  Portierung von edit_version.py, edit_revision.py, edit_title.py und
 #  edit_date.py. Die Werte fragt der Patcher nach der Auswahl ab (Felder
@@ -2870,7 +3050,8 @@ $patches = @(
         #                    add esp, 14h / ret
         # Lux selbst setzt zur Laufzeit einen Sprung in die erste freie Luecke
         # ab 24 Byte im Code; die drei Luecken hier sind kleiner, Lux waehlt also
-        # dieselbe Stelle wie beim Laden ueber Lexara.
+        # dieselbe Stelle wie beim Laden ueber Lexara. Nicht zusammen mit Visus
+        # (St0nyCam): beide setzen an derselben Stelle der Kamera an.
         Assert-Bytes 0x36D895 @(0xE9, 0xD6, 0x06, 0xE8, 0xFF) 'Lux-Lader'
         foreach ($o in @(0x2B5CA0, 0x2B5DC0, 0x2B5EE0)) { Assert-Bytes $o (@(0xCC) * 16) 'Lux-Lader' }
         Patch 0x36D896 @(0x06, 0x84, 0xF4, 0xFF)                       # jmp 0x5EEB70 -> jmp A
@@ -3809,6 +3990,22 @@ $patches = @(
         Patch 0x469183 @(0x83, 0xF8, 0x32, 0x7D, 0x03, 0x83, 0xC0, 0x01, 0x83, 0xF9, 0x32, 0xEB, 0x31)
     }}
 
+    @{ Id = 'visus'; Cat = 'window'; On = $false; GrowsExe = $true; PublicUntested = $true; GameUntested = $true
+       Author = 'St0ny'
+       De = 'Visus - St0nyCam [BETA]: Schulterkamera und Zoom'
+       En = 'Visus - St0nyCam [BETA]: shoulder camera and zoom'
+       NoteDe = 'Schulterkamera per /console visusHeight und visusShoulder, Zoom bis 100 Yards'
+       NoteEn = 'shoulder camera via /console visusHeight and visusShoulder, zoom up to 100 yards'
+       Code = {
+        # BETA - noch ungetestet. Eigene Schulterkamera und Zoom ohne DLL:
+        # neue CVars visusHeight (-1..1) und visusShoulder (-2..2), Zoom-Grenze
+        # 100 statt 50 Yards, Zoom-Tempo-Vorgabe 20 statt 8.33. Haengt eine
+        # eigene Sektion an (Exe wird groesser). Nicht zusammen mit
+        # LuxShoulderCam: beide setzen an derselben Stelle der Kamera an.
+        # Details bei Add-Visus.
+        Add-Visus
+    }}
+
     # --- Sound ---
 
     @{ Id = 'sound'; Cat = 'sound'; On = $false
@@ -4201,6 +4398,22 @@ mouse;469183;CCCCCCCCCCCCCCCCCCCCCCCCCC;1
 mouse;4691B1;8BEC83EC108D45F0506A00E8DF28000083C40450FF150CF69D008B45F8992BC28BC88B45FC992BC2D1F8D1F95051890DEC13D400A3F013D400E881EEFFFF83C4088BE55DC3CCCCCCCCCCCCCCCCCCCC;1
 mouse;469A2C;8B45F08B15EC13D4008B1DF0;1
 mouse;528AA2;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
+visus;116;0600;0
+visus;160;00D09F00;0
+visus;1A8;007C750098120000;0
+visus;2F8;00000000000000000000000000000000000000000000000000000000000000000000000000000000;0
+visus;3C0;00000000000000000000000000000000000000000000000000000000000000000000000000000000;0
+visus;1FCA99;FCE2A100;1
+visus;1FCE37;E0E7A100;1
+visus;1FD6AF;A37049C200;1
+visus;1FD972;FCE2A100;1
+visus;1FE7F7;FCE2A100;1
+visus;1FF537;FCE2A100;1
+visus;1FF55F;FCE2A100;1
+visus;1FF9E0;FCE2A100;1
+visus;1FF9FE;FCE2A100;1
+visus;1FFD22;FCE2A100;1
+visus;2064CB;D90570169F00;1
 sound;C77C2;85C074068B40308945F8;1
 sound;D0604;6864149E00;1
 sound;D0624;68DC219E00;1

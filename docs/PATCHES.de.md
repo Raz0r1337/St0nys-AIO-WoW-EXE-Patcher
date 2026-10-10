@@ -522,6 +522,10 @@ startet WoW ganz normal.
 > zweite Aufruf von `LoadLibraryA("LuxShoulderCam.dll")` bekommt nur die schon
 > geladene DLL zurück, ihr Startcode läuft kein zweites Mal.
 
+Nicht zusammen mit Visus - St0nyCam (Nr. 83) verwenden: Beide setzen an
+derselben Stelle der Kamera an (VA `0x6070CB`). Ist Visus eingespielt, hängt
+sich Lux dort nicht ein, Höhe und Versatz von Lux bleiben dann ohne Wirkung.
+
 Dateigröße und PE-Header bleiben unverändert: Beim Start läuft einmalig der
 Sprung bei VA `0x76E495` (zu einem bloßen `ret`) – nach dem Lexara- und dem
 wow_optimize-Lader, vor dem voice.dll-Lader. Er führt jetzt durch drei freie
@@ -1419,10 +1423,79 @@ Ein umfangreicher Patch (4 Teile), der Probleme mit Mäusen behebt, die eine
 hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
+<a id="patch-visus"></a>
+**Visus - St0nyCam [BETA]: Schulterkamera und Zoom** *(Nr. 83, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
+
+Eine eigene Schulterkamera und mehr Zoom direkt in der `Wow.exe`, ohne DLL.
+Vorlage für die Schulterkamera ist [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) von
+Stormhand – mit seiner Erlaubnis. Der Code ist neu und aus eigener Analyse der
+Exe entstanden.
+
+> [!WARNING]
+> **BETA** – noch ungetestet, online wie im Spiel. Deshalb ist der Patch
+> standardmäßig abgewählt und vorerst nur in den dev-Zweigen, nicht in
+> `st0ny-main`.
+
+**Schulterkamera** – zwei neue Konsolen-Variablen:
+
+| CVar            | Vorgabe | Bereich      | Wirkung |
+|-----------------|---------|--------------|---------|
+| `visusHeight`   | 0       | -1.0 bis 1.0 | hebt oder senkt den Punkt, um den die Kamera kreist (in Yards) |
+| `visusShoulder` | 0       | -2.0 bis 2.0 | verschiebt ihn quer zur Blickrichtung: positiv nach rechts (Blick über die rechte Schulter, die Figur steht links im Bild), negativ nach links |
+
+Der Versatz dreht mit der Kamera mit, in der Ich-Perspektive gibt es keinen.
+Werte außerhalb der Bereiche werden auf die Grenze gesetzt. Beide Werte wirken
+sofort und werden wie die anderen Kamera-Einstellungen in der `Config.wtf`
+gespeichert. Beispiele für den Chat oder ein Makro:
+
+```
+/console visusShoulder 1
+/console visusHeight 0.5
+/run SetCVar("visusShoulder", GetCVar("visusShoulder") == "0" and 1 or 0)
+```
+
+Die letzte Zeile schaltet die Schulterkamera ein und aus – als Makro auf eine
+Taste gelegt.
+
+**Zoom** – WoW begrenzt die Kamera-Entfernung fest auf 50 Yards, Visus hebt die
+Grenze auf 100 Yards. Eingestellt wird wie gewohnt: maximale Entfernung =
+`cameraDistanceMax` (Vorgabe 15, jetzt bis 100 erlaubt) ×
+`cameraDistanceMaxFactor` (den setzt auch der Regler für die Kamera-Entfernung
+in den Interface-Optionen), z. B. `/console cameraDistanceMaxFactor 4` für 60
+Yards. Das Zoom-Tempo `cameraDistanceMoveSpeed` hat jetzt die Vorgabe 20 statt
+8.33 und lässt sich weiter bis 50 einstellen. Wer schon eigene Werte in der
+`Config.wtf` hat, behält sie.
+
+> [!NOTE]
+> Nicht zusammen mit LuxShoulderCam verwenden (Lux-Lader Nr. 31 oder über
+> Lexara): Beide setzen an derselben Stelle der Kamera an. Mit Visus hängt sich
+> Lux dort nicht ein, Höhe und Versatz von Lux bleiben dann ohne Wirkung.
+
+<details>
+<summary><b>Hintergrund: Wie der Patch eingebaut ist</b></summary>
+
+Visus hängt eine eigene Sektion `.visus` an die Exe an (512 Byte, ausführbar
+und beschreibbar) und hängt sich an drei Stellen ein:
+
+- **Neue Variablen:** Die Funktion, die alle Kamera-Variablen anlegt (VA
+  `0x5FD910`), springt an ihrem Ende (VA `0x5FE2AF`) in die Sektion. Dort
+  werden `visusHeight` und `visusShoulder` mit denselben Einstellungen wie die
+  Kamera-Variablen des Clients angelegt.
+- **Kamera:** Bei VA `0x6070CB` hat die Kamera-Funktion gerade den Blickpunkt
+  berechnet. Visus addiert die Höhe und verschiebt den Punkt quer zur
+  Blickrichtung. Die Richtung kommt aus der Kameraposition und dem im letzten
+  Bild verschobenen Blickpunkt – so steht der Versatz immer genau quer zur
+  Kamera.
+- **Zoom:** Acht Stellen der Kamera lesen die feste Grenze von 50 Yards, sie
+  zeigen jetzt auf 100 in der Sektion. Die Grenze des Zoom-Tempos (ebenfalls
+  50) bleibt unverändert, die Vorgabe des Tempos steht in der Sektion.
+
+</details>
+
 ## Sound
 
 <a id="patch-sound"></a>
-**Sound-Einstellungen optimieren** *(Nr. 83, Autor: St0ny)* 🟢 **[sicher]**
+**Sound-Einstellungen optimieren** *(Nr. 84, Autor: St0ny)* 🟢 **[sicher]**
 
 Umfasst folgende Änderungen:
 
@@ -1451,7 +1524,7 @@ einer Meldung neu abgefragt, und alle Werte werden geprüft, bevor irgendetwas
 geschrieben wird. Die Werte merkt sich der Patcher in `patcher_selection.ini`
 (`value.<Id>=…`); mit `-Unattended` gelten die gemerkten Werte, ohne gemerkten
 Wert die Originalwerte – Ausnahmen: Build-Datum (aktueller Zeitpunkt) und Icon
-(Abbruch), siehe Nr. 87 und 88. Steckt ein Patch schon in der `Wow.exe`, ist
+(Abbruch), siehe Nr. 88 und 89. Steckt ein Patch schon in der `Wow.exe`, ist
 sein aktueller Wert der Vorschlag.
 Bei der Abfrage steht er auch hinter dem Patchnamen (`-> Vorschlag: …`, bei einem
 bereits eingespielten Patch `-> aktuell: …`).
@@ -1461,7 +1534,7 @@ bereits eingespielten Patch `-> aktuell: …`).
 > muss also zum Server passen.
 
 <a id="patch-clientversion"></a>
-**Client-Version ändern (Original 3.3.5)** *(Nr. 84, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Client-Version ändern (Original 3.3.5)** *(Nr. 85, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Version im Format `x.y.z` (z. B. `3.3.6` oder `3.3.123`, höchstens
 7 Zeichen). Geändert werden die Version, die der Client im Spiel anzeigt, die
@@ -1471,7 +1544,7 @@ FileVersion-Text (`3, 3, 5, 12340`) wird zur reinen Version (`3.3.6`). Haupt-
 und Nebenversion müssen zusammen in das ProductVersion-Feld passen (z. B. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Build-Nummer ändern (Original 12340)** *(Nr. 85, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Build-Nummer ändern (Original 12340)** *(Nr. 86, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Build-Nummer (6142 bis 65535, Original `12340`): die interne
 Build-Nummer, die sichtbare Build-Nummer und den vierten Teil der FileVersion
@@ -1500,7 +1573,7 @@ den Server.
 > offline.
 
 <a id="patch-clienttitle"></a>
-**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 86, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
+**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 87, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
 
 Setzt FileDescription, InternalName und ProductName der Versionsressource, also
 das, was Windows z. B. in den Dateieigenschaften und im Task-Manager anzeigt.
@@ -1518,7 +1591,7 @@ ab, damit er stehen bleibt.
 > Titel.
 
 <a id="patch-clientdate"></a>
-**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 87, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 88, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Setzt das Build-Datum (Original `Jun 24 2010`) an allen drei Stellen in der EXE
 und das Jahr im Copyright-Vermerk, dazu die Uhrzeit. Die steht an zwei Stellen:
@@ -1538,7 +1611,7 @@ Patchens. Ist der Patch schon eingespielt, steht dort das aktuelle Datum samt
 Uhrzeit der `Wow.exe`.
 
 <a id="patch-clienticon"></a>
-**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 88, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 89, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Tauscht das Icon aus, das Windows für die `Wow.exe` anzeigt (Explorer,
 Taskleiste, Verknüpfungen). Der Patcher fragt nach dem Pfad einer `.ico`-
