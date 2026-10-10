@@ -4743,8 +4743,14 @@ Say (T 'StartWarn7') 'Yellow'
 Write-Host ''
 Say (T 'Thanks') 'Magenta'
 Write-Host ''
+# Danach auf einer neuen Seite weiter, oben wieder das Banner: Pruefung und
+# Startmenue stehen dann nicht unter Begruessung und Warnungen. Das
+# Patch-Menue und alles danach kommen ohne Banner (eigene Seiten).
 if (-not $Unattended) {
     [void](Read-Host "  $(T 'PressStart')")
+    Clear-Host
+    Write-Host ''
+    Show-Banner
     Write-Host ''
 }
 
