@@ -3027,7 +3027,7 @@ $patches = @(
     }}
 
     @{ Id = 'luaunlockfull'; Cat = 'modding'; On = $false; Obsoletes = @('luaunlock'); BanRisk = $true
-       Author = 'St0ny'
+       Author = 'St0ny (original by Alastor StrixEfuartus)'
        De = 'LUA Unlock (vollstaendig): alle geschuetzten Funktionen freigeben'
        En = 'LUA unlock (complete): allow all protected functions'
        Code = {

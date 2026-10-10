@@ -305,7 +305,7 @@ meldet weiterhin einen Fehler. Diese und alle übrigen gibt Nr. 24 frei.
 > werten – das kann zu einem Bann führen.
 
 <a id="patch-luaunlockfull"></a>
-**LUA Unlock (vollständig): alle geschützten Funktionen freigeben** *(Nr. 24, Autor: St0ny)* 🔴 **[unsicher]**
+**LUA Unlock (vollständig): alle geschützten Funktionen freigeben** *(Nr. 24, Autor: St0ny (original by Alastor StrixEfuartus))* 🔴 **[unsicher]**
 
 Erweitert Nr. 23 auf alle geschützten Funktionen. Die zentrale Schutzprüfung
 des Clients kennt 24 Schutztypen in drei Klassen (immer verboten, nur nach
