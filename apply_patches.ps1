@@ -128,6 +128,7 @@ $TEXT = @{
         StartBackups  = 'Sicherungen im Ordner:'
         RestOri       = '  Original: {0}'
         RestBak       = '  Backup:   {0} (Stand vor dem letzten Patchen)'
+        RestBakSame   = '  Backup:   {0} (gleicher Stand wie die aktuelle Wow.exe)'
         RestBadOri    = 'Hinweis: {0} ist nicht die originale Wow.exe (SHA256 passt nicht) und wird nicht verwendet.'
         RestBadBak    = 'Hinweis: {0} ist weder original noch mit diesem Patcher gepatcht und wird nicht verwendet.'
         RestAsk       = 'Was moechtest du tun?'
@@ -226,6 +227,8 @@ $TEXT = @{
         BackupSkip    = 'Wow.exe.ORI (Original) ist vorhanden und bleibt unveraendert.'
         BackupRedo    = 'Wow.exe.ORI fehlte und wurde aus dem rekonstruierten Original neu angelegt: {0}'
         BackupPrev    = 'Bisherige Wow.exe gesichert als: {0}'
+        BakRedo       = 'Wow.exe.BAK fehlte - die aktuelle Wow.exe wurde als Backup gesichert: {0}'
+        BackupWarn    = 'HINWEIS: Sicherung konnte nicht angelegt werden: {0}'
         Starting      = 'Starte Patch-Vorgang...'
         PatchFail     = '[FEHLER] Beim Patchen ist ein Fehler aufgetreten:'
         NotWritten    = 'Die Wow.exe wurde nicht veraendert.'
@@ -262,6 +265,7 @@ $TEXT = @{
         StartBackups  = 'Backups in the folder:'
         RestOri       = '  Original: {0}'
         RestBak       = '  Backup:   {0} (state before the last patching)'
+        RestBakSame   = '  Backup:   {0} (same state as the current Wow.exe)'
         RestBadOri    = 'Note: {0} is not the original Wow.exe (SHA256 does not match) and is not used.'
         RestBadBak    = 'Note: {0} is neither original nor patched with this patcher and is not used.'
         RestAsk       = 'What do you want to do?'
@@ -360,6 +364,8 @@ $TEXT = @{
         BackupSkip    = 'Wow.exe.ORI (original) exists and stays untouched.'
         BackupRedo    = 'Wow.exe.ORI was missing and has been recreated from the reconstructed original: {0}'
         BackupPrev    = 'Previous Wow.exe saved as: {0}'
+        BakRedo       = 'Wow.exe.BAK was missing - the current Wow.exe has been saved as the backup: {0}'
+        BackupWarn    = 'NOTE: Could not create the backup: {0}'
         Starting      = 'Starting patch process...'
         PatchFail     = '[ERROR] An error occurred while patching:'
         NotWritten    = 'Wow.exe has not been modified.'
@@ -4759,12 +4765,13 @@ if (-not $Unattended) {
 # Patcher eine von ihm gepatchte Exe am Wasserzeichen. Passt der Hash aus
 # patcher_state.ini, wird das Original schnell aus der Zustandsdatei
 # rekonstruiert, sonst ueber die Original-Byte-Tabelle (mit Erkennung der
-# eingespielten Patches und ihrer Werte).
+# eingespielten Patches und ihrer Werte). Fehlende Sicherungen (.ORI, bei einer
+# gepatchten Exe auch .BAK) werden dann gleich angelegt.
 # Danach kommt das Startmenue: 1 = Patch-Menue oeffnen, 2 = vorherige Wow.exe
 # (.BAK) bzw. 3 = Original (.ORI) wiederherstellen. Fehlt die Wow.exe oder ist
 # sie nicht verwendbar, baut 1 sie neu aus dem Original. Mit M (gemerkt als
 # startmenu=off in patcher_selection.ini) geht es kuenftig direkt ins
-# Patch-Menue - ausser die Wow.exe fehlt oder ist nicht verwendbar. Die
+# Patch-Menue - ausser die Wow.exe fehlt oder ist nicht verwendbar. Vorhandene
 # Sicherungen werden nur gelesen bzw. kopiert, nie verschoben oder
 # ueberschrieben.
 if ($wowHits.Count -gt 1) {
@@ -4851,6 +4858,33 @@ if ($haveExe) {
     Write-Host ''
 }
 
+# Fehlende Sicherungen gleich anlegen, wie beim Patchen - auch wenn danach
+# nichts gepatcht wird: Wow.exe.ORI aus dem Original (gelesen oder aus der
+# gepatchten Exe zurueckgerechnet und per SHA256 geprueft), bei einer
+# gepatchten Wow.exe ausserdem Wow.exe.BAK als Kopie ihres jetzigen Stands.
+# Vorhandene Sicherungen bleiben unangetastet.
+$madeBackup = $false
+if ($haveExe -and -not $broken) {
+    $said = $false
+    if (-not $oriFile) {
+        $said = $true
+        try {
+            [System.IO.File]::WriteAllBytes($backup, $f)
+            if ($patchedMode) { Say (T 'BackupRedo' $backup) } else { Say (T 'BackupOk' $backup) }
+            $oriFile = $backup; $oriOk = $true; $madeBackup = $true
+        } catch { Say (T 'BackupWarn' $_.Exception.Message) 'Yellow' }
+    }
+    if ($patchedMode -and -not $bakFile) {
+        $said = $true
+        try {
+            [System.IO.File]::Copy($file, $backupPrev, $false)
+            Say (T 'BakRedo' $backupPrev)
+            $bakFile = $backupPrev; $bakOk = $true; $bakHash = $hash; $madeBackup = $true
+        } catch { Say (T 'BackupWarn' $_.Exception.Message) 'Yellow' }
+    }
+    if ($said) { Write-Host '' }
+}
+
 # Ohne verwendbare Wow.exe geht es nur ueber eine Sicherung weiter - ohne
 # Rueckfragen (-Unattended) oder ohne Sicherung ist hier Schluss.
 $usable = $haveExe -and -not $broken
@@ -4873,8 +4907,12 @@ if (-not $Unattended -and (-not $usable -or (-not $Select -and -not $startMenuOf
     if (-not $haveExe) { Say (T 'RestFound') 'Yellow' }
     elseif ($broken) { Say (T 'RestBroken') 'Yellow' }
     elseif ($canRestore) { Say (T 'StartBackups') }
+    # Eine .BAK mit demselben Stand wie die Wow.exe (z.B. eben beim Start
+    # angelegt) wird nur gelistet - zurueckzuholen gibt es daraus nichts.
+    $bakSame = $usable -and $bakOk -and $bakHash -eq $hash
     if ($oriOk) { Say (T 'RestOri' (Split-Path -Leaf $oriFile)) }
-    if ($bakOk) { Say (T 'RestBak' (Split-Path -Leaf $bakFile)) }
+    if ($bakSame) { Say (T 'RestBakSame' (Split-Path -Leaf $bakFile)) }
+    elseif ($bakOk) { Say (T 'RestBak' (Split-Path -Leaf $bakFile)) }
     if ($oriFile -and -not $oriOk) { Say (T 'RestBadOri' (Split-Path -Leaf $oriFile)) 'Yellow' }
     if ($bakFile -and -not $bakOk) { Say (T 'RestBadBak' (Split-Path -Leaf $bakFile)) 'Yellow' }
     if ($canRestore -or $oriFile -or $bakFile) { Write-Host '' }
@@ -4883,7 +4921,7 @@ if (-not $Unattended -and (-not $usable -or (-not $Select -and -not $startMenuOf
     if ($usable) { Say (T 'StartOpt1'); $keys += '1' }
     elseif ($oriOk -and $haveExe) { Say (T 'RestOpt1Repl'); $keys += '1' }
     elseif ($oriOk) { Say (T 'RestOpt1'); $keys += '1' }
-    if ($bakOk) { Say (T 'RestOpt2'); $keys += '2' }
+    if ($bakOk -and -not $bakSame) { Say (T 'RestOpt2'); $keys += '2' }
     if ($oriOk) { Say (T 'RestOpt3'); $keys += '3' }
     if ($usable) { Say (T 'StartOptM'); $keys += 'M' }
     Say (T 'RestOptQ')
@@ -4895,7 +4933,8 @@ if (-not $Unattended -and (-not $usable -or (-not $Select -and -not $startMenuOf
     }
     Write-Host ''
     if ($pick -eq 'Q') {
-        Say (T 'RestAbort') 'Yellow'
+        # Eben angelegte Sicherungen bleiben; geaendert wurde nur die Wow.exe nicht.
+        if ($madeBackup) { Say (T 'Aborted') 'Yellow' } else { Say (T 'RestAbort') 'Yellow' }
         Exit-Patcher 2
     }
     if ($pick -eq 'M') {
@@ -5214,7 +5253,8 @@ if ($atConfirm.Count -gt 0) {
 # SHA256 geprueft) neu angelegt - VOR dem .BAK, falls dort noch ein Original
 # aus einer aelteren Patcher-Version liegt. Danach wird die bisherige
 # (gepatchte) Wow.exe als Wow.exe.BAK gesichert, man kann also immer einen
-# Schritt zurueck.
+# Schritt zurueck. Fehlende Sicherungen legt der Patcher meist schon beim
+# Start an (siehe oben); dann bleibt Wow.exe.ORI hier stehen.
 try {
     if ($fromOri) {
         # Neu aus dem Original: Wow.exe.ORI bleibt, wie es ist. Ein .BAK gibt
@@ -5222,10 +5262,14 @@ try {
         # wird ersetzt.
         Say (T 'BackupSkip')
     } elseif (-not $patchedMode) {
-        Copy-Item -LiteralPath $file -Destination $backup -Force
-        Say (T 'BackupOk' $backup)
+        if ($oriOk) {
+            Say (T 'BackupSkip')
+        } else {
+            Copy-Item -LiteralPath $file -Destination $backup -Force
+            Say (T 'BackupOk' $backup)
+        }
     } else {
-        if (Test-Path -LiteralPath $backup -PathType Leaf) {
+        if ($oriFile -or (Test-Path -LiteralPath $backup -PathType Leaf)) {
             Say (T 'BackupSkip')
         } else {
             [System.IO.File]::WriteAllBytes($backup, $f)
