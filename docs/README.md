@@ -79,7 +79,9 @@ again and copy `Wow.exe` back into your WoW folder afterwards, see
 2. **Language selection:** `1` = Deutsch, `2` = English. First start only – after
    that the language is remembered and can be switched with `L` in the menu.
 3. Welcome message, press ENTER to start.
-4. Check that a `Wow.exe` exists in the folder.
+4. Check that a `Wow.exe` exists in the folder. If it is missing but backups
+   are still there, the patcher offers to rebuild or restore it (see
+   [If Wow.exe is missing](#if-wowexe-is-missing)).
 5. Checking `Wow.exe`: on the first start it must be original and unmodified
    (SHA256). After that the patcher recognizes a `Wow.exe` it patched itself
    by the watermark and determines which patches are in it. Anything else
@@ -230,6 +232,26 @@ How it works:
 > A patch with a value exactly matching the original (e.g. the jump height
 > `-7.9555473`) changes no bytes and is therefore not detected as applied when
 > the exe is checked – it has no effect then anyway.
+
+### If Wow.exe is missing
+
+If there is no `Wow.exe` in the patcher folder any more, but the backups
+`Wow.exe.ORI` and/or `Wow.exe.BAK` are still there – e.g. because you moved the
+patched exe into your WoW folder instead of copying it –, the patcher offers at
+startup:
+
+1. **Build a new Wow.exe from the original:** the menu starts with the patches
+   and values applied last time. You can keep them, change them or load a
+   preset with `R`, `B` or `S`. Without changes you get exactly the last
+   patched `Wow.exe` again.
+2. **Restore the previous Wow.exe:** the patcher copies `Wow.exe.BAK` back,
+   i.e. the state before the last patching.
+3. **Restore the original:** the patcher copies `Wow.exe.ORI` back.
+
+`Q` cancels. The backups are kept in every case. Only usable options are
+offered: the original must really be the original according to SHA256, the
+backup original or patched with this patcher. With `-Unattended` there is no
+menu; the patcher then aborts and points to the backups.
 
 ## Parameters for unattended use
 
@@ -503,8 +525,9 @@ clicking the number of a patch takes you straight to its description.
   file name if it is there).
 - **Restoring the original:** run the patcher, press `N` and ENTER – with or
   without `patcher_state.ini`. Alternatively delete the patched `Wow.exe` and
-  rename `Wow.exe.ORI` to `Wow.exe`. `Wow.exe.BAK`, on the other hand, is the
-  `Wow.exe` from before the last run.
+  start the patcher: it then offers to restore the original (see
+  [If Wow.exe is missing](#if-wowexe-is-missing)). `Wow.exe.BAK`, on the other
+  hand, is the `Wow.exe` from before the last run.
 - **For developers:** the original bytes table in the script is regenerated
   with `apply_patches.ps1 -BuildTable -Path <original Wow.exe>`. This is needed
   after every change to a patch; if it no longer matches, the patcher points it

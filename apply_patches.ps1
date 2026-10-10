@@ -84,6 +84,8 @@ $f = $null
 # Gepatchte Wow.exe aus einem frueheren Lauf? Dann die dort aktiven Patch-Ids.
 $patchedMode = $false
 $appliedIds = @()
+# Keine Wow.exe, im Wiederherstellungs-Menue "neu aus dem Original" gewaehlt
+$fromOri = $false
 
 # Jeder Schreibzugriff ins Original geht ueber Patch() und wird als
 # Offset/Laenge-Paar mitgeschrieben. Daraus entsteht nach dem Patchen die
@@ -119,6 +121,22 @@ $TEXT = @{
         PressStart    = 'ENTER druecken um zu starten'
         NotFound      = '[FEHLER] Keine Wow.exe gefunden: {0}'
         WowMulti      = '[FEHLER] Mehrere Wow.exe in unterschiedlicher Schreibweise gefunden: {0} - bitte nur eine davon im Ordner lassen oder die richtige mit -Path angeben.'
+        RestFound     = 'Keine Wow.exe gefunden, aber Sicherungen im Ordner:'
+        RestOri       = '  Original: {0}'
+        RestBak       = '  Backup:   {0} (Stand vor dem letzten Patchen)'
+        RestBadOri    = 'Hinweis: {0} ist nicht die originale Wow.exe (SHA256 passt nicht) und wird nicht verwendet.'
+        RestBadBak    = 'Hinweis: {0} ist weder original noch mit diesem Patcher gepatcht und wird nicht verwendet.'
+        RestAsk       = 'Was moechtest du tun?'
+        RestOpt1      = '  1 = Neue Wow.exe aus dem Original bauen (Patches wie zuletzt, im Menue aenderbar)'
+        RestOpt2      = '  2 = Vorherige Wow.exe wiederherstellen (Stand vor dem letzten Patchen)'
+        RestOpt3      = '  3 = Original wiederherstellen'
+        RestOptQ      = '  Q = Abbrechen, nichts aendern'
+        RestDone      = '[OK] {0} wurde aus {1} wiederhergestellt. Original und Backup bleiben erhalten.'
+        RestCopyBack  = 'Danach die Wow.exe wie gewohnt in den WoW-Ordner kopieren.'
+        RestFail      = '[FEHLER] Wiederherstellen fehlgeschlagen:'
+        RestAbort     = 'Abgebrochen. Es wurde nichts geaendert.'
+        RestUnatt     = 'Im Ordner liegen Sicherungen ({0}). Ohne -Unattended gestartet bietet der Patcher an, sie wiederherzustellen.'
+        LastLoaded    = 'Ausgewaehlt sind die Patches, die zuletzt eingespielt waren. Mit R, B oder S laedst du ein Preset.'
         Checking      = 'Pruefe Wow.exe Integritaet...'
         HashBad1      = '[FEHLER] Die Wow.exe ist weder original noch mit diesem Patcher gepatcht (kein Wasserzeichen).'
         HashBad2      = '         Sie wurde mit einem anderen Tool oder einer alten Patcher-Version gepatcht oder ist eine andere Version.'
@@ -225,6 +243,22 @@ $TEXT = @{
         PressStart    = 'Press ENTER to start'
         NotFound      = '[ERROR] No Wow.exe found: {0}'
         WowMulti      = '[ERROR] Several Wow.exe with different spelling found: {0} - please keep only one of them in the folder or pass the right one with -Path.'
+        RestFound     = 'No Wow.exe found, but there are backups in the folder:'
+        RestOri       = '  Original: {0}'
+        RestBak       = '  Backup:   {0} (state before the last patching)'
+        RestBadOri    = 'Note: {0} is not the original Wow.exe (SHA256 does not match) and is not used.'
+        RestBadBak    = 'Note: {0} is neither original nor patched with this patcher and is not used.'
+        RestAsk       = 'What do you want to do?'
+        RestOpt1      = '  1 = Build a new Wow.exe from the original (patches as last time, changeable in the menu)'
+        RestOpt2      = '  2 = Restore the previous Wow.exe (state before the last patching)'
+        RestOpt3      = '  3 = Restore the original'
+        RestOptQ      = '  Q = Cancel, change nothing'
+        RestDone      = '[OK] {0} has been restored from {1}. Original and backup are kept.'
+        RestCopyBack  = 'Then copy Wow.exe into your WoW folder as usual.'
+        RestFail      = '[ERROR] Restoring failed:'
+        RestAbort     = 'Aborted. Nothing has been changed.'
+        RestUnatt     = 'There are backups in the folder ({0}). Started without -Unattended, the patcher offers to restore them.'
+        LastLoaded    = 'Selected are the patches applied last time. Load a preset with R, B or S.'
         Checking      = 'Checking Wow.exe integrity...'
         HashBad1      = '[ERROR] This Wow.exe is neither original nor patched with this patcher (no watermark).'
         HashBad2      = '        It has been patched with another tool or an old patcher version, or is a different version.'
@@ -4755,6 +4789,17 @@ function Write-State([string]$path, [string]$hash, [int64]$size, $ids, $values, 
 
 # Hinweis auf Wow.exe.ORI bzw. Wow.exe.BAK, wenn eine davon das Original enthaelt
 # (.BAK war in aelteren Versionen das Original).
+# Sicherung (.ORI/.BAK) zu einer fehlenden Wow.exe: der erwartete Name, sonst
+# (Linux) jede Schreibweise davon - aber nur bei genau einem Treffer.
+function Find-Backup([string]$want) {
+    if (Test-Path -LiteralPath $want -PathType Leaf) { return $want }
+    $leaf = Split-Path -Leaf $want
+    $hits = @(Get-ChildItem -LiteralPath (Split-Path -Parent $want) -File -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -ieq $leaf })
+    if ($hits.Count -eq 1) { return $hits[0].FullName }
+    return $null
+}
+
 function Show-BakHint {
     foreach ($b in @($backup, $backupPrev)) {
         try {
@@ -4786,7 +4831,7 @@ function Get-NameById([string]$id) {
 # der Patch schon mit einem anderen Wert drin ist, sonst liesse sich der Wert
 # unbeaufsichtigt nie aendern.
 function Test-ValueActive($p) {
-    return ($script:patchedMode -and ($script:appliedIds -contains $p.Id) -and $script:state.Values.ContainsKey($p.Id))
+    return (($script:patchedMode -or $script:fromOri) -and ($script:appliedIds -contains $p.Id) -and $script:state.Values.ContainsKey($p.Id))
 }
 
 function Get-ValueSuggestion($p) {
@@ -5044,12 +5089,80 @@ if ($wowHits.Count -gt 1) {
     Exit-Patcher 1
 }
 if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
-    Say (T 'NotFound' $file) 'Red'
-    Exit-Patcher 1
+    # Keine Wow.exe, aber Sicherungen im Ordner (z.B. die gepatchte Exe in den
+    # WoW-Ordner verschoben statt kopiert): 1 = neu aus dem Original bauen,
+    # 2 = vorherige Wow.exe (.BAK), 3 = Original (.ORI). Die Sicherungen werden
+    # nur gelesen bzw. kopiert, nie verschoben oder ueberschrieben.
+    $oriFile = Find-Backup $backup
+    $bakFile = Find-Backup $backupPrev
+    $oriOk = $false; $bakOk = $false; $oriBytes = $null
+    if ($oriFile) {
+        try { $oriBytes = [System.IO.File]::ReadAllBytes($oriFile); $oriOk = ((Get-Sha256 $oriBytes) -eq $EXPECTED_HASH) } catch { }
+    }
+    if ($bakFile) {
+        try { $b = [System.IO.File]::ReadAllBytes($bakFile); $bakOk = ((Get-Sha256 $b) -eq $EXPECTED_HASH) -or (Test-Watermark $b) } catch { }
+    }
+    if ((-not $oriOk -and -not $bakOk) -or $Unattended) {
+        Say (T 'NotFound' $file) 'Red'
+        if ($oriFile -and -not $oriOk) { Say (T 'RestBadOri' (Split-Path -Leaf $oriFile)) 'Yellow' }
+        if ($bakFile -and -not $bakOk) { Say (T 'RestBadBak' (Split-Path -Leaf $bakFile)) 'Yellow' }
+        if ($oriOk -or $bakOk) {
+            $names = @(); if ($oriOk) { $names += Split-Path -Leaf $oriFile }; if ($bakOk) { $names += Split-Path -Leaf $bakFile }
+            Say (T 'RestUnatt' ($names -join ', ')) 'Yellow'
+        }
+        Exit-Patcher 1
+    }
+    Say (T 'RestFound') 'Yellow'
+    if ($oriOk) { Say (T 'RestOri' (Split-Path -Leaf $oriFile)) }
+    if ($bakOk) { Say (T 'RestBak' (Split-Path -Leaf $bakFile)) }
+    if ($oriFile -and -not $oriOk) { Say (T 'RestBadOri' (Split-Path -Leaf $oriFile)) 'Yellow' }
+    if ($bakFile -and -not $bakOk) { Say (T 'RestBadBak' (Split-Path -Leaf $bakFile)) 'Yellow' }
+    Write-Host ''
+    Say (T 'RestAsk')
+    $keys = @()
+    if ($oriOk) { Say (T 'RestOpt1'); $keys += '1' }
+    if ($bakOk) { Say (T 'RestOpt2'); $keys += '2' }
+    if ($oriOk) { Say (T 'RestOpt3'); $keys += '3' }
+    Say (T 'RestOptQ')
+    $keys += 'Q'
+    $pick = $null
+    while (-not $pick) {
+        $in = (Ask "  [$($keys -join '/')]").ToUpperInvariant()
+        if ($keys -contains $in) { $pick = $in }
+    }
+    Write-Host ''
+    if ($pick -eq 'Q') {
+        Say (T 'RestAbort') 'Yellow'
+        Exit-Patcher 2
+    }
+    # Die Wow.exe bekommt den Namen der Sicherung ohne Endung - unter Linux
+    # also z.B. wow.exe zu wow.exe.ORI. Die Sicherungen heissen dann wieder
+    # passend dazu.
+    if ($pick -eq '2') { $src = $bakFile } else { $src = $oriFile }
+    $file = $src.Substring(0, $src.Length - 4)
+    $backup = $file + '.ORI'
+    $backupPrev = $file + '.BAK'
+    if ($pick -eq '1') {
+        $fromOri = $true
+    } else {
+        try {
+            [System.IO.File]::Copy($src, $file, $false)
+        } catch {
+            Say (T 'RestFail') 'Red'
+            Say $_.Exception.Message 'Red'
+            Exit-Patcher 1
+        }
+        if (Get-Command Unblock-File -ErrorAction SilentlyContinue) {
+            try { Unblock-File -LiteralPath $file -ErrorAction Stop } catch { }
+        }
+        Say (T 'RestDone' (Split-Path -Leaf $file) (Split-Path -Leaf $src)) 'Green'
+        Say (T 'RestCopyBack')
+        Exit-Patcher 0
+    }
 }
 
 Say (T 'Checking')
-$f = [System.IO.File]::ReadAllBytes($file)
+if ($fromOri) { $f = $oriBytes } else { $f = [System.IO.File]::ReadAllBytes($file) }
 $hash = Get-Sha256 $f
 $state = $null
 if ($hash -eq $EXPECTED_HASH) {
@@ -5111,6 +5224,13 @@ if ($hash -eq $EXPECTED_HASH) {
 }
 Write-Host ''
 
+# Neu aus dem Original (Wiederherstellungs-Menue, Option 1): Auswahl und Werte
+# wie bei der zuletzt gepatchten Wow.exe, soweit patcher_state.ini sie kennt.
+if ($fromOri) {
+    $last = Read-State
+    if ($null -ne $last -and @($last.Ids).Count -gt 0) { $state = $last; $appliedIds = @($last.Ids) }
+}
+
 # --- 3. Patches auswaehlen ---
 $savedValues = Get-SavedValues
 # Build-Datum aus aelteren Versionen ohne Uhrzeit: originale 23:54:57 ergaenzen
@@ -5128,6 +5248,10 @@ if ($Select) {
         $initial = New-Object bool[] $patches.Count
         for ($i = 0; $i -lt $patches.Count; $i++) { $initial[$i] = $appliedIds -contains $patches[$i].Id }
         $message = T 'AppliedLoaded'
+    } elseif ($fromOri -and $appliedIds.Count -gt 0) {
+        $initial = New-Object bool[] $patches.Count
+        for ($i = 0; $i -lt $patches.Count; $i++) { $initial[$i] = $appliedIds -contains $patches[$i].Id }
+        $message = T 'LastLoaded'
     } else {
         $initial = Get-SavedSelection
         if ($null -eq $initial) { $initial = Get-DefaultSelection } else { $message = T 'SavedLoaded' }
@@ -5363,7 +5487,11 @@ if ($atConfirm.Count -gt 0) {
 # (gepatchte) Wow.exe als Wow.exe.BAK gesichert, man kann also immer einen
 # Schritt zurueck.
 try {
-    if (-not $patchedMode) {
+    if ($fromOri) {
+        # Neu aus dem Original: Wow.exe.ORI bleibt, wie es ist, und eine
+        # bisherige Wow.exe fuer ein .BAK gibt es nicht.
+        Say (T 'BackupSkip')
+    } elseif (-not $patchedMode) {
         Copy-Item -LiteralPath $file -Destination $backup -Force
         Say (T 'BackupOk' $backup)
     } else {
