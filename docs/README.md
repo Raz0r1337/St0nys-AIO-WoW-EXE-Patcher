@@ -531,7 +531,7 @@ name, and before patching it lists them once more.
 | [81](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 80)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 | [82](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [83](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [84](PATCHES.en.md#patch-visus) | Visus - St0nyCam [BETA]: shoulder camera and zoom *(shoulder camera via `/console visusHeight` and `visusShoulder`, zoom up to 100 yards)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
+| [84](PATCHES.en.md#patch-visus) | Visus - ShoulderCam [BETA]: shoulder camera and zoom *(shoulder camera via `/console visusHeight` and `visusShoulder`, zoom up to 100 yards)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
 
 #### Sound
 
@@ -631,9 +631,9 @@ clicking the number of a patch takes you straight to its description.
 - Thanks also to **MacWarrior**, who also helped collect the patches and
   contributed some of his own.
 - Thanks also to **Stormhand** for the permission to include his
-  LuxShoulderCam and to use it as the template for Visus – St0nyCam.
+  LuxShoulderCam and to use it as the template for Visus – ShoulderCam.
 - Thanks to **Zendevve**, the author of CameraReforged, for the idea behind
-  Visus – St0nyCam.
+  Visus – ShoulderCam.
 - A big thank you to **Stormhand**, **MacWarrior** and **Billy Hoyle** for all
   the testing in game – and to Stormhand in particular for risking their own
   Warmane account to find out which patches are "safe" to use. 😄

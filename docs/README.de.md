@@ -546,7 +546,7 @@ dem Patchen listet er sie noch einmal auf.
 | [81](PATCHES.de.md#patch-maximize) | Fenstermodus maximiert als Standard setzen *(wirkt nur zusammen mit Nr. 80)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 | [82](PATCHES.de.md#patch-windowfix) | Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [83](PATCHES.de.md#patch-mouse) | Mausflackern / Kamerasprünge Fix | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
-| [84](PATCHES.de.md#patch-visus) | Visus - St0nyCam [BETA]: Schulterkamera und Zoom *(Schulterkamera per `/console visusHeight` und `visusShoulder`, Zoom bis 100 Yards)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
+| [84](PATCHES.de.md#patch-visus) | Visus - ShoulderCam [BETA]: Schulterkamera und Zoom *(Schulterkamera per `/console visusHeight` und `visusShoulder`, Zoom bis 100 Yards)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
 
 #### Sound
 
@@ -649,9 +649,9 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
 - Danke auch an **MacWarrior**, der ebenfalls beim Zusammentragen der Patches
   geholfen und einige eigene Patches beigesteuert hat.
 - Danke auch an **Stormhand** für die Erlaubnis, seine LuxShoulderCam
-  einzubinden und als Vorlage für Visus – St0nyCam zu nutzen.
+  einzubinden und als Vorlage für Visus – ShoulderCam zu nutzen.
 - Danke an **Zendevve**, den Autor von CameraReforged, für die Idee hinter
-  Visus – St0nyCam.
+  Visus – ShoulderCam.
 - Ein großes Dankeschön an **Stormhand**, **MacWarrior** und **Billy Hoyle** für
   die vielen Tests im Spiel – und an Stormhand ganz besonders dafür, den eigenen
   Warmane-Account riskiert zu haben, um herauszufinden, welche Patches „sicher“

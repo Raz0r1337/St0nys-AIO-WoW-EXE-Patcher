@@ -522,7 +522,7 @@ startet WoW ganz normal.
 > zweite Aufruf von `LoadLibraryA("LuxShoulderCam.dll")` bekommt nur die schon
 > geladene DLL zurück, ihr Startcode läuft kein zweites Mal.
 
-Nicht zusammen mit Visus - St0nyCam (Nr. 84) verwenden: Beide setzen an
+Nicht zusammen mit Visus - ShoulderCam (Nr. 84) verwenden: Beide setzen an
 derselben Stelle der Kamera an (VA `0x6070CB`). Ist Visus eingespielt, hängt
 sich Lux dort nicht ein, Höhe und Versatz von Lux bleiben dann ohne Wirkung.
 
@@ -1526,7 +1526,7 @@ hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
 <a id="patch-visus"></a>
-**Visus - St0nyCam [BETA]: Schulterkamera und Zoom** *(Nr. 84, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
+**Visus - ShoulderCam [BETA]: Schulterkamera und Zoom** *(Nr. 84, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
 
 Eine eigene Schulterkamera und mehr Zoom direkt in der `Wow.exe`, ohne DLL.
 Vorlage für die Schulterkamera ist [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) von

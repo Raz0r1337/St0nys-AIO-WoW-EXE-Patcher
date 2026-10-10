@@ -587,7 +587,7 @@ function Add-HdPortraits([int]$SIZE) {
 }
 
 # ============================================================
-#  Helfer fuer Visus - St0nyCam (Schulterkamera und Zoom, BETA)
+#  Helfer fuer Visus - ShoulderCam (Schulterkamera und Zoom, BETA)
 #  Eigene Umsetzung aus eigener Analyse dieser Exe. Vorlage fuer die
 #  Schulterkamera ist LuxShoulderCam von Stormhand (mit seiner Erlaubnis):
 #  Blickpunkt der Kamera anheben und quer zur Blickrichtung verschieben.
@@ -4109,7 +4109,7 @@ $patches = @(
         # Lux selbst setzt zur Laufzeit einen Sprung in die erste freie Luecke
         # ab 24 Byte im Code; die drei Luecken hier sind kleiner, Lux waehlt also
         # dieselbe Stelle wie beim Laden ueber Lexara. Nicht zusammen mit Visus
-        # (St0nyCam): beide setzen an derselben Stelle der Kamera an.
+        # (ShoulderCam): beide setzen an derselben Stelle der Kamera an.
         Assert-Bytes 0x36D895 @(0xE9, 0xD6, 0x06, 0xE8, 0xFF) 'Lux-Lader'
         foreach ($o in @(0x2B5CA0, 0x2B5DC0, 0x2B5EE0)) { Assert-Bytes $o (@(0xCC) * 16) 'Lux-Lader' }
         Patch 0x36D896 @(0x06, 0x84, 0xF4, 0xFF)                       # jmp 0x5EEB70 -> jmp A
@@ -5069,8 +5069,8 @@ $patches = @(
 
     @{ Id = 'visus'; Cat = 'window'; On = $false; GrowsExe = $true; PublicUntested = $true; GameUntested = $true
        Author = 'St0ny'
-       De = 'Visus - St0nyCam [BETA]: Schulterkamera und Zoom'
-       En = 'Visus - St0nyCam [BETA]: shoulder camera and zoom'
+       De = 'Visus - ShoulderCam [BETA]: Schulterkamera und Zoom'
+       En = 'Visus - ShoulderCam [BETA]: shoulder camera and zoom'
        NoteDe = 'Schulterkamera per /console visusHeight und visusShoulder, Zoom bis 100 Yards'
        NoteEn = 'shoulder camera via /console visusHeight and visusShoulder, zoom up to 100 yards'
        Code = {

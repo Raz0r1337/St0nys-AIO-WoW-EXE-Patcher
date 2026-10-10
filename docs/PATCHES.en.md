@@ -508,7 +508,7 @@ missing, WoW starts normally.
 > `LoadLibraryA("LuxShoulderCam.dll")` just gets the already loaded DLL back,
 > its startup code does not run a second time.
 
-Do not use it together with Visus - St0nyCam (No. 84): both hook the same spot
+Do not use it together with Visus - ShoulderCam (No. 84): both hook the same spot
 of the camera (VA `0x6070CB`). If Visus is applied, Lux does not hook in there,
 and Lux's height and offset have no effect.
 
@@ -1474,7 +1474,7 @@ A larger patch (4 parts) that fixes problems with mice using a high polling
 rate. Prevents cursor flicker and uncontrolled camera movement.
 
 <a id="patch-visus"></a>
-**Visus - St0nyCam [BETA]: shoulder camera and zoom** *(No. 84, Author: St0ny)* 🟠 **[untested - exe grows]**
+**Visus - ShoulderCam [BETA]: shoulder camera and zoom** *(No. 84, Author: St0ny)* 🟠 **[untested - exe grows]**
 
 A shoulder camera of its own and more zoom directly in `Wow.exe`, without a
 DLL. The template for the shoulder camera is [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam)
