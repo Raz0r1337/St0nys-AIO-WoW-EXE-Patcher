@@ -50,7 +50,9 @@ Schleife die drei Indizes jedes Dreiecks; ein Dreieck mit ungültigem Index wird
 übersprungen, die übrigen werden normal verarbeitet.
 Das Original (0x539wowmod) prüft nur das erste Dreieck jedes Aufrufs, einmal
 vor der Schleife, und hat falsch berechnete Sprungweiten; hier sitzt die
-Prüfung im Schleifenkörper, bei gleicher Codegröße.
+Prüfung im Schleifenkörper, bei gleicher Codegröße. Eine `Wow.exe` mit der
+Fassung bis zum 9.10.2026 (Sprung bei VA `0x81D51B`) erkennt der Patcher
+ebenfalls und kann sie zurücknehmen.
 
 > [!NOTE]
 > Der Code liegt in der freien Lücke am Ende von `.text`, die auch Nr. 65 nutzt.

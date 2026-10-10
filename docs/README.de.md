@@ -156,8 +156,10 @@ Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
 8. Zusammenfassung der gewählten Patches (bei einer gepatchten `Wow.exe`: was
    neu dazukommt, was zurückgenommen wird), Hinweise (fehlende oder
    überflüssige Ergänzungs-Patches, Warnungen) und Sicherheitsabfrage (J/N).
-9. Backup: Beim ersten Patchen wird das Original als `Wow.exe.ORI` gesichert,
-   bei jedem weiteren Lauf die bisherige `Wow.exe` als `Wow.exe.BAK`.
+9. Backup: Das Original sichert der Patcher als `Wow.exe.ORI` – schon gleich
+   nach der Prüfung in Schritt 4, auch wenn danach nichts gepatcht wird –, bei
+   jedem weiteren Lauf die bisherige `Wow.exe` als `Wow.exe.BAK` (siehe
+   [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen)).
 10. Alle gewählten Patches werden im Speicher eingespielt (mit
     Fortschrittsanzeige) und die `Wow.exe` danach **einmal** zurückgeschrieben.
     Tritt dabei ein Fehler auf, bleibt die `Wow.exe` unverändert.
@@ -181,7 +183,9 @@ Menü. Darüber stehen die Sicherungen, die im Ordner liegen.
 Ersetzt `2` oder `3` eine vorhandene `Wow.exe`, fragt der Patcher vorher nach
 (J/N). Die Sicherungen bleiben in jedem Fall erhalten. Angeboten wird nur, was
 sich verwenden lässt: Das Original muss laut SHA256 wirklich das Original sein,
-das Backup original oder mit diesem Patcher gepatcht.
+das Backup original oder mit diesem Patcher gepatcht. Hat `Wow.exe.BAK`
+denselben Stand wie die `Wow.exe` – etwa weil der Patcher sie gerade erst
+angelegt hat –, entfällt `2`.
 
 **Startmenü abschalten:** Mit `M` geht es ab dem nächsten Start direkt ins
 Patch-Menü. Wie die Sprache wird das in `patcher_selection.ini` gemerkt
@@ -335,9 +339,14 @@ So funktioniert es:
 - Vor dem Schreiben prüft der Patcher außerdem, dass sich das neue Ergebnis
   wieder sauber zum Original zurücknehmen lässt.
 - `Wow.exe.ORI` bleibt bei weiteren Läufen unangetastet und ist immer das
-  Original. Fehlt es, legt der Patcher es aus dem rekonstruierten Original neu
-  an. Zusätzlich sichert er bei jedem weiteren Lauf die bisherige `Wow.exe` als
-  `Wow.exe.BAK` – ein Schritt zurück ist also immer möglich.
+  Original. Zusätzlich sichert der Patcher bei jedem weiteren Lauf die bisherige
+  `Wow.exe` als `Wow.exe.BAK` – ein Schritt zurück ist also immer möglich.
+- **Fehlende Sicherungen** legt der Patcher gleich beim Start an, auch wenn
+  danach nichts gepatcht wird – etwa wenn du eine gepatchte `Wow.exe` in einen
+  neuen Patcher-Ordner kopierst: `Wow.exe.ORI` aus dem Original (bei einer
+  gepatchten `Wow.exe` zurückgerechnet und per SHA256 geprüft) und bei einer
+  gepatchten `Wow.exe` ihren jetzigen Stand als `Wow.exe.BAK`. Vorhandene
+  Sicherungen bleiben unangetastet.
 
 > [!NOTE]
 > Ein Patch mit einem Wert, der genau dem Original entspricht (z. B. die
@@ -378,7 +387,7 @@ abgebrochen (vom Benutzer oder weil keine Eingabe mehr möglich ist).
 | `docs/PATCHES.en.md` | Patch-Beschreibungen auf Englisch |
 | `patcher_selection.ini` | Wird beim ersten Start angelegt (gemerkte Sprache) und speichert die übernommene Auswahl samt eingegebenen Werten sowie die Einstellung für das Startmenü |
 | `patcher_state.ini` | Wird beim Patchen angelegt: Hash der gepatchten `Wow.exe`, eingespielte Patches, Werte und Original-Bytes – beschleunigt den nächsten Start, ist aber nicht zwingend nötig |
-| `Wow.exe.ORI`       | Sicherung der originalen `Wow.exe`, angelegt beim ersten Patchen |
+| `Wow.exe.ORI`       | Sicherung der originalen `Wow.exe`, angelegt beim ersten Start |
 | `Wow.exe.BAK`       | Sicherung der bisherigen `Wow.exe` vor dem letzten Lauf |
 | `LICENSE`           | MIT-Lizenz |
 

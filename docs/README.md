@@ -148,8 +148,10 @@ Everything else works as on Windows: wherever this guide says
 8. Summary of the selected patches (for a patched `Wow.exe`: what is added and
    what is removed), notes (missing or redundant companion patches, warnings)
    and a confirmation prompt (Y/N).
-9. Backup: on the first patch run the original is saved as `Wow.exe.ORI`, on
-   every later run the previous `Wow.exe` is saved as `Wow.exe.BAK`.
+9. Backup: the patcher saves the original as `Wow.exe.ORI` – right after the
+   check in step 4, even if nothing is patched afterwards – and on every later
+   run the previous `Wow.exe` as `Wow.exe.BAK` (see
+   [Changing or removing patches](#changing-or-removing-patches)).
 10. All selected patches are applied in memory (with progress output) and
     `Wow.exe` is written back **once**. If anything fails, `Wow.exe` stays
     untouched.
@@ -173,7 +175,8 @@ it, it lists the backups in the folder.
 If `2` or `3` replaces an existing `Wow.exe`, the patcher asks first (Y/N).
 The backups are kept in every case. Only usable options are offered: the
 original must really be the original according to SHA256, the backup original
-or patched with this patcher.
+or patched with this patcher. If `Wow.exe.BAK` has the same state as
+`Wow.exe` – e.g. because the patcher has just created it – `2` is left out.
 
 **Turning the start menu off:** with `M` the patch menu opens directly from
 the next start on. Like the language, this is remembered in
@@ -319,10 +322,14 @@ How it works:
   some other way after patching – it cannot be used (see above).
 - Before writing, the patcher also checks that the new result can be reverted
   cleanly to the original.
-- `Wow.exe.ORI` is not touched on later runs and is always the original. If
-  it is missing, the patcher recreates it from the reconstructed original. In
+- `Wow.exe.ORI` is not touched on later runs and is always the original. In
   addition, every later run saves the previous `Wow.exe` as `Wow.exe.BAK`, so
   one step back is always possible.
+- **Missing backups** are created right at the start, even if nothing is
+  patched afterwards – for example when you copy a patched `Wow.exe` into a new
+  patcher folder: `Wow.exe.ORI` from the original (reconstructed from a patched
+  `Wow.exe` and checked by SHA256) and, for a patched `Wow.exe`, its current
+  state as `Wow.exe.BAK`. Existing backups are left untouched.
 
 > [!NOTE]
 > A patch with a value exactly matching the original (e.g. the jump height
@@ -363,7 +370,7 @@ the user or because no more input is possible).
 | `docs/PATCHES.en.md` | Detailed descriptions of all patches |
 | `patcher_selection.ini` | Created on the first start (remembered language), stores the accepted selection, the entered values and the start menu setting |
 | `patcher_state.ini` | Created when patching: hash of the patched `Wow.exe`, applied patches, values and original bytes – speeds up the next start, but is not strictly required |
-| `Wow.exe.ORI`       | Backup of the original `Wow.exe`, created on the first patch run |
+| `Wow.exe.ORI`       | Backup of the original `Wow.exe`, created on the first start |
 | `Wow.exe.BAK`       | Backup of the previous `Wow.exe` from before the last run |
 | `LICENSE`           | MIT license |
 
