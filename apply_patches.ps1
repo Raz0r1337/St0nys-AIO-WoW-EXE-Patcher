@@ -6,8 +6,10 @@
 #    1. Sprache waehlen (Deutsch / English)
 #    2. Pruefen: Wow.exe vorhanden und original (SHA256) bzw. mit diesem
 #       Patcher gepatcht (Wasserzeichen) - dann Patchstand ermitteln
-#    3. Patches auswaehlen (Menue mit Vorauswahl)
-#    4. Bestaetigen, Backup anlegen (Wow.exe.ORI = Original beim ersten
+#    3. Startmenue: Patch-Menue oeffnen oder die Wow.exe aus einer Sicherung
+#       wiederherstellen (abschaltbar, dann direkt weiter mit 4)
+#    4. Patches auswaehlen (Menue mit Vorauswahl)
+#    5. Bestaetigen, Backup anlegen (Wow.exe.ORI = Original beim ersten
 #       Patchen, danach Wow.exe.BAK = vorherige Wow.exe), patchen
 #
 #  Die Auswahl aus dem Menue wird in patcher_selection.ini neben dem Skript
@@ -84,7 +86,7 @@ $f = $null
 # Gepatchte Wow.exe aus einem frueheren Lauf? Dann die dort aktiven Patch-Ids.
 $patchedMode = $false
 $appliedIds = @()
-# Keine Wow.exe, im Wiederherstellungs-Menue "neu aus dem Original" gewaehlt
+# Im Startmenue "neu aus dem Original" gewaehlt (Wow.exe fehlt oder ist nicht verwendbar)
 $fromOri = $false
 
 # Jeder Schreibzugriff ins Original geht ueber Patch() und wird als
@@ -122,15 +124,23 @@ $TEXT = @{
         NotFound      = '[FEHLER] Keine Wow.exe gefunden: {0}'
         WowMulti      = '[FEHLER] Mehrere Wow.exe in unterschiedlicher Schreibweise gefunden: {0} - bitte nur eine davon im Ordner lassen oder die richtige mit -Path angeben.'
         RestFound     = 'Keine Wow.exe gefunden, aber Sicherungen im Ordner:'
+        RestBroken    = 'Die Wow.exe ist nicht verwendbar, es gibt aber Sicherungen im Ordner:'
+        StartBackups  = 'Sicherungen im Ordner:'
         RestOri       = '  Original: {0}'
         RestBak       = '  Backup:   {0} (Stand vor dem letzten Patchen)'
         RestBadOri    = 'Hinweis: {0} ist nicht die originale Wow.exe (SHA256 passt nicht) und wird nicht verwendet.'
         RestBadBak    = 'Hinweis: {0} ist weder original noch mit diesem Patcher gepatcht und wird nicht verwendet.'
         RestAsk       = 'Was moechtest du tun?'
+        StartOpt1     = '  1 = Patch-Menue oeffnen (Patches auswaehlen, dazu- oder abwaehlen)'
         RestOpt1      = '  1 = Neue Wow.exe aus dem Original bauen (Patches wie zuletzt, im Menue aenderbar)'
+        RestOpt1Repl  = '  1 = Neue Wow.exe aus dem Original bauen (ersetzt die aktuelle, Patches wie zuletzt)'
         RestOpt2      = '  2 = Vorherige Wow.exe wiederherstellen (Stand vor dem letzten Patchen)'
         RestOpt3      = '  3 = Original wiederherstellen'
+        StartOptM     = '  M = Patch-Menue oeffnen und das Startmenue kuenftig ueberspringen (wird gemerkt)'
         RestOptQ      = '  Q = Abbrechen, nichts aendern'
+        RestReplace   = 'Die aktuelle {0} wird durch {1} ersetzt.'
+        RestConfirm   = 'Fortfahren? (J/N)'
+        RestSame      = '{0} ist bereits identisch mit {1} - es gibt nichts zu tun.'
         RestDone      = '[OK] {0} wurde aus {1} wiederhergestellt. Original und Backup bleiben erhalten.'
         RestCopyBack  = 'Danach die Wow.exe wie gewohnt in den WoW-Ordner kopieren.'
         RestFail      = '[FEHLER] Wiederherstellen fehlgeschlagen:'
@@ -143,7 +153,6 @@ $TEXT = @{
         HashBad3      = 'Beim ersten Start wird eine unmodifizierte Wow.exe benoetigt.'
         Expected      = 'Original:  {0}'
         Found         = 'Gefunden:  {0}'
-        BakHint       = 'Tipp: {0} ist die originale Wow.exe. Zurueck nach Wow.exe kopieren und den Patcher neu starten.'
         HashOk        = '[OK] Wow.exe ist original und unmodifiziert.'
         HashKnown     = '[OK] Wow.exe ist die zuletzt von diesem Patcher erzeugte Datei ({0} Patches aktiv).'
         RevertOk      = '[OK] Original aus patcher_state.ini rekonstruiert und per SHA256 geprueft.'
@@ -155,11 +164,16 @@ $TEXT = @{
         TableWarn     = 'HINWEIS: Die eingebaute Original-Byte-Tabelle passt nicht zu dieser Auswahl - ohne patcher_state.ini liesse sich diese Wow.exe nicht zuruecknehmen.'
         MenuTitle     = 'PATCH-AUSWAHL  ({0} von {1} ausgewaehlt)'
         MenuHelp1     = 'Nummer(n) eingeben um Patches an-/abzuwaehlen, z.B.:  5   oder  3 7 12   oder  10-15'
-        MenuHelp2     = 'A = alle an    N = alle aus    L = English    Q = abbrechen'
+        MenuHelp2     = 'A = alle an    N = alle aus    L = English    M = {0}    Q = abbrechen'
+        MenuStartOff  = 'Startmenue ausschalten'
+        MenuStartOn   = 'Startmenue einschalten'
         MenuPresetR   = 'R = Preset Reforged (Standard, sicher)'
         MenuPresets   = 'B = Preset Billy''s_Wow.exe (erprobte Basis, sicher)    S = Preset St0nys_Wow.exe (unsicher)'
         StonyWarning  = 'Achtung: Das Preset St0nys_Wow.exe sollte unter keinen Umstaenden auf oeffentlichen Servern verwendet werden - das fuehrt wahrscheinlich zu einem Bann!'
         LangInfo      = 'Sprache: Deutsch (gemerkt, im Menue mit L umschaltbar)'
+        StartMenuOff  = 'Startmenue: aus (gemerkt, im Patch-Menue mit M wieder einschaltbar)'
+        StartNowOff   = 'Startmenue ausgeschaltet: Beim naechsten Start geht es direkt ins Patch-Menue (mit M wieder einschalten).'
+        StartNowOn    = 'Startmenue eingeschaltet: Es erscheint wieder bei jedem Start.'
         MenuHelp3     = 'ENTER = Auswahl uebernehmen, speichern und weiter'
         SavedLoaded   = 'Deine gespeicherte Auswahl vom letzten Mal wurde geladen.'
         AppliedLoaded = 'Ausgewaehlt sind die Patches, die gerade in der Wow.exe stecken. Abwaehlen nimmt einen Patch zurueck.'
@@ -244,15 +258,23 @@ $TEXT = @{
         NotFound      = '[ERROR] No Wow.exe found: {0}'
         WowMulti      = '[ERROR] Several Wow.exe with different spelling found: {0} - please keep only one of them in the folder or pass the right one with -Path.'
         RestFound     = 'No Wow.exe found, but there are backups in the folder:'
+        RestBroken    = 'This Wow.exe cannot be used, but there are backups in the folder:'
+        StartBackups  = 'Backups in the folder:'
         RestOri       = '  Original: {0}'
         RestBak       = '  Backup:   {0} (state before the last patching)'
         RestBadOri    = 'Note: {0} is not the original Wow.exe (SHA256 does not match) and is not used.'
         RestBadBak    = 'Note: {0} is neither original nor patched with this patcher and is not used.'
         RestAsk       = 'What do you want to do?'
+        StartOpt1     = '  1 = Open the patch menu (select, add or remove patches)'
         RestOpt1      = '  1 = Build a new Wow.exe from the original (patches as last time, changeable in the menu)'
+        RestOpt1Repl  = '  1 = Build a new Wow.exe from the original (replaces the current one, patches as last time)'
         RestOpt2      = '  2 = Restore the previous Wow.exe (state before the last patching)'
         RestOpt3      = '  3 = Restore the original'
+        StartOptM     = '  M = Open the patch menu and skip the start menu from now on (remembered)'
         RestOptQ      = '  Q = Cancel, change nothing'
+        RestReplace   = 'The current {0} will be replaced by {1}.'
+        RestConfirm   = 'Continue? (Y/N)'
+        RestSame      = '{0} is already identical to {1} - nothing to do.'
         RestDone      = '[OK] {0} has been restored from {1}. Original and backup are kept.'
         RestCopyBack  = 'Then copy Wow.exe into your WoW folder as usual.'
         RestFail      = '[ERROR] Restoring failed:'
@@ -265,7 +287,6 @@ $TEXT = @{
         HashBad3      = 'The first run requires an unmodified Wow.exe.'
         Expected      = 'Original:  {0}'
         Found         = 'Found:     {0}'
-        BakHint       = 'Tip: {0} is the original Wow.exe. Copy it back to Wow.exe and start the patcher again.'
         HashOk        = '[OK] Wow.exe is original and unmodified.'
         HashKnown     = '[OK] Wow.exe is the file last produced by this patcher ({0} patches active).'
         RevertOk      = '[OK] Original reconstructed from patcher_state.ini and verified by SHA256.'
@@ -277,11 +298,16 @@ $TEXT = @{
         TableWarn     = 'NOTE: The built-in original bytes table does not match this selection - without patcher_state.ini this Wow.exe could not be reverted.'
         MenuTitle     = 'PATCH SELECTION  ({0} of {1} selected)'
         MenuHelp1     = 'Enter number(s) to toggle patches, e.g.:  5   or  3 7 12   or  10-15'
-        MenuHelp2     = 'A = all on    N = all off    L = Deutsch    Q = quit'
+        MenuHelp2     = 'A = all on    N = all off    L = Deutsch    M = {0}    Q = quit'
+        MenuStartOff  = 'turn start menu off'
+        MenuStartOn   = 'turn start menu on'
         MenuPresetR   = 'R = preset Reforged (default, safe)'
         MenuPresets   = 'B = preset Billy''s_Wow.exe (proven base, safe)    S = preset St0nys_Wow.exe (unsafe)'
         StonyWarning  = 'Warning: the preset St0nys_Wow.exe should never be used on public servers under any circumstances - it will most likely get you banned!'
         LangInfo      = 'Language: English (remembered, switch with L in the menu)'
+        StartMenuOff  = 'Start menu: off (remembered, switch it back on with M in the patch menu)'
+        StartNowOff   = 'Start menu turned off: next time the patch menu opens directly (turn it back on with M).'
+        StartNowOn    = 'Start menu turned on: it appears at every start again.'
         MenuHelp3     = 'ENTER = accept and save selection, continue'
         SavedLoaded   = 'Your saved selection from last time has been loaded.'
         AppliedLoaded = 'Selected are the patches currently in Wow.exe. Deselecting a patch removes it.'
@@ -4222,6 +4248,32 @@ function Save-Language([string]$language) {
     } catch { }
 }
 
+# Startmenue abgeschaltet? (Zeile "startmenu=off" in patcher_selection.ini)
+function Get-StartMenuOff {
+    if (-not (Test-Path -LiteralPath $settingsFile -PathType Leaf)) { return $false }
+    try { $lines = [System.IO.File]::ReadAllLines($settingsFile) } catch { return $false }
+    foreach ($l in $lines) {
+        if ($l -match '^\s*startmenu\s*=\s*off\s*$') { return $true }
+    }
+    return $false
+}
+
+# Nur die Einstellung fuer das Startmenue in patcher_selection.ini setzen
+# (startmenu=on bzw. off), alles andere bleibt stehen. Fehler beim Schreiben
+# sind hier unkritisch und werden ignoriert.
+function Save-StartMenu {
+    try {
+        $lines = New-Object System.Collections.Generic.List[string]
+        if (Test-Path -LiteralPath $settingsFile -PathType Leaf) {
+            foreach ($l in [System.IO.File]::ReadAllLines($settingsFile)) {
+                if ($l -notmatch '^\s*startmenu\s*=') { $lines.Add($l) }
+            }
+        }
+        if ($script:startMenuOff) { $lines.Add('startmenu=off') } else { $lines.Add('startmenu=on') }
+        [System.IO.File]::WriteAllLines($settingsFile, $lines.ToArray())
+    } catch { }
+}
+
 # Nur die Werte (value.<Id>=...) in patcher_selection.ini erneuern, die Auswahl
 # bleibt stehen - fuer -Select, das die gespeicherte Auswahl nicht veraendern
 # soll. Fehler beim Schreiben sind hier unkritisch und werden ignoriert.
@@ -4262,6 +4314,7 @@ function Save-Selection($sel, $values) {
     }
     foreach ($k in ($values.Keys | Sort-Object)) { $lines.Add("value.$k=$($values[$k])") }
     $lines.Add("language=$script:lang")
+    if ($script:startMenuOff) { $lines.Add('startmenu=off') } else { $lines.Add('startmenu=on') }
     try {
         [System.IO.File]::WriteAllLines($settingsFile, $lines.ToArray())
         return $null
@@ -4364,9 +4417,7 @@ function Write-State([string]$path, [string]$hash, [int64]$size, $ids, $values, 
     }
 }
 
-# Hinweis auf Wow.exe.ORI bzw. Wow.exe.BAK, wenn eine davon das Original enthaelt
-# (.BAK war in aelteren Versionen das Original).
-# Sicherung (.ORI/.BAK) zu einer fehlenden Wow.exe: der erwartete Name, sonst
+# Sicherung (.ORI/.BAK) zur Wow.exe: der erwartete Name, sonst
 # (Linux) jede Schreibweise davon - aber nur bei genau einem Treffer.
 function Find-Backup([string]$want) {
     if (Test-Path -LiteralPath $want -PathType Leaf) { return $want }
@@ -4375,18 +4426,6 @@ function Find-Backup([string]$want) {
         Where-Object { $_.Name -ieq $leaf })
     if ($hits.Count -eq 1) { return $hits[0].FullName }
     return $null
-}
-
-function Show-BakHint {
-    foreach ($b in @($backup, $backupPrev)) {
-        try {
-            if (-not (Test-Path -LiteralPath $b -PathType Leaf)) { continue }
-            if ((Get-Sha256 ([System.IO.File]::ReadAllBytes($b))) -ne $EXPECTED_HASH) { continue }
-            Write-Host ''
-            Say (T 'BakHint' $b) 'Yellow'
-            return
-        } catch { }
-    }
 }
 
 function Get-PatchById([string]$id) {
@@ -4476,7 +4515,8 @@ function Show-Menu($sel, [string]$message) {
     }
     Say ('=' * 70) 'Cyan'
     Say (T 'MenuHelp1')
-    Say (T 'MenuHelp2')
+    if ($script:startMenuOff) { $mk = T 'MenuStartOn' } else { $mk = T 'MenuStartOff' }
+    Say (T 'MenuHelp2' $mk)
     Say (T 'MenuPresetR')
     Say (T 'MenuPresets')
     Say (T 'MenuHelp3')
@@ -4508,6 +4548,12 @@ function Select-Patches([bool[]]$sel, [string]$message) {
             '^[lL]$'   {
                 if ($script:lang -eq 'de') { $script:lang = 'en' } else { $script:lang = 'de' }
                 Save-Language $script:lang
+                break
+            }
+            '^[mM]$'   {
+                $script:startMenuOff = -not $script:startMenuOff
+                Save-StartMenu
+                if ($script:startMenuOff) { $message = T 'StartNowOff' } else { $message = T 'StartNowOn' }
                 break
             }
             '^[qQxX]$' { return $null }
@@ -4629,8 +4675,13 @@ while (-not $lang) {
 }
 if ($askedLanguage) { Save-Language $lang }
 
-if ($langFromSettings) {
-    Say (T 'LangInfo') 'DarkGray'
+# Gemerkte Einstellungen kurz anzeigen: Sprache und abgeschaltetes Startmenue
+$startMenuOff = Get-StartMenuOff
+$infos = @()
+if ($langFromSettings) { $infos += T 'LangInfo' }
+if ($startMenuOff -and -not $Unattended -and -not $Select) { $infos += T 'StartMenuOff' }
+if ($infos.Count -gt 0) {
+    foreach ($i in $infos) { Say $i 'DarkGray' }
     Write-Host ''
 }
 Say (T 'Welcome1')
@@ -4655,51 +4706,138 @@ if (-not $Unattended) {
     Write-Host ''
 }
 
-# --- 2. Wow.exe vorhanden und original oder mit diesem Patcher gepatcht? ---
+# --- 2. Wow.exe pruefen, Startmenue ---
 # Beim ersten Start muss die Wow.exe original sein. Danach erkennt der
 # Patcher eine von ihm gepatchte Exe am Wasserzeichen. Passt der Hash aus
 # patcher_state.ini, wird das Original schnell aus der Zustandsdatei
 # rekonstruiert, sonst ueber die Original-Byte-Tabelle (mit Erkennung der
 # eingespielten Patches und ihrer Werte).
+# Danach kommt das Startmenue: 1 = Patch-Menue oeffnen, 2 = vorherige Wow.exe
+# (.BAK) bzw. 3 = Original (.ORI) wiederherstellen. Fehlt die Wow.exe oder ist
+# sie nicht verwendbar, baut 1 sie neu aus dem Original. Mit M (gemerkt als
+# startmenu=off in patcher_selection.ini) geht es kuenftig direkt ins
+# Patch-Menue - ausser die Wow.exe fehlt oder ist nicht verwendbar. Die
+# Sicherungen werden nur gelesen bzw. kopiert, nie verschoben oder
+# ueberschrieben.
 if ($wowHits.Count -gt 1) {
     Say (T 'WowMulti' (($wowHits | ForEach-Object { $_.Name }) -join ', ')) 'Red'
     Exit-Patcher 1
 }
-if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
-    # Keine Wow.exe, aber Sicherungen im Ordner (z.B. die gepatchte Exe in den
-    # WoW-Ordner verschoben statt kopiert): 1 = neu aus dem Original bauen,
-    # 2 = vorherige Wow.exe (.BAK), 3 = Original (.ORI). Die Sicherungen werden
-    # nur gelesen bzw. kopiert, nie verschoben oder ueberschrieben.
-    $oriFile = Find-Backup $backup
-    $bakFile = Find-Backup $backupPrev
-    $oriOk = $false; $bakOk = $false; $oriBytes = $null
-    if ($oriFile) {
-        try { $oriBytes = [System.IO.File]::ReadAllBytes($oriFile); $oriOk = ((Get-Sha256 $oriBytes) -eq $EXPECTED_HASH) } catch { }
-    }
-    if ($bakFile) {
-        try { $b = [System.IO.File]::ReadAllBytes($bakFile); $bakOk = ((Get-Sha256 $b) -eq $EXPECTED_HASH) -or (Test-Watermark $b) } catch { }
-    }
-    if ((-not $oriOk -and -not $bakOk) -or $Unattended) {
-        Say (T 'NotFound' $file) 'Red'
-        if ($oriFile -and -not $oriOk) { Say (T 'RestBadOri' (Split-Path -Leaf $oriFile)) 'Yellow' }
-        if ($bakFile -and -not $bakOk) { Say (T 'RestBadBak' (Split-Path -Leaf $bakFile)) 'Yellow' }
-        if ($oriOk -or $bakOk) {
-            $names = @(); if ($oriOk) { $names += Split-Path -Leaf $oriFile }; if ($bakOk) { $names += Split-Path -Leaf $bakFile }
-            Say (T 'RestUnatt' ($names -join ', ')) 'Yellow'
+# Angeboten wird nur, was sich verwenden laesst: .ORI muss das Original sein,
+# .BAK original oder mit diesem Patcher gepatcht.
+$oriFile = Find-Backup $backup
+$bakFile = Find-Backup $backupPrev
+$oriOk = $false; $bakOk = $false; $oriBytes = $null; $bakHash = $null
+if ($oriFile) {
+    try { $oriBytes = [System.IO.File]::ReadAllBytes($oriFile); $oriOk = ((Get-Sha256 $oriBytes) -eq $EXPECTED_HASH) } catch { }
+}
+if ($bakFile) {
+    try { $b = [System.IO.File]::ReadAllBytes($bakFile); $bakHash = Get-Sha256 $b; $bakOk = ($bakHash -eq $EXPECTED_HASH) -or (Test-Watermark $b) } catch { }
+}
+
+$haveExe = Test-Path -LiteralPath $file -PathType Leaf
+$broken = $false      # Wow.exe vorhanden, aber weder original noch sicher zuruecknehmbar
+$state = $null
+if ($haveExe) {
+    Say (T 'Checking')
+    $f = [System.IO.File]::ReadAllBytes($file)
+    $hash = Get-Sha256 $f
+    if ($hash -eq $EXPECTED_HASH) {
+        Say (T 'HashOk') 'Green'
+    } else {
+        $state = Read-State
+        $orig = $null
+        if ($null -ne $state -and $state.Hash -eq $hash) { $orig = Restore-Original $f $state }
+        if ($null -ne $orig) {
+            # schneller Weg ueber patcher_state.ini
+            Say (T 'HashKnown' @($state.Ids).Count) 'Green'
+            Say (T 'RevertOk') 'Green'
+        } elseif (Test-Watermark $f) {
+            # Patchstand aus der Exe selbst ermitteln
+            Say (T 'Scanning')
+            $ids = Find-AppliedPatches $f
+            $vals = @{}
+            foreach ($id in $ids) {
+                $p = Get-PatchById $id
+                if (-not $p.Decode) { continue }
+                $v = $null
+                try { $v = & $p.Decode } catch { }
+                if ($v -and -not (& $p.Check $v)) { $vals[$id] = [string]$v }
+            }
+            $orig = Restore-FromTable $f
+            if ($null -eq $orig) {
+                Write-Host ''
+                Say (T 'WmBroken1') 'Red'
+                Say (T 'WmBroken2') 'Red'
+                $broken = $true
+            } else {
+                # Zustand wie nach dem Patchen: Original-Bytes aller erkannten Patches
+                # aus der Tabelle. Gibt es nichts zu tun, wird er unten gespeichert,
+                # damit der naechste Start wieder den schnellen Weg nehmen kann.
+                $undo = New-Object System.Collections.Generic.List[object]
+                foreach ($e in (Get-OriginalTable).Entries) {
+                    if ($ids -contains $e.Id -or $e.Id -eq 'watermark' -or $e.Id -eq 'pe') { $undo.Add(@($e.Off, $e.Bytes)) }
+                }
+                $state = @{ Hash = $hash; Size = (Get-OriginalTable).Size; Ids = $ids; Values = $vals; Undo = $undo; Scanned = $true }
+                Say (T 'WmFound') 'Green'
+                Say (T 'WmScanned' $ids.Count) 'Green'
+            }
+        } else {
+            Write-Host ''
+            Say (T 'HashBad1') 'Red'
+            Say (T 'HashBad2') 'Red'
+            Write-Host ''
+            Say (T 'Expected' $EXPECTED_HASH)
+            Say (T 'Found' $hash)
+            Write-Host ''
+            Say (T 'HashBad3')
+            $broken = $true
         }
-        Exit-Patcher 1
+        if (-not $broken) {
+            $origPatched = $f      # die gepatchte Datei, wie sie auf der Platte liegt
+            $f = $orig
+            $patchedMode = $true
+            $appliedIds = @($state.Ids)
+        }
     }
-    Say (T 'RestFound') 'Yellow'
+    Write-Host ''
+}
+
+# Ohne verwendbare Wow.exe geht es nur ueber eine Sicherung weiter - ohne
+# Rueckfragen (-Unattended) oder ohne Sicherung ist hier Schluss.
+$usable = $haveExe -and -not $broken
+$canRestore = $oriOk -or $bakOk
+if (-not $usable -and ($Unattended -or -not $canRestore)) {
+    if (-not $haveExe) { Say (T 'NotFound' $file) 'Red' }
+    if ($oriFile -and -not $oriOk) { Say (T 'RestBadOri' (Split-Path -Leaf $oriFile)) 'Yellow' }
+    if ($bakFile -and -not $bakOk) { Say (T 'RestBadBak' (Split-Path -Leaf $bakFile)) 'Yellow' }
+    if ($canRestore) {
+        $names = @(); if ($oriOk) { $names += Split-Path -Leaf $oriFile }; if ($bakOk) { $names += Split-Path -Leaf $bakFile }
+        Say (T 'RestUnatt' ($names -join ', ')) 'Yellow'
+    }
+    Exit-Patcher 1
+}
+
+# Startmenue: bei jedem Start, ausser abgeschaltet, mit -Select oder mit
+# -Unattended. Fehlt die Wow.exe oder ist sie nicht verwendbar, kommt es immer.
+$startNote = ''
+if (-not $Unattended -and (-not $usable -or (-not $Select -and -not $startMenuOff))) {
+    if (-not $haveExe) { Say (T 'RestFound') 'Yellow' }
+    elseif ($broken) { Say (T 'RestBroken') 'Yellow' }
+    elseif ($canRestore) { Say (T 'StartBackups') }
     if ($oriOk) { Say (T 'RestOri' (Split-Path -Leaf $oriFile)) }
     if ($bakOk) { Say (T 'RestBak' (Split-Path -Leaf $bakFile)) }
     if ($oriFile -and -not $oriOk) { Say (T 'RestBadOri' (Split-Path -Leaf $oriFile)) 'Yellow' }
     if ($bakFile -and -not $bakOk) { Say (T 'RestBadBak' (Split-Path -Leaf $bakFile)) 'Yellow' }
-    Write-Host ''
+    if ($canRestore -or $oriFile -or $bakFile) { Write-Host '' }
     Say (T 'RestAsk')
     $keys = @()
-    if ($oriOk) { Say (T 'RestOpt1'); $keys += '1' }
+    if ($usable) { Say (T 'StartOpt1'); $keys += '1' }
+    elseif ($oriOk -and $haveExe) { Say (T 'RestOpt1Repl'); $keys += '1' }
+    elseif ($oriOk) { Say (T 'RestOpt1'); $keys += '1' }
     if ($bakOk) { Say (T 'RestOpt2'); $keys += '2' }
     if ($oriOk) { Say (T 'RestOpt3'); $keys += '3' }
+    if ($usable) { Say (T 'StartOptM'); $keys += 'M' }
     Say (T 'RestOptQ')
     $keys += 'Q'
     $pick = $null
@@ -4712,18 +4850,35 @@ if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
         Say (T 'RestAbort') 'Yellow'
         Exit-Patcher 2
     }
-    # Die Wow.exe bekommt den Namen der Sicherung ohne Endung - unter Linux
-    # also z.B. wow.exe zu wow.exe.ORI. Die Sicherungen heissen dann wieder
-    # passend dazu.
-    if ($pick -eq '2') { $src = $bakFile } else { $src = $oriFile }
-    $file = $src.Substring(0, $src.Length - 4)
-    $backup = $file + '.ORI'
-    $backupPrev = $file + '.BAK'
-    if ($pick -eq '1') {
-        $fromOri = $true
-    } else {
+    if ($pick -eq 'M') {
+        # Ab jetzt direkt ins Patch-Menue; der Hinweis steht dort unter der Liste.
+        $startMenuOff = $true
+        Save-StartMenu
+        $startNote = T 'StartNowOff'
+    }
+    if ($pick -eq '2' -or $pick -eq '3') {
+        if ($pick -eq '2') { $src = $bakFile; $srcHash = $bakHash } else { $src = $oriFile; $srcHash = $EXPECTED_HASH }
+        if ($haveExe) {
+            # Die vorhandene Wow.exe wird ersetzt: nur nach Rueckfrage und nicht,
+            # wenn sie schon genau der Sicherung entspricht.
+            if ($hash -eq $srcHash) {
+                Say (T 'RestSame' (Split-Path -Leaf $file) (Split-Path -Leaf $src)) 'Green'
+                Exit-Patcher 0
+            }
+            Say (T 'RestReplace' (Split-Path -Leaf $file) (Split-Path -Leaf $src)) 'Yellow'
+            $answer = (Ask "  $(T 'RestConfirm')").ToUpperInvariant()
+            Write-Host ''
+            if ($answer -ne (T 'Yes') -and $answer -ne 'Y' -and $answer -ne 'J') {
+                Say (T 'RestAbort') 'Yellow'
+                Exit-Patcher 2
+            }
+        } else {
+            # Die Wow.exe bekommt den Namen der Sicherung ohne Endung - unter
+            # Linux also z.B. wow.exe zu wow.exe.ORI.
+            $file = $src.Substring(0, $src.Length - 4)
+        }
         try {
-            [System.IO.File]::Copy($src, $file, $false)
+            [System.IO.File]::Copy($src, $file, $haveExe)
         } catch {
             Say (T 'RestFail') 'Red'
             Say $_.Exception.Message 'Red'
@@ -4736,76 +4891,24 @@ if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
         Say (T 'RestCopyBack')
         Exit-Patcher 0
     }
-}
-
-Say (T 'Checking')
-if ($fromOri) { $f = $oriBytes } else { $f = [System.IO.File]::ReadAllBytes($file) }
-$hash = Get-Sha256 $f
-$state = $null
-if ($hash -eq $EXPECTED_HASH) {
-    Say (T 'HashOk') 'Green'
-} else {
-    $state = Read-State
-    $orig = $null
-    if ($null -ne $state -and $state.Hash -eq $hash) { $orig = Restore-Original $f $state }
-    if ($null -ne $orig) {
-        # schneller Weg ueber patcher_state.ini
-        Say (T 'HashKnown' @($state.Ids).Count) 'Green'
-        Say (T 'RevertOk') 'Green'
-    } elseif (Test-Watermark $f) {
-        # Patchstand aus der Exe selbst ermitteln
-        Say (T 'Scanning')
-        $ids = Find-AppliedPatches $f
-        $vals = @{}
-        foreach ($id in $ids) {
-            $p = Get-PatchById $id
-            if (-not $p.Decode) { continue }
-            $v = $null
-            try { $v = & $p.Decode } catch { }
-            if ($v -and -not (& $p.Check $v)) { $vals[$id] = [string]$v }
+    if ($pick -eq '1' -and -not $usable) {
+        # Neu aus dem Original. Fehlt die Wow.exe, bekommt sie den Namen des
+        # Originals ohne Endung (unter Linux z.B. wow.exe zu wow.exe.ORI), die
+        # Sicherungen heissen passend dazu. Eine nicht verwendbare Wow.exe wird
+        # beim Schreiben ersetzt.
+        if (-not $haveExe) {
+            $file = $oriFile.Substring(0, $oriFile.Length - 4)
+            $backup = $file + '.ORI'
+            $backupPrev = $file + '.BAK'
         }
-        $orig = Restore-FromTable $f
-        if ($null -eq $orig) {
-            Write-Host ''
-            Say (T 'WmBroken1') 'Red'
-            Say (T 'WmBroken2') 'Red'
-            Show-BakHint
-            Exit-Patcher 1
-        }
-        # Zustand wie nach dem Patchen: Original-Bytes aller erkannten Patches
-        # aus der Tabelle. Gibt es nichts zu tun, wird er unten gespeichert,
-        # damit der naechste Start wieder den schnellen Weg nehmen kann.
-        $undo = New-Object System.Collections.Generic.List[object]
-        foreach ($e in (Get-OriginalTable).Entries) {
-            if ($ids -contains $e.Id -or $e.Id -eq 'watermark' -or $e.Id -eq 'pe') { $undo.Add(@($e.Off, $e.Bytes)) }
-        }
-        $state = @{ Hash = $hash; Size = (Get-OriginalTable).Size; Ids = $ids; Values = $vals; Undo = $undo; Scanned = $true }
-        Say (T 'WmFound') 'Green'
-        Say (T 'WmScanned' $ids.Count) 'Green'
-    } else {
-        Write-Host ''
-        Say (T 'HashBad1') 'Red'
-        Say (T 'HashBad2') 'Red'
-        Write-Host ''
-        Say (T 'Expected' $EXPECTED_HASH)
-        Say (T 'Found' $hash)
-        Write-Host ''
-        Say (T 'HashBad3')
-        Show-BakHint
-        Exit-Patcher 1
+        $fromOri = $true
+        $f = $oriBytes
+        # Auswahl und Werte wie bei der zuletzt gepatchten Wow.exe, soweit
+        # patcher_state.ini sie kennt.
+        $state = $null
+        $last = Read-State
+        if ($null -ne $last -and @($last.Ids).Count -gt 0) { $state = $last; $appliedIds = @($last.Ids) }
     }
-    $origPatched = $f      # die gepatchte Datei, wie sie auf der Platte liegt
-    $f = $orig
-    $patchedMode = $true
-    $appliedIds = @($state.Ids)
-}
-Write-Host ''
-
-# Neu aus dem Original (Wiederherstellungs-Menue, Option 1): Auswahl und Werte
-# wie bei der zuletzt gepatchten Wow.exe, soweit patcher_state.ini sie kennt.
-if ($fromOri) {
-    $last = Read-State
-    if ($null -ne $last -and @($last.Ids).Count -gt 0) { $state = $last; $appliedIds = @($last.Ids) }
 }
 
 # --- 3. Patches auswaehlen ---
@@ -4833,6 +4936,7 @@ if ($Select) {
         $initial = Get-SavedSelection
         if ($null -eq $initial) { $initial = Get-DefaultSelection } else { $message = T 'SavedLoaded' }
     }
+    if ($startNote) { if ($message) { $message = "$message`n  $startNote" } else { $message = $startNote } }
     $selection = Select-Patches $initial $message
     if ($null -eq $selection) {
         Write-Host ''
@@ -5065,8 +5169,9 @@ if ($atConfirm.Count -gt 0) {
 # Schritt zurueck.
 try {
     if ($fromOri) {
-        # Neu aus dem Original: Wow.exe.ORI bleibt, wie es ist, und eine
-        # bisherige Wow.exe fuer ein .BAK gibt es nicht.
+        # Neu aus dem Original: Wow.exe.ORI bleibt, wie es ist. Ein .BAK gibt
+        # es nicht - eine fehlende Wow.exe hat keins, eine nicht verwendbare
+        # wird ersetzt.
         Say (T 'BackupSkip')
     } elseif (-not $patchedMode) {
         Copy-Item -LiteralPath $file -Destination $backup -Force
