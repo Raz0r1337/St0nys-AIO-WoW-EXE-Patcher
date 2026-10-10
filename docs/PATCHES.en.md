@@ -1181,7 +1181,9 @@ The code lives in a small section of its own (`.isnap`, 179 bytes).
 **Outline for target and mouseover [BETA]** *(No. 68, Author: St0ny)* 🟠 **[untested - exe grows]**
 
 Like in retail, the 3D figure of your target and the figure under the mouse
-cursor get a thin outline (about 2 pixels). Players get their class color like
+cursor get a glowing outline: bright right at the figure, fading out over
+about 6 pixels. Raid members outside your party of 5 only get a thin line
+(about 2 pixels), which saves performance. Players get their class color like
 in the raid frames, everyone else the color of the selection circle: red
 hostile, yellow neutral, green friendly. Hostile players gently pulse between
 their class color and red, so you still recognize them as enemies despite the
@@ -1220,8 +1222,10 @@ the switches are called `hidden`, `self`, `party`, `raid`, `wallsgroup`,
 `walls` and `react`).
 
 > [!WARNING]
-> **Whole raid costs a lot of FPS:** every outlined figure is drawn ten times.
-> With 25 or 40 players that is a lot of extra draw calls per frame. On weaker
+> **Whole raid costs a lot of FPS:** every figure with a glowing outline is
+> drawn 26 times, raid members outside your party of 5 with the thin line
+> still ten times. With 25 or 40 players that is a lot of extra draw calls per
+> frame. On weaker
 > computers better use only the party of 5. This also applies to "through
 > walls: party/raid only" with party/raid set to "off": then all other players
 > in the raid are drawn that way.
@@ -1240,11 +1244,13 @@ How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
   itself never uses stencil.
 - While the figure is drawn, its visible pixels are marked in the stencil.
-  Then it is drawn eight more times invisibly, each shifted by 2 pixels in
-  every direction (via the shader's projection matrix), with depth test –
-  these copies mark the outline and store the figure's depth there. Every
-  outlined figure (target, mouseover, you, every party and raid member, up to
-  48) gets a value of its own and so a color of its own.
+  Then it is drawn 24 more times invisibly, eight times each shifted by 2, 4
+  and 6 pixels in every direction (via the shader's projection matrix), with
+  depth test – these copies mark the three steps of the outline; the inner
+  one also stores the figure's depth there. The thin line only gets the eight
+  copies of the inner step. Every outlined figure (target, mouseover, you,
+  every party and raid member, up to 48) gets a value of its own and so a
+  color of its own.
 - The game sorts opaque models by model and texture, not by distance, and
   draws batched doodads (`M2BatchDoodads`) after them. The patch moves the
   parts of outlined figures to the end of this order; among themselves it
@@ -1270,12 +1276,15 @@ How it works:
   drawn lies clearly in front of them. For that, the projection matrix pulls
   their depth forward a bit (see above).
 - After the models and before the interface, a full-screen quad per outlined
-  figure colors only its outline pixels; then the stencil is cleared and the
-  game sends all its graphics states again.
+  figure and step colors only its outline pixels: inside its color halfway
+  towards white, in the middle about 60 %, outside about 25 % opaque – so the
+  outline gets darker towards the outside. The thin line gets the full color.
+  Then the stencil is cleared and the game sends all its graphics states
+  again.
 - Hostile means: the player's selection circle would be red. Then the quad
   mixes their class color with red; the share of red rises and falls smoothly
   (cosine), one pulse takes 1.5 seconds.
-- Code and data live in a section of their own (`.outl`, 0x14F0 bytes). Each
+- Code and data live in a section of their own (`.outl`, 0x16AC bytes). Each
   switch is a single padding byte between two functions in `.text` that the
   chosen setting sets to 1; the code reads these switches while drawing. This is also
   how the patcher recognizes the settings in a patched `Wow.exe`.

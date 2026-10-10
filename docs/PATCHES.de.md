@@ -1221,7 +1221,10 @@ Der Code liegt in einer eigenen kleinen Sektion (`.isnap`, 179 Byte).
 **Umrandung für Ziel und Mouseover [BETA]** *(Nr. 68, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
 
 Wie in Retail bekommt die 3D-Figur des markierten Ziels und die Figur unter
-dem Mauszeiger eine dünne Umrandung (etwa 2 Pixel). Spieler bekommen ihre
+dem Mauszeiger einen leuchtenden Rand: direkt an der Figur hell, nach außen
+auf etwa 6 Pixeln auslaufend. Schlachtzug-Mitglieder außerhalb deiner
+5er-Gruppe bekommen nur eine dünne Linie (etwa 2 Pixel), das spart Leistung.
+Spieler bekommen ihre
 Klassenfarbe wie in den Raid-Frames, alle anderen die Farbe des Auswahlkreises:
 rot feindlich, gelb neutral, grün freundlich. Feindliche Spieler pulsieren
 sanft zwischen ihrer Klassenfarbe und Rot, damit man sie trotz Klassenfarbe als
@@ -1261,9 +1264,10 @@ eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
 `party`, `raid`, `wallsgroup`, `walls` und `react`).
 
 > [!WARNING]
-> **Ganzer Schlachtzug kostet viele FPS:** Jede umrandete Figur wird zehnmal
-> gezeichnet. Bei 25 oder 40 Spielern sind das sehr viele zusätzliche
-> Zeichenaufrufe pro Bild. Auf schwächeren Rechnern lieber nur die 5er-Gruppe
+> **Ganzer Schlachtzug kostet viele FPS:** Jede Figur mit Leuchtrand wird
+> 26-mal gezeichnet, Schlachtzug-Mitglieder außerhalb deiner 5er-Gruppe mit
+> der dünnen Linie immer noch zehnmal. Bei 25 oder 40 Spielern sind das sehr
+> viele zusätzliche Zeichenaufrufe pro Bild. Auf schwächeren Rechnern lieber nur die 5er-Gruppe
 > nehmen. Das gilt auch für „durch Wände: nur Gruppe/Schlachtzug“, wenn die
 > Gruppe auf „aus“ steht: Dann werden im Schlachtzug alle Mitspieler so
 > gezeichnet.
@@ -1283,12 +1287,13 @@ So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
   selbst nutzt Stencil nirgends.
 - Beim Zeichnen der Figur werden ihre sichtbaren Pixel im Stencil markiert.
-  Danach wird sie noch achtmal unsichtbar gezeichnet, je um 2 Pixel in alle
-  Richtungen verschoben (über die Projektionsmatrix des Shaders), mit
-  Tiefentest – diese Kopien markieren den Rand und tragen dort die Tiefe der
-  Figur ein. Jede umrandete Figur (Ziel, Mouseover, du, jedes Gruppen- und
-  Schlachtzug-Mitglied, bis zu 48) bekommt dabei ihren eigenen Wert und so
-  ihre eigene Farbe.
+  Danach wird sie noch 24-mal unsichtbar gezeichnet, je achtmal um 2, 4 und
+  6 Pixel in alle Richtungen verschoben (über die Projektionsmatrix des
+  Shaders), mit Tiefentest – diese Kopien markieren die drei Stufen des
+  Rands; die innere trägt dort auch die Tiefe der Figur ein. Für die dünne
+  Linie gibt es nur die acht Kopien der inneren Stufe. Jede umrandete Figur
+  (Ziel, Mouseover, du, jedes Gruppen- und Schlachtzug-Mitglied, bis zu 48)
+  bekommt dabei ihren eigenen Wert und so ihre eigene Farbe.
 - Undurchsichtige Modelle sortiert das Spiel nach Modell und Textur, nicht nach
   Entfernung, und zeichnet gebündelte Deko-Objekte (`M2BatchDoodads`) erst
   danach. Der Patch stellt die Teile umrandeter Figuren ans Ende dieser
@@ -1313,13 +1318,16 @@ So funktioniert es:
   wo sie verdeckt ist; ihre Kopien markieren den Rand aber nur dort, wo
   bereits Gezeichnetes deutlich vor ihnen liegt. Dafür zieht die
   Projektionsmatrix ihre Tiefe ein Stück nach vorn (siehe oben).
-- Nach den Modellen und vor dem Interface färbt je umrandeter Figur eine
-  bildschirmfüllende Fläche nur ihre Rand-Pixel ein; danach wird der Stencil
-  geleert und das Spiel setzt alle Grafik-Einstellungen neu.
+- Nach den Modellen und vor dem Interface färbt je umrandeter Figur und Stufe
+  eine bildschirmfüllende Fläche nur ihre Rand-Pixel ein: innen ihre Farbe zur
+  Hälfte Richtung Weiß, in der Mitte zu etwa 60 %, außen zu etwa 25 % deckend
+  – so wird der Rand nach außen dunkler. Die dünne Linie bekommt die volle
+  Farbe. Danach wird der Stencil geleert und das Spiel setzt alle
+  Grafik-Einstellungen neu.
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x14F0 Byte). Jeder
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x16AC Byte). Jeder
   Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
   die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
   Zeichnen.
