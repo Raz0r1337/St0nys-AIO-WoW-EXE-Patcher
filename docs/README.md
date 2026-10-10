@@ -632,6 +632,8 @@ clicking the number of a patch takes you straight to its description.
   contributed some of his own.
 - Thanks also to **Stormhand** for the permission to include his
   LuxShoulderCam and to use it as the template for Visus – St0nyCam.
+- Thanks to **Zendevve**, the author of CameraReforged, for the idea behind
+  Visus – St0nyCam.
 - A big thank you to **Stormhand**, **MacWarrior** and **Billy Hoyle** for all
   the testing in game – and to Stormhand in particular for risking their own
   Warmane account to find out which patches are "safe" to use. 😄
