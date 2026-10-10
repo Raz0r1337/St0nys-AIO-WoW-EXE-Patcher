@@ -533,9 +533,6 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   „Billy's_Wow.exe“ in diesem Patcher.
 - Danke auch an **MacWarrior**, der ebenfalls beim Zusammentragen der Patches
   geholfen und einige eigene Patches beigesteuert hat.
-- Danke auch an **Stormhand** für das offizielle Preset seines Projekts
-  [Project Reforged](https://projectreforged.github.io/wotlk/): Es steckt als
-  Preset „Reforged“ in diesem Patcher und ist die Standard-Auswahl.
 - Ein großes Dankeschön an **Stormhand**, **MacWarrior** und **Billy Hoyle** für
   die vielen Tests im Spiel – und an Stormhand ganz besonders dafür, den eigenen
   Warmane-Account riskiert zu haben, um herauszufinden, welche Patches „sicher“
