@@ -1182,10 +1182,8 @@ The code lives in a small section of its own (`.isnap`, 179 bytes).
 
 Like in retail, the 3D figure of your target and the figure under the mouse
 cursor get a soft glow: a bright line right at the figure, fading out softly
-over about 8 pixels. This also applies to you and your party of 5. Raid
-members outside your party of 5 only get a thin line (about 2 pixels) without
-glow, which saves performance – unless they are your target or under the
-mouse cursor. Players get their class color like
+over about 8 pixels. This also applies to you, your party and your raid.
+Players get their class color like
 in the raid frames, everyone else the color of the selection circle: red
 hostile, yellow neutral, green friendly. Hostile players gently pulse between
 their class color and red, so you still recognize them as enemies despite the
@@ -1224,7 +1222,11 @@ for a patched `Wow.exe`.
 | Color | **1 = class color** · 2 = reaction color: all outlines in the color of the selection circle (mostly blue for players), target and mouseover too; hostile players are then simply red and do not pulse |
 
 If a figure is the target or under the mouse cursor, that outline applies.
-Players out of sight have none. The patcher remembers the settings like other
+The companions of the other players (pets, companions and other summoned
+creatures) are outlined along with party or raid, in their owner's color. If
+another player stands in a different building or room, the patch still draws
+them as soon as they are in view – so their outline stays visible through the
+wall. Players beyond the game's range have none. The patcher remembers the settings like other
 values in `patcher_selection.ini` as a list of the switches that are on, e.g.
 `value.outline=hidden,party` (the default is `hidden,wallsgroup`, `none` means
 all off; the switches are called `hidden`, `self`, `party`, `raid`,
@@ -1242,7 +1244,8 @@ all off; the switches are called `hidden`, `self`, `party`, `raid`,
 > figure is detected. The game normally draws terrain and buildings first; all
 > other figures and objects – a lantern, a mailbox or a plate on the table in
 > front of you, say – are drawn before the outlined figures by the patch as
-> well. Transparent things like water or spell effects do not hide anything.
+> well. Only companions (yours and the other players') come after them and do
+> not trigger the outline. Transparent things like water or spell effects do not hide anything.
 > Also, whatever hides it has to lie a bit in front of the figure, otherwise
 > there would be a line on the ground right under the feet: about 0.1 yards at
 > 10 yards camera distance, 0.2 yards at 15 and almost 1 yard at 30.
@@ -1254,13 +1257,15 @@ How it works:
   Then it is drawn eight more times invisibly, each shifted by 2 pixels in
   every direction (via the shader's projection matrix), with depth test –
   these copies mark the outline and store the figure's depth there. Every
-  outlined figure (target, mouseover, you, every party and raid member, up to
-  48) gets a value of its own and so a color of its own.
+  outlined figure (target, mouseover, you, every party and raid member and
+  their companions, up to 48) gets a value of its own and so a color of its
+  own.
 - The game sorts opaque models by model and texture, not by distance, and
   draws batched doodads (`M2BatchDoodads`) after them. The patch moves the
-  parts of outlined figures to the end of this order; among themselves it
-  stays as it was. So everything else is already in the depth buffer when the
-  outlined figures are drawn.
+  parts of outlined figures to the end of this order, those of companions to
+  the very end; among themselves it stays as it was. So everything else is
+  already in the depth buffer when the outlined figures are drawn, and a
+  companion in front of you does not trigger "only where hidden".
 - Whatever is still drawn afterwards in front of the figure clears the mark at
   its pixels and so hides the outline as well. Things behind stay behind the
   outline thanks to the stored depth. Transparent things like water or spell
@@ -1276,6 +1281,16 @@ How it works:
   later then only clear the outlines of the others. If party/raid is set to
   "off", party or raid are still put on the list and are outlined only where
   they are hidden, like your character.
+- Companions: the patch walks the game's object list. Units (not players)
+  that another player on the list has summoned, created or taken control of
+  are added in that player's color (up to the 45th entry, so there is still
+  room for you, target and mouseover). Your own companions – and with "only
+  where hidden" also those of party and raid that are not on the list
+  otherwise – are added without an outline, only so that they are drawn last.
+- If an outlined party figure (with "through walls: all" every outlined
+  figure) stands in a different building or room, the game sorts it out
+  before drawing. If it is in view, the patch still adds it to the list of
+  visible objects – the way the game does it with visible ones.
 - With "only where hidden" your figure is also marked where it is hidden as
   well; its copies, however, only mark the outline where something already
   drawn lies clearly in front of them. For that, the projection matrix pulls
@@ -1283,12 +1298,14 @@ How it works:
 - After the models and before the interface, the glow comes first: per
   figure with glow, a full-screen quad colors only its outline pixels, but in
   a texture of its own (same size and anti-aliasing as the image, the same
-  stencil). A pixel shader blurs it (Gaussian filter at half resolution,
-  first horizontally, then vertically), then it is laid over the image – only
+  stencil). Pixel shaders shrink it to half resolution (with a soft 4×4
+  filter, so the glow does not twitch on small movements) and blur it
+  (Gaussian filter, first horizontally, then vertically); along the way the
+  glow also gets its brightness curve. Then it is laid over the image – only
   where there is no outlined figure, and brighter towards the figure.
 - Then a full-screen quad per outlined figure colors only its outline pixels
-  – the thin line. For figures with glow it is lightened (5/8 of the color
-  plus some white), for the others it has the full color. Then the stencil is
+  – the thin line. With glow it is lightened (5/8 of the color plus some
+  white), without glow it has the full color. Then the stencil is
   cleared and the game sends the changed graphics states again.
 - The glow's textures live in video memory (about 46 MB at 1920×1080 with 4x
   anti-aliasing) and are released before the game resets the graphics
@@ -1298,7 +1315,7 @@ How it works:
 - Hostile means: the player's selection circle would be red. Then the quad
   mixes their class color with red; the share of red rises and falls smoothly
   (cosine), one pulse takes 1.5 seconds.
-- Code and data live in a section of their own (`.outl`, 0x26A7 bytes). Each
+- Code and data live in a section of their own (`.outl`, 0x2C86 bytes). Each
   switch is a single padding byte between two functions in `.text` that the
   chosen setting sets to 1; the code reads these switches while drawing. This is also
   how the patcher recognizes the settings in a patched `Wow.exe`.

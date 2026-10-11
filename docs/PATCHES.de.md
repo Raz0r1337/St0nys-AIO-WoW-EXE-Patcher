@@ -1222,10 +1222,8 @@ Der Code liegt in einer eigenen kleinen Sektion (`.isnap`, 179 Byte).
 
 Wie in Retail bekommt die 3D-Figur des markierten Ziels und die Figur unter
 dem Mauszeiger einen weichen Schein: direkt an der Figur eine helle Linie,
-nach außen auf etwa 8 Pixeln weich auslaufend. Das gilt auch für dich und
-deine 5er-Gruppe. Schlachtzug-Mitglieder außerhalb deiner 5er-Gruppe bekommen
-nur eine dünne Linie (etwa 2 Pixel) ohne Schein, das spart Leistung – außer
-sie sind gerade dein Ziel oder unter dem Mauszeiger. Spieler bekommen ihre
+nach außen auf etwa 8 Pixeln weich auslaufend. Das gilt auch für dich, deine
+Gruppe und deinen Schlachtzug. Spieler bekommen ihre
 Klassenfarbe wie in den Raid-Frames, alle anderen die Farbe des Auswahlkreises:
 rot feindlich, gelb neutral, grün freundlich. Feindliche Spieler pulsieren
 sanft zwischen ihrer Klassenfarbe und Rot, damit man sie trotz Klassenfarbe als
@@ -1266,7 +1264,12 @@ aktuellen Stand.
 | Farbe | **1 = Klassenfarbe** · 2 = Gesinnungsfarbe: alle Ränder in der Farbe des Auswahlkreises (bei Spielern meist blau), auch Ziel und Mouseover; feindliche Spieler sind dann einfach rot und pulsieren nicht |
 
 Ist eine Figur gerade Ziel oder unter dem Mauszeiger, gilt dieser Rand.
-Mitspieler außer Sichtweite haben keinen. Die Einstellungen merkt sich der
+Begleiter der Mitspieler (Pets, Begleiter und andere beschworene Wesen)
+werden mit Gruppe bzw. Schlachtzug umrandet, in der Farbe ihres Besitzers.
+Steht ein Mitspieler in einem anderen Gebäude oder Raum, zeichnet der Patch
+ihn trotzdem, sobald er im Blickfeld liegt – so bleibt sein Rand durch die
+Wand sichtbar. Mitspieler außerhalb der Reichweite des Spiels haben keinen
+Rand. Die Einstellungen merkt sich der
 Patcher wie andere Werte in `patcher_selection.ini` als Liste der
 eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
 `hidden,wallsgroup`, `none` heißt alles aus; die Schalter heißen `hidden`,
@@ -1286,7 +1289,8 @@ eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
 > vor deiner Figur gezeichnet wird. Gelände und Gebäude zeichnet das Spiel
 > normalerweise zuerst; alle anderen Figuren und Objekte – etwa eine Laterne,
 > ein Briefkasten oder ein Teller auf dem Tisch vor dir – zeichnet der Patch
-> ebenfalls vor den umrandeten Figuren. Durchsichtiges wie Wasser oder
+> ebenfalls vor den umrandeten Figuren. Nur Begleiter (deine und die der
+> Mitspieler) kommen erst danach und lösen den Rand nicht aus. Durchsichtiges wie Wasser oder
 > Zaubereffekte verdeckt nicht. Außerdem muss das Verdeckende ein Stück vor
 > der Figur liegen, sonst gäbe es direkt unter den Füßen eine Linie am Boden:
 > rund 0,1 Yards bei 10 Yards Kameraabstand, 0,2 Yards bei 15 und knapp
@@ -1300,13 +1304,15 @@ So funktioniert es:
   Richtungen verschoben (über die Projektionsmatrix des Shaders), mit
   Tiefentest – diese Kopien markieren den Rand und tragen dort die Tiefe der
   Figur ein. Jede umrandete Figur (Ziel, Mouseover, du, jedes Gruppen- und
-  Schlachtzug-Mitglied, bis zu 48) bekommt dabei ihren eigenen Wert und so
-  ihre eigene Farbe.
+  Schlachtzug-Mitglied und ihre Begleiter, bis zu 48) bekommt dabei ihren
+  eigenen Wert und so ihre eigene Farbe.
 - Undurchsichtige Modelle sortiert das Spiel nach Modell und Textur, nicht nach
   Entfernung, und zeichnet gebündelte Deko-Objekte (`M2BatchDoodads`) erst
   danach. Der Patch stellt die Teile umrandeter Figuren ans Ende dieser
-  Reihenfolge, untereinander bleibt sie, wie sie war. So liegt alles andere
-  schon im Tiefenpuffer, wenn die umrandeten Figuren gezeichnet werden.
+  Reihenfolge, die von Begleitern ganz ans Ende; untereinander bleibt sie, wie
+  sie war. So liegt alles andere schon im Tiefenpuffer, wenn die umrandeten
+  Figuren gezeichnet werden, und ein Begleiter vor dir löst „nur wo verdeckt“
+  nicht aus.
 - Was danach noch gezeichnet wird und vor der Figur liegt, löscht die
   Markierung an seinen Pixeln und verdeckt so auch den Rand. Dinge dahinter
   bleiben dank der eingetragenen Tiefe hinter dem Rand. Durchsichtiges wie
@@ -1322,6 +1328,17 @@ So funktioniert es:
   löscht dann nur die Ränder der anderen. Steht die Gruppe auf „aus“, kommen
   Gruppe bzw. Schlachtzug trotzdem in die Liste und werden wie dein Charakter
   nur dort umrandet, wo sie verdeckt sind.
+- Begleiter: Der Patch geht die Objektliste des Spiels durch. Einheiten (keine
+  Spieler), die ein Mitspieler auf der Liste beschworen, erschaffen oder
+  übernommen hat, kommen mit dessen Farbe dazu (bis zum 45. Eintrag, damit du,
+  Ziel und Mouseover noch Platz haben). Deine eigenen Begleiter – und bei „nur
+  wo verdeckt“ auch die von Gruppe und Schlachtzug, die sonst nicht auf der
+  Liste stehen – kommen ohne Rand dazu, nur damit sie zuletzt gezeichnet
+  werden.
+- Steht eine umrandete Figur der Gruppe (mit „durch Wände: alle“ jede
+  umrandete Figur) in einem anderen Gebäude oder Raum, sortiert das Spiel sie
+  vor dem Zeichnen aus. Liegt sie im Blickfeld, hängt der Patch sie trotzdem
+  in die Liste der sichtbaren Objekte – wie das Spiel es mit sichtbaren tut.
 - Mit „nur dort, wo verdeckt“ wird deine Figur ebenfalls auch dort markiert,
   wo sie verdeckt ist; ihre Kopien markieren den Rand aber nur dort, wo
   bereits Gezeichnetes deutlich vor ihnen liegt. Dafür zieht die
@@ -1329,13 +1346,15 @@ So funktioniert es:
 - Nach den Modellen und vor dem Interface entsteht zuerst der Schein: Je Figur
   mit Schein färbt eine bildschirmfüllende Fläche nur ihre Rand-Pixel ein,
   aber in einer eigenen Textur (gleiche Größe und Kantenglättung wie das Bild,
-  derselbe Stencil). Ein Pixelshader zeichnet sie weich (Gauß-Filter in
-  halber Auflösung, erst waagrecht, dann senkrecht), dann wird sie über das
-  Bild gelegt – nur dort, wo keine umrandete Figur ist, und zur Figur hin
-  heller.
+  derselbe Stencil). Pixelshader verkleinern sie auf halbe Auflösung (mit
+  einem weichen 4×4-Filter, damit der Schein bei kleinen Bewegungen nicht
+  zuckt) und zeichnen sie weich (Gauß-Filter, erst waagrecht, dann
+  senkrecht); dabei bekommt der Schein gleich seine Helligkeitskurve. Dann
+  wird er über das Bild gelegt – nur dort, wo keine umrandete Figur ist, und
+  zur Figur hin heller.
 - Danach färbt je umrandeter Figur eine bildschirmfüllende Fläche nur ihre
-  Rand-Pixel ein – die dünne Linie. Bei Figuren mit Schein ist sie aufgehellt
-  (5/8 der Farbe plus etwas Weiß), bei den anderen in voller Farbe. Dann wird
+  Rand-Pixel ein – die dünne Linie. Mit Schein ist sie aufgehellt (5/8 der
+  Farbe plus etwas Weiß), ohne Schein in voller Farbe. Dann wird
   der Stencil geleert und das Spiel setzt die geänderten Grafik-Einstellungen
   neu.
 - Die Texturen des Scheins liegen im Grafikspeicher (bei 1920×1080 mit
@@ -1346,7 +1365,7 @@ So funktioniert es:
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x26A7 Byte). Jeder
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x2C86 Byte). Jeder
   Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
   die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
   Zeichnen.
