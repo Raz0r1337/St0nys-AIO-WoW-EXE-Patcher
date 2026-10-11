@@ -6153,6 +6153,11 @@ function Read-WowPath {
         $in = Ask "  $(T 'PathAsk')"
         if ($in.StartsWith('& ')) { $in = $in.Substring(2).Trim() }
         $in = $in.Trim('"', "'").Trim()
+        # Linux/Mac: Manche Terminals setzen beim Hineinziehen einen Backslash
+        # vor Leerzeichen und Sonderzeichen ("My\ Games") - den entfernen.
+        if ([System.IO.Path]::DirectorySeparatorChar -eq '/' -and $in.Contains('\') -and -not (Test-Path -LiteralPath $in)) {
+            $in = [regex]::Replace($in, '\\(.)', '$1')
+        }
         if ($in -eq '') {
             Save-WowPath ''
             return (T 'PathReset')

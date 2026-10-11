@@ -63,22 +63,23 @@ originalen `Wow.exe`.
 
 1. Das ZIP vom [neuesten Release](https://github.com/Raz0r1337/St0nys-AIO-WoW-EXE-Patcher/releases/latest) herunterladen und entpacken.
    Darin liegt der Ordner `St0nys-AIO-WoW-EXE-Patcher`.
-2. Die originale `Wow.exe` aus dem WoW-Ordner in diesen Ordner kopieren.
-3. `patcher-win.bat` per Doppelklick starten.
-4. Sprache wählen (nur beim ersten Start), im [Startmenü](#startmenü) `1` für das
-   Patch-Menü, Patches auswählen, bestätigen.
-5. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
-   den WoW-Ordner, dort ersetzt sie die alte.
+2. WoW beenden und `patcher-win.bat` per Doppelklick starten.
+3. Sprache wählen (nur beim ersten Start). Im [Startmenü](#startmenü) `P`
+   drücken und den Pfad zu deinem WoW-Ordner eingeben – oder den Ordner bzw.
+   die `Wow.exe` einfach ins Fenster ziehen – und ENTER drücken. Das ist nur
+   einmal nötig, der Patcher merkt sich den Pfad.
+4. Im Startmenü `1` für das Patch-Menü, Patches auswählen, bestätigen. Der
+   Patcher patcht die `Wow.exe` direkt in deinem WoW-Ordner; die Sicherungen
+   (`Wow.exe.ORI`, `Wow.exe.BAK`) legt er in seinem eigenen Ordner an.
 
-Patches **ändern oder zurücknehmen:** `patcher-win.bat` im Patcher-Ordner einfach
-erneut starten und die `Wow.exe` danach wieder in den WoW-Ordner kopieren,
+Patches **ändern oder zurücknehmen:** `patcher-win.bat` einfach erneut starten,
 siehe [Patches ändern oder zurücknehmen](#patches-ändern-oder-zurücknehmen).
 
 > [!TIP]
-> **Ohne Kopieren:** Statt die `Wow.exe` hin und her zu kopieren, kannst du im
-> [Startmenü](#startmenü) mit `P` den Pfad zur `Wow.exe` in deinem WoW-Ordner
-> angeben. Der Patcher merkt sich den Pfad und patcht die Exe dann direkt dort;
-> die Sicherungen bleiben im Patcher-Ordner. WoW muss dabei beendet sein.
+> **Kopieren statt Pfad:** Soll der Patcher die `Wow.exe` im WoW-Ordner nicht
+> direkt verändern, kopiere die originale `Wow.exe` vor dem Start in den
+> Patcher-Ordner und lass `P` weg. Nach dem Patchen kopierst du die gepatchte
+> `Wow.exe` zurück in den WoW-Ordner – nach jeder Änderung erneut.
 
 > [!NOTE]
 > Windows warnt beim Start der gepatchten `Wow.exe` wahrscheinlich vor einer
@@ -102,17 +103,19 @@ Ubuntu 24.04.
    sonst findet z. B. `apt` das Paket `powershell` nicht.
    Für andere Distributionen gibt es Snap und ein Archiv zum Entpacken
    ([Anleitung](https://learn.microsoft.com/powershell/scripting/install/install-other-linux)), für Arch das Paket im AUR.
-2. Das ZIP entpacken und die originale `Wow.exe` in den Ordner
-   `St0nys-AIO-WoW-EXE-Patcher` kopieren – wie unter Windows. Wie die
-   `Wow.exe` geschrieben ist (`WoW.exe`, `wow.exe` …), spielt keine Rolle.
+2. Das ZIP entpacken.
 3. Im Terminal in diesem Ordner `./patcher-lin.sh` starten. Falls das nicht
    startet (z. B. weil beim Entpacken das Ausführungsrecht verloren ging):
    `sh patcher-lin.sh`.
-4. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
-   den WoW-Ordner.
+4. Im Startmenü `P` drücken und den Pfad zu deinem WoW-Ordner angeben –
+   eintippen oder den Ordner ins Terminal ziehen –, dann `1` und Patches
+   wählen, wie unter Windows. WoW muss dabei beendet sein. Wie die `Wow.exe`
+   geschrieben ist (`WoW.exe`, `wow.exe` …), spielt keine Rolle.
 
-Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
-`patcher-win.bat` steht, nimmst du `./patcher-lin.sh`.
+Statt mit `P` kannst du die `Wow.exe` auch wie unter Windows in den
+Patcher-Ordner kopieren und nach dem Patchen zurückkopieren. Alles Weitere
+funktioniert wie unter Windows: Wo in dieser Anleitung `patcher-win.bat`
+steht, nimmst du `./patcher-lin.sh`.
 
 ### Auf dem Mac
 
@@ -129,16 +132,18 @@ oder Wine startest.
 1. PowerShell 7 installieren, z. B. mit [Homebrew](https://brew.sh):
    `brew install --cask powershell`. Alternativ gibt es ein
    Installationspaket von Microsoft ([Anleitung](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-macos)).
-2. Das ZIP entpacken und die originale `Wow.exe` in den Ordner
-   `St0nys-AIO-WoW-EXE-Patcher` kopieren – wie unter Windows.
+2. Das ZIP entpacken.
 3. Das Terminal öffnen und in diesen Ordner wechseln, z. B. `cd ` eingeben und
    den Ordner ins Terminal-Fenster ziehen. Dann `sh patcher-lin.sh` starten –
    die Linux-Startdatei sollte auch auf dem Mac funktionieren.
-4. Sollte WoW laufen, beende es und kopiere die gepatchte `Wow.exe` zurück in
-   den WoW-Ordner.
+4. Im Startmenü `P` drücken und den Pfad zu der `Wow.exe` angeben, die du mit
+   CrossOver oder Wine startest – eintippen oder ins Terminal ziehen –, dann
+   `1` und Patches wählen, wie unter Windows. WoW muss dabei beendet sein.
 
-Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
-`patcher-win.bat` steht, nimmst du `sh patcher-lin.sh`.
+Statt mit `P` kannst du die `Wow.exe` auch wie unter Windows in den
+Patcher-Ordner kopieren und nach dem Patchen zurückkopieren. Alles Weitere
+funktioniert wie unter Windows: Wo in dieser Anleitung `patcher-win.bat`
+steht, nimmst du `sh patcher-lin.sh`.
 
 ## Ablauf
 
@@ -149,10 +154,11 @@ Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
 4. Prüfung der `Wow.exe`: Beim ersten Start muss sie original und unmodifiziert
    sein (SHA256). Danach erkennt der Patcher eine von ihm gepatchte `Wow.exe` am
    Wasserzeichen und ermittelt, welche Patches darin stecken.
-5. **Startmenü:** Patch-Menü öffnen oder die `Wow.exe` aus einer Sicherung
-   wiederherstellen (siehe [Startmenü](#startmenü)). Fehlt die `Wow.exe` oder
-   ist sie nicht verwendbar, kann es sie auch neu aus dem Original bauen; ohne
-   Sicherungen bricht der Patcher dann ab.
+5. **Startmenü:** Patch-Menü öffnen, die `Wow.exe` aus einer Sicherung
+   wiederherstellen oder mit `P` den Pfad zur `Wow.exe` festlegen (siehe
+   [Startmenü](#startmenü)). Fehlt die `Wow.exe` oder ist sie nicht verwendbar,
+   kann es sie auch neu aus dem Original bauen; ohne Sicherungen bietet es nur
+   `P` und `Q` an.
 6. **Patch-Auswahl** im Menü (siehe unten). Vorausgewählt ist die Auswahl vom
    letzten Mal bzw. bei einer gepatchten `Wow.exe` die Patches, die gerade
    darin stecken.
@@ -327,8 +333,9 @@ gerade in der `Wow.exe` stecken. Neu angehakte Patches sind mit **(neu)**
 markiert, abgewählte mit **(wird zurückgenommen)**. So kannst du beliebig
 Patches dazunehmen, abwählen oder Werte ändern (Sprunghöhe, Doppelsprung,
 Client-Infos). Mit `N` und ENTER nimmst du alle Patches zurück – danach ist die
-`Wow.exe` wieder **byte-genau das Original**. Danach kopierst du die `Wow.exe`
-wieder in deinen WoW-Ordner.
+`Wow.exe` wieder **byte-genau das Original**. Hast du die `Wow.exe` in den
+Patcher-Ordner kopiert, statt mit `P` den Pfad anzugeben, kopierst du sie
+danach wieder in deinen WoW-Ordner.
 
 So funktioniert es:
 
