@@ -357,6 +357,12 @@ So funktioniert es:
   eine kleine Tabelle mit den Original-Bytes an allen Patch-Stellen. Gibt es
   danach nichts zu tun, legt der Patcher die `patcher_state.ini` trotzdem neu
   an, damit der nächste Start wieder den schnellen Weg nimmt.
+- **Keine Änderung:** Entspricht die Auswahl genau dem Stand der `Wow.exe`,
+  fragt der Patcher, ob er trotzdem neu patchen (`J`) oder beenden (`N`) soll.
+  Neu patchen spielt alle gewählten Patches frisch auf das Original – sinnvoll
+  nach einem Update des Patchers, wenn ein Patch neuen Code bekommen hat (der
+  Patchstand merkt sich nur, welche Patches mit welchen Werten drin sind). Mit
+  `-Unattended` beendet er sich ohne Rückfrage (Exit-Code `0`).
 - **Original wiederherstellen:** Aus der gepatchten Exe baut der Patcher im
   Speicher das Original wieder auf, prüft es per SHA256 und spielt darauf die
   neue Auswahl ein. Klappt das nicht exakt – etwa weil die Exe nach dem

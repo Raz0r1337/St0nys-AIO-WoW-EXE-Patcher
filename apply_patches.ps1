@@ -229,6 +229,9 @@ $TEXT = @{
         SumKeep       = 'Bleiben unveraendert aktiv: {0}'
         SumOriginal   = 'Danach ist die Wow.exe wieder die originale Datei.'
         NoChange      = 'Keine Aenderung gegenueber der aktuellen Wow.exe - es gibt nichts zu tun.'
+        RedoInfo      = 'Neu patchen spielt alle gewaehlten Patches frisch auf das Original - sinnvoll nach einem Update des Patchers, wenn ein Patch neuen Code bekommen hat.'
+        RedoAsk       = 'Trotzdem neu patchen? (J = neu patchen, N = beenden)'
+        SumRedo       = 'Neu patchen ({0}):'
         AlreadyOrig   = 'Die Wow.exe ist bereits original - es gibt nichts zurueckzunehmen.'
         InputHead     = 'Werte fuer die gewaehlten Patches (ENTER = Vorschlag in Klammern):'
         BadValue      = '[FEHLER] Ungueltiger gemerkter Wert fuer "{0}": {1}'
@@ -379,6 +382,9 @@ $TEXT = @{
         SumKeep       = 'Stay active unchanged: {0}'
         SumOriginal   = 'Afterwards Wow.exe is the original file again.'
         NoChange      = 'No change compared to the current Wow.exe - nothing to do.'
+        RedoInfo      = 'Patching again applies all selected patches freshly to the original - useful after an update of the patcher when a patch got new code.'
+        RedoAsk       = 'Patch again anyway? (Y = patch again, N = quit)'
+        SumRedo       = 'Patch again ({0}):'
         AlreadyOrig   = 'Wow.exe is already original - nothing to remove.'
         InputHead     = 'Values for the selected patches (ENTER = suggestion in brackets):'
         BadValue      = '[ERROR] Invalid saved value for "{0}": {1}'
@@ -8565,13 +8571,29 @@ if (-not $patchedMode) {
         else { $kept++ }
     }
     foreach ($id in $appliedIds) { if ($chosenIds -notcontains $id) { $removed += $id } }
+    $redo = $false
     if ($added.Count + $changed.Count + $removed.Count -eq 0 -and $chosen.Count -gt 0) {
         Say (T 'NoChange') 'Green'
-        if ($state.Scanned -and $null -ne (Restore-Original $origPatched $state)) {
-            # Patchstand kam ueber das Wasserzeichen - jetzt merken, dann geht es beim naechsten Mal schneller.
-            if ($null -eq (Write-State $stateFile $state.Hash $state.Size $state.Ids $state.Values $state.Undo)) { Say (T 'StateSaved') 'DarkGray' }
+        # Ohne -Unattended fragen: trotzdem neu patchen (z.B. nach einem Update, wenn ein Patch neuen Code
+        # hat - der Patchstand zaehlt nur Ids und Werte) oder beenden.
+        if (-not $Unattended) {
+            Write-Host ''
+            Say (T 'RedoInfo')
+            $answer = (Ask "  $(T 'RedoAsk')").ToUpperInvariant()
+            $redo = ($answer -eq (T 'Yes') -or $answer -eq 'Y' -or $answer -eq 'J')
         }
-        Exit-Patcher 0
+        if (-not $redo) {
+            if ($state.Scanned -and $null -ne (Restore-Original $origPatched $state)) {
+                # Patchstand kam ueber das Wasserzeichen - jetzt merken, dann geht es beim naechsten Mal schneller.
+                if ($null -eq (Write-State $stateFile $state.Hash $state.Size $state.Ids $state.Values $state.Undo)) { Say (T 'StateSaved') 'DarkGray' }
+            }
+            Exit-Patcher 0
+        }
+        Write-Host ''
+        Say (T 'SumRedo' $chosen.Count) 'Cyan'
+        foreach ($p in $chosen) {
+            if ($VALUES.ContainsKey($p.Id)) { Say "  + $(PatchName $p): $(Get-ValueText $p)" 'Green' } else { Say "  + $(PatchName $p)" 'Green' }
+        }
     }
     if ($added.Count -gt 0) {
         Say (T 'SumAdd' $added.Count) 'Cyan'
@@ -8591,7 +8613,7 @@ if (-not $patchedMode) {
         Say (T 'SumRemove' $removed.Count) 'Cyan'
         foreach ($id in $removed) { Say "  - $(Get-NameById $id)" 'Yellow' }
     }
-    Say (T 'SumKeep' $kept)
+    if (-not $redo) { Say (T 'SumKeep' $kept) }
     if ($chosen.Count -eq 0) {
         Write-Host ''
         Say (T 'SumOriginal') 'Yellow'
@@ -8837,7 +8859,7 @@ if ($total -eq 0) {
     Say (T 'DoneOrig') 'Green'
 } else {
     Say (T 'Done1') 'Green'
-    if ($patchedMode) {
+    if ($patchedMode -and -not $redo) {
         Say (T 'Done3' $added.Count $changed.Count $removed.Count $total) 'Green'
     } else {
         Say (T 'Done2' $total) 'Green'
