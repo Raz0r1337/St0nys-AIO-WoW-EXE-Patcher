@@ -1197,38 +1197,45 @@ belong to the figure.
 > `st0ny-main`.
 
 > [!WARNING]
-> **On public servers please keep the default setting:** before patching,
-> press ENTER for every point (own character only where hidden, everything
-> else off or never). If the patch gets banned on a server, that is bad
+> **On public servers please use the safe default:** before patching, choose
+> `1` for the outline (your character as well as party and raid outlined only
+> where they are hidden). If the patch gets banned on a server, that is bad
 > luck – there is nothing I can do about it. From then on it can only be used
 > on your own private servers. So please be careful.
 
-**Settings:** After the patch selection the patcher asks four points as
-switches, one number per point. ENTER takes the suggestion in brackets – the
-default (bold) the first time, the current state for a patched `Wow.exe`.
+**Settings:** After the patch selection the patcher first only asks: `1` =
+apply the safe default or `2` = open the patch options (caution: this can make
+the patch unsafe). The safe default is bold in the table: your character only
+where hidden, party and raid not always outlined but through walls – and so,
+like your character, only where they are hidden –, class color. `1` is
+suggested if the current state is the safe default or the patch is new,
+otherwise `2`; so your own settings are not lost with ENTER. Only with `2`
+the four points follow as switches, one number per point. ENTER takes the
+suggestion in brackets there – the default the first time, the current state
+for a patched `Wow.exe`.
 
 | Point | Choices |
 |-------|---------|
 | Own character | 1 = off · **2 = only where hidden:** an outline only where your figure is hidden, for example behind a house wall or a hill; visible parts get no outline · 3 = always |
 | Party / raid always outlined | **1 = off** · 2 = party of 5: the up to 4 other players (`party1` to `party4`) · 3 = whole raid: all other players in the raid (up to 39), your party outside of a raid – **costs a lot of FPS** |
-| Visible through walls | **1 = never** · 2 = party/raid only: the other players from the point before also where they are hidden; if that one is "off", party or raid get an outline only where they are hidden, like your character · 3 = all: every outline, target and mouseover too – **unsafe**, may be considered cheating, the patcher then warns in red |
+| Visible through walls | 1 = never · **2 = party/raid only:** the other players from the point before also where they are hidden; if that one is "off", party or raid get an outline only where they are hidden, like your character · 3 = all: every outline, target and mouseover too – **unsafe**, may be considered cheating, the patcher then warns in red |
 | Color | **1 = class color** · 2 = reaction color: all outlines in the color of the selection circle (mostly blue for players), target and mouseover too; hostile players are then simply red and do not pulse |
 
 If a figure is the target or under the mouse cursor, that outline applies.
 Players out of sight have none. The patcher remembers the settings like other
 values in `patcher_selection.ini` as a list of the switches that are on, e.g.
-`value.outline=hidden,party` (the default is `hidden`, `none` means all off;
-the switches are called `hidden`, `self`, `party`, `raid`, `wallsgroup`,
-`walls` and `react`).
+`value.outline=hidden,party` (the default is `hidden,wallsgroup`, `none` means
+all off; the switches are called `hidden`, `self`, `party`, `raid`,
+`wallsgroup`, `walls` and `react`).
 
 > [!WARNING]
 > **Whole raid costs a lot of FPS:** every figure with a glowing outline is
 > drawn 26 times, raid members outside your party of 5 with the thin line
 > still ten times. With 25 or 40 players that is a lot of extra draw calls per
-> frame. On weaker
-> computers better use only the party of 5. This also applies to "through
-> walls: party/raid only" with party/raid set to "off": then all other players
-> in the raid are drawn that way.
+> frame. On weaker computers better use only the party of 5. This also
+> applies to "through walls: party/raid only" with party/raid set to "off" –
+> so to the safe default as well: then all other players in the raid are
+> drawn that way.
 
 > [!NOTE]
 > **Only where hidden** (also for party/raid): what is drawn before your

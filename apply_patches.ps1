@@ -254,6 +254,9 @@ $TEXT = @{
         Confirm       = 'Patchen jetzt starten? (J/N)'
         Yes           = 'J'
         ChoiceHint    = 'Je Punkt eine Zahl eingeben, ENTER = Vorschlag in Klammern.'
+        SafeOpt1      = '1 = sicheren Standard anwenden ({0})'
+        SafeOpt2      = '2 = Patch-Optionen aufrufen (Achtung: das kann den Patch unsicher machen)'
+        SafeAsk       = 'Auswahl'
         ChoiceBad     = 'Bitte eine Zahl von 1 bis {0} eingeben (ENTER = Vorschlag in Klammern).'
         OptNone       = 'alles aus'
         Aborted       = 'Abgebrochen. Die Wow.exe wurde nicht veraendert.'
@@ -401,6 +404,9 @@ $TEXT = @{
         Confirm       = 'Start patching now? (Y/N)'
         Yes           = 'Y'
         ChoiceHint    = 'Enter a number for each point, ENTER = suggestion in brackets.'
+        SafeOpt1      = '1 = apply the safe default ({0})'
+        SafeOpt2      = '2 = open the patch options (caution: this can make the patch unsafe)'
+        SafeAsk       = 'Choice'
         ChoiceBad     = 'Please enter a number from 1 to {0} (ENTER = suggestion in brackets).'
         OptNone       = 'all off'
         Aborted       = 'Aborted. Wow.exe has not been modified.'
@@ -4036,6 +4042,9 @@ function Get-BubbleRangeFromExe {
 #            En, ShortDe, ShortEn, Prio, optional BanRisk = rote Warnung).
 #            Der Wert sind die eingeschalteten Keys durch Komma getrennt
 #            (z.B. "hidden,party") oder "none"
+#    SafeDefault - optional mit Questions: Default ist der sichere Standard.
+#            Vor den Umschaltern fragt der Patcher dann nur "1 = sicheren
+#            Standard anwenden" oder "2 = Patch-Optionen aufrufen"
 #    Code  - Scriptblock mit den Patch-Aufrufen
 #  Die Reihenfolge hier ist die Reihenfolge im Menue und beim Einspielen,
 #  Patches einer Kategorie stehen zusammen.
@@ -5268,14 +5277,16 @@ $patches = @(
        NoteDe = 'nur gxApi d3d9'
        NoteEn = 'gxApi d3d9 only'
        Questions = $OUTLINE_OPTIONS
-       Default = 'hidden'
+       Default = 'hidden,wallsgroup'
+       SafeDefault = $true
        Check = { param($v) Test-OptionValue $OUTLINE_OPTIONS $v }
        Normalize = { param($v) ConvertTo-OptionValue $OUTLINE_OPTIONS (Get-OptionKeys $OUTLINE_OPTIONS $v) }
        Decode = { Get-OutlineOptionsFromExe }
        Code = {
         # Eigene Sektion (.outl), siehe Add-Outline. Die Einstellungen
-        # (Umschalter vor dem Patchen, Standard: eigener Charakter nur wo
-        # verdeckt) setzt Set-OutlineOptions.
+        # (sicherer Standard: eigener Charakter nur wo verdeckt, durch Waende
+        # nur Gruppe/Schlachtzug - oder eigene Umschalter) setzt
+        # Set-OutlineOptions.
         Add-Outline
         Set-OutlineOptions $script:VALUES['outline']
     }}
@@ -6434,6 +6445,29 @@ function Format-OptionValue($opts, [string]$v) {
     return ($out -join ', ')
 }
 
+# Patches mit SafeDefault: zuerst nur "1 = sicheren Standard anwenden" oder
+# "2 = Patch-Optionen aufrufen". Vorschlag ist 1, wenn der bisherige Wert der
+# sichere Standard ist (oder es keinen gibt), sonst 2 - eigene Einstellungen
+# gehen mit ENTER also nicht verloren. Liefert den sicheren Wert oder $null
+# (dann folgen die Umschalter, mit dem bisherigen Wert als Vorschlag).
+function Read-SafeChoice($p, [string]$def) {
+    $opts = $p.Questions
+    $safe = ConvertTo-OptionValue $opts (Get-OptionKeys $opts $p.Default)
+    $cur = $safe
+    $k = Get-OptionKeys $opts $def
+    if ($def -ne '' -and $null -ne $k) { $cur = ConvertTo-OptionValue $opts $k }
+    $n = 2; if ($cur -eq $safe) { $n = 1 }
+    Say "  $(T 'SafeOpt1' (Format-OptionValue $opts $safe))"
+    Say "  $(T 'SafeOpt2')" 'DarkYellow'
+    while ($true) {
+        $a = Ask "  $(T 'SafeAsk') [$n]"
+        if ($a -eq '') { $a = [string]$n }
+        if ($a -eq '1') { return $safe }
+        if ($a -eq '2') { return $null }
+        Say (T 'ChoiceBad' 2) 'Yellow'
+    }
+}
+
 # Fragt jeden Punkt als Umschalter ab: die Wahlen nummeriert (in Zeilen bis
 # etwa 64 Zeichen, die letzte Zeile ist die Eingabe), ENTER uebernimmt den
 # Vorschlag aus $def.
@@ -7046,7 +7080,9 @@ foreach ($p in $chosen) {
     if ($def -ne '') { Say "$(PatchName $p) $(T $label $shown)" } else { Say (PatchName $p) }
     $takeNow = $false
     if ($p.Questions) {
-        $v = Read-OptionAnswers $p.Questions $def
+        $v = $null
+        if ($p.SafeDefault) { $v = Read-SafeChoice $p $def }
+        if ($null -eq $v) { $v = Read-OptionAnswers $p.Questions $def }
     } else {
         while ($true) {
             $hint = ''; if ($def -ne '') { $hint = " [$shown]" }

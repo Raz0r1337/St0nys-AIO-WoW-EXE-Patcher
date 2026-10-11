@@ -157,8 +157,9 @@ Alles Weitere funktioniert wie unter Windows: Wo in dieser Anleitung
    letzten Mal bzw. bei einer gepatchten `Wow.exe` die Patches, die gerade
    darin stecken.
 7. Bei Patches mit eigenem Wert (Sprunghöhe, Doppelsprung, Client-Infos) fragt
-   der Patcher die Werte ab, bei der Umrandung die Einstellungen (Umschalter,
-   je Punkt eine Zahl); danach speichert er die Auswahl.
+   der Patcher die Werte ab, bei der Umrandung erst „sicherer Standard oder
+   eigene Einstellungen“ und bei eigenen Einstellungen die Umschalter (je
+   Punkt eine Zahl); danach speichert er die Auswahl.
 8. Zusammenfassung der gewählten Patches (bei einer gepatchten `Wow.exe`: was
    neu dazukommt, was zurückgenommen wird), Hinweise (fehlende oder
    überflüssige Ergänzungs-Patches, Warnungen) und Sicherheitsabfrage (J/N).
@@ -544,9 +545,9 @@ dem Patchen listet er sie noch einmal auf.
 
 > [!WARNING]
 > **Umrandung (Nr. 68) auf öffentlichen Servern:** Wenn du den Patch dort
-> verwendest, lass bitte die Standard-Einstellung – vor dem Patchen bei allen
-> Punkten ENTER drücken (eigener Charakter nur wo verdeckt, alles andere aus
-> bzw. nie). Wird der Patch auf einem Server
+> verwendest, nimm bitte den sicheren Standard – vor dem Patchen bei der
+> Umrandung `1` wählen (dein Charakter sowie Gruppe und Schlachtzug nur dort
+> umrandet, wo sie verdeckt sind). Wird der Patch auf einem Server
 > gebannt, hast du Pech gehabt; daran kann ich nichts ändern. Ab dann ist er
 > nur noch auf eigenen privaten Servern nutzbar. Also pass bitte auf.
 

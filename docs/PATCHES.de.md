@@ -1238,38 +1238,47 @@ gehören mit zur Figur.
 > `st0ny-main`.
 
 > [!WARNING]
-> **Auf öffentlichen Servern bitte die Standard-Einstellung lassen:** vor dem
-> Patchen bei allen Punkten ENTER drücken (eigener Charakter nur wo verdeckt,
-> alles andere aus bzw. nie). Wird der Patch auf einem Server
-> gebannt, hast du Pech gehabt – daran kann ich nichts ändern. Ab dann ist er
-> nur noch auf eigenen privaten Servern nutzbar. Also pass bitte auf.
+> **Auf öffentlichen Servern bitte den sicheren Standard nehmen:** vor dem
+> Patchen bei der Umrandung `1` wählen (dein Charakter sowie Gruppe und
+> Schlachtzug nur dort umrandet, wo sie verdeckt sind). Wird der Patch auf
+> einem Server gebannt, hast du Pech gehabt – daran kann ich nichts ändern. Ab
+> dann ist er nur noch auf eigenen privaten Servern nutzbar. Also pass bitte
+> auf.
 
-**Einstellungen:** Nach der Patch-Auswahl fragt der Patcher vier Punkte als
-Umschalter ab, je Punkt eine Zahl. ENTER übernimmt den Vorschlag in Klammern –
-beim ersten Mal den Standard (fett), bei einer gepatchten `Wow.exe` den
+**Einstellungen:** Nach der Patch-Auswahl fragt der Patcher zuerst nur:
+`1` = sicheren Standard anwenden oder `2` = Patch-Optionen aufrufen (Achtung:
+das kann den Patch unsicher machen). Der sichere Standard ist in der Tabelle
+fett: dein Charakter nur wo verdeckt, Gruppe und Schlachtzug nicht immer
+umrandet, aber durch Wände – und damit wie dein Charakter nur dort, wo sie
+verdeckt sind –, Klassenfarbe. Vorgeschlagen ist `1`, wenn der bisherige Stand
+der sichere Standard ist oder der Patch neu dazukommt, sonst `2`; eigene
+Einstellungen gehen mit ENTER also nicht verloren. Nur bei `2` folgen die vier
+Punkte als Umschalter, je Punkt eine Zahl. ENTER übernimmt dort den Vorschlag
+in Klammern – beim ersten Mal den Standard, bei einer gepatchten `Wow.exe` den
 aktuellen Stand.
 
 | Punkt | Wahlen |
 |-------|--------|
 | Eigener Charakter | 1 = aus · **2 = nur wo verdeckt:** Rand nur dort, wo deine Figur verdeckt ist, etwa hinter einer Hauswand oder einem Hügel; sichtbare Teile bleiben ohne Rand · 3 = immer |
 | Gruppe / Schlachtzug immer umrandet | **1 = aus** · 2 = 5er-Gruppe: die bis zu 4 Mitspieler (`party1` bis `party4`) · 3 = ganzer Schlachtzug: alle Mitspieler im Schlachtzug (bis zu 39), außerhalb eines Schlachtzugs deine Gruppe – **kostet viele FPS** |
-| Durch Wände sichtbar | **1 = nie** · 2 = nur Gruppe/Schlachtzug: die Mitspieler aus dem Punkt davor auch dort, wo sie verdeckt sind; steht der auf „aus“, bekommen Gruppe bzw. Schlachtzug wie dein Charakter nur dort einen Rand, wo sie verdeckt sind · 3 = alle: jeder Rand, auch Ziel und Mouseover – **unsicher**, kann als Cheat gewertet werden, der Patcher warnt dann rot |
+| Durch Wände sichtbar | 1 = nie · **2 = nur Gruppe/Schlachtzug:** die Mitspieler aus dem Punkt davor auch dort, wo sie verdeckt sind; steht der auf „aus“, bekommen Gruppe bzw. Schlachtzug wie dein Charakter nur dort einen Rand, wo sie verdeckt sind · 3 = alle: jeder Rand, auch Ziel und Mouseover – **unsicher**, kann als Cheat gewertet werden, der Patcher warnt dann rot |
 | Farbe | **1 = Klassenfarbe** · 2 = Gesinnungsfarbe: alle Ränder in der Farbe des Auswahlkreises (bei Spielern meist blau), auch Ziel und Mouseover; feindliche Spieler sind dann einfach rot und pulsieren nicht |
 
 Ist eine Figur gerade Ziel oder unter dem Mauszeiger, gilt dieser Rand.
 Mitspieler außer Sichtweite haben keinen. Die Einstellungen merkt sich der
 Patcher wie andere Werte in `patcher_selection.ini` als Liste der
 eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
-`hidden`, `none` heißt alles aus; die Schalter heißen `hidden`, `self`,
-`party`, `raid`, `wallsgroup`, `walls` und `react`).
+`hidden,wallsgroup`, `none` heißt alles aus; die Schalter heißen `hidden`,
+`self`, `party`, `raid`, `wallsgroup`, `walls` und `react`).
 
 > [!WARNING]
 > **Ganzer Schlachtzug kostet viele FPS:** Jede Figur mit Leuchtrand wird
 > 26-mal gezeichnet, Schlachtzug-Mitglieder außerhalb deiner 5er-Gruppe mit
 > der dünnen Linie immer noch zehnmal. Bei 25 oder 40 Spielern sind das sehr
-> viele zusätzliche Zeichenaufrufe pro Bild. Auf schwächeren Rechnern lieber nur die 5er-Gruppe
-> nehmen. Das gilt auch für „durch Wände: nur Gruppe/Schlachtzug“, wenn die
-> Gruppe auf „aus“ steht: Dann werden im Schlachtzug alle Mitspieler so
+> viele zusätzliche Zeichenaufrufe pro Bild. Auf schwächeren Rechnern lieber
+> nur die 5er-Gruppe nehmen. Das gilt auch für „durch Wände: nur
+> Gruppe/Schlachtzug“, wenn die Gruppe auf „aus“ steht – also auch für den
+> sicheren Standard: Dann werden im Schlachtzug alle Mitspieler so
 > gezeichnet.
 
 > [!NOTE]
