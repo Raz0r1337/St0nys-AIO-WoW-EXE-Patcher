@@ -1221,10 +1221,11 @@ Der Code liegt in einer eigenen kleinen Sektion (`.isnap`, 179 Byte).
 **Umrandung für Ziel und Mouseover [BETA]** *(Nr. 68, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
 
 Wie in Retail bekommt die 3D-Figur des markierten Ziels und die Figur unter
-dem Mauszeiger einen leuchtenden Rand: direkt an der Figur hell, nach außen
-auf etwa 6 Pixeln auslaufend. Schlachtzug-Mitglieder außerhalb deiner
-5er-Gruppe bekommen nur eine dünne Linie (etwa 2 Pixel), das spart Leistung.
-Spieler bekommen ihre
+dem Mauszeiger einen weichen Schein: direkt an der Figur eine helle Linie,
+nach außen auf etwa 8 Pixeln weich auslaufend. Das gilt auch für dich und
+deine 5er-Gruppe. Schlachtzug-Mitglieder außerhalb deiner 5er-Gruppe bekommen
+nur eine dünne Linie (etwa 2 Pixel) ohne Schein, das spart Leistung – außer
+sie sind gerade dein Ziel oder unter dem Mauszeiger. Spieler bekommen ihre
 Klassenfarbe wie in den Raid-Frames, alle anderen die Farbe des Auswahlkreises:
 rot feindlich, gelb neutral, grün freundlich. Feindliche Spieler pulsieren
 sanft zwischen ihrer Klassenfarbe und Rot, damit man sie trotz Klassenfarbe als
@@ -1272,10 +1273,9 @@ eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
 `self`, `party`, `raid`, `wallsgroup`, `walls` und `react`).
 
 > [!WARNING]
-> **Ganzer Schlachtzug kostet viele FPS:** Jede Figur mit Leuchtrand wird
-> 26-mal gezeichnet, Schlachtzug-Mitglieder außerhalb deiner 5er-Gruppe mit
-> der dünnen Linie immer noch zehnmal. Bei 25 oder 40 Spielern sind das sehr
-> viele zusätzliche Zeichenaufrufe pro Bild. Auf schwächeren Rechnern lieber
+> **Ganzer Schlachtzug kostet viele FPS:** Jede umrandete Figur wird zehnmal
+> gezeichnet. Bei 25 oder 40 Spielern sind das sehr viele zusätzliche
+> Zeichenaufrufe pro Bild. Auf schwächeren Rechnern lieber
 > nur die 5er-Gruppe nehmen. Das gilt auch für „durch Wände: nur
 > Gruppe/Schlachtzug“, wenn die Gruppe auf „aus“ steht – also auch für den
 > sicheren Standard: Dann werden im Schlachtzug alle Mitspieler so
@@ -1296,13 +1296,12 @@ So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
   selbst nutzt Stencil nirgends.
 - Beim Zeichnen der Figur werden ihre sichtbaren Pixel im Stencil markiert.
-  Danach wird sie noch 24-mal unsichtbar gezeichnet, je achtmal um 2, 4 und
-  6 Pixel in alle Richtungen verschoben (über die Projektionsmatrix des
-  Shaders), mit Tiefentest – diese Kopien markieren die drei Stufen des
-  Rands; die innere trägt dort auch die Tiefe der Figur ein. Für die dünne
-  Linie gibt es nur die acht Kopien der inneren Stufe. Jede umrandete Figur
-  (Ziel, Mouseover, du, jedes Gruppen- und Schlachtzug-Mitglied, bis zu 48)
-  bekommt dabei ihren eigenen Wert und so ihre eigene Farbe.
+  Danach wird sie noch achtmal unsichtbar gezeichnet, je um 2 Pixel in alle
+  Richtungen verschoben (über die Projektionsmatrix des Shaders), mit
+  Tiefentest – diese Kopien markieren den Rand und tragen dort die Tiefe der
+  Figur ein. Jede umrandete Figur (Ziel, Mouseover, du, jedes Gruppen- und
+  Schlachtzug-Mitglied, bis zu 48) bekommt dabei ihren eigenen Wert und so
+  ihre eigene Farbe.
 - Undurchsichtige Modelle sortiert das Spiel nach Modell und Textur, nicht nach
   Entfernung, und zeichnet gebündelte Deko-Objekte (`M2BatchDoodads`) erst
   danach. Der Patch stellt die Teile umrandeter Figuren ans Ende dieser
@@ -1327,16 +1326,27 @@ So funktioniert es:
   wo sie verdeckt ist; ihre Kopien markieren den Rand aber nur dort, wo
   bereits Gezeichnetes deutlich vor ihnen liegt. Dafür zieht die
   Projektionsmatrix ihre Tiefe ein Stück nach vorn (siehe oben).
-- Nach den Modellen und vor dem Interface färbt je umrandeter Figur und Stufe
-  eine bildschirmfüllende Fläche nur ihre Rand-Pixel ein: innen ihre Farbe zur
-  Hälfte Richtung Weiß, in der Mitte zu etwa 60 %, außen zu etwa 25 % deckend
-  – so wird der Rand nach außen dunkler. Die dünne Linie bekommt die volle
-  Farbe. Danach wird der Stencil geleert und das Spiel setzt alle
-  Grafik-Einstellungen neu.
+- Nach den Modellen und vor dem Interface entsteht zuerst der Schein: Je Figur
+  mit Schein färbt eine bildschirmfüllende Fläche nur ihre Rand-Pixel ein,
+  aber in einer eigenen Textur (gleiche Größe und Kantenglättung wie das Bild,
+  derselbe Stencil). Ein Pixelshader zeichnet sie weich (Gauß-Filter in
+  halber Auflösung, erst waagrecht, dann senkrecht), dann wird sie über das
+  Bild gelegt – nur dort, wo keine umrandete Figur ist, und zur Figur hin
+  heller.
+- Danach färbt je umrandeter Figur eine bildschirmfüllende Fläche nur ihre
+  Rand-Pixel ein – die dünne Linie. Bei Figuren mit Schein ist sie aufgehellt
+  (5/8 der Farbe plus etwas Weiß), bei den anderen in voller Farbe. Dann wird
+  der Stencil geleert und das Spiel setzt die geänderten Grafik-Einstellungen
+  neu.
+- Die Texturen des Scheins liegen im Grafikspeicher (bei 1920×1080 mit
+  4-facher Kantenglättung rund 46 MB) und werden freigegeben, bevor das Spiel
+  die Grafik zurücksetzt (Auflösung oder Fenstermodus ändern, Alt+Tab im
+  Vollbild, Beenden). Klappt dabei etwas nicht, etwa weil der Grafikspeicher
+  nicht reicht, bleibt es bei den dünnen Linien.
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x16AC Byte). Jeder
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x26A7 Byte). Jeder
   Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
   die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
   Zeichnen.
@@ -1347,7 +1357,8 @@ So funktioniert es:
 > Nur mit `gxApi d3d9` (Standard) und 24-Bit-Tiefenpuffer (Standard). Mit
 > D3D9Ex, OpenGL oder `gxDepthBits` 16/32 schaltet sich der Patch ab. Mit
 > DXVK lief die erste Fassung im Spiel ebenfalls, weil WoW auch dort
-> Direct3D 9 nutzt.
+> Direct3D 9 nutzt. Der weiche Schein braucht Pixel-Shader 2.0 (jede
+> Grafikkarte seit etwa 2003), sonst bleibt es bei den dünnen Linien.
 
 > [!NOTE]
 > Sind alle Patches mit eigener Sektion gleichzeitig aktiv, ist im PE-Header

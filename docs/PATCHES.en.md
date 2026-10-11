@@ -1181,9 +1181,11 @@ The code lives in a small section of its own (`.isnap`, 179 bytes).
 **Outline for target and mouseover [BETA]** *(No. 68, Author: St0ny)* 🟠 **[untested - exe grows]**
 
 Like in retail, the 3D figure of your target and the figure under the mouse
-cursor get a glowing outline: bright right at the figure, fading out over
-about 6 pixels. Raid members outside your party of 5 only get a thin line
-(about 2 pixels), which saves performance. Players get their class color like
+cursor get a soft glow: a bright line right at the figure, fading out softly
+over about 8 pixels. This also applies to you and your party of 5. Raid
+members outside your party of 5 only get a thin line (about 2 pixels) without
+glow, which saves performance – unless they are your target or under the
+mouse cursor. Players get their class color like
 in the raid frames, everyone else the color of the selection circle: red
 hostile, yellow neutral, green friendly. Hostile players gently pulse between
 their class color and red, so you still recognize them as enemies despite the
@@ -1229,10 +1231,8 @@ all off; the switches are called `hidden`, `self`, `party`, `raid`,
 `wallsgroup`, `walls` and `react`).
 
 > [!WARNING]
-> **Whole raid costs a lot of FPS:** every figure with a glowing outline is
-> drawn 26 times, raid members outside your party of 5 with the thin line
-> still ten times. With 25 or 40 players that is a lot of extra draw calls per
-> frame. On weaker computers better use only the party of 5. This also
+> **Whole raid costs a lot of FPS:** every outlined figure is drawn ten times.
+> With 25 or 40 players that is a lot of extra draw calls per frame. On weaker computers better use only the party of 5. This also
 > applies to "through walls: party/raid only" with party/raid set to "off" –
 > so to the safe default as well: then all other players in the raid are
 > drawn that way.
@@ -1251,13 +1251,11 @@ How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
   itself never uses stencil.
 - While the figure is drawn, its visible pixels are marked in the stencil.
-  Then it is drawn 24 more times invisibly, eight times each shifted by 2, 4
-  and 6 pixels in every direction (via the shader's projection matrix), with
-  depth test – these copies mark the three steps of the outline; the inner
-  one also stores the figure's depth there. The thin line only gets the eight
-  copies of the inner step. Every outlined figure (target, mouseover, you,
-  every party and raid member, up to 48) gets a value of its own and so a
-  color of its own.
+  Then it is drawn eight more times invisibly, each shifted by 2 pixels in
+  every direction (via the shader's projection matrix), with depth test –
+  these copies mark the outline and store the figure's depth there. Every
+  outlined figure (target, mouseover, you, every party and raid member, up to
+  48) gets a value of its own and so a color of its own.
 - The game sorts opaque models by model and texture, not by distance, and
   draws batched doodads (`M2BatchDoodads`) after them. The patch moves the
   parts of outlined figures to the end of this order; among themselves it
@@ -1282,16 +1280,25 @@ How it works:
   well; its copies, however, only mark the outline where something already
   drawn lies clearly in front of them. For that, the projection matrix pulls
   their depth forward a bit (see above).
-- After the models and before the interface, a full-screen quad per outlined
-  figure and step colors only its outline pixels: inside its color halfway
-  towards white, in the middle about 60 %, outside about 25 % opaque – so the
-  outline gets darker towards the outside. The thin line gets the full color.
-  Then the stencil is cleared and the game sends all its graphics states
-  again.
+- After the models and before the interface, the glow comes first: per
+  figure with glow, a full-screen quad colors only its outline pixels, but in
+  a texture of its own (same size and anti-aliasing as the image, the same
+  stencil). A pixel shader blurs it (Gaussian filter at half resolution,
+  first horizontally, then vertically), then it is laid over the image – only
+  where there is no outlined figure, and brighter towards the figure.
+- Then a full-screen quad per outlined figure colors only its outline pixels
+  – the thin line. For figures with glow it is lightened (5/8 of the color
+  plus some white), for the others it has the full color. Then the stencil is
+  cleared and the game sends the changed graphics states again.
+- The glow's textures live in video memory (about 46 MB at 1920×1080 with 4x
+  anti-aliasing) and are released before the game resets the graphics
+  (changing the resolution or window mode, Alt+Tab in full screen, quitting).
+  If something goes wrong there, for example because there is not enough
+  video memory, it stays with the thin lines.
 - Hostile means: the player's selection circle would be red. Then the quad
   mixes their class color with red; the share of red rises and falls smoothly
   (cosine), one pulse takes 1.5 seconds.
-- Code and data live in a section of their own (`.outl`, 0x16AC bytes). Each
+- Code and data live in a section of their own (`.outl`, 0x26A7 bytes). Each
   switch is a single padding byte between two functions in `.text` that the
   chosen setting sets to 1; the code reads these switches while drawing. This is also
   how the patcher recognizes the settings in a patched `Wow.exe`.
@@ -1300,7 +1307,8 @@ How it works:
 > Only with `gxApi d3d9` (default) and a 24-bit depth buffer (default). With
 > D3D9Ex, OpenGL or `gxDepthBits` 16/32 the patch switches itself off. The
 > first version also ran in game with DXVK, because WoW uses Direct3D 9 there
-> as well.
+> as well. The soft glow needs pixel shader 2.0 (every graphics card since
+> about 2003), otherwise it stays with the thin lines.
 
 > [!NOTE]
 > If all patches with a section of their own are active at the same time,
