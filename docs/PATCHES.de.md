@@ -1300,10 +1300,12 @@ So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
   selbst nutzt Stencil nirgends.
 - Beim Zeichnen der Figur werden ihre sichtbaren Pixel im Stencil markiert.
-  Danach wird sie noch achtmal unsichtbar gezeichnet, je um 2 Pixel in alle
-  Richtungen verschoben (über die Projektionsmatrix des Shaders), mit
-  Tiefentest – diese Kopien markieren den Rand und tragen dort die Tiefe der
-  Figur ein. Jede umrandete Figur (Ziel, Mouseover, du, jedes Gruppen- und
+  Danach wird sie noch achtmal unsichtbar gezeichnet, leicht verschoben (über
+  die Projektionsmatrix des Shaders): viermal schräg um 1 Pixel und viermal
+  waagrecht bzw. senkrecht um einen halben Pixel, mit Tiefentest. Diese Kopien
+  markieren einen 1 Pixel breiten Rand und tragen dort die Tiefe der Figur
+  ein. So bleibt der Rand auch um Spitzen und Kanten geschlossen, die dünner
+  als ein Pixel sind (etwa Ohrspitzen), statt dort zu flackern. Jede umrandete Figur (Ziel, Mouseover, du, jedes Gruppen- und
   Schlachtzug-Mitglied und ihre Begleiter, bis zu 48) bekommt dabei ihren
   eigenen Wert und so ihre eigene Farbe.
 - Undurchsichtige Modelle sortiert das Spiel nach Modell und Textur, nicht nach
@@ -1346,26 +1348,27 @@ So funktioniert es:
 - Nach den Modellen und vor dem Interface entsteht zuerst der Schein: Je Figur
   mit Schein färbt eine bildschirmfüllende Fläche nur ihre Rand-Pixel ein,
   aber in einer eigenen Textur (gleiche Größe und Kantenglättung wie das Bild,
-  derselbe Stencil). Pixelshader verkleinern sie auf halbe Auflösung (mit
+  derselbe Stencil). Ein Pixelshader macht daraus die geglättete, 2 Pixel
+  breite Linie (weicher 3×3-Filter). Pixelshader verkleinern sie auf halbe Auflösung (mit
   einem weichen 4×4-Filter, damit der Schein bei kleinen Bewegungen nicht
   zuckt) und zeichnen sie weich (Gauß-Filter, erst waagrecht, dann
   senkrecht); dabei bekommt der Schein gleich seine Helligkeitskurve. Dann
   wird er über das Bild gelegt – nur dort, wo keine umrandete Figur ist, und
   zur Figur hin heller.
-- Danach färbt je umrandeter Figur eine bildschirmfüllende Fläche nur ihre
-  Rand-Pixel ein – die dünne Linie. Mit Schein ist sie aufgehellt (5/8 der
-  Farbe plus etwas Weiß), ohne Schein in voller Farbe. Dann wird
-  der Stencil geleert und das Spiel setzt die geänderten Grafik-Einstellungen
-  neu.
+- Danach kommt ebenso die Linie darüber, aufgehellt (5/8 der Farbe plus etwas
+  Weiß). Ohne Schein liegen die Kopien wie früher 2 Pixel weit, und je
+  umrandeter Figur färbt eine bildschirmfüllende Fläche nur ihre Rand-Pixel
+  ein – die dünne Linie in voller Farbe. Dann wird der Stencil geleert und das
+  Spiel setzt die geänderten Grafik-Einstellungen neu.
 - Die Texturen des Scheins liegen im Grafikspeicher (bei 1920×1080 mit
-  4-facher Kantenglättung rund 46 MB) und werden freigegeben, bevor das Spiel
+  4-facher Kantenglättung rund 54 MB) und werden freigegeben, bevor das Spiel
   die Grafik zurücksetzt (Auflösung oder Fenstermodus ändern, Alt+Tab im
   Vollbild, Beenden). Klappt dabei etwas nicht, etwa weil der Grafikspeicher
   nicht reicht, bleibt es bei den dünnen Linien.
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x2C86 Byte). Jeder
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x2FE2 Byte). Jeder
   Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
   die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
   Zeichnen.

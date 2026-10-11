@@ -1254,9 +1254,12 @@ How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
   itself never uses stencil.
 - While the figure is drawn, its visible pixels are marked in the stencil.
-  Then it is drawn eight more times invisibly, each shifted by 2 pixels in
-  every direction (via the shader's projection matrix), with depth test –
-  these copies mark the outline and store the figure's depth there. Every
+  Then it is drawn eight more times invisibly, slightly shifted (via the
+  shader's projection matrix): four times diagonally by 1 pixel and four
+  times horizontally or vertically by half a pixel, with depth test. These
+  copies mark a 1-pixel outline and store the figure's depth there. So the
+  outline stays closed even around tips and edges thinner than a pixel (ear
+  tips, for example) instead of flickering there. Every
   outlined figure (target, mouseover, you, every party and raid member and
   their companions, up to 48) gets a value of its own and so a color of its
   own.
@@ -1298,16 +1301,18 @@ How it works:
 - After the models and before the interface, the glow comes first: per
   figure with glow, a full-screen quad colors only its outline pixels, but in
   a texture of its own (same size and anti-aliasing as the image, the same
-  stencil). Pixel shaders shrink it to half resolution (with a soft 4×4
+  stencil). A pixel shader turns it into the smoothed 2-pixel line (soft 3×3
+  filter). Pixel shaders shrink it to half resolution (with a soft 4×4
   filter, so the glow does not twitch on small movements) and blur it
   (Gaussian filter, first horizontally, then vertically); along the way the
   glow also gets its brightness curve. Then it is laid over the image – only
   where there is no outlined figure, and brighter towards the figure.
-- Then a full-screen quad per outlined figure colors only its outline pixels
-  – the thin line. With glow it is lightened (5/8 of the color plus some
-  white), without glow it has the full color. Then the stencil is
-  cleared and the game sends the changed graphics states again.
-- The glow's textures live in video memory (about 46 MB at 1920×1080 with 4x
+- Then the line is laid over it the same way, lightened (5/8 of the color
+  plus some white). Without glow the copies are 2 pixels apart as before, and
+  a full-screen quad per outlined figure colors only its outline pixels – the
+  thin line in full color. Then the stencil is cleared and the game sends the
+  changed graphics states again.
+- The glow's textures live in video memory (about 54 MB at 1920×1080 with 4x
   anti-aliasing) and are released before the game resets the graphics
   (changing the resolution or window mode, Alt+Tab in full screen, quitting).
   If something goes wrong there, for example because there is not enough
@@ -1315,7 +1320,7 @@ How it works:
 - Hostile means: the player's selection circle would be red. Then the quad
   mixes their class color with red; the share of red rises and falls smoothly
   (cosine), one pulse takes 1.5 seconds.
-- Code and data live in a section of their own (`.outl`, 0x2C86 bytes). Each
+- Code and data live in a section of their own (`.outl`, 0x2FE2 bytes). Each
   switch is a single padding byte between two functions in `.text` that the
   chosen setting sets to 1; the code reads these switches while drawing. This is also
   how the patcher recognizes the settings in a patched `Wow.exe`.
