@@ -2314,22 +2314,25 @@ function Add-HoldRepeat {
 #    dort, wo sie verdeckt ist. Die Kopien laufen ohne Tiefe mit Tiefentest
 #    "groesser" (bei nicht bestandenem Test bleibt der Stencil) und markieren
 #    den Rand nur dort, wo vorher Gezeichnetes vor der ganzen Einheit liegt:
-#    Alle Kopien eines Teils liegen auf einer Tiefe, der Vorderseite der
-#    Huellkugel (VS c4 = (ZC + KZ) * c5, also z/w = ZC + KZ). Die Kugel kommt
-#    aus dem M2-Kopf (Mitte des Huellquaders [[Modell+0x2C]+0x150]+0xA0/+0xAC,
-#    Radius +0xB8) und der Modell-Sicht-Matrix [Modell+0xF4] (c2-c5 sind nur
-#    die Projektion); genommen wird die vorderste von gezeichnetem Teil und
+#    Alle Kopien eines Teils liegen auf einer Tiefe, der Vorderseite des
+#    Huellquaders (VS c4 = (ZC + KZ) * c5, also z/w = ZC + KZ). Der Quader
+#    kommt aus dem M2-Kopf ([[Modell+0x2C]+0x150]+0xA0/+0xAC, Radius +0xB8
+#    nur als Pruefung) und der Modell-Sicht-Matrix [Modell+0xF4] (c2-c5 sind
+#    nur die Projektion): seine Ecke zur Kamera, waagrecht immer, senkrecht
+#    nur die Unterseite, wenn die Kamera von unten schaut (bei Anbauteilen
+#    wie Waffen die ganze Hoehe), plus 0,05 Yards. Genommen wird die vorderste
+#    Vorderseite von gezeichnetem Teil und
 #    seinen Eltern ([Modell+0x48]: Waffe -> Figur -> Reittier, der Reiter
 #    haengt am Reittier), soweit sie Figur oder Reittier der Einheit sind, nur
 #    von Modellen, die in diesem Bild bewegt wurden
 #    ([Modell+0x3C] = [[Modell+0x28]+0x14]). Gelesen wird nur ueber das
 #    gerade gezeichnete Modell und seine Eltern; die Zeiger der Tabelle werden
-#    nur verglichen. KZ = 0,001 * Entfernung^2 Yards
-#    zusaetzlich nach vorn. So zaehlt, was die Einheit nur schneidet (Boden
-#    unter eingesunkenen Fuessen, Wand, in der sie steht), nicht als Verdecken;
-#    was naeher als etwa der Kugelradius vor ihr steht, auch nicht. Ohne
-#    gueltige Kugel wie frueher: Tiefe der Kopien per c4 + KZ * c5 um
-#    0,001 * Entfernung^2 Yards nach vorn gezogen. Kamera in der Kugel: kein
+#    nur verglichen. Dazu 0,1 * 0,001 * Entfernung^2 Yards (0,1 * KZ) nach
+#    vorn. So zaehlt, was die Einheit nur schneidet (Boden unter
+#    eingesunkenen Fuessen, Wand, in der sie steht), nicht als Verdecken; was
+#    naeher als die Vorderseite des Quaders vor ihr steht, auch nicht. Ohne
+#    gueltigen Quader wie frueher: Tiefe der Kopien per c4 + KZ * c5 um
+#    0,001 * Entfernung^2 Yards nach vorn gezogen. Kamera im Quader: kein
 #    Rand. Was erst nach den umrandeten Figuren gezeichnet wird, erkennt das
 #    nicht.
 #  - Vor den Auswahlkreisen (VA 0x4F91E5): ohne Schein je umrandeter Einheit
@@ -2386,7 +2389,7 @@ function Add-Outline {
     Assert-Bytes (0x6A337F - 0x400C00) @(0xE8, 0xCC, 0xCD, 0xFE, 0xFF) 'Umrandung'
     Assert-Bytes (0x69040B - 0x400C00) @(0xE8, 0x40, 0xFD, 0xFF, 0xFF) 'Umrandung'
     Assert-Bytes 0x62CCBC @(0x4D) 'Umrandung'
-    $loc = Add-CodeSection '.outl' 0x336E -Writable
+    $loc = Add-CodeSection '.outl' 0x346B -Writable
     $CAVE = $loc[0]
     $c = New-Object System.Collections.Generic.List[byte]
     for ($i = 0; $i -lt 0xEB0; $i++) { $c.Add([byte]0) }                 # Daten, beginnen bei 0
@@ -2404,8 +2407,8 @@ function Add-Outline {
     $i = 0x150; foreach ($b in [byte[]]@(0x00, 0x00, 0x00, 0x00, 0x6E, 0x9C, 0xC7, 0xFF, 0xBA, 0x8C, 0xF5, 0xFF, 0x73, 0xD4, 0xAB, 0xFF, 0x69, 0xF5, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x3B, 0x1F, 0xC4, 0xFF, 0xDE, 0x70, 0x00, 0xFF, 0xF0, 0xCC, 0x69, 0xFF, 0xC9, 0x82, 0x94, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x7D, 0xFF, 0xFF)) { $c[$i] = $b; $i++ }
     # Nur wo verdeckt: Abstand in Yards = 0.001 * Entfernung^2
     $i = 0x148; foreach ($b in [byte[]]@(0x6F, 0x12, 0x83, 0x3A)) { $c[$i] = $b; $i++ }
-    # Nur wo verdeckt: Kopien auf der Kugel-Vorderseite, zusaetzlich 1 * KZ nach vorn
-    $i = 0xEA8; foreach ($b in [byte[]]@(0x00, 0x00, 0x80, 0x3F)) { $c[$i] = $b; $i++ }
+    # Nur wo verdeckt: Kopien auf der Quader-Vorderseite plus 0.05 Yards, zusaetzlich 0.1 * KZ nach vorn
+    $i = 0xEA8; foreach ($b in [byte[]]@(0xCD, 0xCC, 0xCC, 0x3D, 0xCD, 0xCC, 0x4C, 0x3D)) { $c[$i] = $b; $i++ }
     # Puls: Konstanten 128.0 und 2*Pi/1500 ms
     $i = 0x180; foreach ($b in [byte[]]@(0x00, 0x00, 0x00, 0x43, 0x1E, 0x42, 0x89, 0x3B)) { $c[$i] = $b; $i++ }
     # Schein: Abstand der Abgriffe 1.3846 und 3.2308 Texel
@@ -3425,11 +3428,20 @@ function Add-Outline {
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0xE74); AddRaw $c @(0x00, 0x00, 0x80, 0x7F) # mov dword ptr [ZC],0x7F800000
     AddRaw $c @(0x53)                                          # push ebx
     AddRaw $c @(0x56)                                          # push esi
+    AddRaw $c @(0x57)                                          # push edi
     AddRaw $c @(0x8B, 0x35); AddLE32 $c ($CAVE + 0x18)         # mov esi,dword ptr [CUR]
     AddRaw $c @(0x8D, 0x34, 0x76)                              # lea esi,[esi+esi*2]
     AddRaw $c @(0x8D, 0x34, 0xF5); AddLE32 $c ($CAVE + 0x178)  # lea esi,[UNITS-24+esi*8]
     AddRaw $c @(0x8B, 0x0D); AddLE32 $c ($CAVE + 0xE78)        # mov ecx,dword ptr [CURM]
-    AddRaw $c @(0xE8, 0x25, 0x00, 0x00, 0x00)                  # call zsph
+    AddRaw $c @(0x31, 0xFF)                                    # xor edi,edi
+    AddRaw $c @(0x3B, 0x4E, 0x08)                              # cmp ecx,[esi+8]
+    AddRaw $c @(0x74, 0x06)                                    # je zf_0
+    AddRaw $c @(0x3B, 0x4E, 0x0C)                              # cmp ecx,[esi+12]
+    AddRaw $c @(0x74, 0x01)                                    # je zf_0
+    AddRaw $c @(0x47)                                          # inc edi
+    # zf_0:
+    AddRaw $c @(0xE8, 0x28, 0x00, 0x00, 0x00)                  # call zsph
+    AddRaw $c @(0x31, 0xFF)                                    # xor edi,edi
     AddRaw $c @(0xBB, 0x03, 0x00, 0x00, 0x00)                  # mov ebx,3
     # zf_l:
     AddRaw $c @(0x85, 0xC9)                                    # test ecx,ecx
@@ -3442,33 +3454,36 @@ function Add-Outline {
     AddRaw $c @(0x3B, 0x4E, 0x0C)                              # cmp ecx,[esi+12]
     AddRaw $c @(0x75, 0x05)                                    # jne zf_n
     # zf_s:
-    AddRaw $c @(0xE8, 0x06, 0x00, 0x00, 0x00)                  # call zsph
+    AddRaw $c @(0xE8, 0x07, 0x00, 0x00, 0x00)                  # call zsph
     # zf_n:
     AddRaw $c @(0x4B)                                          # dec ebx
     AddRaw $c @(0x75, 0xE3)                                    # jnz zf_l
     # zf_r:
+    AddRaw $c @(0x5F)                                          # pop edi
     AddRaw $c @(0x5E)                                          # pop esi
     AddRaw $c @(0x5B)                                          # pop ebx
     AddRaw $c @(0xC3)                                          # ret
     # zsph:
     AddRaw $c @(0x85, 0xC9)                                    # test ecx,ecx
-    AddRaw $c @(0x0F, 0x84, 0x91, 0x02, 0x00, 0x00)            # jz zs_r
+    AddRaw $c @(0x0F, 0x84, 0x7D, 0x03, 0x00, 0x00)            # jz zs_r
     AddRaw $c @(0x8B, 0x51, 0x28)                              # mov edx,[ecx+0x28]
     AddRaw $c @(0x85, 0xD2)                                    # test edx,edx
-    AddRaw $c @(0x0F, 0x84, 0x86, 0x02, 0x00, 0x00)            # jz zs_r
+    AddRaw $c @(0x0F, 0x84, 0x72, 0x03, 0x00, 0x00)            # jz zs_r
     AddRaw $c @(0x8B, 0x42, 0x14)                              # mov eax,[edx+0x14]
     AddRaw $c @(0x3B, 0x41, 0x3C)                              # cmp eax,[ecx+0x3C]
-    AddRaw $c @(0x0F, 0x85, 0x7A, 0x02, 0x00, 0x00)            # jne zs_r
+    AddRaw $c @(0x0F, 0x85, 0x66, 0x03, 0x00, 0x00)            # jne zs_r
     AddRaw $c @(0x8B, 0x51, 0x2C)                              # mov edx,[ecx+0x2C]
     AddRaw $c @(0x85, 0xD2)                                    # test edx,edx
-    AddRaw $c @(0x0F, 0x84, 0x6F, 0x02, 0x00, 0x00)            # jz zs_r
+    AddRaw $c @(0x0F, 0x84, 0x5B, 0x03, 0x00, 0x00)            # jz zs_r
     AddRaw $c @(0xF6, 0x42, 0x08, 0x01)                        # test byte ptr [edx+8],1
-    AddRaw $c @(0x0F, 0x84, 0x65, 0x02, 0x00, 0x00)            # jz zs_r
+    AddRaw $c @(0x0F, 0x84, 0x51, 0x03, 0x00, 0x00)            # jz zs_r
     AddRaw $c @(0x8B, 0x92, 0x50, 0x01, 0x00, 0x00)            # mov edx,[edx+0x150]
     AddRaw $c @(0x85, 0xD2)                                    # test edx,edx
-    AddRaw $c @(0x0F, 0x84, 0x57, 0x02, 0x00, 0x00)            # jz zs_r
+    AddRaw $c @(0x0F, 0x84, 0x43, 0x03, 0x00, 0x00)            # jz zs_r
     AddRaw $c @(0x83, 0xBA, 0xB8, 0x00, 0x00, 0x00, 0x00)      # cmp dword ptr [edx+0xB8],0
-    AddRaw $c @(0x0F, 0x8E, 0x4A, 0x02, 0x00, 0x00)            # jle zs_r
+    AddRaw $c @(0x0F, 0x8E, 0x36, 0x03, 0x00, 0x00)            # jle zs_r
+    AddRaw $c @(0x81, 0xBA, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x7F) # cmp dword ptr [edx+0xB8],0x7F800000
+    AddRaw $c @(0x0F, 0x8D, 0x26, 0x03, 0x00, 0x00)            # jge zs_r
     AddRaw $c @(0xD9, 0x82, 0xA0, 0x00, 0x00, 0x00)            # fld dword ptr [edx+0xA0]
     AddRaw $c @(0xD8, 0x82, 0xAC, 0x00, 0x00, 0x00)            # fadd dword ptr [edx+0xAC]
     AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0x48)         # fmul dword ptr [HALF]
@@ -3511,17 +3526,21 @@ function Add-Outline {
     AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
     AddRaw $c @(0xD8, 0x81, 0x2C, 0x01, 0x00, 0x00)            # fadd dword ptr [ecx+0x12C]
     AddRaw $c @(0xD9, 0x1D); AddLE32 $c ($CAVE + 0xEA4)        # fstp dword ptr [SV+8]
-    AddRaw $c @(0xD9, 0x81, 0xF4, 0x00, 0x00, 0x00)            # fld dword ptr [ecx+0xF4]
-    AddRaw $c @(0xD8, 0xC8)                                    # fmul st(0),st(0)
-    AddRaw $c @(0xD9, 0x81, 0xF8, 0x00, 0x00, 0x00)            # fld dword ptr [ecx+0xF8]
-    AddRaw $c @(0xD8, 0xC8)                                    # fmul st(0),st(0)
-    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
-    AddRaw $c @(0xD9, 0x81, 0xFC, 0x00, 0x00, 0x00)            # fld dword ptr [ecx+0xFC]
-    AddRaw $c @(0xD8, 0xC8)                                    # fmul st(0),st(0)
-    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
-    AddRaw $c @(0xD9, 0xFA)                                    # fsqrt
-    AddRaw $c @(0xD8, 0x8A, 0xB8, 0x00, 0x00, 0x00)            # fmul dword ptr [edx+0xB8]
-    AddRaw $c @(0xD9, 0x1D); AddLE32 $c ($CAVE + 0xE7C)        # fstp dword ptr [ZR]
+    AddRaw $c @(0xD9, 0x82, 0xAC, 0x00, 0x00, 0x00)            # fld dword ptr [edx+0xAC]
+    AddRaw $c @(0xD8, 0xA2, 0xA0, 0x00, 0x00, 0x00)            # fsub dword ptr [edx+0xA0]
+    AddRaw $c @(0xD9, 0xE1)                                    # fabs
+    AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0x48)         # fmul dword ptr [HALF]
+    AddRaw $c @(0xD9, 0x1D); AddLE32 $c ($CAVE + 0xE90)        # fstp dword ptr [SC+0]
+    AddRaw $c @(0xD9, 0x82, 0xB0, 0x00, 0x00, 0x00)            # fld dword ptr [edx+0xB0]
+    AddRaw $c @(0xD8, 0xA2, 0xA4, 0x00, 0x00, 0x00)            # fsub dword ptr [edx+0xA4]
+    AddRaw $c @(0xD9, 0xE1)                                    # fabs
+    AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0x48)         # fmul dword ptr [HALF]
+    AddRaw $c @(0xD9, 0x1D); AddLE32 $c ($CAVE + 0xE94)        # fstp dword ptr [SC+4]
+    AddRaw $c @(0xD9, 0x82, 0xB4, 0x00, 0x00, 0x00)            # fld dword ptr [edx+0xB4]
+    AddRaw $c @(0xD8, 0xA2, 0xA8, 0x00, 0x00, 0x00)            # fsub dword ptr [edx+0xA8]
+    AddRaw $c @(0xD9, 0xE1)                                    # fabs
+    AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0x48)         # fmul dword ptr [HALF]
+    AddRaw $c @(0xD9, 0x1D); AddLE32 $c ($CAVE + 0xE98)        # fstp dword ptr [SC+8]
     AddRaw $c @(0xD9, 0x05, 0x38, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5]
     AddRaw $c @(0xD8, 0xC8)                                    # fmul st(0),st(0)
     AddRaw $c @(0xD9, 0x05, 0x3C, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5+4]
@@ -3532,6 +3551,50 @@ function Add-Outline {
     AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
     AddRaw $c @(0xD9, 0xFA)                                    # fsqrt
     AddRaw $c @(0xD9, 0x1D); AddLE32 $c ($CAVE + 0xE80)        # fstp dword ptr [ZT]
+    AddRaw $c @(0xD9, 0x05, 0x38, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5]
+    AddRaw $c @(0xD8, 0x89, 0xF4, 0x00, 0x00, 0x00)            # fmul dword ptr [ecx+0xF4]
+    AddRaw $c @(0xD9, 0x05, 0x3C, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5+4]
+    AddRaw $c @(0xD8, 0x89, 0xF8, 0x00, 0x00, 0x00)            # fmul dword ptr [ecx+0xF8]
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD9, 0x05, 0x40, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5+8]
+    AddRaw $c @(0xD8, 0x89, 0xFC, 0x00, 0x00, 0x00)            # fmul dword ptr [ecx+0xFC]
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD9, 0xE1)                                    # fabs
+    AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0xE90)        # fmul dword ptr [SC+0]
+    AddRaw $c @(0xD9, 0x05, 0x38, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5]
+    AddRaw $c @(0xD8, 0x89, 0x04, 0x01, 0x00, 0x00)            # fmul dword ptr [ecx+0x104]
+    AddRaw $c @(0xD9, 0x05, 0x3C, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5+4]
+    AddRaw $c @(0xD8, 0x89, 0x08, 0x01, 0x00, 0x00)            # fmul dword ptr [ecx+0x108]
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD9, 0x05, 0x40, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5+8]
+    AddRaw $c @(0xD8, 0x89, 0x0C, 0x01, 0x00, 0x00)            # fmul dword ptr [ecx+0x10C]
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD9, 0xE1)                                    # fabs
+    AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0xE94)        # fmul dword ptr [SC+4]
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD9, 0x05, 0x38, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5]
+    AddRaw $c @(0xD8, 0x89, 0x14, 0x01, 0x00, 0x00)            # fmul dword ptr [ecx+0x114]
+    AddRaw $c @(0xD9, 0x05, 0x3C, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5+4]
+    AddRaw $c @(0xD8, 0x89, 0x18, 0x01, 0x00, 0x00)            # fmul dword ptr [ecx+0x118]
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD9, 0x05, 0x40, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5+8]
+    AddRaw $c @(0xD8, 0x89, 0x1C, 0x01, 0x00, 0x00)            # fmul dword ptr [ecx+0x11C]
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD9, 0xC0)                                    # fld st(0)
+    AddRaw $c @(0xD9, 0xE1)                                    # fabs
+    AddRaw $c @(0x85, 0xFF)                                    # test edi,edi
+    AddRaw $c @(0x75, 0x0A)                                    # jnz zs_full
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0x48)         # fmul dword ptr [HALF]
+    AddRaw $c @(0xEB, 0x02)                                    # jmp zs_h
+    # zs_full:
+    AddRaw $c @(0xDD, 0xD9)                                    # fstp st(1)
+    # zs_h:
+    AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0xE98)        # fmul dword ptr [SC+8]
+    AddRaw $c @(0xDE, 0xC1)                                    # faddp st(1),st(0)
+    AddRaw $c @(0xD8, 0x35); AddLE32 $c ($CAVE + 0xE80)        # fdiv dword ptr [ZT]
+    AddRaw $c @(0xD8, 0x05); AddLE32 $c ($CAVE + 0xEAC)        # fadd dword ptr [SPM]
+    AddRaw $c @(0xD9, 0x1D); AddLE32 $c ($CAVE + 0xE7C)        # fstp dword ptr [ZR]
     AddRaw $c @(0xD9, 0x05, 0x38, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5]
     AddRaw $c @(0xD8, 0x0D); AddLE32 $c ($CAVE + 0xE9C)        # fmul dword ptr [SV]
     AddRaw $c @(0xD9, 0x05, 0x3C, 0xF0, 0xC5, 0x00)            # fld dword ptr [C5+4]
@@ -3592,7 +3655,7 @@ function Add-Outline {
     AddRaw $c @(0x60)                                          # pushad
     AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x20); AddRaw $c @(0x00) # cmp dword ptr [MARKED],0
     AddRaw $c @(0x0F, 0x84, 0xEA, 0x02, 0x00, 0x00)            # je p_clear
-    AddRaw $c @(0xE8, 0x68, 0xF0, 0xFF, 0xFF)                  # call okdev
+    AddRaw $c @(0xE8, 0x6B, 0xEF, 0xFF, 0xFF)                  # call okdev
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
     AddRaw $c @(0x0F, 0x84, 0x1D, 0x03, 0x00, 0x00)            # jz p_reset
     AddRaw $c @(0x89, 0xC6)                                    # mov esi,eax
@@ -3735,7 +3798,7 @@ function Add-Outline {
     AddRaw $c @(0xEB, 0xD4)                                    # jmp p_loop
     # p_done:
     AddRaw $c @(0x8B, 0x0D, 0x88, 0xDF, 0xC5, 0x00)            # mov ecx,dword ptr [DEVPTR]
-    AddRaw $c @(0xE8); AddLE32 $c (0x685A70 - ($CAVE + 0x20B5)) # call 0x685A70
+    AddRaw $c @(0xE8); AddLE32 $c (0x685A70 - ($CAVE + 0x21B2)) # call 0x685A70
     AddRaw $c @(0x8B, 0x15, 0x88, 0xDF, 0xC5, 0x00)            # mov edx,dword ptr [DEVPTR]
     AddRaw $c @(0xC7, 0x82, 0xC4, 0x3B, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF) # mov dword ptr [edx+0x3BC4],0xFFFFFFFF
     AddRaw $c @(0xC7, 0x82, 0xC8, 0x3B, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF) # mov dword ptr [edx+0x3BC8],0xFFFFFFFF
@@ -3761,7 +3824,7 @@ function Add-Outline {
     AddRaw $c @(0xC7, 0x82, 0x84, 0x3B, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF) # mov dword ptr [edx+0x3B84],0xFFFFFFFF
     AddRaw $c @(0xC7, 0x82, 0xA4, 0x3B, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF) # mov dword ptr [edx+0x3BA4],0xFFFFFFFF
     # p_clear:
-    AddRaw $c @(0xE8, 0x7E, 0xED, 0xFF, 0xFF)                  # call okdev
+    AddRaw $c @(0xE8, 0x81, 0xEC, 0xFF, 0xFF)                  # call okdev
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
     AddRaw $c @(0x74, 0x37)                                    # jz p_reset
     AddRaw $c @(0x89, 0xC6)                                    # mov esi,eax
@@ -3789,7 +3852,7 @@ function Add-Outline {
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x20); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [MARKED],0
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x1C); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [VALID],0
     AddRaw $c @(0x61)                                          # popad
-    AddRaw $c @(0xE9); AddLE32 $c (0x4F6F90 - ($CAVE + 0x2205)) # jmp 0x4F6F90
+    AddRaw $c @(0xE9); AddLE32 $c (0x4F6F90 - ($CAVE + 0x2302)) # jmp 0x4F6F90
     # quad:
     AddRaw $c @(0x89, 0x15); AddLE32 $c ($CAVE + 0xA0)         # mov dword ptr [VERTS+16],edx
     AddRaw $c @(0x89, 0x15); AddLE32 $c ($CAVE + 0xB4)         # mov dword ptr [VERTS+36],edx
@@ -3859,7 +3922,7 @@ function Add-Outline {
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x61C); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [NMARK],0
     AddRaw $c @(0x89, 0x3D); AddLE32 $c ($CAVE + 0x620)        # mov dword ptr [MLIST],edi
     AddRaw $c @(0x89, 0x1D); AddLE32 $c ($CAVE + 0x624)        # mov dword ptr [MCOUNT],ebx
-    AddRaw $c @(0xE8, 0x64, 0xEC, 0xFF, 0xFF)                  # call ensure
+    AddRaw $c @(0xE8, 0x67, 0xEB, 0xFF, 0xFF)                  # call ensure
     AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x140); AddRaw $c @(0x00) # cmp dword ptr [NUNITS],0
     AddRaw $c @(0x0F, 0x84, 0x86, 0x00, 0x00, 0x00)            # je sp_none
     AddRaw $c @(0x8B, 0x74, 0x24, 0x1C)                        # mov esi,[esp+0x1C]
@@ -3873,7 +3936,7 @@ function Add-Outline {
     AddRaw $c @(0x75, 0xEE)                                    # jne sp_m
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0x8B, 0x40, 0x04)                              # mov eax,[eax+4]
-    AddRaw $c @(0xE8, 0x92, 0xF1, 0xFF, 0xFF)                  # call classify
+    AddRaw $c @(0xE8, 0x95, 0xF0, 0xFF, 0xFF)                  # call classify
     AddRaw $c @(0x59)                                          # pop ecx
     AddRaw $c @(0x85, 0xC0)                                    # test eax,eax
     AddRaw $c @(0x74, 0xE0)                                    # jz sp_m
@@ -3895,7 +3958,7 @@ function Add-Outline {
     # sp_cw:
     AddRaw $c @(0xEB, 0x45)                                    # jmp cmpw
     # sp_go:
-    AddRaw $c @(0xE8); AddLE32 $c (0x83DCF0 - ($CAVE + 0x2354)) # call 0x83DCF0
+    AddRaw $c @(0xE8); AddLE32 $c (0x83DCF0 - ($CAVE + 0x2451)) # call 0x83DCF0
     AddRaw $c @(0x83, 0xC4, 0x10)                              # add esp,0x10
     AddRaw $c @(0x8B, 0x5C, 0x24, 0x18)                        # mov ebx,[esp+0x18]
     # sp_r:
@@ -3920,7 +3983,7 @@ function Add-Outline {
     AddRaw $c @(0x5F)                                          # pop edi
     AddRaw $c @(0x5E)                                          # pop esi
     # sp_jmp:
-    AddRaw $c @(0xE9); AddLE32 $c (0x83DCF0 - ($CAVE + 0x2386)) # jmp 0x83DCF0
+    AddRaw $c @(0xE9); AddLE32 $c (0x83DCF0 - ($CAVE + 0x2483)) # jmp 0x83DCF0
     # item:
     AddRaw $c @(0x89, 0xC1)                                    # mov ecx,eax
     AddRaw $c @(0xC1, 0xE1, 0x04)                              # shl ecx,4
@@ -3950,7 +4013,7 @@ function Add-Outline {
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0x57)                                          # push edi
-    AddRaw $c @(0xE8); AddLE32 $c (0x81EAD0 - ($CAVE + 0x23CE)) # call 0x81EAD0
+    AddRaw $c @(0xE8); AddLE32 $c (0x81EAD0 - ($CAVE + 0x24CB)) # call 0x81EAD0
     AddRaw $c @(0x83, 0xC4, 0x08)                              # add esp,8
     AddRaw $c @(0x59)                                          # pop ecx
     AddRaw $c @(0x5A)                                          # pop edx
@@ -3961,7 +4024,7 @@ function Add-Outline {
     AddRaw $c @(0xFF, 0x75, 0x10)                              # push dword ptr [ebp+0x10]
     AddRaw $c @(0xFF, 0x75, 0x0C)                              # push dword ptr [ebp+0xC]
     AddRaw $c @(0xFF, 0x75, 0x08)                              # push dword ptr [ebp+8]
-    AddRaw $c @(0xE8); AddLE32 $c (0x81EEA0 - ($CAVE + 0x23E7)) # call 0x81EEA0
+    AddRaw $c @(0xE8); AddLE32 $c (0x81EEA0 - ($CAVE + 0x24E4)) # call 0x81EEA0
     AddRaw $c @(0x83, 0xC4, 0x0C)                              # add esp,0xC
     # cw_ret:
     AddRaw $c @(0x5F)                                          # pop edi
@@ -3985,7 +4048,7 @@ function Add-Outline {
     AddRaw $c @(0x75, 0x04)                                    # jne dr_go
     AddRaw $c @(0x29, 0x44, 0x24, 0x10)                        # sub [esp+0x10],eax
     # dr_go:
-    AddRaw $c @(0xE9); AddLE32 $c (0x823130 - ($CAVE + 0x242A)) # jmp 0x823130
+    AddRaw $c @(0xE9); AddLE32 $c (0x823130 - ($CAVE + 0x2527)) # jmp 0x823130
     # draw2:
     AddRaw $c @(0x8B, 0x41, 0x40)                              # mov eax,[ecx+0x40]
     AddRaw $c @(0x3B, 0x05, 0x4C, 0x75, 0xCD, 0x00)            # cmp eax,dword ptr [WSCENE]
@@ -4004,7 +4067,7 @@ function Add-Outline {
     AddRaw $c @(0xFF, 0x74, 0x24, 0x14)                        # push dword ptr [esp+0x14]
     AddRaw $c @(0xFF, 0x74, 0x24, 0x14)                        # push dword ptr [esp+0x14]
     AddRaw $c @(0xFF, 0x74, 0x24, 0x14)                        # push dword ptr [esp+0x14]
-    AddRaw $c @(0xE8); AddLE32 $c (0x823130 - ($CAVE + 0x246C)) # call 0x823130
+    AddRaw $c @(0xE8); AddLE32 $c (0x823130 - ($CAVE + 0x2569)) # call 0x823130
     AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x624)              # mov eax,dword ptr [MCOUNT]
     AddRaw $c @(0x2B, 0x05); AddLE32 $c ($CAVE + 0x61C)        # sub eax,dword ptr [NMARK]
     AddRaw $c @(0x8B, 0x15); AddLE32 $c ($CAVE + 0x620)        # mov edx,dword ptr [MLIST]
@@ -4014,7 +4077,7 @@ function Add-Outline {
     AddRaw $c @(0xFF, 0x74, 0x24, 0x14)                        # push dword ptr [esp+0x14]
     AddRaw $c @(0x6A, 0x00)                                    # push 0
     AddRaw $c @(0x89, 0xF1)                                    # mov ecx,esi
-    AddRaw $c @(0xE8); AddLE32 $c (0x823130 - ($CAVE + 0x2494)) # call 0x823130
+    AddRaw $c @(0xE8); AddLE32 $c (0x823130 - ($CAVE + 0x2591)) # call 0x823130
     AddRaw $c @(0x5E)                                          # pop esi
     AddRaw $c @(0xC2, 0x10, 0x00)                              # ret 0x10
     # ucol:
@@ -4069,7 +4132,7 @@ function Add-Outline {
     AddRaw $c @(0x5B)                                          # pop ebx
     # gr_go:
     AddRaw $c @(0x59)                                          # pop ecx
-    AddRaw $c @(0xE9); AddLE32 $c (0x690150 - ($CAVE + 0x255D)) # jmp 0x690150
+    AddRaw $c @(0xE9); AddLE32 $c (0x690150 - ($CAVE + 0x265A)) # jmp 0x690150
     # gr_rel:
     AddRaw $c @(0x8B, 0x0B)                                    # mov ecx,[ebx]
     AddRaw $c @(0xC7, 0x03, 0x00, 0x00, 0x00, 0x00)            # mov dword ptr [ebx],0
@@ -4981,20 +5044,20 @@ function Add-Outline {
     # g_fail:
     AddRaw $c @(0x89, 0x35); AddLE32 $c ($CAVE + 0x6B4)        # mov dword ptr [GLFAIL],esi
     AddRaw $c @(0xEB, 0xF4)                                    # jmp g_out
-    if ($c.Count -ne 0x336E) { throw 'Umrandung: Sektion hat die falsche Groesse.' }
+    if ($c.Count -ne 0x346B) { throw 'Umrandung: Sektion hat die falsche Groesse.' }
     Patch $loc[1] $c.ToArray()
     Patch ($VPSITE - 0x400C00) ([byte[]]((Get-Rel32 @(0xE9) $VPSITE ($CAVE + 0xEB0)) + [byte[]](0x90)))
     Patch ($BATCH - 0x400C00) ([byte[]]((Get-Rel32 @(0xE9) $BATCH ($CAVE + 0xED1)) + [byte[]](0x90, 0x90)))
     Patch ($DIPSITE - 0x400C00) ([byte[]]([byte[]](0x52) + (Get-Rel32 @(0xE8) ($DIPSITE + 1) ($CAVE + 0x14E5)) + [byte[]](0x90, 0x90, 0x90)))
     Patch ($DPSITE - 0x400C00) ([byte[]]([byte[]](0x52) + (Get-Rel32 @(0xE8) ($DPSITE + 1) ($CAVE + 0x1503)) + [byte[]](0x90, 0x90, 0x90)))   # DrawPrimitive-Zweig
-    Patch ($POSTSITE - 0x400C00) (Get-Rel32 @(0xE8) $POSTSITE ($CAVE + 0x1EA9))
-    Patch ($SORTSITE - 0x400C00) (Get-Rel32 @(0xE8) $SORTSITE ($CAVE + 0x22B5))
-    Patch ($DRAW1 - 0x400C00) (Get-Rel32 @(0xE8) $DRAW1 ($CAVE + 0x23EE))
-    Patch ($DRAW2 - 0x400C00) (Get-Rel32 @(0xE8) $DRAW2 ($CAVE + 0x242A))
+    Patch ($POSTSITE - 0x400C00) (Get-Rel32 @(0xE8) $POSTSITE ($CAVE + 0x1FA6))
+    Patch ($SORTSITE - 0x400C00) (Get-Rel32 @(0xE8) $SORTSITE ($CAVE + 0x23B2))
+    Patch ($DRAW1 - 0x400C00) (Get-Rel32 @(0xE8) $DRAW1 ($CAVE + 0x24EB))
+    Patch ($DRAW2 - 0x400C00) (Get-Rel32 @(0xE8) $DRAW2 ($CAVE + 0x2527))
     Patch ($CULLSITE - 0x400C00) (Get-Rel32 @(0xE9) $CULLSITE ($CAVE + 0x13AF))   # aussortierte Gruppen-Figuren trotzdem zeichnen
-    Patch (0x69029D - 0x400C00) (Get-Rel32 @(0xE8) 0x69029D ($CAVE + 0x24E4))   # vor Reset/Abbau: Texturen des Scheins freigeben
-    Patch (0x6A337F - 0x400C00) (Get-Rel32 @(0xE8) 0x6A337F ($CAVE + 0x24E4))   # vor Reset/Abbau: Texturen des Scheins freigeben
-    Patch (0x69040B - 0x400C00) (Get-Rel32 @(0xE8) 0x69040B ($CAVE + 0x24E4))   # vor Reset/Abbau: Texturen des Scheins freigeben
+    Patch (0x69029D - 0x400C00) (Get-Rel32 @(0xE8) 0x69029D ($CAVE + 0x25E1))   # vor Reset/Abbau: Texturen des Scheins freigeben
+    Patch (0x6A337F - 0x400C00) (Get-Rel32 @(0xE8) 0x6A337F ($CAVE + 0x25E1))   # vor Reset/Abbau: Texturen des Scheins freigeben
+    Patch (0x69040B - 0x400C00) (Get-Rel32 @(0xE8) 0x69040B ($CAVE + 0x25E1))   # vor Reset/Abbau: Texturen des Scheins freigeben
     Patch 0x62CCBC @(0x4B)                                     # Tiefenpuffer D24X8 -> D24S8 (mit Stencil)
 }
 

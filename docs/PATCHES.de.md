@@ -1294,11 +1294,11 @@ eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
 > Zaubereffekte verdeckt nicht. Außerdem zählt nur, was **vor der ganzen
 > Figur** liegt: Steckt sie nur in etwas – Füße leicht im Boden, halb in
 > einer Wand oder einem Baum –, gibt es dort keinen Rand. Dafür muss das
-> Verdeckende etwa 1 Yard vor dem Körper stehen (bei großen Figuren und
-> Reittieren mehr, auf 30–40 Yards Entfernung bis etwa 2 Yards); wer direkt an
-> einem Baumstamm lehnt, bekommt dahinter also keinen Rand. Bei sehr flachem
-> Blick (Kamera fast am Boden) kann an eingesunkenen Füßen noch eine Linie
-> erscheinen.
+> Verdeckende ein kleines Stück vor dem Körper stehen: vor dem Quader, der das
+> Modell umschließt, plus 0,05 Yards (auf 30–40 Yards Entfernung bis etwa
+> 0,2 Yards); wer direkt an einem Baumstamm lehnt, bekommt dahinter also
+> keinen Rand. Bei flachem Blick (Kamera nah am Boden) oder tief eingesunkenen
+> Füßen kann an den Füßen eine Linie erscheinen.
 
 So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
@@ -1348,11 +1348,13 @@ So funktioniert es:
 - Mit „nur dort, wo verdeckt“ wird deine Figur ebenfalls auch dort markiert,
   wo sie verdeckt ist; ihre Kopien markieren den Rand aber nur dort, wo
   bereits Gezeichnetes vor der ganzen Figur liegt. Dafür liegen alle Kopien
-  auf einer Tiefe: der Vorderseite der Hüllkugel der Figur (aus ihrem Modell,
-  beritten die vordere von Figur und Reittier), über die Projektionsmatrix
-  noch ein Stück nach vorn gezogen (siehe oben). Ist keine Kugel bekannt,
-  zieht die Projektionsmatrix wie früher nur die Tiefe der Kopien ein Stück
-  nach vorn.
+  auf einer Tiefe: der Vorderseite des Quaders, der ihr Modell umschließt
+  (die Ecke zur Kamera; nach unten nur, wenn die Kamera von unten schaut, bei
+  Waffen und anderen Anbauteilen die ganze Höhe; beritten die vordere von
+  Figur und Reittier), plus 0,05 Yards und über die Projektionsmatrix mit der
+  Entfernung noch ein kleines Stück nach vorn gezogen. Ist kein Quader
+  bekannt, zieht die Projektionsmatrix wie früher nur die Tiefe der Kopien ein
+  Stück nach vorn.
 - Nach den Modellen und vor dem Interface entsteht zuerst der Schein: Je Figur
   mit Schein färbt eine bildschirmfüllende Fläche nur ihre Rand-Pixel ein,
   aber in einer eigenen Textur (gleiche Größe und Kantenglättung wie das Bild,
@@ -1376,7 +1378,7 @@ So funktioniert es:
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x336E Byte). Jeder
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x345B Byte). Jeder
   Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
   die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
   Zeichnen.
