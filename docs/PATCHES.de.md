@@ -1291,10 +1291,14 @@ eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
 > ein Briefkasten oder ein Teller auf dem Tisch vor dir – zeichnet der Patch
 > ebenfalls vor den umrandeten Figuren. Nur Begleiter (deine und die der
 > Mitspieler) kommen erst danach und lösen den Rand nicht aus. Durchsichtiges wie Wasser oder
-> Zaubereffekte verdeckt nicht. Außerdem muss das Verdeckende ein Stück vor
-> der Figur liegen, sonst gäbe es direkt unter den Füßen eine Linie am Boden:
-> rund 0,1 Yards bei 10 Yards Kameraabstand, 0,2 Yards bei 15 und knapp
-> 1 Yard bei 30.
+> Zaubereffekte verdeckt nicht. Außerdem zählt nur, was **vor der ganzen
+> Figur** liegt: Steckt sie nur in etwas – Füße leicht im Boden, halb in
+> einer Wand oder einem Baum –, gibt es dort keinen Rand. Dafür muss das
+> Verdeckende etwa 1 Yard vor dem Körper stehen (bei großen Figuren und
+> Reittieren mehr, auf 30–40 Yards Entfernung bis etwa 2 Yards); wer direkt an
+> einem Baumstamm lehnt, bekommt dahinter also keinen Rand. Bei sehr flachem
+> Blick (Kamera fast am Boden) kann an eingesunkenen Füßen noch eine Linie
+> erscheinen.
 
 So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
@@ -1343,8 +1347,12 @@ So funktioniert es:
   in die Liste der sichtbaren Objekte – wie das Spiel es mit sichtbaren tut.
 - Mit „nur dort, wo verdeckt“ wird deine Figur ebenfalls auch dort markiert,
   wo sie verdeckt ist; ihre Kopien markieren den Rand aber nur dort, wo
-  bereits Gezeichnetes deutlich vor ihnen liegt. Dafür zieht die
-  Projektionsmatrix ihre Tiefe ein Stück nach vorn (siehe oben).
+  bereits Gezeichnetes vor der ganzen Figur liegt. Dafür liegen alle Kopien
+  auf einer Tiefe: der Vorderseite der Hüllkugel der Figur (aus ihrem Modell,
+  beritten die vordere von Figur und Reittier), über die Projektionsmatrix
+  noch ein Stück nach vorn gezogen (siehe oben). Ist keine Kugel bekannt,
+  zieht die Projektionsmatrix wie früher nur die Tiefe der Kopien ein Stück
+  nach vorn.
 - Nach den Modellen und vor dem Interface entsteht zuerst der Schein: Je Figur
   mit Schein färbt eine bildschirmfüllende Fläche nur ihre Rand-Pixel ein,
   aber in einer eigenen Textur (gleiche Größe und Kantenglättung wie das Bild,
@@ -1368,7 +1376,7 @@ So funktioniert es:
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x2FE2 Byte). Jeder
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x336E Byte). Jeder
   Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
   die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
   Zeichnen.

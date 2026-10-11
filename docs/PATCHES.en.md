@@ -1246,9 +1246,13 @@ all off; the switches are called `hidden`, `self`, `party`, `raid`,
 > front of you, say – are drawn before the outlined figures by the patch as
 > well. Only companions (yours and the other players') come after them and do
 > not trigger the outline. Transparent things like water or spell effects do not hide anything.
-> Also, whatever hides it has to lie a bit in front of the figure, otherwise
-> there would be a line on the ground right under the feet: about 0.1 yards at
-> 10 yards camera distance, 0.2 yards at 15 and almost 1 yard at 30.
+> Also, only what lies **in front of the whole figure** counts: if the figure
+> merely sticks into something – feet slightly in the ground, half inside a
+> wall or a tree – there is no outline there. For that, whatever hides it has
+> to stand about 1 yard in front of the body (more for large figures and
+> mounts, up to about 2 yards at 30–40 yards distance); someone leaning right
+> against a tree trunk gets no outline behind it. At a very flat view (camera
+> almost on the ground) a line can still show at sunken feet.
 
 How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
@@ -1296,8 +1300,11 @@ How it works:
   visible objects – the way the game does it with visible ones.
 - With "only where hidden" your figure is also marked where it is hidden as
   well; its copies, however, only mark the outline where something already
-  drawn lies clearly in front of them. For that, the projection matrix pulls
-  their depth forward a bit (see above).
+  drawn lies in front of the whole figure. For that, all copies lie at one
+  depth: the front of the figure's bounding sphere (from its model; when
+  mounted the front-most of figure and mount), pulled forward a bit more via
+  the projection matrix (see above). If no sphere is known, the projection
+  matrix only pulls the copies' depth forward a bit as before.
 - After the models and before the interface, the glow comes first: per
   figure with glow, a full-screen quad colors only its outline pixels, but in
   a texture of its own (same size and anti-aliasing as the image, the same
@@ -1320,7 +1327,7 @@ How it works:
 - Hostile means: the player's selection circle would be red. Then the quad
   mixes their class color with red; the share of red rises and falls smoothly
   (cosine), one pulse takes 1.5 seconds.
-- Code and data live in a section of their own (`.outl`, 0x2FE2 bytes). Each
+- Code and data live in a section of their own (`.outl`, 0x336E bytes). Each
   switch is a single padding byte between two functions in `.text` that the
   chosen setting sets to 1; the code reads these switches while drawing. This is also
   how the patcher recognizes the settings in a patched `Wow.exe`.
