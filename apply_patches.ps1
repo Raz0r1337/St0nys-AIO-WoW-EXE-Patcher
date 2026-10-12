@@ -7257,6 +7257,22 @@ $patches = @(
         Set-OutlineOptions $script:VALUES['outline']
     }}
 
+    @{ Id = 'lightstay'; Cat = 'graphics'; On = $false; PublicUntested = $true; GameUntested = $true
+       Author = 'St0ny'
+       De = 'Lichter bleiben an, wenn ihre Quelle ausserhalb des Bildes ist [BETA]'
+       En = 'Lights stay on when their source is off-screen [BETA]'
+       Code = {
+        # Punktlichter haengen an Modellen (Fackeln, Zauber ...). Ihr Zeitstempel
+        # (Licht +4) wird nur gesetzt, wenn das Modell in diesem Bild gezeichnet
+        # wird (VA 0x828B9C). QueryLights (VA 0x81E400) schaltet jedes Licht mit
+        # veraltetem Stempel ab (je bei VA 0x81E548, sonst SetEnabled(0)) - dreht
+        # man die Kamera von einer Fackel weg, verliert auch die Figur daneben ihr
+        # Licht. je -> jmp: das Licht bleibt aktiv, mit der zuletzt bekannten
+        # Position. Beim Entfernen eines Modells meldet es seine Lichter selbst ab
+        # (VA 0x824D30), es bleiben also keine verwaisten Lichter uebrig.
+        Patch 0x41D948 @(0xEB)
+    }}
+
     # --- Interface & Komfort ---
 
     @{ Id = 'tracker'; Cat = 'ui'; On = $false
@@ -7390,13 +7406,13 @@ $patches = @(
        Author = 'tb (ported by St0ny)'
        De = 'Echtes Level statt "??" bei Gegnern ab 10 Level ueber dir'
        En = 'Real level instead of "??" for enemies 10+ levels above you'
-       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 77'
-       NoteEn = 'bosses still show "??" - see No. 77'
+       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 78'
+       NoteEn = 'bosses still show "??" - see No. 78'
        Code = {
         # Lua UnitLevel (VA 0x60F9E0), Tooltip (VA 0x620EE0) und Namensplakette
         # (VA 0x98EF10) zeigen "??" (bzw. -1 / Totenkopf), wenn ein feindliches
         # Ziel 10 oder mehr Level ueber dir ist. Diese Pruefung ("jle") faellt
-        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 77 raus).
+        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 78 raus).
         Patch 0x20EEB2 @(0x90, 0x90)
         Patch 0x220B66 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)
         Patch 0x58E3B9 @(0x90, 0x90)
@@ -7404,15 +7420,15 @@ $patches = @(
 
     @{ Id = 'showlevelboss'; Cat = 'ui'; On = $false; Needs = @('showlevel'); PublicUntested = $true
        Author = 'St0ny'
-       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 76)'
-       En = 'Real level for bosses too instead of "??" (extension to No. 76)'
+       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 77)'
+       En = 'Real level for bosses too instead of "??" (extension to No. 77)'
        Code = {
         # Ist eine Kreatur als Boss markiert (Flag 0x4 in den Kreatur-Typflags,
         # Pruefung CGUnit_C::IsBossMob bei VA 0x715D70), zeigen UnitLevel,
         # Tooltip und Namensplakette immer "??" bzw. -1 / Totenkopf. Diese drei
         # Boss-Pruefungen fallen weg; die Beschriftung "Boss" im Tooltip und das
         # Elite-Symbol der Namensplakette bleiben. Gegner 10+ Level ueber dir
-        # zeigen ihr Level erst zusammen mit Nr. 76.
+        # zeigen ihr Level erst zusammen mit Nr. 77.
         Patch 0x20EEBD @(0xEB)                                 # VA 0x60FABD UnitLevel: je -> jmp (kein -1)
         Patch 0x220B78 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)   # VA 0x621778 Tooltip: jne "??" -> nop
         Patch 0x58E358 @(0xEB)                                 # VA 0x98EF58 Namensplakette: je -> jmp (Level statt Totenkopf)
@@ -7457,8 +7473,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus als Standard setzen'
        En = 'Windowed mode by default'
-       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 81'
-       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 81'
+       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 82'
+       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 82'
        Code = {
         Patch 0x369A7D @(0x64, 0x14, 0x9E)
     }}
@@ -7467,8 +7483,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus maximiert als Standard setzen'
        En = 'Maximized window by default'
-       NoteDe = 'wirkt nur zusammen mit Nr. 80'
-       NoteEn = 'only works together with No. 80'
+       NoteDe = 'wirkt nur zusammen mit Nr. 81'
+       NoteEn = 'only works together with No. 81'
        Code = {
         Patch 0x369AB2 @(0x64, 0x14, 0x9E)
     }}
@@ -7886,6 +7902,7 @@ outline;422E81;8BCEE828C9FFFF;1
 outline;42311F;E80CF4FFFF;1
 outline;42313B;E8F0F3FFFF;1
 outline;62CCBC;4D;1
+lightstay;41D948;74;1
 tracker;11D4C5;A0149E00;1
 worldmap;11D462;A0149E00;1
 castbars;123676;8BCEE8A3181F00;1

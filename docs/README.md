@@ -536,6 +536,7 @@ name, and before patching it lists them once more.
 | [66](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe - exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [67](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [68](PATCHES.en.md#patch-outline) | Outline for target and mouseover [BETA] *(gxApi d3d9 only, asks for the settings)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
+| [69](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen [BETA] | 🟠 **[untested]** | St0ny | – | – | – |
 
 > [!WARNING]
 > **Outline (No. 68) on public servers:** if you use the patch there, please
@@ -549,43 +550,43 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [69](PATCHES.en.md#patch-tracker) | Auto-sort quest tracker | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
-| [70](PATCHES.en.md#patch-worldmap) | Advanced world map enabled by default | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
-| [71](PATCHES.en.md#patch-castbars) | Cast bars on all frames | 🟢 **[safe]** | Kebabstorm | ✅ | ✅ | ✅ |
-| [72](PATCHES.en.md#patch-emblems) | Retail guild emblems: selection extended from 170 to 196 *(requires [Patch-G](https://discord.com/channels/407664041016688662/1541873346608889936))* | 🟠 **[untested online]** | MacWarrior | – | – | ✅ |
-| [73](PATCHES.en.md#patch-flash) | FlashWindow patch *(requires the [FlashWindow addon](https://github.com/noname08662/awesome_wotlk/tree/main/addons/Flash))* | 🟢 **[safe]** | Kebabstorm | – | ✅ | ✅ |
-| [74](PATCHES.en.md#patch-charrandom) | Character creation: do not randomize the appearance automatically | 🟢 **[safe]** | Alyst3r (0x539wowmod) | ✅ | – | – |
-| [75](PATCHES.en.md#patch-lootopen) | Loot window stays open while moving | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
-| [76](PATCHES.en.md#patch-showlevel) | Real level instead of "??" for enemies 10+ levels above you *(bosses still show "??" – see No. 77)* | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
-| [77](PATCHES.en.md#patch-showlevelboss) | Real level for bosses too instead of "??" (extension to No. 76) | 🟠 **[untested online]** | St0ny | – | – | – |
-| [78](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe - exe grows]** | tb (ported by St0ny) | – | – | ✅ |
-| [79](PATCHES.en.md#patch-bubblerange) | Increase the chat bubble range (original 25 yards) *(asks for the value)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [70](PATCHES.en.md#patch-tracker) | Auto-sort quest tracker | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
+| [71](PATCHES.en.md#patch-worldmap) | Advanced world map enabled by default | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
+| [72](PATCHES.en.md#patch-castbars) | Cast bars on all frames | 🟢 **[safe]** | Kebabstorm | ✅ | ✅ | ✅ |
+| [73](PATCHES.en.md#patch-emblems) | Retail guild emblems: selection extended from 170 to 196 *(requires [Patch-G](https://discord.com/channels/407664041016688662/1541873346608889936))* | 🟠 **[untested online]** | MacWarrior | – | – | ✅ |
+| [74](PATCHES.en.md#patch-flash) | FlashWindow patch *(requires the [FlashWindow addon](https://github.com/noname08662/awesome_wotlk/tree/main/addons/Flash))* | 🟢 **[safe]** | Kebabstorm | – | ✅ | ✅ |
+| [75](PATCHES.en.md#patch-charrandom) | Character creation: do not randomize the appearance automatically | 🟢 **[safe]** | Alyst3r (0x539wowmod) | ✅ | – | – |
+| [76](PATCHES.en.md#patch-lootopen) | Loot window stays open while moving | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
+| [77](PATCHES.en.md#patch-showlevel) | Real level instead of "??" for enemies 10+ levels above you *(bosses still show "??" – see No. 78)* | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
+| [78](PATCHES.en.md#patch-showlevelboss) | Real level for bosses too instead of "??" (extension to No. 77) | 🟠 **[untested online]** | St0ny | – | – | – |
+| [79](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe - exe grows]** | tb (ported by St0ny) | – | – | ✅ |
+| [80](PATCHES.en.md#patch-bubblerange) | Increase the chat bubble range (original 25 yards) *(asks for the value)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 
 #### Window, mouse & camera
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [80](PATCHES.en.md#patch-window) | Windowed mode by default *(starts as a small window in the middle of the desktop – maximized only together with No. 81)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
-| [81](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 80)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
-| [82](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [83](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [84](PATCHES.en.md#patch-visus) | Visus - ShoulderCam [BETA]: shoulder camera and zoom *(shoulder camera via `/console visusHeight` and `visusShoulder`, zoom up to 100 yards)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
+| [81](PATCHES.en.md#patch-window) | Windowed mode by default *(starts as a small window in the middle of the desktop – maximized only together with No. 82)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [82](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 81)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [83](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [84](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [85](PATCHES.en.md#patch-visus) | Visus - ShoulderCam [BETA]: shoulder camera and zoom *(shoulder camera via `/console visusHeight` and `visusShoulder`, zoom up to 100 yards)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
 
 #### Sound
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [85](PATCHES.en.md#patch-sound) | Optimize sound settings *(requires [OpenAL](https://github.com/kcat/openal-soft), otherwise the settings have no effect)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [86](PATCHES.en.md#patch-sound) | Optimize sound settings *(requires [OpenAL](https://github.com/kcat/openal-soft), otherwise the settings have no effect)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 
 #### Client info: version, build, title, date, icon
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [86](PATCHES.en.md#patch-clientversion) | Change client version (original 3.3.5) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
-| [87](PATCHES.en.md#patch-clientbuild) | Change build number (original 12340) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
-| [88](PATCHES.en.md#patch-clienttitle) | Change program title (file properties and window title) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior (fixed by St0ny) | – | – | – |
-| [89](PATCHES.en.md#patch-clientdate) | Change build date (original Jun 24 2010) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
-| [90](PATCHES.en.md#patch-clienticon) | Change program icon (icon of Wow.exe) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
+| [87](PATCHES.en.md#patch-clientversion) | Change client version (original 3.3.5) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
+| [88](PATCHES.en.md#patch-clientbuild) | Change build number (original 12340) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
+| [89](PATCHES.en.md#patch-clienttitle) | Change program title (file properties and window title) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior (fixed by St0ny) | – | – | – |
+| [90](PATCHES.en.md#patch-clientdate) | Change build date (original Jun 24 2010) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
+| [91](PATCHES.en.md#patch-clienticon) | Change program icon (icon of Wow.exe) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
 
 </details>
 
@@ -612,14 +613,14 @@ clicking the number of a patch takes you straight to its description.
   selected patches with a warning once more:
   - 🟢 **safe** – tested in game, no warning in the patcher.
   - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 10, 11, 23–25,
-    44, 45, 48–53, 78 and 86–90 (red warning).
+    44, 45, 48–53, 79 and 87–91 (red warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 26, 31, 32, 42, 47, 54, 65, 68, 72, 75–77 and 84
+    you kicked or banned: No. 26, 31, 32, 42, 47, 54, 65, 68, 69, 73, 76–78 and 85
     (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 31, 32, 47, 54, 65, 68 and 84 (orange warning).
+    possibly buggy: No. 25, 26, 31, 32, 47, 54, 65, 68, 69 and 85 (orange warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 53,
-    66–68, 78 and 84. This does not mean a certain ban, but it is a risk: some
+    66–68, 79 and 85. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
     the file size.
   - 🟡 **DLL risky** – the patch itself is safe, but it loads a DLL that may be
@@ -631,7 +632,7 @@ clicking the number of a patch takes you straight to its description.
   anyway" WoW starts normally. A new signature that Windows trusts is only
   issued by certificate authorities with identity verification – you cannot
   get one for a modified Blizzard file. The patches that append a section
-  (No. 9, 53, 66–68, 78 and 84) also remove the reference to the
+  (No. 9, 53, 66–68, 79 and 85) also remove the reference to the
   signature from the header: the new section lies behind the signature, and
   some tools would otherwise report the file as damaged. The signature bytes
   themselves stay untouched, and removing the patches restores the original
