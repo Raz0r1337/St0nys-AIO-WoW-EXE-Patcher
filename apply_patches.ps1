@@ -229,6 +229,14 @@ $TEXT = @{
         SumKeep       = 'Bleiben unveraendert aktiv: {0}'
         SumOriginal   = 'Danach ist die Wow.exe wieder die originale Datei.'
         NoChange      = 'Keine Aenderung gegenueber der aktuellen Wow.exe - es gibt nichts zu tun.'
+        RedoInfo      = 'Neu patchen spielt alle gewaehlten Patches frisch auf das Original - sinnvoll nach einem Update des Patchers, wenn ein Patch neuen Code bekommen hat.'
+        SameSel       = 'Gleiche Patches wie in der aktuellen Wow.exe.'
+        SameOptJ      = 'J = neu patchen mit den aktuellen Einstellungen'
+        SameOptE      = 'E = Einstellungen aendern'
+        SameOptN      = 'N = beenden'
+        SameKeyE      = 'E'
+        SafeAsk       = 'Auswahl'
+        SumRedo       = 'Neu patchen ({0}):'
         AlreadyOrig   = 'Die Wow.exe ist bereits original - es gibt nichts zurueckzunehmen.'
         InputHead     = 'Werte fuer die gewaehlten Patches (ENTER = Vorschlag in Klammern):'
         BadValue      = '[FEHLER] Ungueltiger gemerkter Wert fuer "{0}": {1}'
@@ -373,6 +381,14 @@ $TEXT = @{
         SumKeep       = 'Stay active unchanged: {0}'
         SumOriginal   = 'Afterwards Wow.exe is the original file again.'
         NoChange      = 'No change compared to the current Wow.exe - nothing to do.'
+        RedoInfo      = 'Patching again applies all selected patches freshly to the original - useful after an update of the patcher when a patch got new code.'
+        SameSel       = 'Same patches as in the current Wow.exe.'
+        SameOptJ      = 'Y = patch again with the current settings'
+        SameOptE      = 'S = change settings'
+        SameOptN      = 'N = quit'
+        SameKeyE      = 'S'
+        SafeAsk       = 'Choice'
+        SumRedo       = 'Patch again ({0}):'
         AlreadyOrig   = 'Wow.exe is already original - nothing to remove.'
         InputHead     = 'Values for the selected patches (ENTER = suggestion in brackets):'
         BadValue      = '[ERROR] Invalid saved value for "{0}": {1}'
@@ -5160,11 +5176,61 @@ if ($chosen.Count -eq 0 -and -not $patchedMode) {
     Exit-Patcher 0
 }
 
+# Gleiche Patches wie in der aktuellen Wow.exe: gleich hier, noch vor den Werten,
+# fragen - neu patchen mit den aktuellen Einstellungen (z.B. nach einem Update,
+# wenn ein Patch neuen Code hat - der Patchstand zaehlt nur Ids und Werte),
+# Einstellungen aendern oder beenden. So muss niemand erst alle Werte
+# durchgehen, um dann doch zu beenden. Ohne Rueckfragen (-Unattended) wie bisher.
+$redo = $false
+$sameIds = $patchedMode -and $chosen.Count -gt 0 -and $chosen.Count -eq @($appliedIds).Count
+if ($sameIds) { foreach ($id in $chosenIds) { if ($appliedIds -notcontains $id) { $sameIds = $false } } }
+if ($sameIds -and -not $Unattended) {
+    $hasValues = $false
+    foreach ($p in $chosen) { if ($p.Check) { $hasValues = $true } }
+    Write-Host ''
+    Say (T 'SameSel') 'Green'
+    Say (T 'RedoInfo')
+    Say "  $(T 'SameOptJ')"
+    if ($hasValues) { Say "  $(T 'SameOptE')" }
+    Say "  $(T 'SameOptN')"
+    $def = 'N'; if ($hasValues) { $def = T 'SameKeyE' }
+    $pick = $null
+    while (-not $pick) {
+        $a = (Ask "  $(T 'SafeAsk') [$def]").ToUpperInvariant()
+        if ($a -eq '') { $a = $def }
+        if ($a -eq (T 'Yes') -or $a -eq 'Y' -or $a -eq 'J') { $pick = 'J' }
+        elseif ($hasValues -and ($a -eq 'E' -or $a -eq 'S')) { $pick = 'E' }
+        elseif ($a -eq 'N') { $pick = 'N' }
+    }
+    if ($pick -eq 'N') {
+        if ($state.Scanned -and $null -ne (Restore-Original $origPatched $state)) {
+            # Patchstand kam ueber das Wasserzeichen - jetzt merken, dann geht es beim naechsten Mal schneller.
+            if ($null -eq (Write-State $stateFile $state.Hash $state.Size $state.Ids $state.Values $state.Undo)) { Say (T 'StateSaved') 'DarkGray' }
+        }
+        Exit-Patcher 0
+    }
+    $redo = ($pick -eq 'J')
+}
+
 # --- 3b. Werte fuer Patches mit eigener Eingabe (Vorschlag: Get-ValueSuggestion) ---
 $VALUES = @{}
 $atConfirm = @()      # Ids, deren Wert erst beim Bestaetigen mit J feststeht (Build-Datum: jetzt)
 $asked = $false
-foreach ($p in $chosen) {
+$askList = $chosen
+if ($redo) {
+    # Neu patchen mit den aktuellen Einstellungen: die Werte wie in der Wow.exe,
+    # ohne Rueckfragen. Ist einer davon ungueltig, wird doch gefragt.
+    foreach ($p in $chosen) {
+        if (-not $p.Check) { continue }
+        $v = Get-ValueSuggestion $p
+        if (& $p.Check $v) { $redo = $false; $VALUES = @{}; $atConfirm = @(); break }
+        if (Test-SuggestNow $p) { $atConfirm += $p.Id }
+        if ($p.Normalize) { $v = & $p.Normalize $v }
+        $VALUES[$p.Id] = $v
+    }
+    if ($redo) { $askList = @() }
+}
+foreach ($p in $askList) {
     if (-not $p.Check) { continue }
     $def = Get-ValueSuggestion $p
     $useNow = Test-SuggestNow $p
@@ -5235,12 +5301,19 @@ if (-not $patchedMode) {
     }
     foreach ($id in $appliedIds) { if ($chosenIds -notcontains $id) { $removed += $id } }
     if ($added.Count + $changed.Count + $removed.Count -eq 0 -and $chosen.Count -gt 0) {
-        Say (T 'NoChange') 'Green'
-        if ($state.Scanned -and $null -ne (Restore-Original $origPatched $state)) {
-            # Patchstand kam ueber das Wasserzeichen - jetzt merken, dann geht es beim naechsten Mal schneller.
-            if ($null -eq (Write-State $stateFile $state.Hash $state.Size $state.Ids $state.Values $state.Undo)) { Say (T 'StateSaved') 'DarkGray' }
+        # Neu patchen gab es schon nach der Auswahl (vor den Werten) - sonst gibt es nichts zu tun.
+        if (-not $redo) {
+            Say (T 'NoChange') 'Green'
+            if ($state.Scanned -and $null -ne (Restore-Original $origPatched $state)) {
+                # Patchstand kam ueber das Wasserzeichen - jetzt merken, dann geht es beim naechsten Mal schneller.
+                if ($null -eq (Write-State $stateFile $state.Hash $state.Size $state.Ids $state.Values $state.Undo)) { Say (T 'StateSaved') 'DarkGray' }
+            }
+            Exit-Patcher 0
         }
-        Exit-Patcher 0
+        Say (T 'SumRedo' $chosen.Count) 'Cyan'
+        foreach ($p in $chosen) {
+            if ($VALUES.ContainsKey($p.Id)) { Say "  + $(PatchName $p): $(Get-ValueText $p)" 'Green' } else { Say "  + $(PatchName $p)" 'Green' }
+        }
     }
     if ($added.Count -gt 0) {
         Say (T 'SumAdd' $added.Count) 'Cyan'
@@ -5260,7 +5333,7 @@ if (-not $patchedMode) {
         Say (T 'SumRemove' $removed.Count) 'Cyan'
         foreach ($id in $removed) { Say "  - $(Get-NameById $id)" 'Yellow' }
     }
-    Say (T 'SumKeep' $kept)
+    if (-not $redo) { Say (T 'SumKeep' $kept) }
     if ($chosen.Count -eq 0) {
         Write-Host ''
         Say (T 'SumOriginal') 'Yellow'
@@ -5499,7 +5572,7 @@ if ($total -eq 0) {
     Say (T 'DoneOrig') 'Green'
 } else {
     Say (T 'Done1') 'Green'
-    if ($patchedMode) {
+    if ($patchedMode -and -not $redo) {
         Say (T 'Done3' $added.Count $changed.Count $removed.Count $total) 'Green'
     } else {
         Say (T 'Done2' $total) 'Green'

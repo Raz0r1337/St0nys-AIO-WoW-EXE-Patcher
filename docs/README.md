@@ -334,6 +334,15 @@ How it works:
   table with the original bytes at all patch locations. If there is nothing to
   do afterwards, the patcher still recreates `patcher_state.ini` so that the
   next start takes the fast way again.
+- **No change:** if you choose exactly the patches that are already in
+  `Wow.exe`, the patcher asks right after the selection, before the settings:
+  `Y` = patch again with the current settings, `S` = change settings, `N` =
+  quit (ENTER = `S`, for patches without settings `N`). Patching again applies
+  all selected patches freshly to the original – useful after an update of the
+  patcher when a patch got new code (the patch state only remembers which
+  patches are in it with which values). If the settings then stay the same, it
+  quits with "No change". With `-Unattended` it quits without asking (exit
+  code `0`).
 - **Restoring the original:** from the patched exe the patcher rebuilds the
   original in memory, verifies it by SHA256 and applies the new selection on
   top. If that does not work exactly – e.g. because the exe was changed in
