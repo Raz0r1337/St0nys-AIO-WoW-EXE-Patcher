@@ -1250,10 +1250,14 @@ all off; the switches are called `hidden`, `self`, `party`, `raid`,
 > merely sticks into something – feet slightly in the ground, half inside a
 > wall or a tree – there is no outline there. For that, whatever hides it has
 > to stand a little in front of the body: in front of the box that encloses
-> the model, plus 0.05 yards (up to about 0.2 yards at 30–40 yards distance);
-> someone leaning right against a tree trunk gets no outline behind it. At a
-> flat view (camera close to the ground) or with deeply sunken feet a line can
-> show at the feet.
+> the model, plus 0.05 yards (up to about 0.2 yards at 30–40 yards distance).
+> In addition, the patch checks with collision rays (like the game's camera)
+> whether something with collision stands between the camera and the knee,
+> chest or head – terrain, walls, buildings, objects. Then a wall right in
+> front of the figure counts as well. Foliage, decoration and figures usually
+> have no collision; for them only the box counts. At a flat view (camera
+> close to the ground) or with deeply sunken feet a line can show at the
+> feet.
 
 How it works:
 - The depth buffer gets a stencil part (D24S8 instead of D24X8). The game
@@ -1308,6 +1312,15 @@ How it works:
   and mount), plus 0.05 yards and pulled forward a little more with distance
   via the projection matrix. If no box is known, the projection matrix only
   pulls the copies' depth forward a bit as before.
+- Collision rays: once per frame, after the camera update and before the
+  world is drawn, the patch casts 3 rays with the game's collision query
+  (TraceLine) from the camera to the knee, chest and head of each figure
+  outlined "only where hidden" – in turn, at most 18 rays per frame. Each ray
+  ends 0.4 yards before its target, so the ground right at a foot does not
+  count. If one hits something, the figure counts as hidden at once, and as
+  free only after 3 free checks in a row (no flickering at edges). For a
+  hidden figure the copies move to 0.1 yards behind the rearmost hit if that
+  lies further back than the front of the box.
 - After the models and before the interface, the glow comes first: per
   figure with glow, a full-screen quad colors only its outline pixels, but in
   a texture of its own (same size and anti-aliasing as the image, the same
@@ -1330,7 +1343,7 @@ How it works:
 - Hostile means: the player's selection circle would be red. Then the quad
   mixes their class color with red; the share of red rises and falls smoothly
   (cosine), one pulse takes 1.5 seconds.
-- Code and data live in a section of their own (`.outl`, 0x345B bytes). Each
+- Code and data live in a section of their own (`.outl`, 0x4559 bytes). Each
   switch is a single padding byte between two functions in `.text` that the
   chosen setting sets to 1; the code reads these switches while drawing. This is also
   how the patcher recognizes the settings in a patched `Wow.exe`.

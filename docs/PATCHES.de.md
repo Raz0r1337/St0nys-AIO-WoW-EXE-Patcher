@@ -1296,9 +1296,13 @@ eingeschalteten Schalter, z. B. `value.outline=hidden,party` (Standard ist
 > einer Wand oder einem Baum –, gibt es dort keinen Rand. Dafür muss das
 > Verdeckende ein kleines Stück vor dem Körper stehen: vor dem Quader, der das
 > Modell umschließt, plus 0,05 Yards (auf 30–40 Yards Entfernung bis etwa
-> 0,2 Yards); wer direkt an einem Baumstamm lehnt, bekommt dahinter also
-> keinen Rand. Bei flachem Blick (Kamera nah am Boden) oder tief eingesunkenen
-> Füßen kann an den Füßen eine Linie erscheinen.
+> 0,2 Yards). Zusätzlich prüft der Patch mit Kollisionsstrahlen (wie die
+> Kamera des Spiels), ob zwischen Kamera und Knie, Brust oder Kopf etwas mit
+> Kollision steht – Gelände, Mauern, Gebäude, Objekte. Dann zählt auch eine
+> Mauer direkt vor der Figur. Laub, Deko und Figuren haben meist keine
+> Kollision; für sie gilt nur der Quader. Bei flachem Blick (Kamera nah am
+> Boden) oder tief eingesunkenen Füßen kann an den Füßen eine Linie
+> erscheinen.
 
 So funktioniert es:
 - Der Tiefenpuffer bekommt einen Stencil-Anteil (D24S8 statt D24X8). Das Spiel
@@ -1355,6 +1359,16 @@ So funktioniert es:
   Entfernung noch ein kleines Stück nach vorn gezogen. Ist kein Quader
   bekannt, zieht die Projektionsmatrix wie früher nur die Tiefe der Kopien ein
   Stück nach vorn.
+- Kollisionsstrahlen: Einmal pro Bild, nach dem Kamera-Update und vor dem
+  Zeichnen der Welt, schießt der Patch für die Figuren, die „nur wo verdeckt“
+  umrandet werden, je 3 Strahlen mit der Kollisionsabfrage des Spiels
+  (TraceLine) von der Kamera zu Knie, Brust und Kopf – reihum, höchstens 18
+  Strahlen pro Bild. Jeder Strahl endet 0,4 Yards vor dem Ziel, damit der
+  Boden direkt am Fuß nicht zählt. Trifft einer etwas, gilt die Figur sofort
+  als verdeckt, frei erst nach 3 freien Prüfungen hintereinander (kein
+  Flackern an Kanten). Bei einer verdeckten Figur rücken die Kopien bis
+  0,1 Yards hinter den hintersten Treffer, wenn der weiter hinten liegt als
+  die Vorderseite des Quaders.
 - Nach den Modellen und vor dem Interface entsteht zuerst der Schein: Je Figur
   mit Schein färbt eine bildschirmfüllende Fläche nur ihre Rand-Pixel ein,
   aber in einer eigenen Textur (gleiche Größe und Kantenglättung wie das Bild,
@@ -1378,7 +1392,7 @@ So funktioniert es:
 - Feindlich heißt: Der Auswahlkreis des Spielers wäre rot. Dann mischt die
   Fläche seine Klassenfarbe mit Rot; der Rot-Anteil steigt und fällt sanft
   (Kosinus), ein Puls dauert 1,5 Sekunden.
-- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x345B Byte). Jeder
+- Code und Daten liegen in einer eigenen Sektion (`.outl`, 0x4559 Byte). Jeder
   Schalter ist ein einzelnes Füllbyte zwischen zwei Funktionen in `.text`, das
   die gewählte Einstellung auf 1 setzt; der Code liest diese Schalter beim
   Zeichnen.
