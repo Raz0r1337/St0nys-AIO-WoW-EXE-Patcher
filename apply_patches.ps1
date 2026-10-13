@@ -6154,16 +6154,31 @@ $patches = @(
 
     # --- Sicherheit & Datenschutz ---
 
-    @{ Id = 'rce'; Cat = 'security'; On = $false; BanRisk = $true
-       Author = 'Robinsch'
-       De = 'Remote Code Execution Exploit Fix'
-       En = 'Remote code execution exploit fix'
+    @{ Id = 'rce'; Cat = 'security'; On = $false; BanRisk = $true; GameUntested = $true
+       Author = 'Brady Russell (original by stoneharry / Robinsch)'
+       De = 'Remote Code Execution Exploit Fix v2 [BETA]'
+       En = 'Remote code execution exploit fix v2 [BETA]'
        Code = {
+        # v2 = die 7 Stellen aus RCEPatcher v2.0 von Brady Russell plus
+        # Robinschs Warden-Stelle aus v1. Eine Wow.exe mit v1 erkennt der
+        # Patcher weiter als rce (0x2A7 und 0x3D9D7C sind eigene Stellen).
+        # P0 (stoneharry, RCEPatcher v1): .zdata nicht mehr ausfuehrbar
+        # (Sektions-Flags E0 -> C0).
         Patch 0x2A7 @(0xC0)
+        # Robinsch: Warden-Module nicht aus dem lokalen Cache laden.
         Patch 0x3D9D7C @(0x90, 0x90)
+        # P1-P6 (Brady Russell): weitere Angriffswege, die den .zdata-Fix
+        # umgehen. Die Details veroeffentlicht der Autor erst nach einer
+        # Schutzfrist - die Bytes sind so uebernommen, wie er sie verteilt.
+        Patch 0x14A842 @(0x83, 0xFF, 0x50, 0x90, 0x90, 0x90)
+        Patch 0x14A85C @(0x83, 0xF8, 0x50, 0x7F, 0x5F)
+        Patch 0x364D40 @(0xEB)
+        Patch 0x46B8E0 @(0x33, 0xC0, 0xC3)
+        Patch 0x614A0 @(0x33, 0xC0, 0xC3)
+        Patch 0x46AC43 @(0x90, 0x90)
     }}
 
-    @{ Id = 'wardenoff'; Cat = 'security'; On = $false; Obsoletes = @('rce'); BanRisk = $true
+    @{ Id = 'wardenoff'; Cat = 'security'; On = $false; BanRisk = $true
        Author = 'Robinsch'
        De = 'Warden komplett abschalten, RCE-Fix'
        En = 'Disable Warden completely, RCE fix'
@@ -6173,7 +6188,9 @@ $patches = @(
         # zurueck. Damit kann der Server ueber Warden keinerlei Code mehr im
         # Client ausfuehren. Der Client antwortet aber auch nicht mehr auf
         # Warden - Server mit aktivem Warden koennen deshalb kicken.
-        # Macht den RCE-Fix (rce) ueberfluessig, beide zusammen schaden nicht.
+        # Ersetzt den RCE-Fix (rce) seit dessen v2 nicht mehr: Ob das auch die
+        # neuen Wege aus v2 abdeckt, ist offen, solange die Details nicht
+        # veroeffentlicht sind - fuer den besten Schutz beide zusammen.
         Patch 0x3D9C5B @(0x90, 0x90)
     }}
 
@@ -7691,7 +7708,13 @@ glyphfix;2C5F90;56578BF16A00;1
 glyphfix;2C6880;568BF1837E6400741E8B46488B4E4450E80BB5FFFF85C075078BCEE8F0F6FFFFC74664000000008BCEE86206000033C03986B0000000C786D4000000000000000F95C05EC3;1
 glyphfix;2C9350;558BEC51837D0801;1
 rce;2A7;E0;1
+rce;614A0;558BEC;1
+rce;14A842;3B3DB0A5BE00;1
+rce;14A85C;83F8027D1F;1
+rce;364D40;74;1
 rce;3D9D7C;750A;1
+rce;46AC43;760C;1
+rce;46B8E0;558BEC;1
 wardenoff;3D9C5B;7406;1
 scandll;5F4D56;5363;1
 scandll;5F4D62;5363;1

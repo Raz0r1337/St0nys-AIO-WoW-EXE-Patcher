@@ -165,21 +165,45 @@ per DLL. Hier stecken die vier Hooks in einer eigenen Sektion (`.glyph`,
 ## Sicherheit & Datenschutz
 
 <a id="patch-rce"></a>
-**Remote Code Execution Exploit Fix** *(Nr. 10, Autor: Robinsch)* 🔴 **[unsicher]**
+**Remote Code Execution Exploit Fix v2 [BETA]** *(Nr. 10, Autor: Brady Russell (original by stoneharry / Robinsch))* 🔴 **[unsicher - ingame ungetestet]**
 
-Schließt eine Sicherheitslücke, die Remote-Code-Ausführung über manipulierte
-Pakete ermöglichen konnte: Die Sektion `.zdata` verliert ihr Ausführungsrecht,
-und Warden-Module werden nicht mehr aus dem lokalen Cache geladen. Warden selbst
-läuft weiter.
+Schließt Sicherheitslücken, über die ein bösartiger Server Code auf deinem PC
+ausführen kann. v2 vereint zwei Fixes:
+
+- **RCEPatcher v2.0** von Brady Russell
+  ([bradyrussell/RCEPatcher2](https://github.com/bradyrussell/RCEPatcher2)),
+  7 Stellen: Die erste nimmt der Sektion `.zdata` das Ausführungsrecht – das
+  ist der klassische Fix aus RCEPatcher v1 von stoneharry. Die sechs weiteren
+  schließen laut Autor zusätzliche Angriffswege, mit denen sich der
+  `.zdata`-Fix umgehen lässt. Wie diese Wege funktionieren, veröffentlicht er
+  erst nach einer Schutzfrist, damit vorher möglichst viele Spieler
+  aktualisieren können.
+- **Robinschs Fix** aus v1: Warden-Module werden nicht mehr aus dem lokalen
+  Cache geladen. Warden selbst läuft weiter. RCEPatcher v2.0 enthält diese
+  Stelle nicht.
 
 > [!WARNING]
 > Öffentliche Server können die Änderung über Warden erkennen – auf
 > öffentlichen Servern besteht Bann-Gefahr.
 
 > [!NOTE]
-> „Warden komplett abschalten“ (Nr. 11) schließt die Lücke ebenfalls und macht
-> diesen Patch überflüssig. Wählst du beide, weist der Patcher darauf hin;
-> schaden tun sie zusammen nicht.
+> Laut Brady Russell schalten die neuen Stellen ein paar ungenutzte oder selten
+> genutzte Funktionen des Clients ab; Login, Charakterauswahl, Kampf, Chat und
+> Addons sollten nicht betroffen sein. Er hat damit selbst aber noch wenig
+> gespielt, und auch hier ist die v2 im Spiel noch ungetestet – deshalb
+> [BETA]. Außerdem gibt es laut Autor sehr wahrscheinlich noch weitere
+> Angriffswege. Am sichersten ist es, nur Servern zu vertrauen, die du kennst.
+
+> [!NOTE]
+> Eine `Wow.exe` mit dem bisherigen RCE-Fix (v1) erkennt der Patcher weiterhin
+> als Nr. 10. Wählst du wieder dieselben Patches, bekommt sie die v2 mit
+> „Neu patchen“ (`J`).
+
+> [!NOTE]
+> „Warden komplett abschalten“ (Nr. 11) schließt den Weg über Warden-Module
+> vollständig. Ob das auch die neuen Wege aus v2 abdeckt, ist offen, solange
+> die Details nicht veröffentlicht sind. Für den besten Schutz beide zusammen
+> nutzen.
 
 <a id="patch-wardenoff"></a>
 **Warden komplett abschalten, RCE-Fix** *(Nr. 11, Autor: Robinsch)* 🔴 **[unsicher]**
@@ -187,8 +211,9 @@ läuft weiter.
 Der Client verwirft alle Warden-Pakete des Servers (`SMSG_WARDEN_DATA`).
 Warden-Module sind Code, den der Server im Client ausführen lässt – mit diesem
 Patch ist das überhaupt nicht mehr möglich, auch nicht über künftige Tricks.
-Macht den RCE-Fix (Nr. 10) überflüssig; beide zusammen schaden nicht, der
-Patcher weist dann nur darauf hin.
+Ob das auch die neuen Wege aus dem RCE-Fix v2 (Nr. 10) abdeckt, ist offen,
+solange deren Details nicht veröffentlicht sind. Für den besten Schutz beide
+zusammen nutzen.
 
 > [!WARNING]
 > Der Client antwortet danach nicht mehr auf Warden. Server mit aktivem Warden

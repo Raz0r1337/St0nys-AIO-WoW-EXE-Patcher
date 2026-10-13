@@ -261,7 +261,7 @@ Link dazu steht direkt darunter.
 Vor der Sicherheitsabfrage zeigt der Patcher **Hinweise** an, gesperrt wird
 nichts: wenn ein Ergänzungs-Patch fehlt (z. B. brauchen die erweiterten
 Slider-Maxima die CVar-Unlocks), wenn ein Patch einen anderen überflüssig macht
-(Warden komplett abschalten ersetzt den RCE-Fix) und wenn gewählte Patches eine
+(der vollständige LUA-Unlock ersetzt den einfachen) und wenn gewählte Patches eine
 Warnung tragen – rot bei Bann-Gefahr, orange bei Patches, die auf öffentlichen
 Servern oder im Spiel noch ungetestet sind, und gelb bei vergrößerter
 `Wow.exe` (siehe [Hinweise](#hinweise)).
@@ -475,7 +475,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix | 🔴 **[unsicher]** | Robinsch | – | – | – |
+| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix v2 [BETA] | 🔴 **[unsicher - ingame ungetestet]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.de.md#patch-wardenoff) | Warden komplett abschalten, RCE-Fix | 🔴 **[unsicher]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.de.md#patch-scandll) | Scan.dll deaktivieren | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.de.md#patch-noserverpatch) | Client-Patches vom Server verbieten | 🟢 **[sicher]** | Kebabstorm | ✅ | – | ✅ |
@@ -641,7 +641,7 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     kann zu Kick/Bann führen: Nr. 26, 31, 32, 42, 47, 54, 65, 68, 69, 73, 76–78 und 85
     (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 31, 32, 47, 54, 65, 68, 69 und 85 (orange Warnung).
+    möglicherweise verbuggt: Nr. 10, 25, 26, 31, 32, 47, 54, 65, 68, 69 und 85 (orange Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 53, 66–68, 79 und 85. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
@@ -699,6 +699,8 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   einzubinden und als Vorlage für Visus – ShoulderCam zu nutzen.
 - Danke an **Zendevve**, den Autor von CameraReforged, für die Idee hinter
   Visus – ShoulderCam.
+- Danke an **Brady Russell** für seinen RCEPatcher v2.0, die Grundlage des
+  RCE-Fix v2 (Nr. [10](PATCHES.de.md#patch-rce)).
 - Ein großes Dankeschön an **Stormhand**, **MacWarrior** und **Billy Hoyle** für
   die vielen Tests im Spiel – und an Stormhand ganz besonders dafür, den eigenen
   Warmane-Account riskiert zu haben, um herauszufinden, welche Patches „sicher“

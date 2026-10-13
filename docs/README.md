@@ -246,8 +246,8 @@ after their name, with the link right below.
 
 Before the confirmation prompt the patcher shows **notes** – nothing is blocked:
 when a companion patch is missing (e.g. the extended slider maximums need the
-CVar unlocks), when one patch makes another unnecessary (disabling Warden
-completely replaces the RCE fix) and when selected patches carry a warning –
+CVar unlocks), when one patch makes another unnecessary (the complete LUA
+unlock replaces the basic one) and when selected patches carry a warning –
 red for ban risk, orange for patches that are still untested on public
 servers or in game, and yellow for a larger `Wow.exe` (see [Notes](#notes)).
 
@@ -452,7 +452,7 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix | 🔴 **[unsafe]** | Robinsch | – | – | – |
+| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix v2 [BETA] | 🔴 **[unsafe - untested ingame]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.en.md#patch-wardenoff) | Disable Warden completely, RCE fix | 🔴 **[unsafe]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.en.md#patch-scandll) | Disable Scan.dll | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.en.md#patch-noserverpatch) | Disallow client patches from the server | 🟢 **[safe]** | Kebabstorm | ✅ | – | ✅ |
@@ -618,7 +618,7 @@ clicking the number of a patch takes you straight to its description.
     you kicked or banned: No. 26, 31, 32, 42, 47, 54, 65, 68, 69, 73, 76–78 and 85
     (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 31, 32, 47, 54, 65, 68, 69 and 85 (orange warning).
+    possibly buggy: No. 10, 25, 26, 31, 32, 47, 54, 65, 68, 69 and 85 (orange warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 53,
     66–68, 79 and 85. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
@@ -673,6 +673,8 @@ clicking the number of a patch takes you straight to its description.
   LuxShoulderCam and to use it as the template for Visus – ShoulderCam.
 - Thanks to **Zendevve**, the author of CameraReforged, for the idea behind
   Visus – ShoulderCam.
+- Thanks to **Brady Russell** for his RCEPatcher v2.0, the basis of the RCE
+  fix v2 (No. [10](PATCHES.en.md#patch-rce)).
 - A big thank you to **Stormhand**, **MacWarrior** and **Billy Hoyle** for all
   the testing in game – and to Stormhand in particular for risking their own
   Warmane account to find out which patches are "safe" to use. 😄
