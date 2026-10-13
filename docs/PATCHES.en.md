@@ -178,6 +178,10 @@ combines two fixes:
   local cache. Warden itself keeps working. RCEPatcher v2.0 does not contain
   this place.
 
+I tried to contact Brady Russell, unfortunately without success. If he does not
+want his patch included here, he is welcome to get in touch and it will be
+removed.
+
 > [!WARNING]
 > Public servers can detect the change through Warden – there is a risk of a
 > ban on public servers.

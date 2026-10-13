@@ -674,7 +674,9 @@ clicking the number of a patch takes you straight to its description.
 - Thanks to **Zendevve**, the author of CameraReforged, for the idea behind
   Visus – ShoulderCam.
 - Thanks to **Brady Russell** for his RCEPatcher v2.0, the basis of the RCE
-  fix v2 (No. [10](PATCHES.en.md#patch-rce)).
+  fix v2 (No. [10](PATCHES.en.md#patch-rce)). I tried to contact him,
+  unfortunately without success. If he does not want his patch included here,
+  he is welcome to get in touch and it will be removed.
 - A big thank you to **Stormhand**, **MacWarrior** and **Billy Hoyle** for all
   the testing in game – and to Stormhand in particular for risking their own
   Warmane account to find out which patches are "safe" to use. 😄

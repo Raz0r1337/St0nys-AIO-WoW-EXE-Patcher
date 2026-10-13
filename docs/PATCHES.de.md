@@ -182,6 +182,10 @@ ausführen kann. v2 vereint zwei Fixes:
   Cache geladen. Warden selbst läuft weiter. RCEPatcher v2.0 enthält diese
   Stelle nicht.
 
+Ich habe versucht, Brady Russell zu kontaktieren, leider ohne Erfolg. Sollte er
+nicht damit einverstanden sein, dass sein Patch hier enthalten ist, kann er sich
+gerne melden – dann wird er wieder entfernt.
+
 > [!WARNING]
 > Öffentliche Server können die Änderung über Warden erkennen – auf
 > öffentlichen Servern besteht Bann-Gefahr.
