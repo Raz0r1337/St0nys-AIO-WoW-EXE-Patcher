@@ -419,6 +419,7 @@ Click the number of a patch to jump to its description.
 |--------|---------|----------------|
 | 🟢 **[safe]** | Tested in game and safe to use. | no warning |
 | 🔴 **[unsafe]** | Confirmed ban risk: can lead to a ban on many servers. Only use it on servers that allow it. | red warning |
+| 🟠 **[risky]** | Gets blocked on some servers. If in doubt, check the rules of your server. | orange warning |
 | 🟠 **[untested online]** | Not tested on public servers, possible ban risk: nobody can predict how the server will react. Careful, it may get you kicked or banned. | orange warning |
 | 🟠 **[untested ingame]** | The function has not been checked in game yet: nobody can predict how the game will react, possibly buggy. | orange warning |
 | 🟠 **[untested]** | Neither tested online nor ingame. | orange warning |
@@ -452,7 +453,7 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix v2 [BETA] | 🔴 **[unsafe - untested ingame]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
+| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix v2 [BETA] | 🟠 **[risky - untested ingame]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.en.md#patch-wardenoff) | Disable Warden completely, RCE fix | 🔴 **[unsafe]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.en.md#patch-scandll) | Disable Scan.dll | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.en.md#patch-noserverpatch) | Disallow client patches from the server | 🟢 **[safe]** | Kebabstorm | ✅ | – | ✅ |
@@ -612,8 +613,9 @@ clicking the number of a patch takes you straight to its description.
   in square brackets, and before the confirmation prompt the patcher lists the
   selected patches with a warning once more:
   - 🟢 **safe** – tested in game, no warning in the patcher.
-  - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 10, 11, 23–25,
+  - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 11, 23–25,
     44, 45, 48–53, 79 and 87–91 (red warning).
+  - 🟠 **risky** – gets blocked on some servers: No. 10 (orange warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
     you kicked or banned: No. 26, 31, 32, 42, 47, 54, 65, 68, 69, 73, 76–78 and 85
     (orange warning).

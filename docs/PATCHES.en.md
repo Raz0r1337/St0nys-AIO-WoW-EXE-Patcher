@@ -162,7 +162,7 @@ it in its DLL. Here the four hooks live in a section of their own (`.glyph`,
 ## Security & privacy
 
 <a id="patch-rce"></a>
-**Remote code execution exploit fix v2 [BETA]** *(No. 10, Author: Brady Russell (original by stoneharry / Robinsch))* 🔴 **[unsafe - untested ingame]**
+**Remote code execution exploit fix v2 [BETA]** *(No. 10, Author: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[risky - untested ingame]**
 
 Closes security holes that let a malicious server run code on your PC. v2
 combines two fixes:
@@ -183,8 +183,8 @@ want his patch included here, he is welcome to get in touch and it will be
 removed.
 
 > [!WARNING]
-> Public servers can detect the change through Warden – there is a risk of a
-> ban on public servers.
+> Risky: some servers block this patch. If in doubt, check the rules of your
+> server.
 
 > [!NOTE]
 > According to Brady Russell, the new places turn off a few unused or rarely

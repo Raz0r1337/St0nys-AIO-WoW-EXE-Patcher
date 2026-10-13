@@ -248,11 +248,14 @@ $TEXT = @{
         DllWarn       = 'Der Patch selbst ist sicher - die DLL nur auf Servern nutzen, die sie erlauben.'
         CheatHead     = 'ACHTUNG - unsicher, Bann-Gefahr: Diese Patches koennen von Servern als Cheat oder Botting gewertet werden:'
         CheatBan      = 'Das kann zu einem Bann fuehren - nur auf Servern nutzen, die das erlauben!'
+        BlockedHead   = 'VORSICHT - riskant: Diese Patches werden auf manchen Servern geblockt:'
+        BlockedWarn   = 'Im Zweifel die Regeln deines Servers pruefen.'
         PublicHead    = 'VORSICHT: Diese Patches sind nicht auf oeffentlichen Servern getestet - moegliche Bann-Gefahr:'
         PublicBan     = 'ACHTUNG: Ungetestet - niemand kann vorhersagen, wie der Server darauf reagiert. Das kann zu einem Kick oder Bann fuehren!'
         UntestedHead  = 'HINWEIS: Die Funktion dieser Patches ist im Spiel ungetestet - moeglicherweise verbuggt:'
         UntestedWarn  = 'ACHTUNG: Ungetestet - niemand kann vorhersagen, wie das Spiel darauf reagiert. Fehler oder Abstuerze sind moeglich!'
         TagBan        = 'unsicher'
+        TagBlocked    = 'riskant'
         TagPublic     = 'online ungetestet'
         TagGame       = 'ingame ungetestet'
         TagBoth       = 'ungetestet'
@@ -405,11 +408,14 @@ $TEXT = @{
         DllWarn       = 'The patch itself is safe - only use the DLL on servers that allow it.'
         CheatHead     = 'WARNING - unsafe, ban risk: servers may treat these patches as cheating or botting:'
         CheatBan      = 'This can lead to a ban - only use them on servers that allow it!'
+        BlockedHead   = 'CAUTION - risky: these patches get blocked on some servers:'
+        BlockedWarn   = 'If in doubt, check the rules of your server.'
         PublicHead    = 'CAUTION: These patches have not been tested on public servers - possible ban risk:'
         PublicBan     = 'WARNING: Untested - nobody can predict how the server will react. This may get you kicked or banned!'
         UntestedHead  = 'NOTE: These patches have not been tested in game - possibly buggy:'
         UntestedWarn  = 'WARNING: Untested - nobody can predict how the game will react. Bugs or crashes are possible!'
         TagBan        = 'unsafe'
+        TagBlocked    = 'risky'
         TagPublic     = 'untested online'
         TagGame       = 'untested ingame'
         TagBoth       = 'untested'
@@ -468,10 +474,12 @@ function PatchName($p, [switch]$NoTags) {
 
 # Einheitliche Warnungen (Warn-Codes): BanRisk = Bann-Gefahr (2),
 # PublicUntested = nicht auf oeffentlichen Servern getestet (3),
-# GameUntested = Funktion im Spiel ungetestet (4), dazu GrowsExe und DllRisky.
+# GameUntested = Funktion im Spiel ungetestet (4), Blocked = riskant, wird auf
+# manchen Servern geblockt (5), dazu GrowsExe und DllRisky.
 function PatchTags($p) {
     $tags = @()
     if ($p.BanRisk) { $tags += T 'TagBan' }
+    if ($p.Blocked) { $tags += T 'TagBlocked' }
     if ($p.PublicUntested -and $p.GameUntested) { $tags += T 'TagBoth' }
     elseif ($p.PublicUntested) { $tags += T 'TagPublic' }
     elseif ($p.GameUntested) { $tags += T 'TagGame' }
@@ -5982,7 +5990,7 @@ function Get-BubbleRangeFromExe {
 #    DllRisky - optional: $true bei DLL-Ladern, deren DLL auf oeffentlichen
 #            Servern erkannt oder blockiert werden kann - der Patch selbst ist
 #            sicher (erzeugt einen gelben Hinweis)
-#    Warn-Codes - Patches ohne die drei folgenden Flags sind sicher (Code 1,
+#    Warn-Codes - Patches ohne die vier folgenden Flags sind sicher (Code 1,
 #            keine Warnung). Jedes Flag erzeugt eine Warnung in eckigen
 #            Klammern hinter dem Namen und einen Hinweis vor dem Patchen:
 #    BanRisk - optional: $true bei Bann-Gefahr (Code 2, roter Hinweis)
@@ -5991,6 +5999,8 @@ function Get-BubbleRangeFromExe {
 #            (Code 3, oranger Hinweis)
 #    GameUntested - optional: $true, wenn die Funktion im Spiel ungetestet
 #            ist - moeglicherweise verbuggt (Code 4, oranger Hinweis)
+#    Blocked - optional: $true, wenn der Patch auf manchen Servern geblockt
+#            wird - riskant (Code 5, oranger Hinweis)
 #    Needs - optional: Ids von Patches, ohne die dieser nicht voll wirkt
 #            (erzeugt nur einen Hinweis, keine Sperre)
 #    PromptDe/PromptEn, Default, Check - optional, fuer Patches mit eigenem
@@ -6154,7 +6164,7 @@ $patches = @(
 
     # --- Sicherheit & Datenschutz ---
 
-    @{ Id = 'rce'; Cat = 'security'; On = $false; BanRisk = $true; GameUntested = $true
+    @{ Id = 'rce'; Cat = 'security'; On = $false; Blocked = $true; GameUntested = $true
        Author = 'Brady Russell (original by stoneharry / Robinsch)'
        De = 'Remote Code Execution Exploit Fix v2 [BETA]'
        En = 'Remote code execution exploit fix v2 [BETA]'
@@ -9279,6 +9289,14 @@ if ($cheat.Count -gt 0) {
     Say (T 'CheatHead') 'Red'
     foreach ($m in $cheat) { Say "  - $m" 'Red' }
     Say (T 'CheatBan') 'Red'
+}
+$blocked = @()
+foreach ($p in $chosen) { if ($p.Blocked) { $blocked += PatchRef $p } }
+if ($blocked.Count -gt 0) {
+    Write-Host ''
+    Say (T 'BlockedHead') 'DarkYellow'
+    foreach ($m in $blocked) { Say "  - $m" 'DarkYellow' }
+    Say (T 'BlockedWarn') 'DarkYellow'
 }
 $grow = @()
 foreach ($p in $chosen) { if ($p.GrowsExe) { $grow += PatchRef $p } }

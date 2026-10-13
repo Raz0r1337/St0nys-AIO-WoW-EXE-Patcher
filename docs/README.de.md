@@ -442,6 +442,7 @@ Ein Klick auf die Nummer eines Patches springt zu seiner Beschreibung.
 |---------------|-----------|------------|
 | 🟢 **[sicher]** | Im Spiel getestet und sicher nutzbar. | keine Warnung |
 | 🔴 **[unsicher]** | Bestätigte Bann-Gefahr: kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben. | rote Warnung |
+| 🟠 **[riskant]** | Wird auf manchen Servern geblockt. Im Zweifel die Regeln deines Servers prüfen. | orange Warnung |
 | 🟠 **[online ungetestet]** | Nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr: Niemand kann vorhersagen, wie der Server reagiert. Vorsicht, kann zu Kick/Bann führen. | orange Warnung |
 | 🟠 **[ingame ungetestet]** | Die Funktion ist im Spiel noch nicht geprüft: Niemand kann vorhersagen, wie das Spiel reagiert, möglicherweise verbuggt. | orange Warnung |
 | 🟠 **[ungetestet]** | Weder online noch ingame getestet. | orange Warnung |
@@ -475,7 +476,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix v2 [BETA] | 🔴 **[unsicher - ingame ungetestet]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
+| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix v2 [BETA] | 🟠 **[riskant - ingame ungetestet]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.de.md#patch-wardenoff) | Warden komplett abschalten, RCE-Fix | 🔴 **[unsicher]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.de.md#patch-scandll) | Scan.dll deaktivieren | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.de.md#patch-noserverpatch) | Client-Patches vom Server verbieten | 🟢 **[sicher]** | Kebabstorm | ✅ | – | ✅ |
@@ -635,8 +636,9 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   eckigen Klammern, und vor der Sicherheitsabfrage listet der Patcher die
   gewählten Patches mit Warnung noch einmal auf:
   - 🟢 **sicher** – im Spiel getestet, im Patcher ohne Warnung.
-  - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 4, 10,
+  - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 4,
     11, 23–25, 44, 45, 48–53, 79 und 87–91 (rote Warnung).
+  - 🟠 **riskant** – wird auf manchen Servern geblockt: Nr. 10 (orange Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
     kann zu Kick/Bann führen: Nr. 26, 31, 32, 42, 47, 54, 65, 68, 69, 73, 76–78 und 85
     (orange Warnung).

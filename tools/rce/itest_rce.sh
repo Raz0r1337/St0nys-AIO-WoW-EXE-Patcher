@@ -33,7 +33,7 @@ ref() {   # frisch mit dem neuen Skript, Auswahl $2
 HNEW=$(ref v2 10); HNEW11=$(ref v2w 10,11)
 echo "== Referenz: neues Skript, Nr. 10 frisch"
 ok "v2: alle 8 Stellen gepatcht" '[ "$(st $R/ref_v2/Wow.exe)" = "pppppppp" ]'
-ok "v2: Name und Warnungen" 'grep -q "Remote Code Execution Exploit Fix v2 \[BETA\]" $R/ref_v2/out.txt && grep -A3 "ACHTUNG - unsicher" $R/ref_v2/out.txt | grep -q "Nr. 10 Remote Code Execution Exploit Fix v2" && grep -A3 "im Spiel ungetestet" $R/ref_v2/out.txt | grep -q "Nr. 10 Remote Code Execution Exploit Fix v2"'
+ok "v2: Name und Warnungen (orange riskant, nicht rot)" 'grep -q "Remote Code Execution Exploit Fix v2 \[BETA\] \[riskant - ingame ungetestet\]" $R/ref_v2/out.txt && grep -A3 "VORSICHT - riskant" $R/ref_v2/out.txt | grep -q "Nr. 10 Remote Code Execution Exploit Fix v2" && grep -A3 "im Spiel ungetestet" $R/ref_v2/out.txt | grep -q "Nr. 10 Remote Code Execution Exploit Fix v2" && ! grep -q "ACHTUNG - unsicher" $R/ref_v2/out.txt'
 ok "v2: Groesse wie Original" '[ "$(stat -c %s $R/ref_v2/Wow.exe)" = "$(stat -c %s $ORI)" ]'
 echo "== N: v1 bleibt"
 prep n 10; HOLD=$(h "$d/Wow.exe")
@@ -64,6 +64,7 @@ echo "== v1 + Nr. 11 dazu: v2 + Warden aus, kein Ueberfluessig-Hinweis"
 prep w 10
 (cd "$d" && "$PW" -NoProfile -File ./apply_patches.ps1 -Unattended -Language de -Select 10,11 > out_w.txt 2>&1)
 ok "W: kein Ueberfluessig-Hinweis" '! grep -q "ueberfluessig" $d/out_w.txt'
+ok "W: rot nur Nr. 11, orange riskant Nr. 10" 'grep -A2 "ACHTUNG - unsicher" $d/out_w.txt | grep -q "Nr. 11 " && ! grep -A3 "ACHTUNG - unsicher" $d/out_w.txt | grep -q "Nr. 10 " && grep -A2 "VORSICHT - riskant" $d/out_w.txt | grep -q "Nr. 10 Remote Code Execution Exploit Fix v2" && grep -q "Im Zweifel die Regeln deines Servers pruefen." $d/out_w.txt'
 ok "W: Wow.exe = frisch 10+11, Warden-Stelle gepatcht" '[ "$(h $d/Wow.exe)" = "$HNEW11" ] && [ "$(st $d/Wow.exe)" = "pppppppp" ] && python3 -c "import sys; d=open(sys.argv[1],\"rb\").read(); sys.exit(0 if d[0x3D9C5B:0x3D9C5D]==bytes([0x90,0x90]) else 1)" $d/Wow.exe'
 (cd "$d" && rm -f patcher_state.ini && "$PW" -NoProfile -File ./apply_patches.ps1 -Unattended -Select none > out_w2.txt 2>&1)
 ok "W: per Wasserzeichen zurueck zum Original" 'grep -q "2 Patches erkannt" $d/out_w2.txt && [ "$(h $d/Wow.exe)" = "$EXP" ]'
@@ -71,4 +72,5 @@ echo "== Englisch"
 prep en 10
 run '\nY\nY\n' '-Language en -Select 10' en
 ok "EN: Name, Patch again, v2" 'has en "Remote code execution exploit fix v2 \[BETA\]" && has en "Patch again (1):" && [ "$(h $d/Wow.exe)" = "$HNEW" ]'
+ok "EN: risky (orange)" 'has en "risky - untested ingame" && has en "CAUTION - risky: these patches get blocked on some servers:" && ! has en "WARNING - unsafe"'
 echo "DONE fails=$fails"

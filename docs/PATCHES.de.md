@@ -165,7 +165,7 @@ per DLL. Hier stecken die vier Hooks in einer eigenen Sektion (`.glyph`,
 ## Sicherheit & Datenschutz
 
 <a id="patch-rce"></a>
-**Remote Code Execution Exploit Fix v2 [BETA]** *(Nr. 10, Autor: Brady Russell (original by stoneharry / Robinsch))* 🔴 **[unsicher - ingame ungetestet]**
+**Remote Code Execution Exploit Fix v2 [BETA]** *(Nr. 10, Autor: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[riskant - ingame ungetestet]**
 
 Schließt Sicherheitslücken, über die ein bösartiger Server Code auf deinem PC
 ausführen kann. v2 vereint zwei Fixes:
@@ -187,8 +187,8 @@ nicht damit einverstanden sein, dass sein Patch hier enthalten ist, kann er sich
 gerne melden – dann wird er wieder entfernt.
 
 > [!WARNING]
-> Öffentliche Server können die Änderung über Warden erkennen – auf
-> öffentlichen Servern besteht Bann-Gefahr.
+> Riskant: Auf manchen Servern wird dieser Patch geblockt. Im Zweifel die
+> Regeln deines Servers prüfen.
 
 > [!NOTE]
 > Laut Brady Russell schalten die neuen Stellen ein paar ungenutzte oder selten
