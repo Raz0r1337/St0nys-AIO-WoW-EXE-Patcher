@@ -710,6 +710,8 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   nutzbar sind. 😄
 - Danke an **Moroes**, der den Patch [#26](PATCHES.de.md#patch-globalsv)
   aufgespürt und mir zugespielt hat.
+- Danke an **Pogzur** dafür, RCEPatcher v2.0 (Grundlage des Patches
+  [#10](PATCHES.de.md#patch-rce)) aufgespürt und mir zugespielt zu haben.
 - Und natürlich danke an alle Autoren der Patches, die in der
   [Patch-Übersicht](#patch-übersicht) genannt sind.
 

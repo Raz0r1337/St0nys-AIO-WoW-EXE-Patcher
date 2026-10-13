@@ -682,6 +682,8 @@ clicking the number of a patch takes you straight to its description.
   Warmane account to find out which patches are "safe" to use. 😄
 - Thanks to **Moroes**, who tracked down patch
   [#26](PATCHES.en.md#patch-globalsv) and passed it on to me.
+- Thanks to **Pogzur**, who tracked down RCEPatcher v2.0 (the basis of patch
+  [#10](PATCHES.en.md#patch-rce)) and passed it on to me.
 - And of course thanks to all patch authors named in the
   [patch overview](#patch-overview).
 
