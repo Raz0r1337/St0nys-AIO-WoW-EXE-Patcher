@@ -424,7 +424,7 @@ the stack. The patch works together with the Lexara loader (No. 30), the
 Lux loader (No. 31) and the voice.dll loader (No. 32).
 
 <a id="patch-awesome"></a>
-**Load AwesomeWotlkLib.dll at startup (client extensions by noname08662)** *(No. 28, Author: FrostAtom)* 🟡 **[safe - DLL risky]**
+**Load AwesomeWotlkLib.dll at startup (client extensions by noname08662)** *(No. 28, Author: FrostAtom (fixed by St0ny))* 🟡 **[safe - DLL risky]**
 
 Allows `AwesomeWotlkLib.dll` to be loaded on client start. This DLL extends
 the client with additional features and improvements for private servers.
@@ -437,6 +437,9 @@ The loader sits at the start of the client's main fiber (right before
 that; the Lua function `ScanDLLStart` becomes a no-op and the Scan.dll flag is
 set to "passed". As a side effect the patch disables the Scan.dll mechanism
 (like No. 12). If the DLL is missing, WoW simply starts normally.
+
+Unlike FrostAtom's original, the loader calls `LoadLibraryA` directly. This
+way it also works together with the RCE fix v2 (No. 10).
 
 > [!WARNING]
 > The patch itself is safe, it only loads a DLL that is not included here.

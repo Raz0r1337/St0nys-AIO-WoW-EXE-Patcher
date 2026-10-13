@@ -432,7 +432,7 @@ den DLL-Namen legt der Thread auf dem Stack ab. Der Patch verträgt sich mit dem
 Lexara-Lader (Nr. 30), dem Lux-Lader (Nr. 31) und dem voice.dll-Lader (Nr. 32).
 
 <a id="patch-awesome"></a>
-**AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662)** *(Nr. 28, Autor: FrostAtom)* 🟡 **[sicher - DLL riskant]**
+**AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662)** *(Nr. 28, Autor: FrostAtom (fixed by St0ny))* 🟡 **[sicher - DLL riskant]**
 
 Ermöglicht das Laden der `AwesomeWotlkLib.dll` beim Client-Start. Diese DLL
 erweitert den Client um zusätzliche Funktionen und Verbesserungen für private
@@ -446,6 +446,9 @@ Der Lader sitzt am Start der Haupt-Fiber des Clients (kurz vor `WinMain`) und
 `ScanDLLStart` wird zum Leerlauf und das Scan.dll-Flag auf „bestanden“ gesetzt.
 Der Patch schaltet damit nebenbei den Scan.dll-Mechanismus ab (wie Nr. 12).
 Fehlt die DLL, startet WoW normal weiter.
+
+Anders als im Original von FrostAtom ruft der Lader `LoadLibraryA` direkt auf.
+So funktioniert er auch zusammen mit dem RCE-Fix v2 (Nr. 10).
 
 > [!WARNING]
 > Der Patch selbst ist sicher, er lädt nur eine DLL, die hier nicht enthalten
