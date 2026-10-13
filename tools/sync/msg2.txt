@@ -1,0 +1,8 @@
+README: preset descriptions without script details
+
+The descriptions of the presets Reforged, Billy's_Wow.exe and
+St0nys_Wow.exe no longer explain where they are defined in
+apply_patches.ps1. All three now point to their column in the patch
+overview instead; Billy's preset had no such pointer before.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

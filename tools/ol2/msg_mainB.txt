@@ -1,0 +1,14 @@
+Create missing backups at start
+
+Missing backups are now created right after the Wow.exe check, like when
+patching, even if nothing is patched afterwards: Wow.exe.ORI from the
+original (for a patched exe reconstructed and checked by SHA256) and,
+for a patched exe, its current state as Wow.exe.BAK. Existing backups
+stay untouched; if a backup cannot be written, a note is shown.
+
+- Start menu: a Wow.exe.BAK with the same state as Wow.exe is listed as
+  such, and 2 is left out. Q after creating a backup says that Wow.exe
+  has not been modified.
+- README DE/EN: step 9, start menu, how it works and the file table.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

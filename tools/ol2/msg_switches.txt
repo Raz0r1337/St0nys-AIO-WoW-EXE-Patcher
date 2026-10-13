@@ -1,0 +1,27 @@
+No. 68 outline: 4 switches instead of 6 Y/N questions, walls party/raid only [BETA]
+
+Settings that exclude each other are now one switch each, answered with
+a number (ENTER = suggestion in brackets):
+
+- Own character: off / only where hidden / always
+- Party / raid always outlined: off / party of 5 / whole raid
+- Visible through walls: never / party/raid only / all (unsafe, ban
+  risk)
+- Color: class color / reaction color
+
+New "party/raid only" through walls (flag 0x6AC02F): party and raid
+members come first in the unit table. With the party/raid outline on
+they are drawn as with "through walls", and later geometry only clears
+the outlines of the other units (stencil test "less" against the number
+of party/raid units). With the party/raid outline off they are still
+added and outlined only where hidden, like the own character.
+
+- The value stays a list of keys (e.g. value.outline=hidden,party);
+  values of older versions are mapped to the matching choice, if several
+  fit the one with the higher priority wins (as in the outline code).
+- Section .outl grows from 0x1273 to 0x1310 bytes; byte table: new
+  flag 0x6AC02F.
+- PATCHES DE/EN: settings as a switch table, new "how it works" point;
+  README DE/EN: step 7 and public server notes for the switches.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

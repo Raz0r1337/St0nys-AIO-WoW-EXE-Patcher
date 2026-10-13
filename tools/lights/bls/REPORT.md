@@ -1,0 +1,13 @@
+# BLS report (saved by main from agent hand-back)
+- ShaderCreate via [0xC5DF88]->vtbl+0x110 (D3D9 0x6AA130) -> base 0x6897C0 (hash per type dev+0x2668+type*0x28, key name or "%s:%d") -> loader 0x684970 ("%s\%s\%s.bls" 0xA2DBA8, SFile::Open 0x424F80). Types 0 VS, 4 PS. Profile idx dev+0x2C8 (VS) / dev+0x2D8 (PS). Fallback vs_3_0->vs_2_0->vs_1_1.
+- BLS: magic 'GXSH' (bytes "HSXG"), version 0x10003, count (ignored, caller count used!). Per perm (CGxShader::Load 0x689A70): u32,u32,u16,u16, u32 size, bytecode, pad 4. Bytecode passed unchanged to CreateVertexShader (0x6AA0D0, call 0x6AA105) / CreatePixelShader (0x6AA070, 0x6AA0A5). Lazy creation on bind 0x6AA2F0/0x6AA210.
+- Gx never sets int/bool constants -> loops need defi literals.
+- Modern GPU: vs_3_0 + ps_3_0. MaxVSConst dev+0x2E0. fixedFunction cvar (0x76AD41) clamps to 0.
+- M2: 0x872D30 expects 90 VS perms (push 0x5A @0x872DA0), 16 PS perms (push 0x10 @0x872DC5). VS names Diffuse_T1, _T2, _Env, _T1_T2, _T1_Env, _Env_T2, _Env_Env. PS Combiners_*. Effects .wfx (MapObj, MapObjU, Model2, Particle, ShadowMap) loaded 0x876D90.
+- VS idx 0x873160 = lit + 2*(L + 5*(a + 3*b)). PS idx 0x872DE0.
+- Terrain VS 128 perms, no light axis.
+- M2 VS constants: c17-20 colours, c21-24 pos, c25/26/27 atten 4-wide (original shader computes 4 lights in parallel). Others c2-5, c11-13, c28, c29, bones from c31 (3 regs/bone), c224-235. c236-255 maybe free [G].
+- Hook A for embedding/dumping bytecode: 0x6AA0E7 (VS) / 0x6AA087 (PS) 13 bytes 83 7E 4C 00 C7 46 30 01 00 00 00 74 2C; name at [esi+0x18], bytecode [esi+0x50] len [esi+0x4C]. Dump originals on tester machine possible.
+- d3d9asm.py in SCRATCH/lights/bls/ (unvalidated mini assembler).
+- Recommend: exe+modder BLS (clean). Exe-only PoC = replace whole VS+PS pair (blind) or dump first.
+- WebWowViewerCpp classic light formula: att = 1 - saturate((d-start)/(end-start)); accum += (att*colour)^2 * diff  (G, third party).

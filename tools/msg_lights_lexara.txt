@@ -1,0 +1,12 @@
+Add No. 29: load Lexara.dll at startup (HD fonts by Stormhand)
+
+Taken over unchanged from st0ny-dev, so the Lexara loader and the light
+patches can be tested together in one branch.
+
+- Placed above the voice.dll loader, marked untested, added to the
+  Reforged preset. Patches 29-88 move to 30-89.
+- No overlap with the light patches: the loader only changes the call at
+  the entry point and uses two free gaps in .text.
+- Byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,14 @@
+Clearer names for No. 5 and No. 18; author credits for the loaders
+
+Text only, no patch bytes change (byte table unchanged):
+
+- No. 5 (timer): "Precise Timer Fix" / "Precise timer fix (fixes the
+  character turning stutter bug)" instead of the old description.
+- No. 18 (afk): "CharAutoLogin Idle-Kick Fix" instead of the description.
+- Custom Item Fix v2: author is now "St0ny (original by Kebabstorm)" -
+  v2 is St0ny's, v1 was Kebabstorm's.
+- AwesomeWotlkLib loader: name now credits "client extensions by
+  noname08662".
+- WotLKExtensions loader: name now credits "client extensions by Alyst3r".
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,17 @@
+Rate the AwesomeWotlkLib and WotLKExtensions loaders as [safe - DLL risky]
+
+The loader patches themselves are safe, but the DLLs they load may be
+detected or blocked on public servers. New yellow rating for this case.
+
+- Patcher: new flag DllRisky on No. 27 and 28. The name shows
+  [DLL risky], the start screen explains the tag, and before patching a
+  yellow note lists the chosen patches: the patch itself is safe, only
+  use the DLL on servers that allow it.
+- Docs: status yellow [safe - DLL risky] in the overview and the PATCHES
+  headings, a new row in the rating legend, a new item in the warnings
+  list. The note in both PATCHES sections becomes a warning box.
+- AwesomeWotlkLib stays on by default and in the Reforged preset.
+
+Text only, no patch bytes change (byte table unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

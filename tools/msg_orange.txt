@@ -1,0 +1,9 @@
+Untested warnings in orange
+
+The patcher now shows the notes for patches that are untested online or
+in game in DarkYellow, the console color closest to orange (heading,
+list and the final warning line); unsafe stays red, exe grows yellow.
+README: legend, notes and the paragraph about the notes say orange for
+these ratings, matching the orange dot.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

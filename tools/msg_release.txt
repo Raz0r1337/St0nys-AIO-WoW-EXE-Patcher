@@ -1,0 +1,11 @@
+Add release workflow: ZIP and release on every push to st0ny-main
+
+Each push to st0ny-main builds St0nys-AIO-WoW-EXE-Patcher-<date>.zip
+(date in German time, .2 etc. for a second release on the same day)
+from all files except those starting with a dot, compressed with
+zip -9 and then zopfli (advzip), and publishes it as release v<date>.
+The release notes list the commit titles since the last release (no
+merges, no duplicate titles), the start instructions, links to the
+docs, the SHA256 of the ZIP and the "use at your own risk" warning.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,7 @@
+README: same wording for the last Windows step
+
+The last step on Windows now also reads "If WoW is running, close it
+and copy the patched Wow.exe back into your WoW folder", like on Linux
+and on a Mac.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

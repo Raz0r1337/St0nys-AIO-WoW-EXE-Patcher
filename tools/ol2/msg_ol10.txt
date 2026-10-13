@@ -1,0 +1,42 @@
+No. 68 outline: soft glow from a real blur instead of three steps [BETA]
+
+The three steps of 2 pixels are gone again: every outlined figure is back
+to the thin 2-pixel line with eight copies. The glow now comes from a
+real blur, for you, your party, target and mouseover.
+
+- Before the thin lines, their outline pixels are colored in full
+  opacity into a render target of their own (size and anti-aliasing like
+  the current render target, same depth/stencil buffer), resolved with
+  StretchRect and blurred by a ps_2_0 shader (Gaussian, 5 bilinear taps):
+  down to half resolution, horizontally, vertically. Then it is laid over
+  the image (premultiplied alpha, x4, saturated, RGB only) only where
+  there is no outlined figure (stencil below 0x80).
+- On top the thin line, lightened for figures with glow (5/8 of the
+  color plus 0x5E per channel). Raid members outside your party of 5 keep
+  the plain thin line without glow, unless they are target or mouseover.
+- Render target, depth buffer and viewport are restored; viewport and
+  scissor are also marked as changed for the game. The texture transform
+  flags of stages 0-4 go back to the values in the game's state cache.
+- Names above heads no longer disappear while something is outlined
+  (e.g. while hovering an NPC): depth-writing things drawn after the
+  outlined figures went through a stencil test LESS against WPROT, which
+  discarded every pixel outside an outline. Now the stencil gets a
+  "visible" bit (figure 0xC0, ring 0x40 | category); later depth-writing
+  draws use ALWAYS, PASS ZERO with write mask 0xC0, so they are always
+  drawn and only hide the outline where they lie in front. Post colors
+  protected party/raid rings with mask 0x3F, so "through walls party/raid
+  only" keeps them. The DrawPrimitive branch (VA 0x6A3706) now goes
+  through the same check as DrawIndexedPrimitive.
+- The game's state cache: only the entries post and glow change are
+  invalidated now, not all of them - 0xFFFFFFFF is a real value for
+  D3DRS_AMBIENT, so the game could skip setting it after the outline.
+- The textures live in video memory and are released before
+  IDirect3DDevice9::Reset and when the device is destroyed: the three
+  calls of 0x690150 (format change, lost device, destroy) go through the
+  patch first. Byte table: 4 new entries (incl. the DrawPrimitive site).
+- If anything fails (e.g. not enough video memory), that device keeps
+  the thin lines.
+- Section .outl grows from 0x16AC to 0x26A7 bytes.
+- PATCHES DE/EN: description, FPS note, how it works, pixel shader 2.0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

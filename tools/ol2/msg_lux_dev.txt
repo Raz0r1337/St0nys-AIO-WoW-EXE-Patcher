@@ -1,0 +1,12 @@
+Rate the Lux loader (No. 31) like in st0ny-main
+
+The Lux loader is now in st0ny-main as well. In st0ny-dev it loses the
+[BETA] mark and gets the same rating and warning as there: [untested -
+DLL risky], still untested, and the loaded DLL may be detected or
+blocked on public servers.
+
+- Patch name (German and English), comment, README row, the list of
+  DLL-risky patches (No. 27-31), PATCHES heading and warning.
+- Patch bytes unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,20 @@
+No. 68 outline: glowing outline like in retail, thin line for the raid [BETA]
+
+The outline is now bright right at the figure and fades out over about
+6 pixels, in three steps of 2 pixels: inside the color halfway towards
+white, in the middle about 60 %, outside about 25 % opaque.
+
+- Each step gets eight shifted copies (2, 4 and 6 pixels); only the
+  inner step stores the figure's depth, so things drawn later behind the
+  semi-transparent steps (e.g. water) stay visible.
+- Stencil: figure 0xC0, outline step | category (inside 0x80, middle
+  0x40, outside 0). Higher values win, so the inner step always beats
+  the outer ones; later drawn things compare the category bits only
+  (mask 0x3F).
+- Raid members outside your own party of 5 only get the inner step in
+  the full color, as before - this keeps the cost of the raid outline
+  down. You, your party, target and mouseover glow.
+- Section .outl grows from 0x14F0 to 0x16AC bytes.
+- PATCHES DE/EN: description, FPS note and how it works.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,13 @@
+No. 68 outline: ask "only where hidden" right above "always outlined" [BETA]
+
+Both questions are about the own character and partly look the same in
+game, so they now come one after the other. New order: through walls,
+own character only where hidden, own character always, party, raid,
+reaction color.
+
+- The value follows the new order (e.g. value.outline=hidden,self);
+  values from patcher_state.ini are brought into this order when read,
+  so the same answers in the old order do not count as a change.
+- PATCHES DE/EN: table rows and list of the keys in the new order.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

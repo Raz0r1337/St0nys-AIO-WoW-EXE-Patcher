@@ -1,0 +1,8 @@
+README: thank Pogzur for finding RCEPatcher v2.0
+
+Pogzur tracked down RCEPatcher v2.0, the basis of the RCE fix v2
+(No. 10), and passed it on. Thanks added to the acknowledgements, DE and
+EN, next to the one for Moroes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01L353BV8oEfdQVkZWotwrji

@@ -1,0 +1,7 @@
+voice.dll loader: note again that the module is not finished
+
+The note of the voice.dll loader now reads "requires mod-voicechat -
+module not finished yet", in the same form as the notes of the other
+loaders.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

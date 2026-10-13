@@ -1,0 +1,10 @@
+No. 27: name no servers in the warning
+
+The warning box of No. 27 (wow_optimize loader) now speaks of public
+servers instead of naming individual servers: according to the author
+of wow_optimize the DLL leads to a permanent ban on some public servers
+and to a disconnect on others. Same in the code comment.
+
+Text only, no patch bytes change (byte table unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

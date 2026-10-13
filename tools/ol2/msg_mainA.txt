@@ -1,0 +1,10 @@
+Start menu on a page of its own, with the banner on top
+
+After "Press ENTER to start" the screen is cleared and the ASCII banner
+is shown again, followed by the Wow.exe check and the start menu. So the
+start menu no longer appears below the welcome text and warnings. The
+patch menu and everything after it stay on pages of their own without
+the banner, as before.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+

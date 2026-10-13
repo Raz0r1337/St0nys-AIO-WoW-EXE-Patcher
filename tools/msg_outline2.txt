@@ -1,0 +1,19 @@
+Outline: occluders drawn later hide the outline
+
+Bushes, mushrooms and grass are drawn after the figures, so the outline
+used to stay visible through them. Now:
+
+- The figure itself is marked with stencil 4, the outline ring with 1/2.
+- The eight shifted copies also write the figure's depth into the ring,
+  so things behind the figure cannot clear it.
+- Depth-writing draws after a figure was marked run in clear mode: where
+  they pass the depth test they reset the stencil, so whatever lies in
+  front of the figure hides its outline too. Transparent draws (no depth
+  write) leave the outline in place.
+- Further parts of the same figure (cloak, weapon, mount) are first drawn
+  over their own ring without depth test, so no outline remains between
+  the parts.
+
+Section .outl grows to 0x9DA bytes; byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

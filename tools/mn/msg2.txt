@@ -1,0 +1,23 @@
+Ask about patching again right after the selection when nothing changed
+
+From st0ny-dev. If the selection is exactly the state of Wow.exe, the
+patcher used to stop with "No change compared to the current Wow.exe".
+The patch state only remembers which patches are in with which values,
+so after an update of the patcher a patch with new code was never
+written again.
+
+- With exactly the patches that are already in Wow.exe, the patcher asks
+  right after the selection (menu or -Select), before the settings:
+  J/Y = patch again with the current settings, E/S = change settings,
+  N = quit (ENTER = E/S; for patches without settings only J/Y and N,
+  ENTER = N).
+- Patching again takes the values from the current Wow.exe without
+  asking (if one is invalid, the settings are asked after all), lists
+  the patches, shows the usual notes and the confirmation, backs up the
+  current Wow.exe as Wow.exe.BAK and applies all selected patches freshly
+  to the original.
+- After E/S with unchanged settings it quits with "No change".
+- With -Unattended nothing changes: no question, exit code 0.
+- README DE/EN: new point "No change" under the patch state.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

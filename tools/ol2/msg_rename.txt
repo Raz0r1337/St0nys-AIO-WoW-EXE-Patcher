@@ -1,0 +1,13 @@
+Rename Visus - St0nyCam to Visus - ShoulderCam
+
+I noticed that having my name (St0ny) in the name of the patch comes
+across as a bit boastful. Visus - ShoulderCam should fit better.
+
+- Patch name (German and English) and two comments in the script
+  (Visus helpers, Lux loader).
+- README (table, acknowledgements) and PATCHES (heading, note on Lux),
+  German and English.
+- Text only: the patched exe stays byte for byte the same, the console
+  commands (visusHeight, visusShoulder) do not change.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

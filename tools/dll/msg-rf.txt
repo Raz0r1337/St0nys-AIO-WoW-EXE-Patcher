@@ -1,0 +1,10 @@
+Remove the AwesomeWotlkLib loader from the Reforged preset
+
+The loader itself is safe, but AwesomeWotlkLib.dll may be detected or
+blocked on public servers. The Reforged preset is meant to be safe on
+public servers as well, so the loader is no longer part of it. It stays
+in the presets Billy's_Wow.exe and St0nys_Wow.exe.
+
+No patch bytes change (byte table unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

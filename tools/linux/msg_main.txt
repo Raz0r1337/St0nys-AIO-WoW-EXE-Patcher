@@ -1,0 +1,20 @@
+Linux support: start file patcher-lin.sh, Windows start file renamed
+
+The patcher also runs natively on Linux with PowerShell 7 (pwsh), no
+Wine needed. Tested on Ubuntu 24.04.
+
+- patcher-lin.sh: Linux start file. It changes to its own folder,
+  checks that pwsh is installed (otherwise a short hint pointing to the
+  docs) and starts apply_patches.ps1 with all parameters passed
+  through. Stored as executable with LF line endings (.gitattributes).
+- patcher.bat is now patcher-win.bat.
+- Wow.exe is found in any spelling (WoW.exe, wow.exe ...), as Linux
+  file systems are case-sensitive. An exactly named Wow.exe still wins;
+  if several other spellings lie in the folder, the patcher stops with
+  a hint. On Windows nothing changes.
+- Docs: new section "On Linux", a pointer under Requirements, both start
+  files in the file list. Release notes name both start files.
+
+No patch bytes change (byte table unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

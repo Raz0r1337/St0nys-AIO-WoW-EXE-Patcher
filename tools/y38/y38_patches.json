@@ -1,0 +1,386 @@
+[
+ {
+  "va": "0x5b81be",
+  "fileoff": "0x1b75be",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b81bd",
+  "instr": "add eax, 0x7d0",
+  "purpose": "CalendarGetDate year",
+  "optional": false
+ },
+ {
+  "va": "0x5b827b",
+  "fileoff": "0x1b767b",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b827a",
+  "instr": "add eax, 0x7d0",
+  "purpose": "CalendarGetMinDate year",
+  "optional": false
+ },
+ {
+  "va": "0x5b8324",
+  "fileoff": "0x1b7724",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b8323",
+  "instr": "add eax, 0x7d0",
+  "purpose": "CalendarGetMaxDate year",
+  "optional": false
+ },
+ {
+  "va": "0x5b83e9",
+  "fileoff": "0x1b77e9",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b83e7",
+  "instr": "add ecx, 0x7d0",
+  "purpose": "CalendarGetMinHistoryDate year",
+  "optional": false
+ },
+ {
+  "va": "0x5b8476",
+  "fileoff": "0x1b7876",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b8474",
+  "instr": "add ecx, 0x7d0",
+  "purpose": "CalendarGetMaxCreateDate year",
+  "optional": false
+ },
+ {
+  "va": "0x5b9a60",
+  "fileoff": "0x1b8e60",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b9a5e",
+  "instr": "add edx, 0x7d0",
+  "purpose": "CalendarGetMonth year",
+  "optional": false
+ },
+ {
+  "va": "0x5b9b93",
+  "fileoff": "0x1b8f93",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b9b91",
+  "instr": "add edx, 0x7d0",
+  "purpose": "CalendarGetAbsMonth year (out)",
+  "optional": false
+ },
+ {
+  "va": "0x5ba506",
+  "fileoff": "0x1b9906",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5ba504",
+  "instr": "add ecx, 0x7d0",
+  "purpose": "CalendarEventGetInviteResponseTime year",
+  "optional": false
+ },
+ {
+  "va": "0x5bda53",
+  "fileoff": "0x1bce53",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5bda51",
+  "instr": "add edx, 0x7d0",
+  "purpose": "CalendarGetEventInfo event year",
+  "optional": false
+ },
+ {
+  "va": "0x5bdae5",
+  "fileoff": "0x1bcee5",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5bdae4",
+  "instr": "add eax, 0x7d0",
+  "purpose": "CalendarGetEventInfo lockout year",
+  "optional": false
+ },
+ {
+  "va": "0x5b7eb4",
+  "fileoff": "0x1b72b4",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b7eb2",
+  "instr": "add edx, 0x7d0",
+  "purpose": "GetInboxText calendar mail FULLDATE year",
+  "optional": false
+ },
+ {
+  "va": "0x6cc4ef",
+  "fileoff": "0x2cb8ef",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x6cc4ee",
+  "instr": "add eax, 0x7d0",
+  "purpose": "SMSG_GUILD_INFO GUILD_INFO_TEMPLATE year",
+  "optional": false
+ },
+ {
+  "va": "0x76cb3d",
+  "fileoff": "0x36bf3d",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x76cb3b",
+  "instr": "add edx, 0x7d0",
+  "purpose": "GetStatistic/GetAchievementCriteriaInfo date quantity \"%02d/%02d/%d\" (only caller 5B115D)",
+  "optional": false
+ },
+ {
+  "va": "0x5b9b4d",
+  "fileoff": "0x1b8f4d",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5b9b4b",
+  "instr": "sub edi, 0x7d0",
+  "purpose": "CalendarGetAbsMonth year arg (in, sub)",
+  "optional": false
+ },
+ {
+  "va": "0x5bb552",
+  "fileoff": "0x1ba952",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5bb551",
+  "instr": "sub eax, 0x7d0",
+  "purpose": "CalendarEventSetDate year (in, sub)",
+  "optional": false
+ },
+ {
+  "va": "0x5bb702",
+  "fileoff": "0x1bab02",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5bb701",
+  "instr": "sub eax, 0x7d0",
+  "purpose": "CalendarEventSetLockoutDate year (in, sub)",
+  "optional": false
+ },
+ {
+  "va": "0x5c443b",
+  "fileoff": "0x1c383b",
+  "orig": "d0070000",
+  "new": "ec070000",
+  "instr_va": "0x5c4439",
+  "instr": "sub esi, 0x7d0",
+  "purpose": "CalendarSetAbsMonth year arg (in, sub)",
+  "optional": false
+ },
+ {
+  "va": "0x5b8209",
+  "fileoff": "0x1b7609",
+  "orig": "0a000000",
+  "new": "00000000",
+  "instr_va": "0x5b8206",
+  "instr": "mov dword ptr [ebp - 0x14], 0xa",
+  "purpose": "CalendarGetMinDate month 10->0",
+  "optional": false
+ },
+ {
+  "va": "0x5b8210",
+  "fileoff": "0x1b7610",
+  "orig": "17000000",
+  "new": "00000000",
+  "instr_va": "0x5b820d",
+  "instr": "mov dword ptr [ebp - 0x18], 0x17",
+  "purpose": "CalendarGetMinDate day 23->0",
+  "optional": false
+ },
+ {
+  "va": "0x5b8217",
+  "fileoff": "0x1b7617",
+  "orig": "04000000",
+  "new": "00000000",
+  "instr_va": "0x5b8214",
+  "instr": "mov dword ptr [ebp - 0x10], 4",
+  "purpose": "CalendarGetMinDate year 4->0",
+  "optional": false
+ },
+ {
+  "va": "0x5b7b5f",
+  "fileoff": "0x1b6f5f",
+  "orig": "0a000000",
+  "new": "00000000",
+  "instr_va": "0x5b7b5c",
+  "instr": "mov dword ptr [ebp - 0x10], 0xa",
+  "purpose": "IsCalendarDateValid(5B7B30) min month",
+  "optional": false
+ },
+ {
+  "va": "0x5b7b66",
+  "fileoff": "0x1b6f66",
+  "orig": "17000000",
+  "new": "00000000",
+  "instr_va": "0x5b7b63",
+  "instr": "mov dword ptr [ebp - 0x14], 0x17",
+  "purpose": "IsCalendarDateValid min day",
+  "optional": false
+ },
+ {
+  "va": "0x5b7b6d",
+  "fileoff": "0x1b6f6d",
+  "orig": "04000000",
+  "new": "00000000",
+  "instr_va": "0x5b7b6a",
+  "instr": "mov dword ptr [ebp - 0xc], 4",
+  "purpose": "IsCalendarDateValid min year",
+  "optional": false
+ },
+ {
+  "va": "0x5b8f3e",
+  "fileoff": "0x1b833e",
+  "orig": "04",
+  "new": "00",
+  "instr_va": "0x5b8f3c",
+  "instr": "cmp eax, 4",
+  "purpose": "MonthOffset clamp (5B8EC0) cmp year,4",
+  "optional": false
+ },
+ {
+  "va": "0x5b8f45",
+  "fileoff": "0x1b8345",
+  "orig": "04000000",
+  "new": "00000000",
+  "instr_va": "0x5b8f43",
+  "instr": "mov dword ptr [esi], 4",
+  "purpose": "5B8EC0 year=4",
+  "optional": false
+ },
+ {
+  "va": "0x5b8f4d",
+  "fileoff": "0x1b834d",
+  "orig": "0a",
+  "new": "00",
+  "instr_va": "0x5b8f4b",
+  "instr": "cmp eax, 0xa",
+  "purpose": "5B8EC0 cmp month,10",
+  "optional": false
+ },
+ {
+  "va": "0x5b8f51",
+  "fileoff": "0x1b8351",
+  "orig": "0a000000",
+  "new": "00000000",
+  "instr_va": "0x5b8f50",
+  "instr": "mov eax, 0xa",
+  "purpose": "5B8EC0 month=10",
+  "optional": false
+ },
+ {
+  "va": "0x5b8fa5",
+  "fileoff": "0x1b83a5",
+  "orig": "04",
+  "new": "00",
+  "instr_va": "0x5b8fa3",
+  "instr": "cmp eax, 4",
+  "purpose": "AbsMonth clamp (5B8F70) cmp year,4",
+  "optional": false
+ },
+ {
+  "va": "0x5b8fac",
+  "fileoff": "0x1b83ac",
+  "orig": "04000000",
+  "new": "00000000",
+  "instr_va": "0x5b8faa",
+  "instr": "mov dword ptr [ecx], 4",
+  "purpose": "5B8F70 year=4",
+  "optional": false
+ },
+ {
+  "va": "0x5bff68",
+  "fileoff": "0x1bf368",
+  "orig": "04",
+  "new": "00",
+  "instr_va": "0x5bff66",
+  "instr": "cmp eax, 4",
+  "purpose": "Calendar init (5BFF30) cmp year,4",
+  "optional": false
+ },
+ {
+  "va": "0x5bff6d",
+  "fileoff": "0x1bf36d",
+  "orig": "0a",
+  "new": "00",
+  "instr_va": "0x5bff6b",
+  "instr": "cmp ecx, 0xa",
+  "purpose": "5BFF30 cmp month,10",
+  "optional": false
+ },
+ {
+  "va": "0x5bff6f",
+  "fileoff": "0x1bf36f",
+  "orig": "04000000",
+  "new": "00000000",
+  "instr_va": "0x5bff6e",
+  "instr": "mov eax, 4",
+  "purpose": "5BFF30 year=4",
+  "optional": false
+ },
+ {
+  "va": "0x5bff7b",
+  "fileoff": "0x1bf37b",
+  "orig": "0a000000",
+  "new": "00000000",
+  "instr_va": "0x5bff7a",
+  "instr": "mov ecx, 0xa",
+  "purpose": "5BFF30 month=10",
+  "optional": false
+ },
+ {
+  "va": "0x5b9b20",
+  "fileoff": "0x1b8f20",
+  "orig": "04000000",
+  "new": "00000000",
+  "instr_va": "0x5b9b1f",
+  "instr": "mov edi, 4",
+  "purpose": "opt: default year if no game time (GetAbsMonth)",
+  "optional": true
+ },
+ {
+  "va": "0x5c440e",
+  "fileoff": "0x1c380e",
+  "orig": "04000000",
+  "new": "00000000",
+  "instr_va": "0x5c440d",
+  "instr": "mov esi, 4",
+  "purpose": "opt: default year (SetAbsMonth)",
+  "optional": true
+ },
+ {
+  "va": "0x5bfbdc",
+  "fileoff": "0x1befdc",
+  "orig": "04000000",
+  "new": "00000000",
+  "instr_va": "0x5bfbdb",
+  "instr": "mov eax, 4",
+  "purpose": "opt: default year (holiday expand)",
+  "optional": true
+ },
+ {
+  "va": "0x5b4626",
+  "fileoff": "0x1b3a26",
+  "orig": "8b471c83c0018945f4db45f4dd1c2453e8659c29008b4f1883c101894df4db45f483c404dd1c2453e84d9c2900db472083c404dd1c2453e83e9c2900",
+  "new": "db471cd9e8dec1dd1c2453e86a9c2900db4718d9e8dec183c404dd1c2453e8579c29008b472083c01c8945f4db45f483c404dd1c2453e83f9c290090",
+  "purpose": "GetAchievementInfo year +28 (2-digit)",
+  "optional": false
+ },
+ {
+  "va": "0x5b47fd",
+  "fileoff": "0x1b3bfd",
+  "orig": "8b571c83c2018955f8db45f8dd1c2456e88e9a29008b471883c0018945f8db45f883c404dd1c2456e8769a2900db472083c404dd1c2456e8679a2900",
+  "new": "db471cd9e8dec1dd1c2456e8939a2900db4718d9e8dec183c404dd1c2456e8809a29008b472083c01c8945f8db45f883c404dd1c2456e8689a290090",
+  "purpose": "GetAchievementComparisonInfo year +28 (2-digit)",
+  "optional": false
+ },
+ {
+  "va": "0x62dee9",
+  "fileoff": "0x22d2e9",
+  "orig": "83c60156e8de1114008945d0",
+  "new": "4656e8e0111400041c8945d0",
+  "purpose": "AchievementLinkParse year +28 (2-digit)",
+  "optional": false
+ }
+]

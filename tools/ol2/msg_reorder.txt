@@ -1,0 +1,15 @@
+Sort the outline in after No. 65 (now No. 66)
+
+The outline sat at the end of "Graphics & view distance", behind the UI
+textures. It now comes right after No. 64 and No. 65, which also change
+how characters and NPCs are drawn; the HD portraits and the pixel-exact
+icons follow it.
+
+- No. 68 outline -> No. 66, No. 66 HD portraits -> No. 67, No. 67 icon
+  snapping -> No. 68; all other numbers stay the same.
+- Patch list, README tables and lists, PATCHES sections and references
+  (German and English) updated.
+- Byte table rebuilt: same entries, new order. The sections are now
+  appended in the order .outl, .hdp, .isnap.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

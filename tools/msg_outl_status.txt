@@ -1,0 +1,8 @@
+No. 65 (outline) tested in game, no longer a proof of concept
+
+Tested in game by St0ny (with DXVK): target, mouseover, occlusion by
+walls and by bushes drawn later, multi-part figures. Status changes
+from "untested" to "untested online"; "(proof of concept)" is dropped
+from the name.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

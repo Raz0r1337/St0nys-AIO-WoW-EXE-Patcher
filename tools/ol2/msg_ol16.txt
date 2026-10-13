@@ -1,0 +1,28 @@
+No. 68 outline: calm line at thin tips and edges [BETA]
+
+At parts thinner than a pixel (ear tips, spikes) the outline flickered:
+the 8 copies 2 pixels apart only form a closed ring around parts at
+least 2 pixels thick. Around thinner parts they left gaps right next to
+the figure, and every dot of the game's own aliasing was copied 8 times
+as isolated dots. MSAA only reduced it.
+
+- Copies: 4 diagonal at (+-1, +-1) and 4 at (+-0.5, 0), (0, +-0.5),
+  still 8 draws. They mark a closed 1-pixel ring, also around single
+  dots; the half-pixel copies sample thin parts at extra positions but
+  never change a straight edge.
+- New pass line_ps (ps_2_0): 3x3 tent over TEX0, opacity sat(4 * value),
+  colour = average ring colour, into a new full-resolution texture TEX3:
+  the 2-pixel line, anti-aliased. The glow now comes from TEX3 (tent
+  downsample), GLOW_K 2.5 -> 2.0 for the same brightness.
+- After the glow composite, linecomp_ps draws TEX3 lightened (colour *
+  5/8 + 0x5E) under the same stencil and blend. The per-unit quads only
+  run without glow; if the glow failed on the device, the copies are 2
+  pixels apart as before (OFFS2), so the fallback looks unchanged.
+- TEX3/TEX3S and the two shaders are created, checked and released with
+  the others (Reset, teardown). The generator now asserts at most one
+  relocation per instruction (limit of the PowerShell emitter).
+- Section .outl grows from 0x2C86 to 0x2FE2 bytes, about 8 MB more video
+  memory at 1080p.
+- PATCHES DE/EN: copies, line pass, video memory, section size.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,21 @@
+Start menu: P sets the path to Wow.exe; backups stay in the patcher folder
+
+Instead of copying Wow.exe back and forth, the path to it (e.g. in the
+WoW folder) can be set with P in the start menu: the exe itself or the
+folder it is in; dragging it into the window works too (quotes and
+"& '...'" are removed). ENTER switches back to the Wow.exe in the
+patcher folder. The path is remembered as wowpath= in
+patcher_selection.ini; the check and the start menu then run again on a
+new page, with the path shown in grey above the check.
+
+- Wow.exe.ORI, Wow.exe.BAK and patcher_state.ini always stay in the
+  patcher folder - also with -Path, which picks the exe for this run
+  only and takes precedence over the remembered path.
+- 2 and 3 restore directly at the path; building a missing Wow.exe from
+  the original (1) writes it there as well.
+- Without a Wow.exe and without backups the start menu now offers P and
+  Q instead of stopping (-Unattended and -Path still stop).
+- Saving the selection keeps the path.
+- README (DE/EN): tip in the usage section, start menu, -Path, files.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,13 @@
+README: patch Wow.exe right in the WoW folder with P
+
+From st0ny-dev. The usage steps for Windows, Linux and Mac now set the
+path to the WoW folder with P in the start menu instead of copying
+Wow.exe back and forth; copying stays as the second way below. The step
+for the start menu mentions P, and without backups the start menu offers
+P and Q.
+
+- P on Linux/Mac: some terminals put a backslash before spaces when a
+  folder is dragged in ("My\ Games"); the patcher now removes these
+  escapes if the path does not exist as typed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

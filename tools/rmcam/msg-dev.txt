@@ -1,0 +1,17 @@
+Remove No. 83 (CameraReforged) until its use is allowed
+
+CameraReforged is a port of Zendevve's CameraReforged. Besides the
+GPL-3.0, its repository carries a LICENSE.md with all rights reserved
+that forbids porting its code into other projects. The permission we had
+came from Stormhand and does not cover it. So the patch is taken out
+until its author has agreed; it stays in the git history (last in
+09a8035) and can come back from there.
+
+- The patch entry and its helper Add-CameraReforged are removed.
+- Patches 84-89 move to 83-88 (88 patches now).
+- No. 31 (LuxShoulderCam loader) no longer mentions CameraReforged.
+- A Wow.exe patched with an older version that contains it is restored
+  from patcher_state.ini as usual and patched again without it.
+- Byte table rebuilt: only the CameraReforged entries are gone.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

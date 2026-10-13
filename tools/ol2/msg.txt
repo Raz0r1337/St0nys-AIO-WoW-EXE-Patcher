@@ -1,0 +1,41 @@
+No. 68 outline: extra options No. 69-74, class colors, red pulse [BETA]
+
+The outline can now be set up in the patch menu. Six extra options need
+No. 68 and are off by default, so the default stays: only target and
+mouseover, not through walls.
+
+- No. 69: visible through walls too. The figure is also marked where it
+  is hidden, the invisible copies run without depth test and things
+  drawn later no longer clear the outline. Rated unsafe (ban risk).
+- No. 70: own character always outlined.
+- No. 71: own party always outlined (party1-4).
+- No. 72: whole raid always outlined (raid members and party). Costs a
+  lot of FPS, the menu and the docs say so.
+- No. 73: own character outlined only where it is hidden. The figure is
+  also marked where it is hidden, its copies mark the outline only where
+  something drawn earlier lies in front of them (depth test GREATER).
+  For the own character it takes precedence over No. 69 and 70.
+- No. 74: reaction color (selection circle) instead of the class color.
+  Without it every outline of a player, target and mouseover included,
+  uses the class colors of the raid frames; other units keep the
+  reaction color.
+
+Hostile players gently pulse red, so the class color does not hide that
+they are enemies: if the selection circle of a player outlined in class
+color would be red (0xFFFF0000), the post quad mixes the class color with
+red, share of red (1 - cos)/2 over 1.5 s (GetTickCount). With No. 74 they
+are simply red.
+
+Every outlined unit (up to 48 per frame: raid, party, own character,
+target, mouseover) gets a stencil value of its own and so a color of its
+own; target and mouseover take precedence, the figure itself gets 0x80.
+The options each set a single CC padding byte after a ret in .text to 1,
+which the outline code reads at runtime, so the patcher can also detect
+them from the exe. The .outl section grows from 0x9DA to 0x118E bytes.
+
+- No. 68 and the options are rated untested (online and in game).
+- README and PATCHES: warning to keep the default on public servers;
+  if the patch gets banned there, it can only be used on private servers.
+- Patches from No. 69 on move by 6 (now 96 patches); byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,8 @@
+No. 10: note that Brady Russell could not be reached
+
+The author of RCEPatcher v2.0 could not be contacted. PATCHES (No. 10)
+and the acknowledgements, DE and EN, now say so: if he does not want his
+patch included, he is welcome to get in touch and it will be removed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01L353BV8oEfdQVkZWotwrji

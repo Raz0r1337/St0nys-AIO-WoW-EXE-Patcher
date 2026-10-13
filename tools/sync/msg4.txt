@@ -1,0 +1,11 @@
+Same naming for all DLL loaders
+
+All four DLL loaders load their DLL with LoadLibraryA when WoW starts;
+they only differ in where they hook in. The AwesomeWotlkLib and
+WotLKExtensions loaders (No. 28 and 29) were still called
+"Enable ... support", now they read "Load ... at startup" like the
+wow_optimize and Lexara loaders.
+
+Names and docs only, no patch bytes change (byte table unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

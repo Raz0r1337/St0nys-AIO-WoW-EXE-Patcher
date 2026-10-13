@@ -1,0 +1,7 @@
+README: acknowledgement for Stormhand without CameraReforged
+
+CameraReforged is not Stormhand's work and no longer part of the
+patcher. The acknowledgement now thanks him for the official preset of
+Project Reforged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

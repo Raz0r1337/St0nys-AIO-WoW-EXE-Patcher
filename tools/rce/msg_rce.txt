@@ -1,0 +1,32 @@
+No. 10 RCE fix v2: RCEPatcher v2.0 by Brady Russell plus Robinsch's fix [BETA]
+
+RCEPatcher v2.0 by Brady Russell closes further ways for a malicious
+server to run code on the player's PC that get around the .zdata fix.
+No. 10 now combines both fixes:
+
+- The 7 places of RCEPatcher v2.0: P0 is the .zdata fix No. 10 already
+  had (stoneharry's RCEPatcher v1), P1-P6 are new. The author holds back
+  the details for a disclosure period, so the bytes are taken over as
+  he distributes them.
+- Robinsch's place from v1 stays (Warden modules are not loaded from the
+  local cache); RCEPatcher v2.0 does not have it.
+- Name "Remote Code Execution Exploit Fix v2 [BETA]", author
+  "Brady Russell (original by stoneharry / Robinsch)", rating
+  [unsafe - untested ingame]: same ban risk as before, not tested in
+  game yet.
+- None of the new places overlaps another patch. A Wow.exe with v1 is
+  still detected as No. 10 (state file and watermark) and restores to
+  the original; with the same selection "patch again" (J) gives it v2.
+- No. 11 (disable Warden completely) no longer counts as a replacement
+  for No. 10: whether it also covers the new paths is open as long as
+  their details are not published. Obsoletes hint removed, the docs
+  recommend using both.
+- Byte table rebuilt. PATCHES and README DE/EN updated, thanks to Brady
+  Russell in the acknowledgements.
+
+His repository has no license and he could not be reached (no contact
+given, his website does not load). The patch is taken over with credit;
+if he objects, it comes out again.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01L353BV8oEfdQVkZWotwrji

@@ -1,0 +1,18 @@
+Add the LuxShoulderCam loader (No. 31) from st0ny-dev
+
+The loader for LuxShoulderCam.dll (shoulder camera by Stormhand) comes
+over from st0ny-dev as No. 31, right after the Lexara loader. It is
+still untested and rated [untested - DLL risky]: the loaded DLL may be
+detected or blocked on public servers. It is not in any preset.
+
+- Same patch bytes as in st0ny-dev: the one-time jump at VA 0x76E495
+  leads through three free 16-byte gaps that call
+  LoadLibraryA("LuxShoulderCam.dll"); file size and PE header stay
+  unchanged.
+- wow_optimize and Lexara loaders: notes on the Lux loader (Lexara loads
+  LuxShoulderCam.dll by itself, so only one of the two is needed).
+- README: thanks to Stormhand for the permission to include
+  LuxShoulderCam.
+- Patches from No. 31 on move by 1 (now 87 patches); byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

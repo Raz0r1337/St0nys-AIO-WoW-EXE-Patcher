@@ -1,0 +1,16 @@
+Merge st0ny-dev-outline into st0ny-dev: No. 66 outline (public test)
+
+Brings the outline for target and mouseover into st0ny-dev for testing
+on public servers. It was tested in game (with DXVK), status "untested
+online".
+
+- In st0ny-dev the outline becomes No. 66 (after the Lexara loader,
+  No. 29); patches 66-87 move to 67-88.
+- README overview: new row, "[exe grows]" without its own dot as in
+  the rest of the overview.
+- Byte table rebuilt.
+- Two references that were not moved along when No. 29 was added are
+  fixed as well: the boss level note in PATCHES.de.md (No. 74, real
+  level) and the overlap note of No. 57 in PATCHES.en.md (No. 63).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

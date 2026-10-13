@@ -1,0 +1,14 @@
+Remove No. 66 (outline) from st0ny-dev again
+
+The outline for target and mouseover goes back to its own branch until
+it has been tested further. It stays unchanged in st0ny-dev-outline.
+
+- Patches 67-88 move back to 66-87.
+- The section helper Add-SectionBlock, which came with the outline
+  (extends the last section when the PE header is full), is removed as
+  well. The patches that append a section use the same code as in
+  st0ny-main again.
+- Byte table rebuilt; it is identical to the one before the outline
+  merge.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

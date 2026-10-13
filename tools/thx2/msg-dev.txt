@@ -1,0 +1,8 @@
+README: thank Stormhand without the Reforged preset
+
+The thanks for the Reforged preset is removed from the acknowledgements.
+This makes room for another message that is tied to a patch: the bullet
+for Stormhand now only thanks him for LuxShoulderCam and its use as the
+template for Visus - St0nyCam.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

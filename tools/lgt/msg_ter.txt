@@ -1,0 +1,23 @@
+No. 69 more lights: ground gets lights 4-8 too (c236-c250) [BETA]
+
+The terrain shader (Terrain.bls, variants 64-127) only gets the 3 nearest
+point lights per chunk in its own registers c28-c36 (0x7D0050), so with
+more lights the ground still showed only 3 of them, with seams at chunk
+edges.
+
+- Hook at VA 0x7D0292 (mov ecx,[0xC5DF88] right before the upload of
+  c0-c36): lights 4-8 of the chunk's local light list [ebp-0x104] - the 4th
+  inline light and the side list of this patch - go to VS c236-c250 in the
+  terrain format: position world minus camera ([0xCD8F5C], w = 1), colour
+  (w = 0), attenuation (w = 0); free slots all 0 with attenuation x = 1,
+  as the original does for c28-c36. Only if the card has at least 251 VS
+  registers.
+- The local list is cleared per chunk (0x790440 -> 0x834900 memsets 0xD4
+  bytes), so its side list starts fresh for every chunk.
+- Built into this patch, not selectable on its own: models and ground both
+  write from c236 on and each shader reads right after its own upload.
+  Shader selection is unchanged.
+- Section .lght grows from 0x590 to 0x7B4 bytes; byte table rebuilt.
+- PATCHES DE/EN: ground part and its register layout.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,9 @@
+No. 4: drop the old jump spot from the byte table again
+
+The extra entry for the version up to 2026-10-09 (jump at VA 0x81D51B)
+is not needed: normally Wow.exe.ORI is still there, otherwise a fresh
+original Wow.exe does the job. No. 4, the byte table and the No. 4
+description are back to the state before 8dbaf46; missing backups are
+still created at the start.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

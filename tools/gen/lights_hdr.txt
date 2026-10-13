@@ -1,0 +1,22 @@
+# ============================================================
+#  Mehr Lichter: 8 statt 4 Punktlichter (St0ny, Grundlage fuer neue Shader)
+#  Das Spiel sammelt je Modell / Gebaeude / Bodenstueck die naechsten Lichter
+#  in CM2Lighting (0xD4 Byte, Lichter +0x84, Abstaende +0x94, Anzahl +0xA4).
+#  AddLight (VA 0x834F60) behaelt nur die 4 naechsten. Die bleiben unveraendert
+#  dort; das 5. bis 8. Licht kommt in eine Zusatzliste (Ring mit 8192
+#  Eintraegen, per VirtualAlloc, Eintrag-Nr. im oberen Wort von +0x14, das
+#  Initialize mit loescht).
+#  - AddLight (VA 0x834FC7 / 0x834FCD): abgewiesene bzw. verdraengte Lichter
+#    sortiert in die Zusatzliste.
+#  - TransformLights (VA 0x83510E): auch die Zusatzlichter in Kamerasicht.
+#  - Shader-Weg (VA 0x873E85 Modelle, 0x7A91A9 Gebaeude): nach dem Original
+#    werden Licht 5-8 im selben Format wie c17-c27 nach VS c236-c246
+#    geschickt (c236-239 Farbe, c240-243 Position, c244-246 Abschwaechung,
+#    freie Plaetze Farbe 0). Nur wenn die Karte mindestens 247 VS-Register
+#    hat. Die Original-Shader lesen das nicht - sichtbar erst mit neuen
+#    Shadern (Varianten mit 4 Lichtern).
+#  - Weg ohne Shader (CVar fixedFunction 1): Das Gx-Geraet hat statt 4 nun 8
+#    Lichtslots (eigenes Feld in der Sektion), SetupGxLights (VA 0x8353D0)
+#    belegt Slot 1-7 mit den 7 naechsten Lichtern. Behebt nebenbei den
+#    Original-Fehler, dass bei 4 Lichtern ausgerechnet das naechste fehlte.
+# ============================================================

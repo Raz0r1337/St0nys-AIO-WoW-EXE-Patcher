@@ -1,0 +1,18 @@
+Align the docs with st0ny-dev and mark dev-only patches as [BETA]
+
+Brings this branch's documentation up to the same state as st0ny-dev and
+pulls the patcher's user-facing texts along, without touching any patch:
+
+- Docs moved into docs/ and rewritten in the current scheme: one status
+  bracket per patch (strictest colour wins), the "what the markings mean"
+  legend, the folder-based usage text and the issue hint.
+- No. 40 renamed to its st0ny-dev wording ("Level 101+ Druid Fix ...");
+  the patch bytes are unchanged.
+- Patcher pulled forward too: one bracket per patch (" - " separator),
+  untested warnings in orange instead of yellow/red, and the icon prompt
+  text "relative to the folder of Wow.exe".
+- Patches that are only in the dev branches, not in st0ny-main, are now
+  clearly marked [BETA] like voice.dll and CameraReforged.
+- No byte changes; the built-in byte table is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,27 @@
+Offer to rebuild or restore Wow.exe when only the backups are left
+
+If there is no Wow.exe in the patcher folder, but Wow.exe.ORI and/or
+Wow.exe.BAK are (e.g. the patched exe was moved into the WoW folder
+instead of copied), the patcher no longer just stops. It offers:
+
+1 = Build a new Wow.exe from the original. The menu starts with the
+    patches and values of the last patched exe (patcher_state.ini),
+    otherwise with the saved selection; presets can be loaded as usual.
+    Without changes the last patched exe is recreated byte for byte.
+2 = Restore the previous Wow.exe from Wow.exe.BAK (state before the
+    last patching).
+3 = Restore the original from Wow.exe.ORI.
+Q = Cancel.
+
+The backups are only read or copied, never moved or overwritten; option
+1 creates no new .BAK. Only usable backups are offered: the .ORI must
+match the original SHA256, the .BAK must be original or carry the
+watermark. Other spellings (wow.exe.ORI on Linux) are found as well.
+With -Unattended there is no menu: the patcher stops as before and
+points to the backups.
+
+Docs: new section "If Wow.exe is missing", workflow and notes updated.
+No patch bytes change (byte table unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+

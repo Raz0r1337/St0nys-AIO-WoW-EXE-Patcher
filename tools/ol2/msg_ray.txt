@@ -1,0 +1,31 @@
+No. 68 outline: collision rays decide whether a figure is hidden [BETA]
+
+With "only where hidden" only what lies in front of the box around the
+model counted, so a wall right in front of the figure gave no outline.
+Depth alone cannot tell such a wall from the ground in front of a sunken
+foot; the game's collision query can.
+
+- Hook at VA 0x4FB036 (call 0x7E6480 between OnWorldUpdate with the camera
+  update and RenderWorld, once per frame in the main thread): the original
+  call, then the rays. Only in the world ([0xBD0792]), not while loading
+  ([0xBD0790]), with a camera [[0xB7436C]+0x7E20] at a finite position.
+- For each figure whose copies were drawn "only where hidden" in the last
+  frame: 3 rays with TraceLine (0x7A3B70, flags 0x100111: terrain, WMO and
+  M2 collision, GameObjects) from the camera to knee, chest and head (0.3,
+  0.6, 0.9 of the height [obj+0x854]; mounted 0.55, 0.75, 0.95), the foot
+  point from [vtbl+0x2C], the object fresh by GUID (0x4D4DB0) every time.
+  Each ray stops 0.4 yards before its target; no ray under 1 or over 150
+  yards. At most 18 rays per frame, in turn.
+- A hit marks the figure as hidden at once and stores the points 0.1 yards
+  behind the hits (world); it counts as free again only after 3 free checks
+  in a row. Until then a free check drops stored points that lie further
+  from the camera than the figure (it stepped out in front of the wall).
+  Unknown GUID: free.
+- Drawing: for a hidden figure the rearmost stored point, converted via the
+  world matrix [model+0xB4] and [model+0xF4] of the first figure or mount
+  in the chain, replaces the depth of the copies if it lies further back
+  than the front of the box. Without rays in this frame nothing changes.
+- Section .outl grows from 0x345B to 0x4559 bytes; byte table rebuilt.
+- PATCHES DE/EN: collision rays.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

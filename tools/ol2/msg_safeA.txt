@@ -1,0 +1,16 @@
+No. 68 outline: safe default first, options only on request [BETA]
+
+Before the switches the patcher now only asks: 1 = apply the safe
+default or 2 = open the patch options (caution: this can make the patch
+unsafe). Only with 2 the four switches follow.
+
+- The safe default is own character only where hidden and through walls
+  party/raid only (value hidden,wallsgroup); with the party/raid outline
+  off, party and raid are outlined only where they are hidden as well.
+- 1 is suggested if the current value is the safe default or the patch
+  is new, otherwise 2 - so own settings are not lost with ENTER.
+- Unattended runs without a saved value use the safe default.
+- PATCHES DE/EN: settings, safe default in the table, public server and
+  FPS notes; README DE/EN: step 7 and the public server note.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

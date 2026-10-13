@@ -1,0 +1,7 @@
+README: usage heading "on Windows", Linux and Mac below it
+
+The usage section is now called "Usage on Windows", with "On Linux"
+and "On a Mac" as its subsections. The table of contents no longer has
+two entries that both lead to the Windows steps.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

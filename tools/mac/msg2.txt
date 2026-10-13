@@ -1,0 +1,9 @@
+README: clearer wording for the Mac and Linux steps
+
+- Mac: the patcher modifies the Windows Wow.exe and cannot patch the
+  Mac client itself; on a Mac that is the Wow.exe run with CrossOver or
+  Wine. The Linux start file "should" work on a Mac as well.
+- Mac and Linux: the last step now reads "If WoW is running, close it
+  and copy the patched Wow.exe back into your WoW folder".
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

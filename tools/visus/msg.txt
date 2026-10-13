@@ -1,0 +1,29 @@
+Add No. 83: Visus - St0nyCam, shoulder camera and zoom [BETA]
+
+A shoulder camera of our own and more zoom directly in the exe, without
+a DLL. The template for the shoulder camera is Stormhand's
+LuxShoulderCam (with his permission); the code is new and based on our
+own analysis of the exe.
+
+- New console variables visusHeight (-1..1) and visusShoulder (-2..2),
+  created at the end of the function that registers all camera
+  variables (VA 0x5FD910, hook at 0x5FE2AF), with the same flags.
+- Camera hook at VA 0x6070CB, where the camera function has just
+  computed its focus point: the height is added to Z, and the point is
+  shifted sideways to the view direction (positive = right). The
+  direction comes from the camera position and the focus point shifted
+  in the last frame, so the offset turns exactly with the camera. No
+  sideways offset in first person.
+- Zoom: the fixed camera limit of 50 yards, read at eight places, is
+  raised to 100. cameraDistanceMoveSpeed defaults to 20 instead of
+  8.33; its own limit of 50 stays.
+- Own section .visus (512 bytes), so the exe grows. Untested, [BETA],
+  deselected by default, not in any preset. Not together with
+  LuxShoulderCam, both hook the same spot; the docs say so on both.
+- Patches from No. 83 on move up by one (89 patches now).
+- Acknowledgements: Stormhand is thanked for the permission to include
+  LuxShoulderCam and to use it as the template for Visus - St0nyCam.
+
+Byte table rebuilt: new entries for No. 83 only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

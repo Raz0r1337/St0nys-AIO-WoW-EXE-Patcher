@@ -1,0 +1,8 @@
+Linux docs: Microsoft package source, tested on Ubuntu 24.04
+
+Step 1 of "On Linux" now says that PowerShell is not in the default
+package sources and that the linked instructions first add Microsoft's
+package source; otherwise apt does not find the powershell package.
+The section also says that the patcher was tested on Ubuntu 24.04.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

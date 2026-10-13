@@ -1,0 +1,32 @@
+Start menu on every start, can be turned off with M
+
+The menu that so far only appeared when Wow.exe was missing now comes up
+on every start, after Wow.exe has been checked. It lists the backups in
+the folder and offers:
+
+1 = Open the patch menu. If Wow.exe is missing or cannot be used
+    (neither original nor patched with this patcher), build a new one
+    from the original instead, as before.
+2 = Restore the previous Wow.exe from Wow.exe.BAK.
+3 = Restore the original from Wow.exe.ORI.
+M = Open the patch menu and skip the start menu from now on.
+Q = Cancel.
+
+- Like the language, the choice is remembered in patcher_selection.ini
+  (startmenu=off). A grey line at startup points it out, and M in the
+  patch menu turns the start menu on and off again.
+- If Wow.exe is missing or cannot be used, the start menu appears even
+  when it is turned off, so the backups stay reachable. A Wow.exe that
+  cannot be used no longer ends the patcher when there are backups.
+- Replacing an existing Wow.exe with 2 or 3 asks first (Y/N); if it is
+  already identical to the backup, nothing is done. The backups are
+  only read or copied, never changed.
+- With -Unattended, and with -Select when Wow.exe can be used, there is
+  no start menu. Without a usable Wow.exe -Unattended aborts as before
+  and points to the backups.
+
+Docs: new section "Start menu" (replaces "If Wow.exe is missing"), key
+M in the patch menu, startmenu= in patcher_selection.ini, parameters.
+No patch bytes change (byte table unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,21 @@
+No. 68 outline: draw outlined figures after all other opaque models [BETA]
+
+"Only where hidden" did not see objects that are drawn after the
+figure, e.g. a lantern in Dalaran, a mailbox or a plate in front of the
+character. The game sorts the opaque M2 parts by model, shader and
+texture instead of by distance, and draws batched doodads
+(M2BatchDoodads, on by default) after them.
+
+- Sorting pass 0 of the world scene (VA 0x822FDD): parts of outlined
+  units get type 0x10 for the sort and so end up last; among themselves
+  they keep the game's order (0x81EAD0). Afterwards they get their type
+  back.
+- Drawing pass 0 (VA 0x823D1F/0x823D3B): these parts are held back and
+  drawn after the batched doodads.
+- So everything else is already in the depth buffer when the outlined
+  figures are drawn.
+- Section .outl grows from 0x1310 to 0x14F0 bytes; byte table: the three
+  new hook sites.
+- PATCHES DE/EN: note on "only where hidden" and how it works.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

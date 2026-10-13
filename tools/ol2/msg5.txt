@@ -1,0 +1,26 @@
+No. 68 outline: settings as Y/N questions instead of No. 69-74 [BETA]
+
+The extra options of the outline are no longer patches of their own.
+No. 68 now asks six Y/N questions before patching, like the value patches
+ask for their value; ENTER keeps the suggestion (N the first time, the
+current state for a patched exe). Default is N everywhere: only target
+and mouseover, not through walls.
+
+- Questions: through walls (unsafe, red warning with Y), own character,
+  party of 5, whole raid (costs FPS), own character only where hidden,
+  reaction color instead of class color. Class colors and the red pulse
+  for hostile players stay as they are.
+- The answers are the value of No. 68 (value.outline=self,party or none),
+  remembered in patcher_selection.ini and read back from the exe: each
+  setting is a CC padding byte after a ret in .text that becomes 1 with
+  Y. The patch always writes all six bytes, so they are in the byte
+  table.
+- New optional patch field Questions (one Y/N question per point, short
+  form in the summary, red warning for a point marked BanRisk).
+- An exe patched with the separate options of the previous commit is
+  taken over: with patcher_state.ini the six old entries are taken back,
+  without it the settings are read from the exe.
+- Patches No. 75-96 move back to No. 69-90 (90 patches); byte table
+  rebuilt; README and PATCHES updated.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

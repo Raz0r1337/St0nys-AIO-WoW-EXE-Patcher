@@ -1,0 +1,16 @@
+Ratings: one bracket per patch, legend boxes removed
+
+- README overview and PATCHES headings: several ratings share one
+  bracket with a single dot in front, the stricter one wins (red before
+  orange before yellow; green turns yellow when the exe grows), e.g.
+  [safe - exe grows], [unsafe - untested ingame].
+- README: the sentence under the legend explains the scheme with
+  examples, including [untested - exe grows].
+- PATCHES: the boxes that only repeated the legend text (unsafe /
+  untested online / untested ingame) are removed; the "exe grows" notes
+  keep only patch-specific details (section name and size, anti-cheat
+  warnings). The intro points to the README for the meaning of the
+  ratings.
+- Patcher menu: warnings joined with " - " instead of ", ".
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

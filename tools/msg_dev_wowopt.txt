@@ -1,0 +1,20 @@
+Add No. 27: load wow_optimize.dll at startup; mark Lexara as [BETA]
+
+wow_optimize (by SUPREMATIST) is a performance optimizer for 3.3.5a that so
+far was loaded through its bundled proxy version.dll or an injector. This
+patch makes the exe load it itself, like the Lexara and voice.dll loaders.
+
+- New first DLL loader (No. 27); patches 27-87 move to 28-88.
+- Only wow_optimize.dll is needed, no version.dll and no .sym.
+- At startup the exe starts a thread that waits 3 seconds and then calls
+  LoadLibraryA("wow_optimize.dll"), hooked into the one-time call at VA
+  0x76E490. The code sits in eight free gaps in .text; file size and PE
+  header stay unchanged. Works together with the Lexara (No. 30) and
+  voice.dll (No. 31) loaders.
+- Marked unsafe + untested ingame and [BETA] (dev only), off by default, in
+  the St0ny preset. Its own docs warn that Warmane bans it and WoW Circle
+  disconnects, so this is for your own servers only.
+- Lexara (No. 30) is now marked [BETA] too, like the other dev-only patches.
+- Byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

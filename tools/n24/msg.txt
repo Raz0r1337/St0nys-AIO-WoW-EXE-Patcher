@@ -1,0 +1,10 @@
+Credit Alastor StrixEfuartus for No. 24 (full LUA unlock)
+
+No. 24 extends No. 23 (LUA unlock by Alastor StrixEfuartus) to all
+protected functions, so it is a modification and not entirely St0ny's
+own patch. The author is now "St0ny (original by Alastor StrixEfuartus)"
+in the patcher, the patch overview and the patch descriptions.
+
+No patch bytes change.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

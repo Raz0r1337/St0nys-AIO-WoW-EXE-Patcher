@@ -1,0 +1,15 @@
+Rate No. 27 (wow_optimize loader) as [safe - DLL risky]
+
+Like No. 28 and 29: the loader patch itself is safe, the risk lies in
+the loaded DLL (according to its author, Warmane bans for it). So
+No. 27 now gets the yellow DLL note instead of the red ban warning and
+[untested ingame].
+
+- Patcher: DllRisky instead of BanRisk and GameUntested.
+- Docs: status yellow [safe - DLL risky], legend lists updated
+  (DLL risky: No. 27-29). The box about Warmane and WoW Circle stays
+  and now starts with "The patch itself is safe ...".
+
+Text only, no patch bytes change (byte table unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

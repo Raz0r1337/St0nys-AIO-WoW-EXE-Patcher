@@ -1,0 +1,13 @@
+Remove No. 29 (voice.dll loader) and No. 80 (CameraReforged) until they are finished
+
+Both are not finished yet. They stay unchanged in st0ny-dev (there
+No. 30 and 81) and come back once they are done.
+
+- Patches 30-79 move to 29-78, 81-86 to 79-84.
+- Their helpers (Add-VoiceLoader, Add-CameraReforged) are removed as well.
+- A Wow.exe patched with an older version that contains them is restored
+  from patcher_state.ini as usual; the selection is then applied again
+  without them.
+- Byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

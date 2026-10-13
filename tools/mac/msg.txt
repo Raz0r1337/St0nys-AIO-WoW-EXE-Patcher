@@ -1,0 +1,14 @@
+README: usage for Windows, Linux and Mac
+
+The usage section now has three parts in this order: On Windows, On
+Linux and On a Mac, each listed in the table of contents.
+
+The new Mac part explains how to install PowerShell 7 (Homebrew or
+Microsoft's installer package) and to start the patcher with
+sh patcher-lin.sh. It says that the patcher modifies the Windows
+Wow.exe that runs with CrossOver or Wine, and that it is untested on a
+Mac because St0ny has no Mac; feedback is welcome as an issue.
+
+Requirements and the file list mention the Mac as well.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

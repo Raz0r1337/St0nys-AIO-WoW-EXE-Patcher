@@ -1,0 +1,22 @@
+Bring st0ny-dev-lights up to date with st0ny-dev; lights as No. 69 and 70
+
+The branch now carries everything from st0ny-dev (eb0ab2b) plus its own
+two light patches, so all patches can be tested together:
+
+- From st0ny-dev: all DLL loaders as in dev (new here: the wow_optimize
+  loader No. 27 and the Lux loader No. 31; same names, ratings and notes
+  as in dev), No. 68 outline [BETA] (glow, companions, party in other
+  buildings, calm line at thin tips), No. 86 Visus - ShoulderCam [BETA],
+  start menu on a page of its own with P for the path to Wow.exe, backups
+  in the patcher folder, missing backups created at start, start files
+  patcher-win.bat / patcher-lin.sh and the README usage for Windows, Linux
+  and Mac.
+- No. 69 "More lights: 8 instead of 4 point lights" [BETA] and No. 70
+  "Lights stay on when their source is off-screen" [BETA], right after
+  the outline; both stay in the Reforged preset. Every patch from the old
+  No. 69 on moves up by 2 (92 patches); references and the warning lists
+  in the README follow.
+- The tip under No. 69 now points to No. 70 (it said No. 68).
+- Byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

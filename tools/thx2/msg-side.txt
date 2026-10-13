@@ -1,0 +1,7 @@
+README: remove the thanks for the Reforged preset
+
+The bullet thanking Stormhand for the Reforged preset is removed from
+the acknowledgements. This makes room for another message that is tied
+to a patch. The preset itself and its description stay unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

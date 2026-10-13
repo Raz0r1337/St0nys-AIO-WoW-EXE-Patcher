@@ -1,0 +1,1 @@
+{"message":"This GitHub API path is not available: sessions are bound to their configured repositories. Use repository-scoped endpoints (repos/{owner}/{repo}/...).","documentation_url":"https://docs.anthropic.com/en/docs/claude-code/github-actions"}

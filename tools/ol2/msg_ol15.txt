@@ -1,0 +1,31 @@
+No. 68 outline: companions, party in other buildings, calmer glow [BETA]
+
+- Companions of outlined party/raid members (pets, companions, totems and
+  other summoned units: CHARMEDBY/SUMMONEDBY/CREATEDBY of a non-player
+  unit matches a group entry) are found by walking the game's object list
+  (0x4D3730) and outlined in their owner's color. They count as party
+  (through walls / only where hidden like the party), up to entry 45 so
+  you, target and mouseover still fit.
+- In pass 0 their parts are sorted after all other outlined parts (type
+  0x11 instead of 0x10), so a companion in front of you or the party no
+  longer triggers "only where hidden". Your own companions (and with
+  "only where hidden" those of party/raid not in the list) are added
+  without an outline, only for this order.
+- Party figures the game culls before drawing (another building or room)
+  are still added to the list of visible objects when they are in view,
+  like the visible branch of 0x793060 does (new hook at 0x7934C6 in
+  0x793450). With "through walls: all" this applies to every outlined
+  figure. Byte table: 1 new entry.
+- Raid members outside your party of 5 now get the same glow as everyone
+  else; the thin line without glow is gone.
+- Glow twitched on small movements: the binary ring jumps by whole
+  pixels and the composite multiplied 8-bit steps by 4. Now the
+  downsample uses a 4x4 tent (4 bilinear taps at +-0.75 texels) and the
+  vertical blur pass applies the curve 1-(1-y)^2, y = sat(2.5*x), so the
+  texture holds the final opacity at full 8 bits; composite gain 1. Two
+  new ps_2_0 shaders, same passes and textures.
+- Section .outl grows from 0x26A7 to 0x2C86 bytes.
+- PATCHES DE/EN: companions, figures in other buildings, glow for the
+  whole raid, glow filter.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,19 @@
+No. 4: recognize the old jump spot; create missing backups at start
+
+Without patcher_state.ini, a Wow.exe patched with No. 4 up to 2026-10-09
+(jump at VA 0x81D51B) could not be restored: the patcher reported that
+the original cannot be restored safely and stopped.
+
+- No. 4 also writes the old jump spot, with its original bytes, so it is
+  in the byte table: such exes are recognized and can be reverted.
+- Missing backups are created right at the start, like when patching,
+  even if nothing is patched afterwards: Wow.exe.ORI from the original
+  (for a patched exe reconstructed and checked by SHA256) and, for a
+  patched exe, its current state as Wow.exe.BAK. Existing backups stay
+  untouched; if a backup cannot be written, a note is shown.
+- Start menu: a Wow.exe.BAK with the same state as Wow.exe is listed as
+  such, and 2 is left out. Q after creating a backup says that Wow.exe
+  has not been modified.
+- README and PATCHES updated; byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

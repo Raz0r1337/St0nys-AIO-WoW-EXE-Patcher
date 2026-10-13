@@ -1,0 +1,7 @@
+Rename the start files to patcher-win.bat and patcher-lin.sh
+
+patcher.bat is now patcher-win.bat and patcher.sh is now
+patcher-lin.sh, so the platform is clear from the name, as in
+st0ny-main. Docs and the usage comments in both files are updated.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,21 @@
+Add No. 68: outline for target and mouseover [BETA]
+
+Brings the outline from st0ny-dev-outline into st0ny-dev for good; it no
+longer needs a branch of its own. It was tested in game (with DXVK),
+status "untested online", deselected by default and in no preset.
+
+- The outline becomes No. 68 (after No. 67, pixel-exact icons); patches
+  68-89 move to 69-90, references and the note lists in the README
+  are moved along.
+- The section helper Add-SectionBlock comes along again: when the PE
+  header has no room for another section entry, the last appended
+  section is extended instead. Add-CodeSection and Add-HdPortraits use
+  it as in st0ny-dev-outline. With all seven patches that append a
+  section, Visus (No. 84) now extends the section of No. 78.
+- Code, entry and docs section are the ones from st0ny-dev-outline,
+  only the number differs. A Wow.exe with only the outline, and one with
+  the six section patches of st0ny-dev-outline, are byte-identical to
+  the ones from st0ny-dev-outline.
+- Byte table rebuilt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

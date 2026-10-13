@@ -1,0 +1,23 @@
+No. 68 outline: smaller margin before "hidden" counts - box front instead of sphere [BETA]
+
+With "only where hidden" the copies lay on the front of the bounding
+sphere. For a standing figure the radius comes mostly from its height, so
+whatever hides it had to stand about 1 yard in front of the body; a table
+right in front of the legs did not count.
+
+- The copies now lie on the front of the M2 bounding box
+  ([[model+0x2C]+0x150]+0xA0/+0xAC) plus 0.05 yards: the corner towards
+  the camera, horizontally always; the bottom of the box only when the
+  camera looks from below (what stands on the ground then lies in front),
+  the full height for attachments such as weapons (a drawn model that is
+  neither the unit's model nor its mount). Mounts and animal shapes keep
+  hooves and paws behind that depth, which a simply smaller sphere would
+  not.
+- The distance part shrinks from 1 * KZ to 0.1 * KZ (0.1 * 0.001 *
+  distance^2 yards).
+- The radius in the M2 header is only checked now (finite and > 0); a NaN
+  or infinite radius means no box, as before.
+- Section .outl grows from 0x336E to 0x345B bytes.
+- PATCHES DE/EN: the new margin and how the front is found.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

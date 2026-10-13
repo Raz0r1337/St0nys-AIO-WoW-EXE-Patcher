@@ -1,0 +1,19 @@
+No. 69 "Lights stay on when their source is off-screen" from st0ny-dev-lights [BETA]
+
+The fix for vanishing point lights (No. 70 in st0ny-dev-lights) also helps
+without new shaders, so dev gets it too: turning the camera so that a light
+source (a torch, say) leaves the screen no longer switches its light off on
+everything that is still visible.
+
+- One byte at VA 0x81E548 (je -> jmp) in QueryLights 0x81E400: a light with
+  an outdated time stamp stays active. Models still unregister their lights
+  themselves when removed (0x824D30).
+- Right after the outline as No. 69 (when "More lights" comes to dev later,
+  it takes No. 69 and this one becomes No. 70, as in st0ny-dev-lights).
+  Every patch from the old No. 69 on moves up by 1 (91 patches); references
+  and the warning lists in the README follow.
+- Not in the Reforged preset (that one lists tested patches only).
+- Byte table rebuilt.
+- PATCHES and README DE/EN: new section and row.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

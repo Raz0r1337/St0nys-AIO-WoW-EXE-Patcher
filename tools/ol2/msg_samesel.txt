@@ -1,0 +1,16 @@
+Ask about patching again right after the selection, before the settings
+
+With exactly the patches that are already in Wow.exe, the patcher used to
+ask for every setting first and only then offer to patch again or quit.
+
+- Right after the selection (menu or -Select) it now asks: J/Y = patch
+  again with the current settings, E/S = change settings, N = quit
+  (ENTER = E/S; for patches without settings only J/Y and N, ENTER = N).
+- Patching again takes the values from the current Wow.exe without asking;
+  if one of them is invalid, the settings are asked after all.
+- After E/S with unchanged settings it quits with "No change"; the late
+  question is gone.
+- With -Unattended nothing changes.
+- README DE/EN: the "No change" point.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

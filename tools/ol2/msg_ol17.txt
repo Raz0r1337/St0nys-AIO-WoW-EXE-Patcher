@@ -1,0 +1,26 @@
+No. 68 outline: no line where a figure only sticks into the ground or a wall [BETA]
+
+"Only where hidden" marked the outline wherever something lay a little in
+front of the copies, including the ground in front of feet that sink
+slightly into it and a wall a figure stands half inside. At a flat view the
+ground in front of a sunk foot lies s / sin(angle) in front of it, more than
+the old offset of 0.001 * distance^2 yards.
+
+- All copies of an outlined part now lie at one depth: the front of the
+  bounding sphere, c4 = (ZC + KZ) * c5, so z/w = ZC + KZ for every vertex.
+  The outline only shows where something lies in front of the whole unit.
+- The sphere comes from the M2 header (centre of the bounding box
+  [[model+0x2C]+0x150]+0xA0/+0xAC, radius +0xB8) and the model->view
+  matrix [model+0xF4] (VS c2-c5 are the projection only, 0x872C10).
+- The front-most sphere of the drawn part (stored in batch) and its
+  parents [model+0x48] is used, as far as they are the unit's model or
+  mount (weapon -> figure -> mount; the rider hangs on the mount,
+  0x73D793). Only the drawn model and its parent chain are read; the
+  pointers in the table are only compared.
+- Only models updated this frame ([model+0x3C] = [[model+0x28]+0x14]),
+  loaded, with a header and radius > 0; otherwise the old c4 + KZ * c5.
+  Camera inside the sphere: no outline.
+- Section .outl grows from 0x2FE2 to 0x336E bytes.
+- PATCHES DE/EN: only what lies in front of the whole figure counts.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

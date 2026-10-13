@@ -1,0 +1,18 @@
+README: usage on Windows, Linux and Mac
+
+The usage section is now called "Usage on Windows", with "On Linux"
+and "On a Mac" as its subsections, each listed in the table of
+contents.
+
+The new Mac part explains how to install PowerShell 7 (Homebrew or
+Microsoft's installer package) and to start the patcher with
+sh patcher-lin.sh. The patcher modifies the Windows Wow.exe and cannot
+patch the Mac client itself; on a Mac that is the Wow.exe run with
+CrossOver or Wine. It is untested on a Mac because St0ny has no Mac;
+feedback is welcome as an issue.
+
+On Windows, Linux and a Mac the last step now reads "If WoW is running,
+close it and copy the patched Wow.exe back into your WoW folder".
+Requirements and the file list mention the Mac as well.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

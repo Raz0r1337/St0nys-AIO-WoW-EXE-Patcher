@@ -1,0 +1,7 @@
+README: thank Zendevve for the idea behind Visus - St0nyCam
+
+Visus - St0nyCam goes back to an idea of CameraReforged by Zendevve.
+One line in the acknowledgements of the German and English README thanks
+Zendevve for it; the thanks to Stormhand stay as they are.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

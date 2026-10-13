@@ -1,0 +1,19 @@
+No. 4: check every triangle of the list
+
+Ported from st0ny-dev. The check "index smaller than base" now sits in
+the loop body (hook at VA 0x81D536) and covers the three indices of
+every triangle. A triangle with an invalid index is skipped, the
+remaining triangles are processed normally. Before, only the first
+triangle of each call was checked, once before the loop, and the whole
+call was aborted in that case. Same code cave, same size (38 bytes),
+No. 63 is not affected.
+
+Tested in game together with the DLL loaders, no crash. The rating
+stays [unsafe]: the patch still changes the same function.
+
+Byte table rebuilt (hook of No. 4 moved from 0x81D51B to 0x81D536).
+An exe patched with the previous version of No. 4 is still restored
+from patcher_state.ini; it gets the new code the next time the
+selection changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

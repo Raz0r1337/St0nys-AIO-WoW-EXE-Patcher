@@ -1,0 +1,10 @@
+Find Wow.exe regardless of upper/lower case
+
+On Linux (native PowerShell 7) the file system is case-sensitive, so a
+WoW.exe or wow.exe in the patcher folder was not found. Without -Path
+the patcher now also accepts any spelling of Wow.exe. An exactly named
+Wow.exe still wins; if several other spellings lie in the folder, the
+patcher stops with a hint instead of picking one. Backups follow the
+real file name (e.g. wow.exe.ORI). On Windows nothing changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

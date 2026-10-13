@@ -1,0 +1,9 @@
+Move the documentation into docs/
+
+README.md, README.de.md, PATCHES.de.md and PATCHES.en.md now live in
+docs/; GitHub still shows docs/README.md on the start page. The patcher
+files (apply_patches.ps1, patcher.bat) and LICENSE stay in the root.
+The file list in the READMEs shows the new paths and the license link
+points to ../LICENSE.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
