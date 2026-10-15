@@ -278,10 +278,13 @@ together by Stormhand, and the default selection. It contains patches
 rated safe (🟢), all tested by Stormhand for several hours on Warmane – **the
 preset is safe** and can be used on public servers as well. Three of them
 (No. 9, 66 and 67) make `Wow.exe` larger; that was no problem on Warmane, but
-other servers may check the file size. On top of that comes the Lexara loader
-(No. 30) for Stormhand's HD fonts. The patch itself is safe, but `Lexara.dll`
-may be detected or blocked on public servers; without `Lexara.dll` in the WoW
-folder it does nothing. The "Reforged" column in the
+other servers may check the file size. On top of that come the Lexara loader
+(No. 30) for Stormhand's HD fonts and the light patches No. 69 and 70. For the
+Lexara loader the patch itself is safe, but `Lexara.dll` may be detected or
+blocked on public servers; without `Lexara.dll` in the WoW folder it does
+nothing. The light patches are tested in game, but not yet on public servers.
+No. 69 makes `Wow.exe` larger as well and only takes effect with the shaders
+from [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases). The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it.
 
 The preset "Billy's_Wow.exe" (key `B`) is Billy Hoyle's patch set. The
@@ -537,8 +540,8 @@ name, and before patching it lists them once more.
 | [66](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe - exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [67](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [68](PATCHES.en.md#patch-outline) | Outline for target and mouseover [BETA] *(gxApi d3d9 only, asks for the settings)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
-| [69](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA] *(requires [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – unpack `patch-5.MPQ.zip` from the release into the `Data` folder)* | 🟠 **[untested online - exe grows]** | St0ny | – | – | – |
-| [70](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen [BETA] | 🟠 **[untested online]** | St0ny | – | – | – |
+| [69](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA] *(requires [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – unpack `patch-5.MPQ.zip` from the release into the `Data` folder)* | 🟠 **[untested online - exe grows]** | St0ny | ✅ | – | – |
+| [70](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen [BETA] | 🟠 **[untested online]** | St0ny | ✅ | – | – |
 
 > [!WARNING]
 > **Outline (No. 68) on public servers:** if you use the patch there, please

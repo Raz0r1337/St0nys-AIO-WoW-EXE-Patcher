@@ -295,9 +295,13 @@ sichere Patches (🟢), die Stormhand alle mehrere Stunden auf Warmane getestet
 hat – **das Preset ist sicher** und kann auch auf öffentlichen Servern
 verwendet werden. Drei davon (Nr. 9, 66 und 67) vergrößern die `Wow.exe`; auf
 Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen.
-Dazu kommt der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften. Der Patch
-selbst ist sicher, die `Lexara.dll` kann auf öffentlichen Servern aber erkannt
-oder blockiert werden; ohne `Lexara.dll` im WoW-Ordner bewirkt er nichts.
+Dazu kommen der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften und die
+Licht-Patches Nr. 69 und 70. Beim Lexara-Lader ist der Patch selbst sicher,
+die `Lexara.dll` kann auf öffentlichen Servern aber erkannt oder blockiert
+werden; ohne `Lexara.dll` im WoW-Ordner bewirkt er nichts. Die Licht-Patches
+sind im Spiel getestet, auf öffentlichen Servern aber noch nicht. Nr. 69
+vergrößert die `Wow.exe` ebenfalls und wirkt erst mit den Shadern aus
+[WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases).
 Welche Patches dazugehören, zeigt die Spalte „Reforged“ in der
 [Patch-Übersicht](#patch-übersicht).
 
@@ -560,8 +564,8 @@ dem Patchen listet er sie noch einmal auf.
 | [66](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher - Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [67](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟡 **[sicher - Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [68](PATCHES.de.md#patch-outline) | Umrandung für Ziel und Mouseover [BETA] *(nur gxApi d3d9, fragt die Einstellungen ab)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
-| [69](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) [BETA] *(benötigt [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – `patch-5.MPQ.zip` aus dem Release in den `Data`-Ordner entpacken)* | 🟠 **[online ungetestet - Exe wird größer]** | St0ny | – | – | – |
-| [70](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist [BETA] | 🟠 **[online ungetestet]** | St0ny | – | – | – |
+| [69](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) [BETA] *(benötigt [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – `patch-5.MPQ.zip` aus dem Release in den `Data`-Ordner entpacken)* | 🟠 **[online ungetestet - Exe wird größer]** | St0ny | ✅ | – | – |
+| [70](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist [BETA] | 🟠 **[online ungetestet]** | St0ny | ✅ | – | – |
 
 > [!WARNING]
 > **Umrandung (Nr. 68) auf öffentlichen Servern:** Wenn du den Patch dort
