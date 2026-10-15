@@ -539,7 +539,7 @@ missing, WoW starts normally.
 > `LoadLibraryA("LuxShoulderCam.dll")` just gets the already loaded DLL back,
 > its startup code does not run a second time.
 
-Do not use it together with Visus - ShoulderCam (No. 85): both hook the same spot
+Do not use it together with Visus - ShoulderCam (No. 86): both hook the same spot
 of the camera (VA `0x6070CB`). If Visus is applied, Lux does not hook in there,
 and Lux's height and offset have no effect.
 
@@ -1391,8 +1391,88 @@ How it works:
 > there is no room left in the PE header for another section entry. Then the
 > patcher extends the last appended section instead of adding a new one.
 
+<a id="patch-lights"></a>
+**More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA]** *(No. 69, Author: St0ny)* 🟠 **[untested online - exe grows]**
+
+In the original, every model and every building gets the sun plus at most
+the 4 nearest point lights (torches, spells, lights on models). The patch
+makes the game collect the 8 nearest and pass them on to the graphics. It is
+the exe groundwork for new shaders that show more lights.
+
+> [!WARNING]
+> **BETA** – this patch is still being tested and is therefore only in the dev
+> branches for now, not in `st0ny-main`.
+
+How it works:
+- The 4 nearest lights stay where they were; the game and the original
+  shaders keep working with them unchanged. Lights 5–8 go to an extra list
+  (320 KB of memory, allocated once when first needed).
+- **Shader path (default):** for models and buildings the exe also sends
+  lights 5–8 to the vertex shader registers c236–c246, in the same format the
+  original uses for lights 1–4 in c17–c27. The original shaders do not read
+  these registers – you only see a difference with new shaders.
+- **Ground (shader path):** the terrain shader still gets lights 1–3 in
+  c28–c36 for each terrain chunk. In addition the exe sends lights 4–8 in
+  the terrain format to c236–c250 (see the table below), right before the
+  upload of c28–c36. Built into this patch for good, not selectable on its
+  own: models and ground both write from c236 on, and each shader only reads
+  right after its own upload. On their own, new shaders would read wrong
+  values.
+- **Path without shaders** (`/console fixedFunction 1`, then restart): the
+  graphics device gets 8 instead of 4 light slots. Models, buildings, ground
+  and water are lit by the sun and up to 7 point lights. This lets you try
+  the patch without new shaders; the game looks plainer overall in this mode
+  (no pixel shaders).
+- Fixes a bug of the original in the path without shaders along the way:
+  with 4 lights, the nearest one of all was dropped.
+- Code and data live in a section of their own (`.lght`, 0x7B4 bytes).
+
+Register layout for shader authors (vertex shaders, models and buildings):
+
+| Register | Content |
+|---|---|
+| c17–c20 / c236–c239 | color of light 1–4 / 5–8 (rgb, w = 1; free slot = 0) |
+| c21–c24 / c240–c243 | position of light 1–4 / 5–8 in view space (xyz, w = 1) |
+| c25 / c244 | attenuation 0 of light 1–4 / 5–8 (x = first … w = fourth light) |
+| c26 / c245 | attenuation 1, same split |
+| c27 / c246 | attenuation 2, same split |
+
+Ground (vertex shader `Terrain.bls`, variants 64–127), 3 registers per light:
+
+| Register | Content |
+|---|---|
+| c28 / c31 / c34 and c236 / c239 / c242 / c245 / c248 | position of light 1–3 / 4–8: world minus camera (xyz, w = 1) |
+| c29 / c32 / c35 and c237 / c240 / c243 / c246 / c249 | color (rgb, w = 0) |
+| c30 / c33 / c36 and c238 / c241 / c244 / c247 / c250 | attenuation (x = a0, y = a1, z = a2, w = 0) |
+
+Free slot: all 0, attenuation x = 1 (as the original does for c28–c36).
+
+> [!NOTE]
+> Shader selection stays unchanged: from 4 lights on, the game uses the
+> "4 lights" variants (in every `Diffuse_*.bls` the variants 9, 19, …, 89).
+> Only these need the extra code for c236–c246; number and order of the
+> variants stay the same. The extra lights are only sent if the graphics card
+> has at least 247 vertex shader registers (every shader model 2 or 3 card
+> has 256). For the ground the game still uses the variants with lights
+> (64–127) as soon as there is at least one light; ground lights 4–8 are
+> only sent with at least 251 registers.
+
+> [!NOTE]
+> On the shader path, water keeps its lights; it has shaders and a data path
+> of its own.
+
+> [!TIP]
+> Best tested together with No. 70: without it, the client switches off the
+> light of a source as soon as the source is turned off-screen – also on
+> figures that are still visible.
+
+> [!NOTE]
+> If all patches with a section of their own are active at the same time,
+> there is no room left in the PE header for another section entry. Then the
+> patcher extends the last appended section instead of adding a new one.
+
 <a id="patch-lightstay"></a>
-**Lights stay on when their source is off-screen [BETA]** *(No. 69, Author: St0ny)* 🟠 **[untested]**
+**Lights stay on when their source is off-screen [BETA]** *(No. 70, Author: St0ny)* 🟠 **[untested online]**
 
 Fixes a bug of the original client: if you turn the camera so that a light
 source (e.g. a torch) leaves the screen, its light also disappears from
@@ -1418,26 +1498,26 @@ every light with an outdated time stamp. The patch changes one byte there
 ## Interface & comfort
 
 <a id="patch-tracker"></a>
-**Auto-sort quest tracker** *(No. 70)* 🟢 **[safe]**
+**Auto-sort quest tracker** *(No. 71)* 🟢 **[safe]**
 
 Sets the CVar `trackerSorting` to 1 by default. Quests in the tracker are
 sorted automatically.
 
 <a id="patch-worldmap"></a>
-**Advanced world map enabled by default** *(No. 71)* 🟢 **[safe]**
+**Advanced world map enabled by default** *(No. 72)* 🟢 **[safe]**
 
 Sets the CVar `advancedWorldMap` to 1 by default. The advanced map view is
 enabled from the start.
 
 <a id="patch-castbars"></a>
-**Cast bars on all frames** *(No. 72, Author: Kebabstorm)* 🟢 **[safe]**
+**Cast bars on all frames** *(No. 73, Author: Kebabstorm)* 🟢 **[safe]**
 
 Shows cast bars on all unit frames (party, arena, boss etc.), not just target
 and focus, as well as on all default nameplates. Matches the behavior from
 Cataclysm onwards.
 
 <a id="patch-emblems"></a>
-**Retail guild emblems: selection extended from 170 to 196** *(No. 73, Author: MacWarrior)* 🟠 **[untested online]**
+**Retail guild emblems: selection extended from 170 to 196** *(No. 74, Author: MacWarrior)* 🟠 **[untested online]**
 
 The client keeps the number of selectable tabard variants in a small table
 (VA `0xA14908`, file offset `0x613108`): 170 emblems, 17 emblem colors,
@@ -1470,7 +1550,7 @@ up to you (`patch-*.MPQ`), thanks to the patch "Allow extended MPQ names"
 (No. 21).
 
 <a id="patch-flash"></a>
-**FlashWindow patch** *(No. 74, Author: Kebabstorm)* 🟢 **[safe]**
+**FlashWindow patch** *(No. 75, Author: Kebabstorm)* 🟢 **[safe]**
 
 Makes the WoW window flash in the taskbar when a relevant event occurs while
 the game is in the background. For this the Lua function `BNRemoveFriend`,
@@ -1483,7 +1563,7 @@ which additionally needs `IsWindowFocused()` from `AwesomeWotlkLib.dll`
 (No. 28).
 
 <a id="patch-charrandom"></a>
-**Character creation: do not randomize the appearance automatically** *(No. 75, Author: Alyst3r (0x539wowmod))* 🟢 **[safe]**
+**Character creation: do not randomize the appearance automatically** *(No. 76, Author: Alyst3r (0x539wowmod))* 🟢 **[safe]**
 
 When opening character creation (clicking "Create New Character") and when
 changing race or gender, the client no longer randomizes face, skin, hair style
@@ -1491,22 +1571,22 @@ etc. automatically; you start with the default appearance. The randomize button
 keeps working – it uses a separate path in the client.
 
 <a id="patch-lootopen"></a>
-**Loot window stays open while moving** *(No. 76, Author: tb (ported by St0ny))* 🟠 **[untested online]**
+**Loot window stays open while moving** *(No. 77, Author: tb (ported by St0ny))* 🟠 **[untested online]**
 
 In the original the loot window closes as soon as you walk, strafe or turn.
 With the patch it stays open. The ten places in the movement handlers that
 close the window are skipped (one byte each).
 
 <a id="patch-showlevel"></a>
-**Real level instead of "??" for enemies 10+ levels above you** *(No. 77, Author: tb (ported by St0ny))* 🟠 **[untested online]**
+**Real level instead of "??" for enemies 10+ levels above you** *(No. 78, Author: tb (ported by St0ny))* 🟠 **[untested online]**
 
 If a hostile target is 10 or more levels above you, the client shows "??"
 instead of the level (or a skull on the nameplate, `UnitLevel` returns -1).
 With the patch, tooltip, nameplate and `UnitLevel` show the real level. Bosses
-still show "??" – that check is kept; No. 78 removes it.
+still show "??" – that check is kept; No. 79 removes it.
 
 <a id="patch-showlevelboss"></a>
-**Real level for bosses too instead of "??" (extension to No. 77)** *(No. 78, Author: St0ny)* 🟠 **[untested online]**
+**Real level for bosses too instead of "??" (extension to No. 78)** *(No. 79, Author: St0ny)* 🟠 **[untested online]**
 
 Creatures marked as boss (a flag in the creature data, e.g. raid and dungeon
 bosses) always show "??" in the original – in the tooltip, on the nameplate
@@ -1517,11 +1597,11 @@ nameplate stay.
 
 > [!NOTE]
 > If a boss is 10 or more levels above you, the level check applies as well –
-> No. 77 removes its "??". For all bosses, apply it together with No. 77; the
-> patcher points it out if No. 77 is missing.
+> No. 78 removes its "??". For all bosses, apply it together with No. 78; the
+> patcher points it out if No. 78 is missing.
 
 <a id="patch-holdrepeat"></a>
-**Hold action buttons to repeat** *(No. 79, Author: tb (ported by St0ny))* 🔴 **[unsafe - exe grows]**
+**Hold action buttons to repeat** *(No. 80, Author: tb (ported by St0ny))* 🔴 **[unsafe - exe grows]**
 
 When you hold the key of an action bar binding (the main bar,
 `ACTIONBUTTON1`–`12`, with page, stance and form bars), the client triggers the
@@ -1546,7 +1626,7 @@ their own (`.hrep`). Up to 8 keys can be held at the same time.
 > servers forbid "one key press = several actions".
 
 <a id="patch-bubblerange"></a>
-**Increase the chat bubble range (original 25 yards)** *(No. 80, Author: St0ny)* 🟢 **[safe]**
+**Increase the chat bubble range (original 25 yards)** *(No. 81, Author: St0ny)* 🟢 **[safe]**
 
 The client shows chat bubbles (say, party, yell, NPC say and NPC yell) only for
 speakers up to 25 yards away. If the server sends a yell from 100 yards, for
@@ -1571,36 +1651,36 @@ unchanged.
 ## Window, mouse & camera
 
 <a id="patch-window"></a>
-**Windowed mode by default** *(No. 81, Author: St0ny)* 🟢 **[safe]**
+**Windowed mode by default** *(No. 82, Author: St0ny)* 🟢 **[safe]**
 
 Sets the CVar `gxWindow` to 1 by default. The game starts in windowed mode
 instead of fullscreen.
 
 > [!TIP]
-> **No. 81 and No. 82 belong together:** No. 81 enables windowed mode, No. 82
+> **No. 82 and No. 83 belong together:** No. 82 enables windowed mode, No. 83
 > maximizes the window.
 > - **Both selected:** WoW starts as a maximized window covering the whole
 >   screen.
-> - **Only No. 81:** WoW starts as a small window in the middle of the desktop.
-> - **Only No. 82:** no effect, WoW starts in fullscreen. The option "Maximize
+> - **Only No. 82:** WoW starts as a small window in the middle of the desktop.
+> - **Only No. 83:** no effect, WoW starts in fullscreen. The option "Maximize
 >   window" is active, but greyed out.
 
 <a id="patch-maximize"></a>
-**Maximized window by default** *(No. 82, Author: St0ny)* 🟢 **[safe]**
+**Maximized window by default** *(No. 83, Author: St0ny)* 🟢 **[safe]**
 
 Sets the CVar `gxMaximize` to 1 by default. The window is maximized on start.
 
 > [!TIP]
-> **No. 81 and No. 82 belong together:** No. 81 enables windowed mode, No. 82
+> **No. 82 and No. 83 belong together:** No. 82 enables windowed mode, No. 83
 > maximizes the window.
 > - **Both selected:** WoW starts as a maximized window covering the whole
 >   screen.
-> - **Only No. 81:** WoW starts as a small window in the middle of the desktop.
-> - **Only No. 82:** no effect, WoW starts in fullscreen. The option "Maximize
+> - **Only No. 82:** WoW starts as a small window in the middle of the desktop.
+> - **Only No. 83:** no effect, WoW starts in fullscreen. The option "Maximize
 >   window" is active, but greyed out.
 
 <a id="patch-windowfix"></a>
-**No black screen when switching to windowed mode** *(No. 83, Author: Robinsch)* 🟢 **[safe]**
+**No black screen when switching to windowed mode** *(No. 84, Author: Robinsch)* 🟢 **[safe]**
 
 Switching to windowed mode while in-game no longer results in a black
 screen. Technically the callback of the CVar `DesktopGamma` always takes the
@@ -1608,13 +1688,13 @@ game-gamma path; the desktop-gamma path and with it the CVar `DesktopGamma`
 have no effect.
 
 <a id="patch-mouse"></a>
-**Mouse flicker / camera jump fix** *(No. 84, Author: Robinsch)* 🟢 **[safe]**
+**Mouse flicker / camera jump fix** *(No. 85, Author: Robinsch)* 🟢 **[safe]**
 
 A larger patch (4 parts) that fixes problems with mice using a high polling
 rate. Prevents cursor flicker and uncontrolled camera movement.
 
 <a id="patch-visus"></a>
-**Visus - ShoulderCam [BETA]: shoulder camera and zoom** *(No. 85, Author: St0ny)* 🟠 **[untested - exe grows]**
+**Visus - ShoulderCam [BETA]: shoulder camera and zoom** *(No. 86, Author: St0ny)* 🟠 **[untested - exe grows]**
 
 A shoulder camera of its own and more zoom directly in `Wow.exe`, without a
 DLL. The template for the shoulder camera is [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam)
@@ -1684,7 +1764,7 @@ and writable) and hooks in at three places:
 ## Sound
 
 <a id="patch-sound"></a>
-**Optimize sound settings** *(No. 86, Author: St0ny)* 🟢 **[safe]**
+**Optimize sound settings** *(No. 87, Author: St0ny)* 🟢 **[safe]**
 
 Includes the following changes:
 
@@ -1713,7 +1793,7 @@ message and asked for again, and all values are checked before anything is
 written. The patcher remembers the values in `patcher_selection.ini`
 (`value.<Id>=…`); with `-Unattended` the remembered values are used, otherwise
 the original values – exceptions: build date (current time) and icon (the
-patcher aborts), see No. 90 and 91. If a patch is already in `Wow.exe`, its
+patcher aborts), see No. 91 and 92. If a patch is already in `Wow.exe`, its
 current value is the suggestion. When asking, it is also shown after the patch
 name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 
@@ -1722,7 +1802,7 @@ name (`-> suggestion: …`, or `-> current: …` for an already applied patch).
 > to match the server.
 
 <a id="patch-clientversion"></a>
-**Change client version (original 3.3.5)** *(No. 87, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change client version (original 3.3.5)** *(No. 88, Author: MacWarrior)* 🔴 **[unsafe]**
 
 Sets a new version in the format `x.y.z` (e.g. `3.3.6` or `3.3.123`, at most 7
 characters). Changes the version the client shows in-game, the FileVersion and
@@ -1732,7 +1812,7 @@ The build number in `VS_FIXEDFILEINFO` is kept; the FileVersion text
 together must fit into the ProductVersion field (e.g. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Change build number (original 12340)** *(No. 88, Author: MacWarrior)* 🔴 **[unsafe]**
+**Change build number (original 12340)** *(No. 89, Author: MacWarrior)* 🔴 **[unsafe]**
 
 Sets a new build number (6142 to 65535, original `12340`): the internal build
 number, the visible build number and the fourth part of the FileVersion in
@@ -1760,7 +1840,7 @@ different login protocol – a 3.3.5 client can no longer get onto the server.
 > it as offline.
 
 <a id="patch-clienttitle"></a>
-**Change program title (file properties and window title)** *(No. 89, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
+**Change program title (file properties and window title)** *(No. 90, Author: MacWarrior (fixed by St0ny))* 🔴 **[unsafe]**
 
 Sets FileDescription, InternalName and ProductName of the version resource,
 i.e. what Windows shows in the file properties and the Task Manager. At most 17
@@ -1776,7 +1856,7 @@ custom title to the first place and disables the two calls so that it stays.
 > as the title of error messages – the custom title appears there as well.
 
 <a id="patch-clientdate"></a>
-**Change build date (original Jun 24 2010)** *(No. 90, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change build date (original Jun 24 2010)** *(No. 91, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 Sets the build date (original `Jun 24 2010`) at all three places in the EXE and
 the year in the copyright notice, plus the time. The time is stored in two
@@ -1795,7 +1875,7 @@ the time of patching if nothing is remembered. If the patch is already applied,
 the current date and time of `Wow.exe` are suggested.
 
 <a id="patch-clienticon"></a>
-**Change program icon (icon of Wow.exe)** *(No. 91, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
+**Change program icon (icon of Wow.exe)** *(No. 92, Author: St0ny (original by MacWarrior))* 🔴 **[unsafe]**
 
 Replaces the icon Windows shows for `Wow.exe` (Explorer, taskbar, shortcuts).
 The patcher asks for the path of an `.ico` or `.png` file, absolute or

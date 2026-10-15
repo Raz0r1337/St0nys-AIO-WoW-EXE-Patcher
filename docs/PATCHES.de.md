@@ -555,7 +555,7 @@ startet WoW ganz normal.
 > zweite Aufruf von `LoadLibraryA("LuxShoulderCam.dll")` bekommt nur die schon
 > geladene DLL zurück, ihr Startcode läuft kein zweites Mal.
 
-Nicht zusammen mit Visus - ShoulderCam (Nr. 85) verwenden: Beide setzen an
+Nicht zusammen mit Visus - ShoulderCam (Nr. 86) verwenden: Beide setzen an
 derselben Stelle der Kamera an (VA `0x6070CB`). Ist Visus eingespielt, hängt
 sich Lux dort nicht ein, Höhe und Versatz von Lux bleiben dann ohne Wirkung.
 
@@ -1443,8 +1443,88 @@ So funktioniert es:
 > kein Platz mehr für einen weiteren Sektionseintrag. Dann verlängert der
 > Patcher die zuletzt angehängte Sektion, statt eine neue anzulegen.
 
+<a id="patch-lights"></a>
+**Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) [BETA]** *(Nr. 69, Autor: St0ny)* 🟠 **[online ungetestet - Exe wird größer]**
+
+Im Original bekommt jedes Modell und jedes Gebäude neben der Sonne höchstens
+die 4 nächsten Punktlichter ab (Fackeln, Zauber, Lichter an Modellen). Der
+Patch lässt das Spiel die 8 nächsten sammeln und an die Grafik weitergeben.
+Er ist die Exe-Grundlage für neue Shader, die mehr Lichter darstellen.
+
+> [!WARNING]
+> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
+> den dev-Zweigen, nicht in `st0ny-main`.
+
+So funktioniert es:
+- Die 4 nächsten Lichter bleiben wie bisher an ihrem Platz, Spiel und
+  Original-Shader arbeiten unverändert damit. Licht 5–8 kommt in eine
+  Zusatzliste (320 KB Speicher, einmalig beim ersten Bedarf angelegt).
+- **Shader-Weg (Standard):** Für Modelle und Gebäude schickt die Exe Licht 5–8
+  zusätzlich an die Vertex-Shader-Register c236–c246, im selben Format, in dem
+  das Original Licht 1–4 in c17–c27 schickt. Die Original-Shader lesen diese
+  Register nicht – zu sehen ist das erst mit neuen Shadern.
+- **Boden (Shader-Weg):** Der Boden-Shader bekommt je Bodenstück wie bisher
+  Licht 1–3 in c28–c36. Zusätzlich schickt die Exe Licht 4–8 im Format des
+  Bodens an c236–c250 (siehe Tabelle unten), direkt vor dem Upload von
+  c28–c36. Fest in diesen Patch eingebaut, nicht einzeln wählbar: Modelle und
+  Boden schreiben beide ab c236, jeder Shader liest nur direkt nach seinem
+  eigenen Upload. Einzeln würden neue Shader falsche Werte lesen.
+- **Weg ohne Shader** (`/console fixedFunction 1`, danach Neustart): Das
+  Grafikgerät bekommt 8 statt 4 Lichtplätze. Modelle, Gebäude, Boden und
+  Wasser werden von der Sonne und bis zu 7 Punktlichtern beleuchtet. So lässt
+  sich der Patch ohne neue Shader ausprobieren; das Spiel sieht in diesem
+  Modus insgesamt schlichter aus (keine Pixel-Shader).
+- Behebt dabei einen Fehler des Originals im Weg ohne Shader: Bei 4 Lichtern
+  fiel ausgerechnet das nächste weg.
+- Code und Daten liegen in einer eigenen Sektion (`.lght`, 0x7B4 Byte).
+
+Registerbelegung für Shader-Autoren (Vertex-Shader, Modelle und Gebäude):
+
+| Register | Inhalt |
+|---|---|
+| c17–c20 / c236–c239 | Farbe von Licht 1–4 / 5–8 (rgb, w = 1; freier Platz = 0) |
+| c21–c24 / c240–c243 | Position von Licht 1–4 / 5–8 in Kamerasicht (xyz, w = 1) |
+| c25 / c244 | Abschwächung 0 von Licht 1–4 / 5–8 (x = erstes … w = viertes Licht) |
+| c26 / c245 | Abschwächung 1, Aufteilung wie oben |
+| c27 / c246 | Abschwächung 2, Aufteilung wie oben |
+
+Boden (Vertex-Shader `Terrain.bls`, Varianten 64–127), je Licht 3 Register:
+
+| Register | Inhalt |
+|---|---|
+| c28 / c31 / c34 und c236 / c239 / c242 / c245 / c248 | Position von Licht 1–3 / 4–8: Welt minus Kamera (xyz, w = 1) |
+| c29 / c32 / c35 und c237 / c240 / c243 / c246 / c249 | Farbe (rgb, w = 0) |
+| c30 / c33 / c36 und c238 / c241 / c244 / c247 / c250 | Abschwächung (x = a0, y = a1, z = a2, w = 0) |
+
+Freier Platz: alles 0, Abschwächung x = 1 (wie beim Original für c28–c36).
+
+> [!NOTE]
+> Die Shader-Auswahl bleibt unverändert: Ab 4 Lichtern nimmt das Spiel die
+> Varianten für „4 Lichter“ (in jeder `Diffuse_*.bls` die Varianten 9, 19, …,
+> 89). Nur diese brauchen den Zusatzcode für c236–c246; Anzahl und
+> Reihenfolge der Varianten bleiben gleich. Die Zusatzlichter werden nur
+> geschickt, wenn die Grafikkarte mindestens 247 Vertex-Shader-Register hat
+> (jede Karte mit Shader-Modell 2 oder 3 hat 256). Beim Boden nimmt das
+> Spiel weiter die Varianten mit Lichtern (64–127), sobald mindestens ein
+> Licht da ist; die Boden-Lichter 4–8 gehen nur bei mindestens 251 Registern
+> raus.
+
+> [!NOTE]
+> Im Shader-Weg bleibt Wasser bei seinen Lichtern; es hat eigene Shader und
+> einen eigenen Datenweg.
+
+> [!TIP]
+> Zum Testen am besten zusammen mit Nr. 70: Ohne ihn schaltet der Client das
+> Licht einer Quelle ab, sobald die Quelle aus dem Bild gedreht wird – auch auf
+> Figuren, die noch zu sehen sind.
+
+> [!NOTE]
+> Sind alle Patches mit eigener Sektion gleichzeitig aktiv, ist im PE-Header
+> kein Platz mehr für einen weiteren Sektionseintrag. Dann verlängert der
+> Patcher die zuletzt angehängte Sektion, statt eine neue anzulegen.
+
 <a id="patch-lightstay"></a>
-**Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist [BETA]** *(Nr. 69, Autor: St0ny)* 🟠 **[ungetestet]**
+**Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist [BETA]** *(Nr. 70, Autor: St0ny)* 🟠 **[online ungetestet]**
 
 Behebt einen Fehler des Original-Clients: Dreht man die Kamera so, dass eine
 Lichtquelle (z. B. eine Fackel) aus dem Bild rutscht, verschwindet ihr Licht
@@ -1472,26 +1552,26 @@ aktiv.
 ## Interface & Komfort
 
 <a id="patch-tracker"></a>
-**Quest-Tracker automatisch sortieren** *(Nr. 70)* 🟢 **[sicher]**
+**Quest-Tracker automatisch sortieren** *(Nr. 71)* 🟢 **[sicher]**
 
 Setzt das CVar `trackerSorting` standardmäßig auf 1. Quests im Tracker werden
 automatisch sortiert.
 
 <a id="patch-worldmap"></a>
-**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 71)* 🟢 **[sicher]**
+**Erweiterte Weltkarte standardmäßig aktiv** *(Nr. 72)* 🟢 **[sicher]**
 
 Setzt das CVar `advancedWorldMap` standardmäßig auf 1. Die erweiterte
 Kartenansicht ist von Anfang an aktiviert.
 
 <a id="patch-castbars"></a>
-**Cast Bars auf allen Frames** *(Nr. 72, Autor: Kebabstorm)* 🟢 **[sicher]**
+**Cast Bars auf allen Frames** *(Nr. 73, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Ermöglicht die Anzeige von Zauberbalken auf allen Unit-Frames (Party, Arena,
 Boss etc.), nicht nur auf Target und Focus, sowie auf allen
 Standard-Nameplates. Entspricht dem Verhalten ab Cataclysm.
 
 <a id="patch-emblems"></a>
-**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 73, Autor: MacWarrior)* 🟠 **[online ungetestet]**
+**Retail-Gildenembleme: Auswahl von 170 auf 196 erweitert** *(Nr. 74, Autor: MacWarrior)* 🟠 **[online ungetestet]**
 
 Der Client hält die Anzahl der wählbaren Tabard-Varianten in einer kleinen
 Tabelle (VA `0xA14908`, Datei-Offset `0x613108`): 170 Embleme, 17 Emblemfarben,
@@ -1524,7 +1604,7 @@ ist frei wählbar (`patch-*.MPQ`), dafür sorgt der Patch
 „Erweiterte MPQ-Namen erlauben“ (Nr. 21).
 
 <a id="patch-flash"></a>
-**FlashWindow Patch** *(Nr. 74, Autor: Kebabstorm)* 🟢 **[sicher]**
+**FlashWindow Patch** *(Nr. 75, Autor: Kebabstorm)* 🟢 **[sicher]**
 
 Lässt das WoW-Fenster in der Taskleiste blinken, wenn ein relevantes Ereignis
 eintritt und das Spiel im Hintergrund läuft. Dafür wird die in 3.3.5a
@@ -1537,7 +1617,7 @@ das braucht zusätzlich `IsWindowFocused()` aus der `AwesomeWotlkLib.dll`
 (Nr. 28).
 
 <a id="patch-charrandom"></a>
-**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 75, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
+**Charaktererstellung: Aussehen nicht automatisch auswürfeln** *(Nr. 76, Autor: Alyst3r (0x539wowmod))* 🟢 **[sicher]**
 
 Beim Öffnen der Charaktererstellung (Klick auf „Neuer Charakter“) und beim
 Wechsel von Volk oder Geschlecht würfelt der Client Gesicht, Haut, Frisur usw.
@@ -1545,7 +1625,7 @@ nicht mehr automatisch aus, man startet mit dem Standard-Aussehen. Der
 Zufall-Knopf funktioniert weiter – er nutzt im Client einen eigenen Weg.
 
 <a id="patch-lootopen"></a>
-**Lootfenster bleibt beim Laufen offen** *(Nr. 76, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Lootfenster bleibt beim Laufen offen** *(Nr. 77, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 Im Original schließt sich das Lootfenster, sobald du läufst, seitwärts gehst
 oder dich drehst. Mit dem Patch bleibt es offen. Die zehn Stellen in den
@@ -1553,16 +1633,16 @@ Bewegungs-Handlern, die das Fenster schließen, werden übersprungen (je ein
 Byte).
 
 <a id="patch-showlevel"></a>
-**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 77, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
+**Echtes Level statt „??“ bei Gegnern ab 10 Level über dir** *(Nr. 78, Autor: tb (ported by St0ny))* 🟠 **[online ungetestet]**
 
 Ist ein feindliches Ziel 10 oder mehr Level über dir, zeigt der Client statt
 des Levels „??“ (bzw. einen Totenkopf auf der Namensplakette, `UnitLevel`
 liefert -1). Mit dem Patch zeigen Tooltip, Namensplakette und `UnitLevel` das
 echte Level. Bosse zeigen weiterhin „??“ – diese Prüfung bleibt erhalten, sie
-nimmt Nr. 78 heraus.
+nimmt Nr. 79 heraus.
 
 <a id="patch-showlevelboss"></a>
-**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 77)** *(Nr. 78, Autor: St0ny)* 🟠 **[online ungetestet]**
+**Echtes Level auch bei Bossen statt „??“ (Erweiterung zu Nr. 78)** *(Nr. 79, Autor: St0ny)* 🟠 **[online ungetestet]**
 
 Kreaturen, die als Boss markiert sind (Flag in den Kreaturdaten, z. B.
 Schlachtzug- und Dungeonbosse), zeigen im Original immer „??“ – im Tooltip,
@@ -1573,11 +1653,11 @@ steht dort das Level, das der Server für den Boss schickt. Die Beschriftung
 
 > [!NOTE]
 > Ist ein Boss 10 oder mehr Level über dir, greift zusätzlich die
-> Level-Prüfung – deren „??“ entfernt Nr. 77. Für alle Bosse daher zusammen mit
-> Nr. 77 einspielen; der Patcher weist darauf hin, wenn Nr. 77 fehlt.
+> Level-Prüfung – deren „??“ entfernt Nr. 78. Für alle Bosse daher zusammen mit
+> Nr. 78 einspielen; der Patcher weist darauf hin, wenn Nr. 78 fehlt.
 
 <a id="patch-holdrepeat"></a>
-**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 79, Autor: tb (ported by St0ny))* 🔴 **[unsicher - Exe wird größer]**
+**Aktionstasten gedrückt halten zum Wiederholen** *(Nr. 80, Autor: tb (ported by St0ny))* 🔴 **[unsicher - Exe wird größer]**
 
 Hältst du die Taste einer Aktionsleisten-Belegung gedrückt (die Hauptleiste,
 `ACTIONBUTTON1`–`12`, mit Seiten-, Haltungs- und Gestaltleisten), löst der
@@ -1605,7 +1685,7 @@ werden.
 > Server verbieten „ein Tastendruck = mehrere Aktionen“.
 
 <a id="patch-bubblerange"></a>
-**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 80, Autor: St0ny)* 🟢 **[sicher]**
+**Sprechblasen-Reichweite erhöhen (Original 25 Meter)** *(Nr. 81, Autor: St0ny)* 🟢 **[sicher]**
 
 Der Client zeigt Sprechblasen (Sagen, Gruppe, Schreien, NPC-Sagen und
 NPC-Schreien) nur für Sprecher bis 25 Meter Entfernung. Schickt der Server
@@ -1632,37 +1712,37 @@ PE-Header bleiben unverändert.
 ## Fenster, Maus & Kamera
 
 <a id="patch-window"></a>
-**Fenstermodus als Standard setzen** *(Nr. 81, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus als Standard setzen** *(Nr. 82, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxWindow` standardmäßig auf 1. Das Spiel startet im
 Fenstermodus statt im Vollbild.
 
 > [!TIP]
-> **Nr. 81 und Nr. 82 gehören zusammen:** Nr. 81 schaltet den Fenstermodus ein,
-> Nr. 82 maximiert das Fenster.
+> **Nr. 82 und Nr. 83 gehören zusammen:** Nr. 82 schaltet den Fenstermodus ein,
+> Nr. 83 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 81:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 82:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 82:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 83:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-maximize"></a>
-**Fenstermodus maximiert als Standard setzen** *(Nr. 82, Autor: St0ny)* 🟢 **[sicher]**
+**Fenstermodus maximiert als Standard setzen** *(Nr. 83, Autor: St0ny)* 🟢 **[sicher]**
 
 Setzt das CVar `gxMaximize` standardmäßig auf 1. Das Fenster wird beim Start
 automatisch maximiert.
 
 > [!TIP]
-> **Nr. 81 und Nr. 82 gehören zusammen:** Nr. 81 schaltet den Fenstermodus ein,
-> Nr. 82 maximiert das Fenster.
+> **Nr. 82 und Nr. 83 gehören zusammen:** Nr. 82 schaltet den Fenstermodus ein,
+> Nr. 83 maximiert das Fenster.
 > - **Beide gewählt:** WoW startet als maximiertes Fenster über den ganzen
 >   Bildschirm.
-> - **Nur Nr. 81:** WoW startet als kleines Fenster in der Mitte des Desktops.
-> - **Nur Nr. 82:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
+> - **Nur Nr. 82:** WoW startet als kleines Fenster in der Mitte des Desktops.
+> - **Nur Nr. 83:** keine Wirkung, WoW startet im Vollbild. Die Option „Fenster
 >   maximieren“ ist zwar aktiv, aber ausgegraut.
 
 <a id="patch-windowfix"></a>
-**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 83, Autor: Robinsch)* 🟢 **[sicher]**
+**Kein schwarzer Bildschirm beim Wechsel in den Fenstermodus** *(Nr. 84, Autor: Robinsch)* 🟢 **[sicher]**
 
 Wer im laufenden Spiel in den Fenstermodus wechselt, bekommt danach keinen
 schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
@@ -1670,14 +1750,14 @@ schwarzen Bildschirm mehr. Technisch nimmt der Callback des CVars
 damit das CVar `DesktopGamma` sind ohne Wirkung.
 
 <a id="patch-mouse"></a>
-**Mausflackern / Kamerasprünge Fix** *(Nr. 84, Autor: Robinsch)* 🟢 **[sicher]**
+**Mausflackern / Kamerasprünge Fix** *(Nr. 85, Autor: Robinsch)* 🟢 **[sicher]**
 
 Ein umfangreicher Patch (4 Teile), der Probleme mit Mäusen behebt, die eine
 hohe Abtastrate (Polling-Rate) verwenden. Verhindert Flackern des Mauszeigers
 und unkontrollierte Kamerabewegungen.
 
 <a id="patch-visus"></a>
-**Visus - ShoulderCam [BETA]: Schulterkamera und Zoom** *(Nr. 85, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
+**Visus - ShoulderCam [BETA]: Schulterkamera und Zoom** *(Nr. 86, Autor: St0ny)* 🟠 **[ungetestet - Exe wird größer]**
 
 Eine eigene Schulterkamera und mehr Zoom direkt in der `Wow.exe`, ohne DLL.
 Vorlage für die Schulterkamera ist [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) von
@@ -1748,7 +1828,7 @@ und beschreibbar) und hängt sich an drei Stellen ein:
 ## Sound
 
 <a id="patch-sound"></a>
-**Sound-Einstellungen optimieren** *(Nr. 86, Autor: St0ny)* 🟢 **[sicher]**
+**Sound-Einstellungen optimieren** *(Nr. 87, Autor: St0ny)* 🟢 **[sicher]**
 
 Umfasst folgende Änderungen:
 
@@ -1777,7 +1857,7 @@ einer Meldung neu abgefragt, und alle Werte werden geprüft, bevor irgendetwas
 geschrieben wird. Die Werte merkt sich der Patcher in `patcher_selection.ini`
 (`value.<Id>=…`); mit `-Unattended` gelten die gemerkten Werte, ohne gemerkten
 Wert die Originalwerte – Ausnahmen: Build-Datum (aktueller Zeitpunkt) und Icon
-(Abbruch), siehe Nr. 90 und 91. Steckt ein Patch schon in der `Wow.exe`, ist
+(Abbruch), siehe Nr. 91 und 92. Steckt ein Patch schon in der `Wow.exe`, ist
 sein aktueller Wert der Vorschlag.
 Bei der Abfrage steht er auch hinter dem Patchnamen (`-> Vorschlag: …`, bei einem
 bereits eingespielten Patch `-> aktuell: …`).
@@ -1787,7 +1867,7 @@ bereits eingespielten Patch `-> aktuell: …`).
 > muss also zum Server passen.
 
 <a id="patch-clientversion"></a>
-**Client-Version ändern (Original 3.3.5)** *(Nr. 87, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Client-Version ändern (Original 3.3.5)** *(Nr. 88, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Version im Format `x.y.z` (z. B. `3.3.6` oder `3.3.123`, höchstens
 7 Zeichen). Geändert werden die Version, die der Client im Spiel anzeigt, die
@@ -1797,7 +1877,7 @@ FileVersion-Text (`3, 3, 5, 12340`) wird zur reinen Version (`3.3.6`). Haupt-
 und Nebenversion müssen zusammen in das ProductVersion-Feld passen (z. B. `3.3`).
 
 <a id="patch-clientbuild"></a>
-**Build-Nummer ändern (Original 12340)** *(Nr. 88, Autor: MacWarrior)* 🔴 **[unsicher]**
+**Build-Nummer ändern (Original 12340)** *(Nr. 89, Autor: MacWarrior)* 🔴 **[unsicher]**
 
 Setzt eine neue Build-Nummer (6142 bis 65535, Original `12340`): die interne
 Build-Nummer, die sichtbare Build-Nummer und den vierten Teil der FileVersion
@@ -1826,7 +1906,7 @@ den Server.
 > offline.
 
 <a id="patch-clienttitle"></a>
-**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 89, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
+**Programmtitel ändern (Dateieigenschaften und Fenstertitel)** *(Nr. 90, Autor: MacWarrior (fixed by St0ny))* 🔴 **[unsicher]**
 
 Setzt FileDescription, InternalName und ProductName der Versionsressource, also
 das, was Windows z. B. in den Dateieigenschaften und im Task-Manager anzeigt.
@@ -1844,7 +1924,7 @@ ab, damit er stehen bleibt.
 > Titel.
 
 <a id="patch-clientdate"></a>
-**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 90, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Build-Datum ändern (Original Jun 24 2010)** *(Nr. 91, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Setzt das Build-Datum (Original `Jun 24 2010`) an allen drei Stellen in der EXE
 und das Jahr im Copyright-Vermerk, dazu die Uhrzeit. Die steht an zwei Stellen:
@@ -1864,7 +1944,7 @@ Patchens. Ist der Patch schon eingespielt, steht dort das aktuelle Datum samt
 Uhrzeit der `Wow.exe`.
 
 <a id="patch-clienticon"></a>
-**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 91, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
+**Programm-Icon ändern (Symbol der Wow.exe)** *(Nr. 92, Autor: St0ny (original by MacWarrior))* 🔴 **[unsicher]**
 
 Tauscht das Icon aus, das Windows für die `Wow.exe` anzeigt (Explorer,
 Taskleiste, Verknüpfungen). Der Patcher fragt nach dem Pfad einer `.ico`-
