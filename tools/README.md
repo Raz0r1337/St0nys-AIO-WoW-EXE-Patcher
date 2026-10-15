@@ -15,6 +15,7 @@ Notizen. Sie gehören nicht zum Patcher und kommen **nie nach `st0ny-main`**.
 | `raychk/` | Test der Kollisionsstrahlen gegen das echte TraceLine |
 | `rmcam/run_suite.sh` | Suite: alle Presets, jeder Patch einzeln, Erkennung, Zurücknehmen |
 | `rce/`, `rcechk/` | RCE-Fix v2: Umstiegstest v1 → v2 und Suche nach Patches, die in die geänderten Funktionen springen |
+| `dllchk/`, `awl/` | Emulation aller DLL-Lader: lädt jeder Lader seine DLL (auch zusammen mit Nr. 10)? `emu_loaders.py <Wow.exe>` |
 | `agent_*/` | Analysen und Prototypen der Hilfs-Agenten, mit Berichten (`*.md`) |
 | `lights/`, `outline/` | Analyse-Skripte und Berichte zu Lichtern, Shadern, Rahmen und d3d9 |
 | Rest | einmalige Bearbeitungs- und Prüfskripte (z. B. `e*.py`, `readme_*.py`), Commit-Nachrichten `msg*.txt`, Notizen |
