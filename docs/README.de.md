@@ -176,7 +176,7 @@ Link dazu steht direkt darunter.
 Vor der Sicherheitsabfrage zeigt der Patcher **Hinweise** an, gesperrt wird
 nichts: wenn ein Ergänzungs-Patch fehlt (z. B. brauchen die erweiterten
 Slider-Maxima die CVar-Unlocks), wenn ein Patch einen anderen überflüssig macht
-(Warden komplett abschalten ersetzt den RCE-Fix) und wenn gewählte Patches eine
+(der vollständige LUA-Unlock ersetzt den einfachen) und wenn gewählte Patches eine
 Warnung tragen – rot bei Bann-Gefahr, orange bei Patches, die auf öffentlichen
 Servern oder im Spiel noch ungetestet sind, und gelb bei vergrößerter
 `Wow.exe` (siehe [Hinweise](#hinweise)).
@@ -337,6 +337,7 @@ Ein Klick auf die Nummer eines Patches springt zu seiner Beschreibung.
 |---------------|-----------|------------|
 | 🟢 **[sicher]** | Im Spiel getestet und sicher nutzbar. | keine Warnung |
 | 🔴 **[unsicher]** | Bestätigte Bann-Gefahr: kann auf vielen Servern zu einem Bann führen. Nur auf Servern nutzen, die das erlauben. | rote Warnung |
+| 🟠 **[riskant]** | Wird auf manchen Servern geblockt. Im Zweifel die Regeln deines Servers prüfen. | orange Warnung |
 | 🟠 **[online ungetestet]** | Nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr: Niemand kann vorhersagen, wie der Server reagiert. Vorsicht, kann zu Kick/Bann führen. | orange Warnung |
 | 🟠 **[ingame ungetestet]** | Die Funktion ist im Spiel noch nicht geprüft: Niemand kann vorhersagen, wie das Spiel reagiert, möglicherweise verbuggt. | orange Warnung |
 | 🟠 **[ungetestet]** | Weder online noch ingame getestet. | orange Warnung |
@@ -370,7 +371,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix | 🔴 **[unsicher]** | Robinsch | – | – | – |
+| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix v2 [BETA] | 🟠 **[riskant - ingame ungetestet]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.de.md#patch-wardenoff) | Warden komplett abschalten, RCE-Fix | 🔴 **[unsicher]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.de.md#patch-scandll) | Scan.dll deaktivieren | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.de.md#patch-noserverpatch) | Client-Patches vom Server verbieten | 🟢 **[sicher]** | Kebabstorm | ✅ | – | ✅ |
@@ -402,7 +403,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [27](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom | – | ✅ | ✅ |
+| [27](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom (fixed by St0ny) | – | ✅ | ✅ |
 | [28](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [29](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (mod-voicechat) [ALPHA] *(Modul noch unfertig, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
@@ -517,12 +518,13 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   eckigen Klammern, und vor der Sicherheitsabfrage listet der Patcher die
   gewählten Patches mit Warnung noch einmal auf:
   - 🟢 **sicher** – im Spiel getestet, im Patcher ohne Warnung.
-  - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 4, 10, 11, 23–25, 41, 42, 45–50, 74 und 81–85 (rote Warnung).
+  - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 4, 11, 23–25, 41, 42, 45–50, 74 und 81–85 (rote Warnung).
+  - 🟠 **riskant** – wird auf manchen Servern geblockt: Nr. 10 (orange Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
     kann zu Kick/Bann führen: Nr. 26, 29, 39, 44, 51, 62, 68, 71–73 und 86
     (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 29, 44, 51, 62 und 86 (orange Warnung).
+    möglicherweise verbuggt: Nr. 10, 25, 26, 29, 44, 51, 62 und 86 (orange Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 50, 63, 64 und 74. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
@@ -576,12 +578,19 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   „Billy's_Wow.exe“ in diesem Patcher.
 - Danke auch an **MacWarrior**, der ebenfalls beim Zusammentragen der Patches
   geholfen und einige eigene Patches beigesteuert hat.
+- Danke an **Brady Russell** für seinen RCEPatcher v2.0, die Grundlage des
+  RCE-Fix v2 (Nr. [10](PATCHES.de.md#patch-rce)). Ich habe versucht, ihn zu
+  kontaktieren, leider ohne Erfolg. Sollte er nicht damit einverstanden sein,
+  dass sein Patch hier enthalten ist, kann er sich gerne melden – dann wird er
+  wieder entfernt.
 - Ein großes Dankeschön an **Stormhand**, **MacWarrior** und **Billy Hoyle** für
   die vielen Tests im Spiel – und an Stormhand ganz besonders dafür, den eigenen
   Warmane-Account riskiert zu haben, um herauszufinden, welche Patches „sicher“
   nutzbar sind. 😄
 - Danke an **Moroes**, der den Patch [#26](PATCHES.de.md#patch-globalsv)
   aufgespürt und mir zugespielt hat.
+- Danke an **Pogzur** dafür, RCEPatcher v2.0 (Grundlage des Patches
+  [#10](PATCHES.de.md#patch-rce)) aufgespürt und mir zugespielt zu haben.
 - Und natürlich danke an alle Autoren der Patches, die in der
   [Patch-Übersicht](#patch-übersicht) genannt sind.
 

@@ -162,28 +162,56 @@ it in its DLL. Here the four hooks live in a section of their own (`.glyph`,
 ## Security & privacy
 
 <a id="patch-rce"></a>
-**Remote code execution exploit fix** *(No. 10, Author: Robinsch)* 🔴 **[unsafe]**
+**Remote code execution exploit fix v2 [BETA]** *(No. 10, Author: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[risky - untested ingame]**
 
-Closes a vulnerability that could allow remote code execution through crafted
-packets: the `.zdata` section loses its execute permission and Warden modules
-are no longer loaded from the local cache. Warden itself keeps working.
+Closes security holes that let a malicious server run code on your PC. v2
+combines two fixes:
+
+- **RCEPatcher v2.0** by Brady Russell
+  ([bradyrussell/RCEPatcher2](https://github.com/bradyrussell/RCEPatcher2)),
+  7 places: the first one takes the execute permission away from the `.zdata`
+  section – the classic fix from RCEPatcher v1 by stoneharry. According to
+  the author, the other six close additional attack paths that get around
+  the `.zdata` fix. He will publish how these paths work only after a
+  disclosure period, so that as many players as possible can update first.
+- **Robinsch's fix** from v1: Warden modules are no longer loaded from the
+  local cache. Warden itself keeps working. RCEPatcher v2.0 does not contain
+  this place.
+
+I tried to contact Brady Russell, unfortunately without success. If he does not
+want his patch included here, he is welcome to get in touch and it will be
+removed.
 
 > [!WARNING]
-> Public servers can detect the change through Warden – there is a risk of a
-> ban on public servers.
+> Risky: some servers block this patch. If in doubt, check the rules of your
+> server.
 
 > [!NOTE]
-> "Disable Warden completely" (No. 11) closes the hole as well and makes this
-> patch unnecessary. If you select both, the patcher points it out; together
-> they do no harm.
+> According to Brady Russell, the new places turn off a few unused or rarely
+> used client features; login, character selection, combat, chat and addons
+> should not be affected. He has not played much with them himself, though,
+> and v2 has not been tested in game here either – hence [BETA]. The author
+> also says there are almost certainly more attack paths. The safest option is
+> to trust only servers you know.
+
+> [!NOTE]
+> The patcher still detects a `Wow.exe` with the previous RCE fix (v1) as
+> No. 10. If you select the same patches again, "patch again" (`Y`) gives it
+> v2.
+
+> [!NOTE]
+> "Disable Warden completely" (No. 11) closes the path through Warden modules
+> entirely. Whether that also covers the new paths of v2 is open as long as
+> the details are not published. For the best protection use both together.
 
 <a id="patch-wardenoff"></a>
 **Disable Warden completely, RCE fix** *(No. 11, Author: Robinsch)* 🔴 **[unsafe]**
 
 The client drops all Warden packets from the server (`SMSG_WARDEN_DATA`).
 Warden modules are code the server has the client execute – with this patch
-that is no longer possible at all, including future tricks. Makes the RCE fix
-(No. 10) unnecessary; both together do no harm, the patcher just points it out.
+that is no longer possible at all, including future tricks. Whether that also
+covers the new paths of the RCE fix v2 (No. 10) is open as long as their
+details are not published. For the best protection use both together.
 
 > [!WARNING]
 > The client no longer answers Warden. Servers with active Warden (e.g.
@@ -366,7 +394,7 @@ not included.
 ## DLL loaders
 
 <a id="patch-awesome"></a>
-**Enable AwesomeWotlkLib.dll support (client extensions by noname08662)** *(No. 27, Author: FrostAtom)* 🟡 **[safe - DLL risky]**
+**Enable AwesomeWotlkLib.dll support (client extensions by noname08662)** *(No. 27, Author: FrostAtom (fixed by St0ny))* 🟡 **[safe - DLL risky]**
 
 Allows `AwesomeWotlkLib.dll` to be loaded on client start. This DLL extends
 the client with additional features and improvements for private servers.
@@ -379,6 +407,9 @@ The loader sits at the start of the client's main fiber (right before
 that; the Lua function `ScanDLLStart` becomes a no-op and the Scan.dll flag is
 set to "passed". As a side effect the patch disables the Scan.dll mechanism
 (like No. 12). If the DLL is missing, WoW simply starts normally.
+
+Unlike FrostAtom's original, the loader calls `LoadLibraryA` directly. This
+way it also works together with the RCE fix v2 (No. 10).
 
 > [!WARNING]
 > The patch itself is safe, it only loads a DLL that is not included here.

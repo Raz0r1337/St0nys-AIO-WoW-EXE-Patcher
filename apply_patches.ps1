@@ -208,11 +208,14 @@ $TEXT = @{
         DllWarn       = 'Der Patch selbst ist sicher - die DLL nur auf Servern nutzen, die sie erlauben.'
         CheatHead     = 'ACHTUNG - unsicher, Bann-Gefahr: Diese Patches koennen von Servern als Cheat oder Botting gewertet werden:'
         CheatBan      = 'Das kann zu einem Bann fuehren - nur auf Servern nutzen, die das erlauben!'
+        BlockedHead   = 'VORSICHT - riskant: Diese Patches werden auf manchen Servern geblockt:'
+        BlockedWarn   = 'Im Zweifel die Regeln deines Servers pruefen.'
         PublicHead    = 'VORSICHT: Diese Patches sind nicht auf oeffentlichen Servern getestet - moegliche Bann-Gefahr:'
         PublicBan     = 'ACHTUNG: Ungetestet - niemand kann vorhersagen, wie der Server darauf reagiert. Das kann zu einem Kick oder Bann fuehren!'
         UntestedHead  = 'HINWEIS: Die Funktion dieser Patches ist im Spiel ungetestet - moeglicherweise verbuggt:'
         UntestedWarn  = 'ACHTUNG: Ungetestet - niemand kann vorhersagen, wie das Spiel darauf reagiert. Fehler oder Abstuerze sind moeglich!'
         TagBan        = 'unsicher'
+        TagBlocked    = 'riskant'
         TagPublic     = 'online ungetestet'
         TagGame       = 'ingame ungetestet'
         TagBoth       = 'ungetestet'
@@ -342,11 +345,14 @@ $TEXT = @{
         DllWarn       = 'The patch itself is safe - only use the DLL on servers that allow it.'
         CheatHead     = 'WARNING - unsafe, ban risk: servers may treat these patches as cheating or botting:'
         CheatBan      = 'This can lead to a ban - only use them on servers that allow it!'
+        BlockedHead   = 'CAUTION - risky: these patches get blocked on some servers:'
+        BlockedWarn   = 'If in doubt, check the rules of your server.'
         PublicHead    = 'CAUTION: These patches have not been tested on public servers - possible ban risk:'
         PublicBan     = 'WARNING: Untested - nobody can predict how the server will react. This may get you kicked or banned!'
         UntestedHead  = 'NOTE: These patches have not been tested in game - possibly buggy:'
         UntestedWarn  = 'WARNING: Untested - nobody can predict how the game will react. Bugs or crashes are possible!'
         TagBan        = 'unsafe'
+        TagBlocked    = 'risky'
         TagPublic     = 'untested online'
         TagGame       = 'untested ingame'
         TagBoth       = 'untested'
@@ -397,10 +403,12 @@ function PatchName($p, [switch]$NoTags) {
 
 # Einheitliche Warnungen (Warn-Codes): BanRisk = Bann-Gefahr (2),
 # PublicUntested = nicht auf oeffentlichen Servern getestet (3),
-# GameUntested = Funktion im Spiel ungetestet (4), dazu GrowsExe und DllRisky.
+# GameUntested = Funktion im Spiel ungetestet (4), Blocked = riskant, wird auf
+# manchen Servern geblockt (5), dazu GrowsExe und DllRisky.
 function PatchTags($p) {
     $tags = @()
     if ($p.BanRisk) { $tags += T 'TagBan' }
+    if ($p.Blocked) { $tags += T 'TagBlocked' }
     if ($p.PublicUntested -and $p.GameUntested) { $tags += T 'TagBoth' }
     elseif ($p.PublicUntested) { $tags += T 'TagPublic' }
     elseif ($p.GameUntested) { $tags += T 'TagGame' }
@@ -2455,7 +2463,7 @@ function Set-YearShift([int]$N) {
 #    DllRisky - optional: $true bei DLL-Ladern, deren DLL auf oeffentlichen
 #            Servern erkannt oder blockiert werden kann - der Patch selbst ist
 #            sicher (erzeugt einen gelben Hinweis)
-#    Warn-Codes - Patches ohne die drei folgenden Flags sind sicher (Code 1,
+#    Warn-Codes - Patches ohne die vier folgenden Flags sind sicher (Code 1,
 #            keine Warnung). Jedes Flag erzeugt eine Warnung in eckigen
 #            Klammern hinter dem Namen und einen Hinweis vor dem Patchen:
 #    BanRisk - optional: $true bei Bann-Gefahr (Code 2, roter Hinweis)
@@ -2464,6 +2472,8 @@ function Set-YearShift([int]$N) {
 #            (Code 3, oranger Hinweis)
 #    GameUntested - optional: $true, wenn die Funktion im Spiel ungetestet
 #            ist - moeglicherweise verbuggt (Code 4, oranger Hinweis)
+#    Blocked - optional: $true, wenn der Patch auf manchen Servern geblockt
+#            wird - riskant (Code 5, oranger Hinweis)
 #    Needs - optional: Ids von Patches, ohne die dieser nicht voll wirkt
 #            (erzeugt nur einen Hinweis, keine Sperre)
 #    PromptDe/PromptEn, Default, Check - optional, fuer Patches mit eigenem
@@ -2619,16 +2629,31 @@ $patches = @(
 
     # --- Sicherheit & Datenschutz ---
 
-    @{ Id = 'rce'; Cat = 'security'; On = $false; BanRisk = $true
-       Author = 'Robinsch'
-       De = 'Remote Code Execution Exploit Fix'
-       En = 'Remote code execution exploit fix'
+    @{ Id = 'rce'; Cat = 'security'; On = $false; Blocked = $true; GameUntested = $true
+       Author = 'Brady Russell (original by stoneharry / Robinsch)'
+       De = 'Remote Code Execution Exploit Fix v2 [BETA]'
+       En = 'Remote code execution exploit fix v2 [BETA]'
        Code = {
+        # v2 = die 7 Stellen aus RCEPatcher v2.0 von Brady Russell plus
+        # Robinschs Warden-Stelle aus v1. Eine Wow.exe mit v1 erkennt der
+        # Patcher weiter als rce (0x2A7 und 0x3D9D7C sind eigene Stellen).
+        # P0 (stoneharry, RCEPatcher v1): .zdata nicht mehr ausfuehrbar
+        # (Sektions-Flags E0 -> C0).
         Patch 0x2A7 @(0xC0)
+        # Robinsch: Warden-Module nicht aus dem lokalen Cache laden.
         Patch 0x3D9D7C @(0x90, 0x90)
+        # P1-P6 (Brady Russell): weitere Angriffswege, die den .zdata-Fix
+        # umgehen. Die Details veroeffentlicht der Autor erst nach einer
+        # Schutzfrist - die Bytes sind so uebernommen, wie er sie verteilt.
+        Patch 0x14A842 @(0x83, 0xFF, 0x50, 0x90, 0x90, 0x90)
+        Patch 0x14A85C @(0x83, 0xF8, 0x50, 0x7F, 0x5F)
+        Patch 0x364D40 @(0xEB)
+        Patch 0x46B8E0 @(0x33, 0xC0, 0xC3)
+        Patch 0x614A0 @(0x33, 0xC0, 0xC3)
+        Patch 0x46AC43 @(0x90, 0x90)
     }}
 
-    @{ Id = 'wardenoff'; Cat = 'security'; On = $false; Obsoletes = @('rce'); BanRisk = $true
+    @{ Id = 'wardenoff'; Cat = 'security'; On = $false; BanRisk = $true
        Author = 'Robinsch'
        De = 'Warden komplett abschalten, RCE-Fix'
        En = 'Disable Warden completely, RCE fix'
@@ -2638,7 +2663,9 @@ $patches = @(
         # zurueck. Damit kann der Server ueber Warden keinerlei Code mehr im
         # Client ausfuehren. Der Client antwortet aber auch nicht mehr auf
         # Warden - Server mit aktivem Warden koennen deshalb kicken.
-        # Macht den RCE-Fix (rce) ueberfluessig, beide zusammen schaden nicht.
+        # Ersetzt den RCE-Fix (rce) seit dessen v2 nicht mehr: Ob das auch die
+        # neuen Wege aus v2 abdeckt, ist offen, solange die Details nicht
+        # veroeffentlicht sind - fuer den besten Schutz beide zusammen.
         Patch 0x3D9C5B @(0x90, 0x90)
     }}
 
@@ -2853,7 +2880,7 @@ $patches = @(
     # --- DLL-Loader ---
 
     @{ Id = 'awesome'; Cat = 'dll'; On = $true; Needs = @('laa'); DllRisky = $true
-       Author = 'FrostAtom'
+       Author = 'FrostAtom (fixed by St0ny)'
        De = 'AwesomeWotlkLib.dll Unterstuetzung aktivieren (Client-Erweiterungen von noname08662)'
        En = 'Enable AwesomeWotlkLib.dll support (client extensions by noname08662)'
        NoteDe = 'benoetigt awesome_wotlk'
@@ -2868,9 +2895,13 @@ $patches = @(
         # Aufrufer (Lua ScanDLLStart, VA 0x4DCCF0) deshalb zu "return 0" wird -
         # der Scan.dll-Mechanismus ist damit abgeschaltet (wie bei "Scan.dll
         # deaktivieren"). Fehlt die DLL, startet WoW normal weiter.
+        # Angepasst (St0ny): Der Lader ruft LoadLibraryA direkt ueber die
+        # Importtabelle (call [0x9DF248]) statt ueber eine Ladefunktion des
+        # Clients (call 0x86C4E0 / add esp,4) - gleich lang, so laedt er die
+        # DLL auch zusammen mit dem RCE-Fix v2 (rce).
         Patch 0xABD0 @(0xE9, 0xDB, 0xA4, 0x0D, 0x00, 0x90, 0x90, 0x90)
         Patch 0xDC0F0 @(0xB8, 0x00, 0x00, 0x00, 0x00, 0xC3)
-        Patch 0xE50B0 @(0xB8, 0x01, 0x00, 0x00, 0x00, 0xA3, 0x74, 0xB4, 0xB6, 0x00, 0x68, 0xE0, 0x5C, 0x4E, 0x00, 0xE8, 0x1C, 0x68, 0x38, 0x00, 0x83, 0xC4, 0x04, 0x55, 0x8B, 0xEC, 0xE8, 0xA1, 0x10, 0xF2, 0xFF, 0xE9, 0x04, 0x5B, 0xF2, 0xFF, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0x41, 0x77, 0x65, 0x73, 0x6F, 0x6D, 0x65, 0x57, 0x6F, 0x74, 0x6C, 0x6B, 0x4C, 0x69, 0x62, 0x2E, 0x64, 0x6C, 0x6C, 0x00)
+        Patch 0xE50B0 @(0xB8, 0x01, 0x00, 0x00, 0x00, 0xA3, 0x74, 0xB4, 0xB6, 0x00, 0x68, 0xE0, 0x5C, 0x4E, 0x00, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0x90, 0x90, 0x55, 0x8B, 0xEC, 0xE8, 0xA1, 0x10, 0xF2, 0xFF, 0xE9, 0x04, 0x5B, 0xF2, 0xFF, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0x41, 0x77, 0x65, 0x73, 0x6F, 0x6D, 0x65, 0x57, 0x6F, 0x74, 0x6C, 0x6B, 0x4C, 0x69, 0x62, 0x2E, 0x64, 0x6C, 0x6C, 0x00)
     }}
 
     @{ Id = 'wotlkext'; Cat = 'dll'; On = $false; Needs = @('laa'); DllRisky = $true
@@ -4014,7 +4045,13 @@ glyphfix;2C5F90;56578BF16A00;1
 glyphfix;2C6880;568BF1837E6400741E8B46488B4E4450E80BB5FFFF85C075078BCEE8F0F6FFFFC74664000000008BCEE86206000033C03986B0000000C786D4000000000000000F95C05EC3;1
 glyphfix;2C9350;558BEC51837D0801;1
 rce;2A7;E0;1
+rce;614A0;558BEC;1
+rce;14A842;3B3DB0A5BE00;1
+rce;14A85C;83F8027D1F;1
+rce;364D40;74;1
 rce;3D9D7C;750A;1
+rce;46AC43;760C;1
+rce;46B8E0;558BEC;1
 wardenoff;3D9C5B;7406;1
 scandll;5F4D56;5363;1
 scandll;5F4D62;5363;1
@@ -5245,6 +5282,14 @@ if ($cheat.Count -gt 0) {
     Say (T 'CheatHead') 'Red'
     foreach ($m in $cheat) { Say "  - $m" 'Red' }
     Say (T 'CheatBan') 'Red'
+}
+$blocked = @()
+foreach ($p in $chosen) { if ($p.Blocked) { $blocked += PatchRef $p } }
+if ($blocked.Count -gt 0) {
+    Write-Host ''
+    Say (T 'BlockedHead') 'DarkYellow'
+    foreach ($m in $blocked) { Say "  - $m" 'DarkYellow' }
+    Say (T 'BlockedWarn') 'DarkYellow'
 }
 $grow = @()
 foreach ($p in $chosen) { if ($p.GrowsExe) { $grow += PatchRef $p } }
