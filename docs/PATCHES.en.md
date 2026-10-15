@@ -1399,6 +1399,14 @@ the 4 nearest point lights (torches, spells, lights on models). The patch
 makes the game collect the 8 nearest and pass them on to the graphics. It is
 the exe groundwork for new shaders that show more lights.
 
+**Requires** the new shaders from
+[WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader): unpack
+`patch-5.MPQ.zip` from the [releases page](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases)
+into the game's `Data` folder so that
+`Data\patch-5.MPQ\Shaders\Vertex\vs_3_0\Diffuse_T1.bls` exists. The shaders
+only take effect with `gxApi d3d9` and `fixedFunction 0`. Without them the
+extra lights are only visible on the path without shaders (`fixedFunction 1`).
+
 > [!WARNING]
 > **BETA** – this patch is still being tested and is therefore only in the dev
 > branches for now, not in `st0ny-main`.

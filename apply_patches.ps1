@@ -7724,8 +7724,9 @@ $patches = @(
        Author = 'St0ny'
        De = 'Mehr Lichter: 8 statt 4 Punktlichter (Grundlage fuer neue Shader) [BETA]'
        En = 'More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA]'
-       NoteDe = 'sichtbar nur mit neuen Shadern oder mit fixedFunction 1'
-       NoteEn = 'visible only with new shaders or with fixedFunction 1'
+       NoteDe = 'benoetigt WoW-lights-patch-shader - patch-5.MPQ.zip aus dem Release in den Data-Ordner entpacken'
+       NoteEn = 'requires WoW-lights-patch-shader - unpack patch-5.MPQ.zip from the release into the Data folder'
+       Url = 'https://github.com/Raz0r1337/WoW-lights-patch-shader/releases'
        Code = {
         # Eigene Sektion (.lght), siehe Add-MoreLights.
         Add-MoreLights

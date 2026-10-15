@@ -537,7 +537,7 @@ name, and before patching it lists them once more.
 | [66](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe - exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [67](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [68](PATCHES.en.md#patch-outline) | Outline for target and mouseover [BETA] *(gxApi d3d9 only, asks for the settings)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
-| [69](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA] *(visible only with new shaders or with fixedFunction 1)* | 🟠 **[untested online - exe grows]** | St0ny | – | – | – |
+| [69](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA] *(requires [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – unpack `patch-5.MPQ.zip` from the release into the `Data` folder)* | 🟠 **[untested online - exe grows]** | St0ny | – | – | – |
 | [70](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen [BETA] | 🟠 **[untested online]** | St0ny | – | – | – |
 
 > [!WARNING]

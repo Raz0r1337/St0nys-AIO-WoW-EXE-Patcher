@@ -1451,6 +1451,14 @@ die 4 nächsten Punktlichter ab (Fackeln, Zauber, Lichter an Modellen). Der
 Patch lässt das Spiel die 8 nächsten sammeln und an die Grafik weitergeben.
 Er ist die Exe-Grundlage für neue Shader, die mehr Lichter darstellen.
 
+**Benötigt** die neuen Shader aus
+[WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader): `patch-5.MPQ.zip`
+von der [Releases-Seite](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases)
+in den `Data`-Ordner des Spiels entpacken, sodass es
+`Data\patch-5.MPQ\Shaders\Vertex\vs_3_0\Diffuse_T1.bls` gibt. Die Shader
+wirken nur mit `gxApi d3d9` und `fixedFunction 0`. Ohne sie sind die
+zusätzlichen Lichter nur im Weg ohne Shader (`fixedFunction 1`) zu sehen.
+
 > [!WARNING]
 > **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
 > den dev-Zweigen, nicht in `st0ny-main`.

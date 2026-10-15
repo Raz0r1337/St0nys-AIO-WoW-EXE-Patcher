@@ -560,7 +560,7 @@ dem Patchen listet er sie noch einmal auf.
 | [66](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher - Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [67](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟡 **[sicher - Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [68](PATCHES.de.md#patch-outline) | Umrandung für Ziel und Mouseover [BETA] *(nur gxApi d3d9, fragt die Einstellungen ab)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
-| [69](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) [BETA] *(sichtbar nur mit neuen Shadern oder mit fixedFunction 1)* | 🟠 **[online ungetestet - Exe wird größer]** | St0ny | – | – | – |
+| [69](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) [BETA] *(benötigt [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – `patch-5.MPQ.zip` aus dem Release in den `Data`-Ordner entpacken)* | 🟠 **[online ungetestet - Exe wird größer]** | St0ny | – | – | – |
 | [70](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist [BETA] | 🟠 **[online ungetestet]** | St0ny | – | – | – |
 
 > [!WARNING]
