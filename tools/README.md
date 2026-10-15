@@ -14,7 +14,7 @@ Notizen. Sie gehören nicht zum Patcher und kommen **nie nach `st0ny-main`**.
 | `tm/` | Emulator `emu2.py` (Unicorn) und Tests einzelner Patches |
 | `raychk/` | Test der Kollisionsstrahlen gegen das echte TraceLine |
 | `rmcam/run_suite.sh` | Suite: alle Presets, jeder Patch einzeln, Erkennung, Zurücknehmen |
-| `rce/`, `rcechk/` | RCE-Fix v2: Umstiegstest v1 → v2 und Suche nach Patches, die in die geänderten Funktionen springen |
+| `rce/`, `rcechk/` | RCE-Fix v2: Umstiegstest v1 → v2 (`itest_rce.sh`) und die Verträglichkeitsprüfung aller Patches: Stellen in den geänderten Funktionen (`sites_in_rce.py`), Sprünge/Aufrufe aus neuem Code (`xref_rce.py`), 32-Bit-Zeiger (`ptrscan.py`), Aufrufgraph bis Tiefe N (`cgdepth.py`), Verweise in `.zdata` (`zdata_refs.py`) |
 | `dllchk/`, `awl/` | Emulation aller DLL-Lader: lädt jeder Lader seine DLL (auch zusammen mit Nr. 10)? `emu_loaders.py <Wow.exe>` |
 | `agent_*/` | Analysen und Prototypen der Hilfs-Agenten, mit Berichten (`*.md`) |
 | `lights/`, `outline/` | Analyse-Skripte und Berichte zu Lichtern, Shadern, Rahmen und d3d9 |
