@@ -8107,14 +8107,15 @@ $patches = @(
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
 # Warmane getestet (Nr. 9, 66 und 67 vergroessern die Wow.exe); dazu der
-# Lexara-Lader (Nr. 30, Patch sicher, DLL riskant) und die Licht-Patches
-# Nr. 69 und 70 (im Spiel und online getestet, sicher; Nr. 69 vergroessert
-# die Wow.exe ebenfalls). Im Menue mit R, ueber -Select reforged; gilt beim
-# ersten Start und fuer neue Patches.
+# Lexara- und der Lux-Lader (Nr. 30 und 31, Patch sicher, DLL riskant; Lexara
+# laedt Lux ohnehin mit, der Lux-Lader auch ohne Lexara) und die
+# Licht-Patches Nr. 69 und 70 (im Spiel und online getestet, sicher; Nr. 69
+# vergroessert die Wow.exe ebenfalls). Im Menue mit R, ueber -Select
+# reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',
     'scandll', 'noserverpatch', 'nosurvey', 'skipbnet', 'skiprdp', 'nohttp',
-    'glue', 'lexara',
+    'glue', 'lexara', 'lux',
     'areatrigger', 'swing', 'npcanim', 'spellanim', 'ghostattack', 'naked',
     'forcereaction', 'mail', 'deadchat', 'level101',
     'farclip', 'horizon', 'envdetail', 'grounddist', 'sliders', 'goscale',

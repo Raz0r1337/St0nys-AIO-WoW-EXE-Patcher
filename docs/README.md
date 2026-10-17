@@ -280,11 +280,14 @@ rated safe (🟢), all tested by Stormhand for several hours on Warmane – **th
 preset is safe** and can be used on public servers as well. Three of them
 (No. 9, 66 and 67) make `Wow.exe` larger; that was no problem on Warmane, but
 other servers may check the file size. On top of that come the Lexara loader
-(No. 30) for Stormhand's HD fonts and the light patches No. 69 and 70. For the
-Lexara loader the patch itself is safe, but `Lexara.dll` may be detected or
-blocked on public servers; without `Lexara.dll` in the WoW folder it does
-nothing. The light patches are tested in game and online and are safe.
-No. 69 makes `Wow.exe` larger as well and only takes effect with the shaders
+(No. 30) for Stormhand's HD fonts, the Lux loader (No. 31) for the
+LuxShoulderCam shoulder camera and the light patches No. 69 and 70. For both
+loaders the patch itself is safe, but the loaded DLL may be detected or
+blocked on public servers; without the DLL in the WoW folder they do nothing.
+Lexara loads `LuxShoulderCam.dll` by itself, the Lux loader also loads it
+without Lexara – both together do no harm. The light patches are tested in
+game and online and are safe. No. 69 makes `Wow.exe` larger as well and only
+takes effect with the shaders
 from [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases). The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it.
 
@@ -493,7 +496,7 @@ name, and before patching it lists them once more.
 | [28](PATCHES.en.md#patch-awesome) | Load AwesomeWotlkLib.dll at startup (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom (fixed by St0ny) | – | ✅ | ✅ |
 | [29](PATCHES.en.md#patch-wotlkext) | Load WotLKExtensions.dll at startup (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
-| [31](PATCHES.en.md#patch-lux) | Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) *(requires [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – not needed with Lexara (No. 30))* | 🟡 **[safe - DLL risky]** | St0ny | – | – | – |
+| [31](PATCHES.en.md#patch-lux) | Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) *(requires [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – not needed with Lexara (No. 30))* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
 | [32](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (voice chat by St0ny) [BETA] *(requires [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat) – module not finished yet)* | 🟠 **[untested]** | St0ny | – | – | – |
 
 #### Gameplay fixes
