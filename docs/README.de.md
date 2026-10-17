@@ -293,12 +293,15 @@ sichere Patches (🟢), die Stormhand alle mehrere Stunden auf Warmane getestet
 hat – **das Preset ist sicher** und kann auch auf öffentlichen Servern
 verwendet werden. Drei davon (Nr. 9, 65 und 66) vergrößern die `Wow.exe`; auf
 Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen.
-Dazu kommen der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften und die
-Licht-Patches Nr. 67 und 68. Beim Lexara-Lader ist der Patch selbst sicher,
-die `Lexara.dll` kann auf öffentlichen Servern aber erkannt oder blockiert
-werden; ohne `Lexara.dll` im WoW-Ordner bewirkt er nichts. Die Licht-Patches
-sind im Spiel und online getestet und sicher. Nr. 67 vergrößert die
-`Wow.exe` ebenfalls und wirkt erst mit den Shadern aus
+Dazu kommen der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften, der
+Lux-Lader (Nr. 31) für die Schulterkamera LuxShoulderCam und die
+Licht-Patches Nr. 67 und 68. Bei den beiden Ladern ist der Patch selbst
+sicher, die geladene DLL kann auf öffentlichen Servern aber erkannt oder
+blockiert werden; ohne die DLL im WoW-Ordner bewirken sie nichts. Lexara
+lädt die `LuxShoulderCam.dll` selbst mit, der Lux-Lader lädt sie auch ohne
+Lexara – beide zusammen schaden nicht. Die Licht-Patches sind im Spiel und
+online getestet und sicher. Nr. 67 vergrößert die `Wow.exe` ebenfalls und
+wirkt erst mit den Shadern aus
 [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases).
 Welche Patches dazugehören, zeigt die Spalte „Reforged“ in der
 [Patch-Übersicht](#patch-übersicht).
@@ -514,7 +517,7 @@ dem Patchen listet er sie noch einmal auf.
 | [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom (fixed by St0ny) | – | ✅ | ✅ |
 | [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.de.md#patch-lexara) | Lexara.dll beim Start laden (HD-Schriften von Stormhand) *(benötigt [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – `dinput8.dll` in `Lexara.dll` umbenennen)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
-| [31](PATCHES.de.md#patch-lux) | LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) *(benötigt [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – mit Lexara (Nr. 30) nicht nötig)* | 🟡 **[sicher - DLL riskant]** | St0ny | – | – | – |
+| [31](PATCHES.de.md#patch-lux) | LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) *(benötigt [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – mit Lexara (Nr. 30) nicht nötig)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
 
 #### Gameplay-Fixes
 
