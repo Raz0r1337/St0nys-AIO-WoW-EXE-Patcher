@@ -244,10 +244,11 @@ after their name, with the link right below.
 
 Before the confirmation prompt the patcher shows **notes** – nothing is blocked:
 when a companion patch is missing (e.g. the extended slider maximums need the
-CVar unlocks), when one patch makes another unnecessary (disabling Warden
-completely replaces the RCE fix) and when selected patches carry a warning –
-red for ban risk, orange for patches that are still untested on public
-servers or in game, and yellow for a larger `Wow.exe` (see [Notes](#notes)).
+CVar unlocks), when one patch makes another unnecessary (the complete LUA
+unlock replaces the basic one) and when selected patches carry a warning –
+red for ban risk, orange for patches that get blocked on some servers or are
+still untested on public servers or in game, and yellow for a larger
+`Wow.exe` (see [Notes](#notes)).
 
 ### The selection is remembered
 
@@ -275,10 +276,13 @@ together by Stormhand, and the default selection. It contains patches
 rated safe (🟢), all tested by Stormhand for several hours on Warmane – **the
 preset is safe** and can be used on public servers as well. Three of them
 (No. 9, 65 and 66) make `Wow.exe` larger; that was no problem on Warmane, but
-other servers may check the file size. On top of that comes the Lexara loader
-(No. 30) for Stormhand's HD fonts. The patch itself is safe, but `Lexara.dll`
-may be detected or blocked on public servers; without `Lexara.dll` in the WoW
-folder it does nothing. The "Reforged" column in the
+other servers may check the file size. On top of that come the Lexara loader
+(No. 30) for Stormhand's HD fonts and the light patches No. 67 and 68. For the
+Lexara loader the patch itself is safe, but `Lexara.dll` may be detected or
+blocked on public servers; without `Lexara.dll` in the WoW folder it does
+nothing. The light patches are tested in game and online and are safe.
+No. 67 makes `Wow.exe` larger as well and only takes effect with the shaders
+from [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases). The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it.
 
 The preset "Billy's_Wow.exe" (key `B`) is Billy Hoyle's patch set. The
@@ -416,6 +420,7 @@ Click the number of a patch to jump to its description.
 |--------|---------|----------------|
 | 🟢 **[safe]** | Tested in game and safe to use. | no warning |
 | 🔴 **[unsafe]** | Confirmed ban risk: can lead to a ban on many servers. Only use it on servers that allow it. | red warning |
+| 🟠 **[risky]** | Gets blocked on some servers. If in doubt, check the rules of your server. | orange warning |
 | 🟠 **[untested online]** | Not tested on public servers, possible ban risk: nobody can predict how the server will react. Careful, it may get you kicked or banned. | orange warning |
 | 🟠 **[untested ingame]** | The function has not been checked in game yet: nobody can predict how the game will react, possibly buggy. | orange warning |
 | 🟠 **[untested]** | Neither tested online nor ingame. | orange warning |
@@ -449,7 +454,7 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix | 🔴 **[unsafe]** | Robinsch | – | – | – |
+| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix v2 | 🟠 **[risky - untested online]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.en.md#patch-wardenoff) | Disable Warden completely, RCE fix | 🔴 **[unsafe]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.en.md#patch-scandll) | Disable Scan.dll | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.en.md#patch-noserverpatch) | Disallow client patches from the server | 🟢 **[safe]** | Kebabstorm | ✅ | – | ✅ |
@@ -482,7 +487,7 @@ name, and before patching it lists them once more.
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.en.md#patch-wowoptimize) | Load wow_optimize.dll at startup (performance optimizer by SUPREMATIST) *(requires [wow_optimize](https://github.com/suprepupre/wow-optimize) – only `wow_optimize.dll`, without `version.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | – | – | ✅ |
-| [28](PATCHES.en.md#patch-awesome) | Load AwesomeWotlkLib.dll at startup (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom | – | ✅ | ✅ |
+| [28](PATCHES.en.md#patch-awesome) | Load AwesomeWotlkLib.dll at startup (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom (fixed by St0ny) | – | ✅ | ✅ |
 | [29](PATCHES.en.md#patch-wotlkext) | Load WotLKExtensions.dll at startup (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
 | [31](PATCHES.en.md#patch-lux) | Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) *(requires [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – not needed with Lexara (No. 30))* | 🟡 **[safe - DLL risky]** | St0ny | – | – | – |
@@ -531,47 +536,49 @@ name, and before patching it lists them once more.
 | [64](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
 | [65](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe - exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [66](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
+| [67](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) *(requires [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – unpack `patch-5.MPQ.zip` from the release into the `Data` folder)* | 🟡 **[safe - exe grows]** | St0ny | ✅ | – | – |
+| [68](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen | 🟢 **[safe]** | St0ny | ✅ | – | – |
 
 #### Interface & comfort
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [67](PATCHES.en.md#patch-tracker) | Auto-sort quest tracker | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
-| [68](PATCHES.en.md#patch-worldmap) | Advanced world map enabled by default | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
-| [69](PATCHES.en.md#patch-castbars) | Cast bars on all frames | 🟢 **[safe]** | Kebabstorm | ✅ | ✅ | ✅ |
-| [70](PATCHES.en.md#patch-emblems) | Retail guild emblems: selection extended from 170 to 196 *(requires [Patch-G](https://discord.com/channels/407664041016688662/1541873346608889936))* | 🟠 **[untested online]** | MacWarrior | – | – | ✅ |
-| [71](PATCHES.en.md#patch-flash) | FlashWindow patch *(requires the [FlashWindow addon](https://github.com/noname08662/awesome_wotlk/tree/main/addons/Flash))* | 🟢 **[safe]** | Kebabstorm | – | ✅ | ✅ |
-| [72](PATCHES.en.md#patch-charrandom) | Character creation: do not randomize the appearance automatically | 🟢 **[safe]** | Alyst3r (0x539wowmod) | ✅ | – | – |
-| [73](PATCHES.en.md#patch-lootopen) | Loot window stays open while moving | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
-| [74](PATCHES.en.md#patch-showlevel) | Real level instead of "??" for enemies 10+ levels above you *(bosses still show "??" – see No. 75)* | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
-| [75](PATCHES.en.md#patch-showlevelboss) | Real level for bosses too instead of "??" (extension to No. 74) | 🟠 **[untested online]** | St0ny | – | – | – |
-| [76](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe - exe grows]** | tb (ported by St0ny) | – | – | ✅ |
-| [77](PATCHES.en.md#patch-bubblerange) | Increase the chat bubble range (original 25 yards) *(asks for the value)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [69](PATCHES.en.md#patch-tracker) | Auto-sort quest tracker | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
+| [70](PATCHES.en.md#patch-worldmap) | Advanced world map enabled by default | 🟢 **[safe]** | unknown | ✅ | – | ✅ |
+| [71](PATCHES.en.md#patch-castbars) | Cast bars on all frames | 🟢 **[safe]** | Kebabstorm | ✅ | ✅ | ✅ |
+| [72](PATCHES.en.md#patch-emblems) | Retail guild emblems: selection extended from 170 to 196 *(requires [Patch-G](https://discord.com/channels/407664041016688662/1541873346608889936))* | 🟠 **[untested online]** | MacWarrior | – | – | ✅ |
+| [73](PATCHES.en.md#patch-flash) | FlashWindow patch *(requires the [FlashWindow addon](https://github.com/noname08662/awesome_wotlk/tree/main/addons/Flash))* | 🟢 **[safe]** | Kebabstorm | – | ✅ | ✅ |
+| [74](PATCHES.en.md#patch-charrandom) | Character creation: do not randomize the appearance automatically | 🟢 **[safe]** | Alyst3r (0x539wowmod) | ✅ | – | – |
+| [75](PATCHES.en.md#patch-lootopen) | Loot window stays open while moving | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
+| [76](PATCHES.en.md#patch-showlevel) | Real level instead of "??" for enemies 10+ levels above you *(bosses still show "??" – see No. 77)* | 🟠 **[untested online]** | tb (ported by St0ny) | – | – | – |
+| [77](PATCHES.en.md#patch-showlevelboss) | Real level for bosses too instead of "??" (extension to No. 76) | 🟠 **[untested online]** | St0ny | – | – | – |
+| [78](PATCHES.en.md#patch-holdrepeat) | Hold action buttons to repeat | 🔴 **[unsafe - exe grows]** | tb (ported by St0ny) | – | – | ✅ |
+| [79](PATCHES.en.md#patch-bubblerange) | Increase the chat bubble range (original 25 yards) *(asks for the value)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 
 #### Window, mouse & camera
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [78](PATCHES.en.md#patch-window) | Windowed mode by default *(starts as a small window in the middle of the desktop – maximized only together with No. 79)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
-| [79](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 78)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
-| [80](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [81](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [80](PATCHES.en.md#patch-window) | Windowed mode by default *(starts as a small window in the middle of the desktop – maximized only together with No. 81)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [81](PATCHES.en.md#patch-maximize) | Maximized window by default *(only works together with No. 80)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [82](PATCHES.en.md#patch-windowfix) | No black screen when switching to windowed mode | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [83](PATCHES.en.md#patch-mouse) | Mouse flicker / camera jump fix | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 
 #### Sound
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [82](PATCHES.en.md#patch-sound) | Optimize sound settings *(requires [OpenAL](https://github.com/kcat/openal-soft), otherwise the settings have no effect)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [84](PATCHES.en.md#patch-sound) | Optimize sound settings *(requires [OpenAL](https://github.com/kcat/openal-soft), otherwise the settings have no effect)* | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 
 #### Client info: version, build, title, date, icon
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [83](PATCHES.en.md#patch-clientversion) | Change client version (original 3.3.5) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
-| [84](PATCHES.en.md#patch-clientbuild) | Change build number (original 12340) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
-| [85](PATCHES.en.md#patch-clienttitle) | Change program title (file properties and window title) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior (fixed by St0ny) | – | – | – |
-| [86](PATCHES.en.md#patch-clientdate) | Change build date (original Jun 24 2010) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
-| [87](PATCHES.en.md#patch-clienticon) | Change program icon (icon of Wow.exe) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
+| [85](PATCHES.en.md#patch-clientversion) | Change client version (original 3.3.5) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
+| [86](PATCHES.en.md#patch-clientbuild) | Change build number (original 12340) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior | – | – | – |
+| [87](PATCHES.en.md#patch-clienttitle) | Change program title (file properties and window title) *(asks for the value)* | 🔴 **[unsafe]** | MacWarrior (fixed by St0ny) | – | – | – |
+| [88](PATCHES.en.md#patch-clientdate) | Change build date (original Jun 24 2010) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
+| [89](PATCHES.en.md#patch-clienticon) | Change program icon (icon of Wow.exe) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
 
 </details>
 
@@ -597,14 +604,15 @@ clicking the number of a patch takes you straight to its description.
   in square brackets, and before the confirmation prompt the patcher lists the
   selected patches with a warning once more:
   - 🟢 **safe** – tested in game, no warning in the patcher.
-  - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 10, 11, 23–25,
-    43, 44, 47–52, 76 and 83–87 (red warning).
+  - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 11, 23–25,
+    43, 44, 47–52, 78 and 85–89 (red warning).
+  - 🟠 **risky** – gets blocked on some servers: No. 10 (orange warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 26, 31, 41, 46, 53, 64, 70 and 73–75 (orange warning).
+    you kicked or banned: No. 10, 26, 41, 46, 53, 64, 72 and 75–77 (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 31, 46, 53 and 64 (orange warning).
+    possibly buggy: No. 25, 26, 46, 53 and 64 (orange warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 52,
-    65, 66 and 76. This does not mean a certain ban, but it is a risk: some
+    65–67 and 78. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
     the file size.
   - 🟡 **DLL risky** – the patch itself is safe, but it loads a DLL that may be
@@ -616,7 +624,7 @@ clicking the number of a patch takes you straight to its description.
   anyway" WoW starts normally. A new signature that Windows trusts is only
   issued by certificate authorities with identity verification – you cannot
   get one for a modified Blizzard file. The patches that append a section
-  (No. 9, 52, 65, 66 and 76) also remove the reference to the
+  (No. 9, 52, 65–67 and 78) also remove the reference to the
   signature from the header: the new section lies behind the signature, and
   some tools would otherwise report the file as damaged. The signature bytes
   themselves stay untouched, and removing the patches restores the original
@@ -655,11 +663,17 @@ clicking the number of a patch takes you straight to its description.
   contributed some of his own.
 - Thanks also to **Stormhand** for the permission to include his
   LuxShoulderCam.
+- Thanks to **Brady Russell** for his RCEPatcher v2.0, the basis of the RCE
+  fix v2 (No. [10](PATCHES.en.md#patch-rce)). I tried to contact him,
+  unfortunately without success. If he does not want his patch included here,
+  he is welcome to get in touch and it will be removed.
 - A big thank you to **Stormhand**, **MacWarrior** and **Billy Hoyle** for all
   the testing in game – and to Stormhand in particular for risking their own
   Warmane account to find out which patches are "safe" to use. 😄
 - Thanks to **Moroes**, who tracked down patch
   [#26](PATCHES.en.md#patch-globalsv) and passed it on to me.
+- Thanks to **Pogzur**, who tracked down RCEPatcher v2.0 (the basis of patch
+  [#10](PATCHES.en.md#patch-rce)) and passed it on to me.
 - And of course thanks to all patch authors named in the
   [patch overview](#patch-overview).
 
