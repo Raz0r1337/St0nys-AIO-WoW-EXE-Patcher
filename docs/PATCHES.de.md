@@ -165,7 +165,7 @@ per DLL. Hier stecken die vier Hooks in einer eigenen Sektion (`.glyph`,
 ## Sicherheit & Datenschutz
 
 <a id="patch-rce"></a>
-**Remote Code Execution Exploit Fix v2 [BETA]** *(Nr. 10, Autor: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[riskant - ingame ungetestet]**
+**Remote Code Execution Exploit Fix v2** *(Nr. 10, Autor: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[riskant - online ungetestet]**
 
 Schließt Sicherheitslücken, über die ein bösartiger Server Code auf deinem PC
 ausführen kann. v2 vereint zwei Fixes:
@@ -194,9 +194,10 @@ gerne melden – dann wird er wieder entfernt.
 > Laut Brady Russell schalten die neuen Stellen ein paar ungenutzte oder selten
 > genutzte Funktionen des Clients ab; Login, Charakterauswahl, Kampf, Chat und
 > Addons sollten nicht betroffen sein. Er hat damit selbst aber noch wenig
-> gespielt, und auch hier ist die v2 im Spiel noch ungetestet – deshalb
-> [BETA]. Außerdem gibt es laut Autor sehr wahrscheinlich noch weitere
-> Angriffswege. Am sichersten ist es, nur Servern zu vertrauen, die du kennst.
+> gespielt. Im Spiel ist die v2 hier inzwischen getestet, auf öffentlichen
+> Servern noch nicht. Außerdem gibt es laut Autor sehr wahrscheinlich noch
+> weitere Angriffswege. Am sichersten ist es, nur Servern zu vertrauen, die du
+> kennst.
 
 > [!NOTE]
 > Eine `Wow.exe` mit dem bisherigen RCE-Fix (v1) erkennt der Patcher weiterhin
@@ -1444,7 +1445,7 @@ So funktioniert es:
 > Patcher die zuletzt angehängte Sektion, statt eine neue anzulegen.
 
 <a id="patch-lights"></a>
-**Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) [BETA]** *(Nr. 69, Autor: St0ny)* 🟠 **[online ungetestet - Exe wird größer]**
+**Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader)** *(Nr. 69, Autor: St0ny)* 🟡 **[sicher - Exe wird größer]**
 
 Im Original bekommt jedes Modell und jedes Gebäude neben der Sonne höchstens
 die 4 nächsten Punktlichter ab (Fackeln, Zauber, Lichter an Modellen). Der
@@ -1458,10 +1459,6 @@ in den `Data`-Ordner des Spiels entpacken, sodass es
 `Data\patch-5.MPQ\Shaders\Vertex\vs_3_0\Diffuse_T1.bls` gibt. Die Shader
 wirken nur mit `gxApi d3d9` und `fixedFunction 0`. Ohne sie sind die
 zusätzlichen Lichter nur im Weg ohne Shader (`fixedFunction 1`) zu sehen.
-
-> [!WARNING]
-> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
-> den dev-Zweigen, nicht in `st0ny-main`.
 
 So funktioniert es:
 - Die 4 nächsten Lichter bleiben wie bisher an ihrem Platz, Spiel und
@@ -1522,7 +1519,7 @@ Freier Platz: alles 0, Abschwächung x = 1 (wie beim Original für c28–c36).
 > einen eigenen Datenweg.
 
 > [!TIP]
-> Zum Testen am besten zusammen mit Nr. 70: Ohne ihn schaltet der Client das
+> Am besten zusammen mit Nr. 70 nutzen: Ohne ihn schaltet der Client das
 > Licht einer Quelle ab, sobald die Quelle aus dem Bild gedreht wird – auch auf
 > Figuren, die noch zu sehen sind.
 
@@ -1532,16 +1529,12 @@ Freier Platz: alles 0, Abschwächung x = 1 (wie beim Original für c28–c36).
 > Patcher die zuletzt angehängte Sektion, statt eine neue anzulegen.
 
 <a id="patch-lightstay"></a>
-**Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist [BETA]** *(Nr. 70, Autor: St0ny)* 🟠 **[online ungetestet]**
+**Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist** *(Nr. 70, Autor: St0ny)* 🟢 **[sicher]**
 
 Behebt einen Fehler des Original-Clients: Dreht man die Kamera so, dass eine
 Lichtquelle (z. B. eine Fackel) aus dem Bild rutscht, verschwindet ihr Licht
 auch auf allem, was noch zu sehen ist – etwa auf der eigenen Figur direkt
 daneben. Das passiert mit und ohne Shader.
-
-> [!WARNING]
-> **BETA** – dieser Patch ist noch in der Testphase und deshalb vorerst nur in
-> den dev-Zweigen, nicht in `st0ny-main`.
 
 Ursache: Punktlichter hängen an Modellen. Ihr Zeitstempel wird nur gesetzt,
 wenn das Modell im aktuellen Bild gezeichnet wird (VA `0x828B9C`); Modelle

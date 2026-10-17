@@ -6596,10 +6596,10 @@ $patches = @(
 
     # --- Sicherheit & Datenschutz ---
 
-    @{ Id = 'rce'; Cat = 'security'; On = $false; Blocked = $true; GameUntested = $true
+    @{ Id = 'rce'; Cat = 'security'; On = $false; Blocked = $true; PublicUntested = $true
        Author = 'Brady Russell (original by stoneharry / Robinsch)'
-       De = 'Remote Code Execution Exploit Fix v2 [BETA]'
-       En = 'Remote code execution exploit fix v2 [BETA]'
+       De = 'Remote Code Execution Exploit Fix v2'
+       En = 'Remote code execution exploit fix v2'
        Code = {
         # v2 = die 7 Stellen aus RCEPatcher v2.0 von Brady Russell plus
         # Robinschs Warden-Stelle aus v1. Eine Wow.exe mit v1 erkennt der
@@ -7720,10 +7720,10 @@ $patches = @(
         Set-OutlineOptions $script:VALUES['outline']
     }}
 
-    @{ Id = 'lights'; Cat = 'graphics'; On = $false; GrowsExe = $true; PublicUntested = $true
+    @{ Id = 'lights'; Cat = 'graphics'; On = $false; GrowsExe = $true
        Author = 'St0ny'
-       De = 'Mehr Lichter: 8 statt 4 Punktlichter (Grundlage fuer neue Shader) [BETA]'
-       En = 'More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA]'
+       De = 'Mehr Lichter: 8 statt 4 Punktlichter (Grundlage fuer neue Shader)'
+       En = 'More lights: 8 instead of 4 point lights (groundwork for new shaders)'
        NoteDe = 'benoetigt WoW-lights-patch-shader - patch-5.MPQ.zip aus dem Release in den Data-Ordner entpacken'
        NoteEn = 'requires WoW-lights-patch-shader - unpack patch-5.MPQ.zip from the release into the Data folder'
        Url = 'https://github.com/Raz0r1337/WoW-lights-patch-shader/releases'
@@ -7732,10 +7732,10 @@ $patches = @(
         Add-MoreLights
     }}
 
-    @{ Id = 'lightstay'; Cat = 'graphics'; On = $false; PublicUntested = $true
+    @{ Id = 'lightstay'; Cat = 'graphics'; On = $false
        Author = 'St0ny'
-       De = 'Lichter bleiben an, wenn ihre Quelle ausserhalb des Bildes ist [BETA]'
-       En = 'Lights stay on when their source is off-screen [BETA]'
+       De = 'Lichter bleiben an, wenn ihre Quelle ausserhalb des Bildes ist'
+       En = 'Lights stay on when their source is off-screen'
        Code = {
         # Punktlichter haengen an Modellen (Fackeln, Zauber ...). Ihr Zeitstempel
         # (Licht +4) wird nur gesetzt, wenn das Modell in diesem Bild gezeichnet
@@ -8108,8 +8108,9 @@ $patches = @(
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
 # Warmane getestet (Nr. 9, 66 und 67 vergroessern die Wow.exe); dazu der
 # Lexara-Lader (Nr. 30, Patch sicher, DLL riskant) und die Licht-Patches
-# Nr. 69 und 70 (im Spiel getestet, online noch nicht). Im Menue mit R, ueber
-# -Select reforged; gilt beim ersten Start und fuer neue Patches.
+# Nr. 69 und 70 (im Spiel und online getestet, sicher; Nr. 69 vergroessert
+# die Wow.exe ebenfalls). Im Menue mit R, ueber -Select reforged; gilt beim
+# ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',
     'scandll', 'noserverpatch', 'nosurvey', 'skipbnet', 'skiprdp', 'nohttp',

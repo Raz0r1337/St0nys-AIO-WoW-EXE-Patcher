@@ -162,7 +162,7 @@ it in its DLL. Here the four hooks live in a section of their own (`.glyph`,
 ## Security & privacy
 
 <a id="patch-rce"></a>
-**Remote code execution exploit fix v2 [BETA]** *(No. 10, Author: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[risky - untested ingame]**
+**Remote code execution exploit fix v2** *(No. 10, Author: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[risky - untested online]**
 
 Closes security holes that let a malicious server run code on your PC. v2
 combines two fixes:
@@ -189,10 +189,10 @@ removed.
 > [!NOTE]
 > According to Brady Russell, the new places turn off a few unused or rarely
 > used client features; login, character selection, combat, chat and addons
-> should not be affected. He has not played much with them himself, though,
-> and v2 has not been tested in game here either – hence [BETA]. The author
-> also says there are almost certainly more attack paths. The safest option is
-> to trust only servers you know.
+> should not be affected. He has not played much with them himself, though.
+> v2 has since been tested in game here, but not yet on public servers. The
+> author also says there are almost certainly more attack paths. The safest
+> option is to trust only servers you know.
 
 > [!NOTE]
 > The patcher still detects a `Wow.exe` with the previous RCE fix (v1) as
@@ -1392,7 +1392,7 @@ How it works:
 > patcher extends the last appended section instead of adding a new one.
 
 <a id="patch-lights"></a>
-**More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA]** *(No. 69, Author: St0ny)* 🟠 **[untested online - exe grows]**
+**More lights: 8 instead of 4 point lights (groundwork for new shaders)** *(No. 69, Author: St0ny)* 🟡 **[safe - exe grows]**
 
 In the original, every model and every building gets the sun plus at most
 the 4 nearest point lights (torches, spells, lights on models). The patch
@@ -1406,10 +1406,6 @@ into the game's `Data` folder so that
 `Data\patch-5.MPQ\Shaders\Vertex\vs_3_0\Diffuse_T1.bls` exists. The shaders
 only take effect with `gxApi d3d9` and `fixedFunction 0`. Without them the
 extra lights are only visible on the path without shaders (`fixedFunction 1`).
-
-> [!WARNING]
-> **BETA** – this patch is still being tested and is therefore only in the dev
-> branches for now, not in `st0ny-main`.
 
 How it works:
 - The 4 nearest lights stay where they were; the game and the original
@@ -1470,7 +1466,7 @@ Free slot: all 0, attenuation x = 1 (as the original does for c28–c36).
 > of its own.
 
 > [!TIP]
-> Best tested together with No. 70: without it, the client switches off the
+> Best used together with No. 70: without it, the client switches off the
 > light of a source as soon as the source is turned off-screen – also on
 > figures that are still visible.
 
@@ -1480,16 +1476,12 @@ Free slot: all 0, attenuation x = 1 (as the original does for c28–c36).
 > patcher extends the last appended section instead of adding a new one.
 
 <a id="patch-lightstay"></a>
-**Lights stay on when their source is off-screen [BETA]** *(No. 70, Author: St0ny)* 🟠 **[untested online]**
+**Lights stay on when their source is off-screen** *(No. 70, Author: St0ny)* 🟢 **[safe]**
 
 Fixes a bug of the original client: if you turn the camera so that a light
 source (e.g. a torch) leaves the screen, its light also disappears from
 everything that is still visible – for example from your own character right
 next to it. This happens with and without shaders.
-
-> [!WARNING]
-> **BETA** – this patch is still being tested and is therefore only in the dev
-> branches for now, not in `st0ny-main`.
 
 Cause: point lights belong to models. Their time stamp is only set when the
 model is drawn in the current frame (VA `0x828B9C`); models outside the view

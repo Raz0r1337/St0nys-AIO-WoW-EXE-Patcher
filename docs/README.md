@@ -248,8 +248,9 @@ Before the confirmation prompt the patcher shows **notes** – nothing is blocke
 when a companion patch is missing (e.g. the extended slider maximums need the
 CVar unlocks), when one patch makes another unnecessary (the complete LUA
 unlock replaces the basic one) and when selected patches carry a warning –
-red for ban risk, orange for patches that are still untested on public
-servers or in game, and yellow for a larger `Wow.exe` (see [Notes](#notes)).
+red for ban risk, orange for patches that get blocked on some servers or are
+still untested on public servers or in game, and yellow for a larger
+`Wow.exe` (see [Notes](#notes)).
 
 ### The selection is remembered
 
@@ -282,7 +283,7 @@ other servers may check the file size. On top of that come the Lexara loader
 (No. 30) for Stormhand's HD fonts and the light patches No. 69 and 70. For the
 Lexara loader the patch itself is safe, but `Lexara.dll` may be detected or
 blocked on public servers; without `Lexara.dll` in the WoW folder it does
-nothing. The light patches are tested in game, but not yet on public servers.
+nothing. The light patches are tested in game and online and are safe.
 No. 69 makes `Wow.exe` larger as well and only takes effect with the shaders
 from [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases). The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it.
@@ -456,7 +457,7 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix v2 [BETA] | 🟠 **[risky - untested ingame]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
+| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix v2 | 🟠 **[risky - untested online]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.en.md#patch-wardenoff) | Disable Warden completely, RCE fix | 🔴 **[unsafe]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.en.md#patch-scandll) | Disable Scan.dll | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.en.md#patch-noserverpatch) | Disallow client patches from the server | 🟢 **[safe]** | Kebabstorm | ✅ | – | ✅ |
@@ -540,8 +541,8 @@ name, and before patching it lists them once more.
 | [66](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe - exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [67](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [68](PATCHES.en.md#patch-outline) | Outline for target and mouseover [BETA] *(gxApi d3d9 only, asks for the settings)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
-| [69](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) [BETA] *(requires [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – unpack `patch-5.MPQ.zip` from the release into the `Data` folder)* | 🟠 **[untested online - exe grows]** | St0ny | ✅ | – | – |
-| [70](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen [BETA] | 🟠 **[untested online]** | St0ny | ✅ | – | – |
+| [69](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) *(requires [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – unpack `patch-5.MPQ.zip` from the release into the `Data` folder)* | 🟡 **[safe - exe grows]** | St0ny | ✅ | – | – |
+| [70](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen | 🟢 **[safe]** | St0ny | ✅ | – | – |
 
 > [!WARNING]
 > **Outline (No. 68) on public servers:** if you use the patch there, please
@@ -621,10 +622,10 @@ clicking the number of a patch takes you straight to its description.
     44, 45, 48–53, 80 and 88–92 (red warning).
   - 🟠 **risky** – gets blocked on some servers: No. 10 (orange warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 26, 31, 32, 42, 47, 54, 65, 68–70, 74, 77–79 and 86
+    you kicked or banned: No. 10, 26, 32, 42, 47, 54, 65, 68, 74, 77–79 and 86
     (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 10, 25, 26, 31, 32, 47, 54, 65, 68 and 86 (orange warning).
+    possibly buggy: No. 25, 26, 32, 47, 54, 65, 68 and 86 (orange warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 53,
     66–69, 80 and 86. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change

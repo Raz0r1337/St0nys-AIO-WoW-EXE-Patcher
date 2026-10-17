@@ -262,9 +262,10 @@ Vor der Sicherheitsabfrage zeigt der Patcher **Hinweise** an, gesperrt wird
 nichts: wenn ein Ergänzungs-Patch fehlt (z. B. brauchen die erweiterten
 Slider-Maxima die CVar-Unlocks), wenn ein Patch einen anderen überflüssig macht
 (der vollständige LUA-Unlock ersetzt den einfachen) und wenn gewählte Patches eine
-Warnung tragen – rot bei Bann-Gefahr, orange bei Patches, die auf öffentlichen
-Servern oder im Spiel noch ungetestet sind, und gelb bei vergrößerter
-`Wow.exe` (siehe [Hinweise](#hinweise)).
+Warnung tragen – rot bei Bann-Gefahr, orange bei Patches, die auf manchen
+Servern geblockt werden oder auf öffentlichen Servern oder im Spiel noch
+ungetestet sind, und gelb bei vergrößerter `Wow.exe` (siehe
+[Hinweise](#hinweise)).
 
 ### Auswahl wird gespeichert
 
@@ -299,8 +300,8 @@ Dazu kommen der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften und die
 Licht-Patches Nr. 69 und 70. Beim Lexara-Lader ist der Patch selbst sicher,
 die `Lexara.dll` kann auf öffentlichen Servern aber erkannt oder blockiert
 werden; ohne `Lexara.dll` im WoW-Ordner bewirkt er nichts. Die Licht-Patches
-sind im Spiel getestet, auf öffentlichen Servern aber noch nicht. Nr. 69
-vergrößert die `Wow.exe` ebenfalls und wirkt erst mit den Shadern aus
+sind im Spiel und online getestet und sicher. Nr. 69 vergrößert die
+`Wow.exe` ebenfalls und wirkt erst mit den Shadern aus
 [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases).
 Welche Patches dazugehören, zeigt die Spalte „Reforged“ in der
 [Patch-Übersicht](#patch-übersicht).
@@ -480,7 +481,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix v2 [BETA] | 🟠 **[riskant - ingame ungetestet]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
+| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix v2 | 🟠 **[riskant - online ungetestet]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.de.md#patch-wardenoff) | Warden komplett abschalten, RCE-Fix | 🔴 **[unsicher]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.de.md#patch-scandll) | Scan.dll deaktivieren | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.de.md#patch-noserverpatch) | Client-Patches vom Server verbieten | 🟢 **[sicher]** | Kebabstorm | ✅ | – | ✅ |
@@ -564,8 +565,8 @@ dem Patchen listet er sie noch einmal auf.
 | [66](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher - Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [67](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟡 **[sicher - Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [68](PATCHES.de.md#patch-outline) | Umrandung für Ziel und Mouseover [BETA] *(nur gxApi d3d9, fragt die Einstellungen ab)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
-| [69](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) [BETA] *(benötigt [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – `patch-5.MPQ.zip` aus dem Release in den `Data`-Ordner entpacken)* | 🟠 **[online ungetestet - Exe wird größer]** | St0ny | ✅ | – | – |
-| [70](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist [BETA] | 🟠 **[online ungetestet]** | St0ny | ✅ | – | – |
+| [69](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) *(benötigt [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – `patch-5.MPQ.zip` aus dem Release in den `Data`-Ordner entpacken)* | 🟡 **[sicher - Exe wird größer]** | St0ny | ✅ | – | – |
+| [70](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist | 🟢 **[sicher]** | St0ny | ✅ | – | – |
 
 > [!WARNING]
 > **Umrandung (Nr. 68) auf öffentlichen Servern:** Wenn du den Patch dort
@@ -645,10 +646,10 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     11, 23–25, 44, 45, 48–53, 80 und 88–92 (rote Warnung).
   - 🟠 **riskant** – wird auf manchen Servern geblockt: Nr. 10 (orange Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
-    kann zu Kick/Bann führen: Nr. 26, 31, 32, 42, 47, 54, 65, 68–70, 74, 77–79 und 86
+    kann zu Kick/Bann führen: Nr. 10, 26, 32, 42, 47, 54, 65, 68, 74, 77–79 und 86
     (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 10, 25, 26, 31, 32, 47, 54, 65, 68 und 86 (orange Warnung).
+    möglicherweise verbuggt: Nr. 25, 26, 32, 47, 54, 65, 68 und 86 (orange Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 53, 66–69, 80 und 86. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
