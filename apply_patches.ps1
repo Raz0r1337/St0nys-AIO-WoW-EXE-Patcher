@@ -2629,10 +2629,10 @@ $patches = @(
 
     # --- Sicherheit & Datenschutz ---
 
-    @{ Id = 'rce'; Cat = 'security'; On = $false; Blocked = $true; GameUntested = $true
+    @{ Id = 'rce'; Cat = 'security'; On = $false; Blocked = $true; PublicUntested = $true
        Author = 'Brady Russell (original by stoneharry / Robinsch)'
-       De = 'Remote Code Execution Exploit Fix v2 [BETA]'
-       En = 'Remote code execution exploit fix v2 [BETA]'
+       De = 'Remote Code Execution Exploit Fix v2'
+       En = 'Remote code execution exploit fix v2'
        Code = {
         # v2 = die 7 Stellen aus RCEPatcher v2.0 von Brady Russell plus
         # Robinschs Warden-Stelle aus v1. Eine Wow.exe mit v1 erkennt der

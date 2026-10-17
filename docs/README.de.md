@@ -177,9 +177,10 @@ Vor der Sicherheitsabfrage zeigt der Patcher **Hinweise** an, gesperrt wird
 nichts: wenn ein Ergänzungs-Patch fehlt (z. B. brauchen die erweiterten
 Slider-Maxima die CVar-Unlocks), wenn ein Patch einen anderen überflüssig macht
 (der vollständige LUA-Unlock ersetzt den einfachen) und wenn gewählte Patches eine
-Warnung tragen – rot bei Bann-Gefahr, orange bei Patches, die auf öffentlichen
-Servern oder im Spiel noch ungetestet sind, und gelb bei vergrößerter
-`Wow.exe` (siehe [Hinweise](#hinweise)).
+Warnung tragen – rot bei Bann-Gefahr, orange bei Patches, die auf manchen
+Servern geblockt werden oder auf öffentlichen Servern oder im Spiel noch
+ungetestet sind, und gelb bei vergrößerter `Wow.exe` (siehe
+[Hinweise](#hinweise)).
 
 ### Auswahl wird gespeichert
 
@@ -371,7 +372,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix v2 [BETA] | 🟠 **[riskant - ingame ungetestet]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
+| [10](PATCHES.de.md#patch-rce) | Remote Code Execution Exploit Fix v2 | 🟠 **[riskant - online ungetestet]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.de.md#patch-wardenoff) | Warden komplett abschalten, RCE-Fix | 🔴 **[unsicher]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.de.md#patch-scandll) | Scan.dll deaktivieren | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.de.md#patch-noserverpatch) | Client-Patches vom Server verbieten | 🟢 **[sicher]** | Kebabstorm | ✅ | – | ✅ |
@@ -521,10 +522,10 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   - 🔴 **unsicher** – Bann-Gefahr, kann auf vielen Servern zu einem Bann führen: Nr. 4, 11, 23–25, 41, 42, 45–50, 74 und 81–85 (rote Warnung).
   - 🟠 **riskant** – wird auf manchen Servern geblockt: Nr. 10 (orange Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
-    kann zu Kick/Bann führen: Nr. 26, 29, 39, 44, 51, 62, 68, 71–73 und 86
+    kann zu Kick/Bann führen: Nr. 10, 26, 29, 39, 44, 51, 62, 68, 71–73 und 86
     (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 10, 25, 26, 29, 44, 51, 62 und 86 (orange Warnung).
+    möglicherweise verbuggt: Nr. 25, 26, 29, 44, 51, 62 und 86 (orange Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 50, 63, 64 und 74. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle

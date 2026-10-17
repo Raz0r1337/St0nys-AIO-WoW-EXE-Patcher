@@ -172,8 +172,9 @@ Before the confirmation prompt the patcher shows **notes** – nothing is blocke
 when a companion patch is missing (e.g. the extended slider maximums need the
 CVar unlocks), when one patch makes another unnecessary (the complete LUA
 unlock replaces the basic one) and when selected patches carry a warning –
-red for ban risk, orange for patches that are still untested on public
-servers or in game, and yellow for a larger `Wow.exe` (see [Notes](#notes)).
+red for ban risk, orange for patches that get blocked on some servers or are
+still untested on public servers or in game, and yellow for a larger
+`Wow.exe` (see [Notes](#notes)).
 
 ### The selection is remembered
 
@@ -358,7 +359,7 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix v2 [BETA] | 🟠 **[risky - untested ingame]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
+| [10](PATCHES.en.md#patch-rce) | Remote code execution exploit fix v2 | 🟠 **[risky - untested online]** | Brady Russell (original by stoneharry / Robinsch) | – | – | – |
 | [11](PATCHES.en.md#patch-wardenoff) | Disable Warden completely, RCE fix | 🔴 **[unsafe]** | Robinsch | – | – | ✅ |
 | [12](PATCHES.en.md#patch-scandll) | Disable Scan.dll | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | – | ✅ |
 | [13](PATCHES.en.md#patch-noserverpatch) | Disallow client patches from the server | 🟢 **[safe]** | Kebabstorm | ✅ | – | ✅ |
@@ -508,10 +509,10 @@ clicking the number of a patch takes you straight to its description.
   - 🔴 **unsafe** – ban risk, can lead to a ban on many servers: No. 4, 11, 23–25, 41, 42, 45–50, 74 and 81–85 (red warning).
   - 🟠 **risky** – gets blocked on some servers: No. 10 (orange warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 26, 29, 39, 44, 51, 62, 68, 71–73 and 86
+    you kicked or banned: No. 10, 26, 29, 39, 44, 51, 62, 68, 71–73 and 86
     (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 10, 25, 26, 29, 44, 51, 62 and 86 (orange warning).
+    possibly buggy: No. 25, 26, 29, 44, 51, 62 and 86 (orange warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 50, 63, 64 and 74. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
     the file size.

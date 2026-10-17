@@ -162,7 +162,7 @@ it in its DLL. Here the four hooks live in a section of their own (`.glyph`,
 ## Security & privacy
 
 <a id="patch-rce"></a>
-**Remote code execution exploit fix v2 [BETA]** *(No. 10, Author: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[risky - untested ingame]**
+**Remote code execution exploit fix v2** *(No. 10, Author: Brady Russell (original by stoneharry / Robinsch))* 🟠 **[risky - untested online]**
 
 Closes security holes that let a malicious server run code on your PC. v2
 combines two fixes:
@@ -189,10 +189,10 @@ removed.
 > [!NOTE]
 > According to Brady Russell, the new places turn off a few unused or rarely
 > used client features; login, character selection, combat, chat and addons
-> should not be affected. He has not played much with them himself, though,
-> and v2 has not been tested in game here either – hence [BETA]. The author
-> also says there are almost certainly more attack paths. The safest option is
-> to trust only servers you know.
+> should not be affected. He has not played much with them himself, though.
+> v2 has since been tested in game here, but not yet on public servers. The
+> author also says there are almost certainly more attack paths. The safest
+> option is to trust only servers you know.
 
 > [!NOTE]
 > The patcher still detects a `Wow.exe` with the previous RCE fix (v1) as
