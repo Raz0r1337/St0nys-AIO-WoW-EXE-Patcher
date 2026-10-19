@@ -1169,7 +1169,7 @@ sie unabhängig von den Distanzen verbreitern.
 </details>
 
 <a id="patch-occluder"></a>
-**Occluder Fix für Stormwind (Open Azeroth)** *(Nr. 62, Autor: Robinsch)* 🟢 **[sicher]**
+**Occluder Fix für Stormwind (Open Azeroth)** *(Nr. 62, Autor: Kebful)* 🟢 **[sicher]**
 
 Schaltet die fest in den Client eingebauten Occluder (Sichtblocker) für
 Stormwind ab: Der Karten-Schlüssel des Tabelleneintrags für die Östlichen

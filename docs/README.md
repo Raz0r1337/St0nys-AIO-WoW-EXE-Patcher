@@ -538,7 +538,7 @@ name, and before patching it lists them once more.
 | [59](PATCHES.en.md#patch-sliders) | Graphics options: extend slider maximums | 🟢 **[safe]** | St0ny | – | – | ✅ |
 | [60](PATCHES.en.md#patch-goscale) | GameObject view distance: Cat 0 and Cat 4 scale with environmentDetail | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 | [61](PATCHES.en.md#patch-cat0) | GameObject view distance: Cat 0 from 30 to 50 yards *(costs performance, more small objects visible)* | 🟢 **[safe]** | St0ny | – | – | ✅ |
-| [62](PATCHES.en.md#patch-occluder) | Occluder fix for Stormwind (Open Azeroth) | 🟢 **[safe]** | Robinsch | ✅ | – | ✅ |
+| [62](PATCHES.en.md#patch-occluder) | Occluder fix for Stormwind (Open Azeroth) | 🟢 **[safe]** | Kebful | ✅ | – | ✅ |
 | [63](PATCHES.en.md#patch-bluemoon) | Re-enable the blue moon in the night sky | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [64](PATCHES.en.md#patch-notransparency) | No character transparency when zooming in | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
 | [65](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
