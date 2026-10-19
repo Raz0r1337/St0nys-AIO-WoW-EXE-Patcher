@@ -279,15 +279,16 @@ together by Stormhand, and the default selection. It contains patches
 rated safe (🟢), all tested by Stormhand for several hours on Warmane – **the
 preset is safe** and can be used on public servers as well. Three of them
 (No. 9, 66 and 67) make `Wow.exe` larger; that was no problem on Warmane, but
-other servers may check the file size. On top of that come the Lexara loader
+other servers may check the file size. On top of that come the awesome_wotlk
+loader (No. 28) for the client extensions by noname08662, the Lexara loader
 (No. 30) for Stormhand's HD fonts, the Lux loader (No. 31) for the
-LuxShoulderCam shoulder camera and the light patches No. 69 and 70. For both
+LuxShoulderCam shoulder camera and the light patch No. 69. For the three
 loaders the patch itself is safe, but the loaded DLL may be detected or
 blocked on public servers; without the DLL in the WoW folder they do nothing.
 Lexara loads `LuxShoulderCam.dll` by itself, the Lux loader also loads it
-without Lexara – both together do no harm. The light patches are tested in
-game and online and are safe. No. 69 makes `Wow.exe` larger as well and only
-takes effect with the shaders
+without Lexara – both together do no harm. The light patch is tested in game
+and online and is safe. It makes `Wow.exe` larger as well and only takes
+effect with the shaders
 from [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases). The "Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it.
 
@@ -493,7 +494,7 @@ name, and before patching it lists them once more.
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.en.md#patch-wowoptimize) | Load wow_optimize.dll at startup (performance optimizer by SUPREMATIST) *(requires [wow_optimize](https://github.com/suprepupre/wow-optimize) – only `wow_optimize.dll`, without `version.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | – | – | ✅ |
-| [28](PATCHES.en.md#patch-awesome) | Load AwesomeWotlkLib.dll at startup (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom (fixed by St0ny) | – | ✅ | ✅ |
+| [28](PATCHES.en.md#patch-awesome) | Load AwesomeWotlkLib.dll at startup (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [29](PATCHES.en.md#patch-wotlkext) | Load WotLKExtensions.dll at startup (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
 | [31](PATCHES.en.md#patch-lux) | Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) *(requires [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – not needed with Lexara (No. 30))* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
@@ -511,7 +512,7 @@ name, and before patching it lists them once more.
 | [38](PATCHES.en.md#patch-naked) | Fix naked character bug | 🟢 **[safe]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [39](PATCHES.en.md#patch-forcereaction) | Keep force reaction on /reload | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [40](PATCHES.en.md#patch-mail) | New mail without the 60-second wait | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [41](PATCHES.en.md#patch-deadchat) | Allow chat commands while dead | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [41](PATCHES.en.md#patch-deadchat) | Allow chat commands while dead | 🟢 **[safe]** | Robinsch | – | ✅ | ✅ |
 | [42](PATCHES.en.md#patch-follow) | Allow /follow on NPCs | 🟠 **[untested online]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
 | [43](PATCHES.en.md#patch-level101) | Level 101+ Druid fix (druid stats in the character window, barber shop for everyone) | 🟢 **[safe]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
 | [44](PATCHES.en.md#patch-raceclass) | Character creation: more than 10 classes (random class) *(for custom classes; server must support it)* | 🔴 **[unsafe]** | Alastor StrixEfuartus / Robinsch | – | – | – |
@@ -545,7 +546,7 @@ name, and before patching it lists them once more.
 | [67](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [68](PATCHES.en.md#patch-outline) | Outline for target and mouseover [BETA] *(gxApi d3d9 only, asks for the settings)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
 | [69](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) *(requires [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – unpack `patch-5.MPQ.zip` from the release into the `Data` folder)* | 🟡 **[safe - exe grows]** | St0ny | ✅ | – | – |
-| [70](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen | 🟢 **[safe]** | St0ny | ✅ | – | – |
+| [70](PATCHES.en.md#patch-lightstay) | Lights stay on when their source is off-screen | 🟢 **[safe]** | St0ny | – | – | – |
 
 > [!WARNING]
 > **Outline (No. 68) on public servers:** if you use the patch there, please

@@ -8106,21 +8106,21 @@ $patches = @(
 # Standard-Preset "Reforged" - das offizielle Preset des Projekts
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
-# Warmane getestet (Nr. 9, 66 und 67 vergroessern die Wow.exe); dazu der
-# Lexara- und der Lux-Lader (Nr. 30 und 31, Patch sicher, DLL riskant; Lexara
-# laedt Lux ohnehin mit, der Lux-Lader auch ohne Lexara) und die
-# Licht-Patches Nr. 69 und 70 (im Spiel und online getestet, sicher; Nr. 69
+# Warmane getestet (Nr. 9, 66 und 67 vergroessern die Wow.exe); dazu die
+# Lader fuer awesome_wotlk, Lexara und Lux (Nr. 28, 30 und 31, Patch sicher,
+# DLL riskant; Lexara laedt Lux ohnehin mit, der Lux-Lader auch ohne Lexara)
+# und der Licht-Patch Nr. 69 (im Spiel und online getestet, sicher;
 # vergroessert die Wow.exe ebenfalls). Im Menue mit R, ueber -Select
 # reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',
     'scandll', 'noserverpatch', 'nosurvey', 'skipbnet', 'skiprdp', 'nohttp',
-    'glue', 'lexara', 'lux',
+    'glue', 'awesome', 'lexara', 'lux',
     'areatrigger', 'swing', 'npcanim', 'spellanim', 'ghostattack', 'naked',
-    'forcereaction', 'mail', 'deadchat', 'level101',
+    'forcereaction', 'mail', 'level101',
     'farclip', 'horizon', 'envdetail', 'grounddist', 'goscale',
     'occluder', 'bluemoon', 'notransparency', 'hdportraits', 'iconsnap',
-    'lights', 'lightstay',
+    'lights',
     'tracker', 'worldmap', 'castbars', 'charrandom', 'bubblerange',
     'window', 'maximize', 'windowfix', 'mouse', 'sound'
 )
