@@ -1031,7 +1031,7 @@ you can widen them independently of the distances.
 </details>
 
 <a id="patch-occluder"></a>
-**Occluder fix for Stormwind (Open Azeroth)** *(No. 59, Author: Robinsch)* 🟢 **[safe]**
+**Occluder fix for Stormwind (Open Azeroth)** *(No. 59, Author: Kebful)* 🟢 **[safe]**
 
 Disables the occluders (view blockers) for Stormwind that are hard-coded in the
 client: the map key of the table entry for the Eastern Kingdoms is set to
