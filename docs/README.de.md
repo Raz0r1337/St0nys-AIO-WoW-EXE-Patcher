@@ -622,6 +622,12 @@ dem Patchen listet er sie noch einmal auf.
 | [91](PATCHES.de.md#patch-clientdate) | Build-Datum ändern (Original Jun 24 2010) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
 | [92](PATCHES.de.md#patch-clienticon) | Programm-Icon ändern (Symbol der Wow.exe) *(fragt den Wert ab)* | 🔴 **[unsicher]** | St0ny (original by MacWarrior) | – | – | – |
 
+#### Debugging & Testen
+
+| Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
+|----:|-------|--------|-------|:--------:|:-----:|:-----:|
+| [93](PATCHES.de.md#patch-assetdebug) | Debug-Log für geladene Dateien, Modelle, Texturen und Abstürze [BETA] *(schreibt `Logs\AssetDebug.log` im WoW-Ordner – die Datei wächst mit jedem Start)* | 🟠 **[ungetestet - Exe wird größer]** | FineWolf | – | – | – |
+
 </details>
 
 > [!NOTE]
@@ -650,12 +656,13 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     11, 23–25, 44, 45, 48–53, 80 und 88–92 (rote Warnung).
   - 🟠 **riskant** – wird auf manchen Servern geblockt: Nr. 10 (orange Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
-    kann zu Kick/Bann führen: Nr. 10, 26, 32, 42, 47, 54, 65, 68, 74, 77–79 und 86
-    (orange Warnung).
+    kann zu Kick/Bann führen: Nr. 10, 26, 32, 42, 47, 54, 65, 68, 74, 77–79, 86
+    und 93 (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 32, 47, 54, 65, 68 und 86 (orange Warnung).
+    möglicherweise verbuggt: Nr. 25, 26, 32, 47, 54, 65, 68, 86 und 93 (orange
+    Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
-    Nr. 9, 53, 66–69, 80 und 86. Das ist keine sichere Bann-Gefahr,
+    Nr. 9, 53, 66–69, 80, 86 und 93. Das ist keine sichere Bann-Gefahr,
     aber ein Risiko: Manche Server prüfen die Dateigröße (gelber Hinweis). Alle
     anderen Patches ändern die Dateigröße nicht.
   - 🟡 **DLL riskant** – der Patch selbst ist sicher, er lädt aber eine DLL, die
@@ -724,6 +731,8 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
   aufgespürt und mir zugespielt hat.
 - Danke an **Pogzur** dafür, RCEPatcher v2.0 (Grundlage des Patches
   [#10](PATCHES.de.md#patch-rce)) aufgespürt und mir zugespielt zu haben.
+- Danke an **FineWolf** für den Debug-Patch
+  [#93](PATCHES.de.md#patch-assetdebug) (Asset-Debug-Log).
 - Und natürlich danke an alle Autoren der Patches, die in der
   [Patch-Übersicht](#patch-übersicht) genannt sind.
 

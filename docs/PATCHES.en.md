@@ -1905,3 +1905,61 @@ patcher aborts with a message.
 > cache: rename `Wow.exe` briefly or copy it to another folder, recreate
 > shortcuts or restart Explorer. The icon in the game itself (window title)
 > comes from these resources as well.
+
+## Debugging & testing
+
+<a id="patch-assetdebug"></a>
+**Debug log for loaded files, models, textures and crashes [BETA]** *(No. 93, Author: FineWolf)* 🟠 **[untested - exe grows]**
+
+For troubleshooting, e.g. when custom models, textures or maps crash the client.
+The patch writes a log to `Logs\AssetDebug.log` in the WoW folder (if that
+fails, to `AssetDebug.log` next to `Wow.exe`):
+
+- **Every file the client opens** – from the MPQs or the `Data` folder – in the
+  order it loads them: `OPEN`, or `OPEN-FAIL` if it cannot find the file.
+- **Models and WMOs** the client creates: `M2-CREATE` or `WMO-CREATE` with path
+  and memory address.
+- **Textures** that are really loaded (not already in the cache): `TEX-LOAD`
+  with path.
+- **On a crash:** exception code and address, the registers, the model, WMO
+  group and terrain chunk (ADT file and chunk) drawn last and the last 16
+  opened files. After that the client reports the crash as usual.
+
+Every line starts with the time in milliseconds since Windows started and the
+thread number, e.g.:
+
+```
+0001234567 [0A1C] OPEN      Creature\Foo\Foo.m2 (flags=0)
+0001234567 [0A1C] OPEN-FAIL Creature\Foo\Foo01.skin (flags=0)
+0001234570 [0A1C] M2-CREATE  Creature\Foo\Foo.m2 -> model=1A2B3C40
+```
+
+While drawing, the patch only remembers in memory what is being drawn – nothing
+is written per frame.
+
+> [!WARNING]
+> **BETA** – still untested, online and in game. That is why the patch is
+> deselected by default and only in the dev branches for now, not in
+> `st0ny-main`. It is not meant for public servers.
+
+> [!NOTE]
+> The log names the individual files, not the MPQ archives: it shows in which
+> order the client loads files and whether it finds them, but not which MPQ a
+> file came from.
+
+> [!IMPORTANT]
+> The file is continued at every start (line
+> `==== AssetDebug session start ====`) and never truncated – it grows with
+> every session. Best delete it from time to time. Because every opened file is
+> written right away, the client loads a bit slower.
+
+Technical details: the patch appends its own section `.alog` (code and data,
+a little over 9 KB) and redirects nine spots in the client to it:
+`SFileOpenFileEx` (VA `0x424B50`), `CM2Scene::CreateModel` (`0x81F8F0`),
+`CMapObj::Create` (`0x7B0CC0`), the cache miss in `TextureCreate`
+(`0x4B9853`), the M2 draw loop (`0x823A20`), both WMO group calls
+(`0x7ABFF0`, `0x7AC011`), the terrain loop (`0x798A6C`) and the top-level
+exception filter (`0x772B20`). The overwritten instructions keep running
+unchanged in the section. Ported from FineWolf's script `make_debug_exe.py`:
+code, data and hook sites are byte-identical. Together with DLLs that redirect
+the same functions, the patch is untested.

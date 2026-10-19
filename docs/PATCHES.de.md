@@ -1977,3 +1977,63 @@ Meldung ab.
 > Windows: `Wow.exe` kurz umbenennen oder in einen anderen Ordner kopieren,
 > Verknüpfungen neu anlegen oder den Explorer neu starten. Das Icon im Spiel
 > selbst (Fenstertitel) kommt ebenfalls aus diesen Ressourcen.
+
+## Debugging & Testen
+
+<a id="patch-assetdebug"></a>
+**Debug-Log für geladene Dateien, Modelle, Texturen und Abstürze [BETA]** *(Nr. 93, Autor: FineWolf)* 🟠 **[ungetestet - Exe wird größer]**
+
+Für die Fehlersuche, z. B. wenn eigene Modelle, Texturen oder Karten den Client
+abstürzen lassen. Der Patch schreibt ein Protokoll nach `Logs\AssetDebug.log` im
+WoW-Ordner (geht das nicht, nach `AssetDebug.log` neben der `Wow.exe`):
+
+- **Jede Datei, die der Client öffnet** – aus den MPQs oder dem `Data`-Ordner –,
+  in der Reihenfolge, in der er sie lädt: `OPEN`, oder `OPEN-FAIL`, wenn er sie
+  nicht findet.
+- **Modelle und WMOs**, die der Client anlegt: `M2-CREATE` bzw. `WMO-CREATE` mit
+  Pfad und Speicheradresse.
+- **Texturen**, die wirklich neu geladen werden (nicht schon im Cache):
+  `TEX-LOAD` mit Pfad.
+- **Bei einem Absturz:** Fehlercode und Adresse, die Register, das zuletzt
+  gezeichnete Modell, die zuletzt gezeichnete WMO-Gruppe, der zuletzt
+  gezeichnete Geländeabschnitt (ADT-Datei und Chunk) und die letzten 16
+  geöffneten Dateien. Danach meldet der Client den Absturz wie gewohnt.
+
+Jede Zeile beginnt mit der Zeit in Millisekunden seit dem Windows-Start und der
+Thread-Nummer, z. B.:
+
+```
+0001234567 [0A1C] OPEN      Creature\Foo\Foo.m2 (flags=0)
+0001234567 [0A1C] OPEN-FAIL Creature\Foo\Foo01.skin (flags=0)
+0001234570 [0A1C] M2-CREATE  Creature\Foo\Foo.m2 -> model=1A2B3C40
+```
+
+Beim Zeichnen merkt sich der Patch nur im Speicher, was gerade dran ist – pro
+Bild wird nichts geschrieben.
+
+> [!WARNING]
+> **BETA** – noch ungetestet, online wie im Spiel. Deshalb ist der Patch
+> standardmäßig abgewählt und vorerst nur in den dev-Zweigen, nicht in
+> `st0ny-main`. Für öffentliche Server ist er nicht gedacht.
+
+> [!NOTE]
+> Das Log nennt die einzelnen Dateien, nicht die MPQ-Archive: Es zeigt, in
+> welcher Reihenfolge der Client Dateien lädt und ob er sie findet, aber nicht,
+> aus welchem MPQ eine Datei stammt.
+
+> [!IMPORTANT]
+> Die Datei wird bei jedem Start fortgesetzt (Zeile
+> `==== AssetDebug session start ====`) und nie gekürzt – sie wächst mit jeder
+> Sitzung. Am besten ab und zu löschen. Weil jede geöffnete Datei sofort
+> geschrieben wird, lädt der Client etwas langsamer.
+
+Technik: Der Patch hängt eine eigene Sektion `.alog` an (Code und Daten, gut
+9 KB) und leitet neun Stellen im Client dorthin um: `SFileOpenFileEx`
+(VA `0x424B50`), `CM2Scene::CreateModel` (`0x81F8F0`), `CMapObj::Create`
+(`0x7B0CC0`), den Cache-Fehlschlag in `TextureCreate` (`0x4B9853`), die
+M2-Zeichenschleife (`0x823A20`), die beiden WMO-Gruppen-Aufrufe (`0x7ABFF0`,
+`0x7AC011`), die Geländeschleife (`0x798A6C`) und den obersten
+Ausnahme-Filter (`0x772B20`). Die überschriebenen Befehle laufen in der Sektion
+unverändert weiter. Portiert aus FineWolfs Skript `make_debug_exe.py`: Code,
+Daten und Hook-Stellen sind byte-gleich. Zusammen mit DLLs, die dieselben
+Funktionen umleiten, ist der Patch ungetestet.

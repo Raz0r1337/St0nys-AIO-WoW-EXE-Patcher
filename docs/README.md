@@ -598,6 +598,12 @@ name, and before patching it lists them once more.
 | [91](PATCHES.en.md#patch-clientdate) | Change build date (original Jun 24 2010) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
 | [92](PATCHES.en.md#patch-clienticon) | Change program icon (icon of Wow.exe) *(asks for the value)* | 🔴 **[unsafe]** | St0ny (original by MacWarrior) | – | – | – |
 
+#### Debugging & testing
+
+| No. | Patch | Status | Author | Reforged | Billy | St0ny |
+|----:|-------|--------|-------|:--------:|:-----:|:-----:|
+| [93](PATCHES.en.md#patch-assetdebug) | Debug log for loaded files, models, textures and crashes [BETA] *(writes `Logs\AssetDebug.log` in the WoW folder – the file grows with every start)* | 🟠 **[untested - exe grows]** | FineWolf | – | – | – |
+
 </details>
 
 > [!NOTE]
@@ -626,12 +632,12 @@ clicking the number of a patch takes you straight to its description.
     44, 45, 48–53, 80 and 88–92 (red warning).
   - 🟠 **risky** – gets blocked on some servers: No. 10 (orange warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 10, 26, 32, 42, 47, 54, 65, 68, 74, 77–79 and 86
-    (orange warning).
+    you kicked or banned: No. 10, 26, 32, 42, 47, 54, 65, 68, 74, 77–79, 86
+    and 93 (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 32, 47, 54, 65, 68 and 86 (orange warning).
+    possibly buggy: No. 25, 26, 32, 47, 54, 65, 68, 86 and 93 (orange warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 53,
-    66–69, 80 and 86. This does not mean a certain ban, but it is a risk: some
+    66–69, 80, 86 and 93. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change
     the file size.
   - 🟡 **DLL risky** – the patch itself is safe, but it loads a DLL that may be
@@ -695,6 +701,8 @@ clicking the number of a patch takes you straight to its description.
   [#26](PATCHES.en.md#patch-globalsv) and passed it on to me.
 - Thanks to **Pogzur**, who tracked down RCEPatcher v2.0 (the basis of patch
   [#10](PATCHES.en.md#patch-rce)) and passed it on to me.
+- Thanks to **FineWolf** for the debug patch
+  [#93](PATCHES.en.md#patch-assetdebug) (asset debug log).
 - And of course thanks to all patch authors named in the
   [patch overview](#patch-overview).
 
