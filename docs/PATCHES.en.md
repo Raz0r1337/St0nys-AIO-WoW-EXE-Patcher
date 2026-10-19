@@ -301,7 +301,7 @@ your own patch MPQs. Together with No. 13 and No. 14 it has no effect any more,
 because neither path runs then.
 
 <a id="patch-mpqnames"></a>
-**Allow extended MPQ names** *(No. 21)* 🟢 **[safe]**
+**Allow extended MPQ names** *(No. 21, Author: iThorgrim)* 🟢 **[safe]**
 
 Allows wildcard names for MPQ archives (`patch-*.MPQ` and
 `patch-locale-*.MPQ`).

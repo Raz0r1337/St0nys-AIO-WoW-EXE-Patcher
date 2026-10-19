@@ -308,7 +308,7 @@ Patch also nicht nötig. Zusammen mit Nr. 13 und Nr. 14 hat er keine Wirkung meh
 weil beide Wege dann gar nicht erst laufen.
 
 <a id="patch-mpqnames"></a>
-**Erweiterte MPQ-Namen erlauben** *(Nr. 21)* 🟢 **[sicher]**
+**Erweiterte MPQ-Namen erlauben** *(Nr. 21, Autor: iThorgrim)* 🟢 **[sicher]**
 
 Ermöglicht die Nutzung von Wildcard-Namen für MPQ-Archive
 (`patch-*.MPQ` und `patch-locale-*.MPQ`).
