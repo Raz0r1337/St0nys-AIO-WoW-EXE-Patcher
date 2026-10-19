@@ -596,7 +596,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [84](PATCHES.de.md#patch-sound) | Sound-Einstellungen optimieren *(benötigt [OpenAL](https://github.com/kcat/openal-soft), sonst wirken die Einstellungen nicht)* | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
+| [84](PATCHES.de.md#patch-sound) | Sound-Einstellungen optimieren *(benötigt [OpenAL](https://github.com/kcat/openal-soft), sonst wirken die Einstellungen nicht)* | 🟢 **[sicher]** | St0ny / FrostAtom | ✅ | – | ✅ |
 
 #### Client-Infos: Version, Build, Titel, Datum, Icon
 
