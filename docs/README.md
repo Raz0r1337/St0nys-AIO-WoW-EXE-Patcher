@@ -430,7 +430,7 @@ name, and before patching it lists them once more.
 | [53](PATCHES.en.md#patch-horizon) | CVar horizonFarclipScale unlock (max 12) | 🟢 **[safe]** | St0ny | ✅ | ✅ | ✅ |
 | [54](PATCHES.en.md#patch-envdetail) | CVar environmentDetail unlock (no limit instead of 1.5) | 🟢 **[safe]** | St0ny | ✅ | ✅ | ✅ |
 | [55](PATCHES.en.md#patch-grounddist) | CVar groundEffectDist unlock (max 3166 instead of 140) | 🟢 **[safe]** | unknown | ✅ | ✅ | ✅ |
-| [56](PATCHES.en.md#patch-sliders) | Graphics options: extend slider maximums | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
+| [56](PATCHES.en.md#patch-sliders) | Graphics options: extend slider maximums | 🟢 **[safe]** | St0ny | – | – | ✅ |
 | [57](PATCHES.en.md#patch-goscale) | GameObject view distance: Cat 0 and Cat 4 scale with environmentDetail | 🟢 **[safe]** | St0ny | ✅ | – | ✅ |
 | [58](PATCHES.en.md#patch-cat0) | GameObject view distance: Cat 0 from 30 to 50 yards *(costs performance, more small objects visible)* | 🟢 **[safe]** | St0ny | – | – | ✅ |
 | [59](PATCHES.en.md#patch-occluder) | Occluder fix for Stormwind (Open Azeroth) | 🟢 **[safe]** | Robinsch | ✅ | – | ✅ |

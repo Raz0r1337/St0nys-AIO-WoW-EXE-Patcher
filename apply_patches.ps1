@@ -3994,7 +3994,7 @@ $PRESET_REFORGED = @(
     'glue',
     'areatrigger', 'swing', 'npcanim', 'spellanim', 'ghostattack', 'naked',
     'forcereaction', 'mail', 'deadchat', 'level101',
-    'farclip', 'horizon', 'envdetail', 'grounddist', 'sliders', 'goscale',
+    'farclip', 'horizon', 'envdetail', 'grounddist', 'goscale',
     'occluder', 'bluemoon', 'notransparency', 'hdportraits', 'iconsnap',
     'tracker', 'worldmap', 'castbars', 'charrandom', 'bubblerange',
     'window', 'maximize', 'windowfix', 'mouse', 'sound'
