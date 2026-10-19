@@ -3126,6 +3126,7 @@ $patches = @(
     }}
 
     @{ Id = 'mpqnames'; Cat = 'modding'; On = $true
+       Author = 'iThorgrim'
        De = 'Erweiterte MPQ-Namen erlauben'
        En = 'Allow extended MPQ names'
        Code = {

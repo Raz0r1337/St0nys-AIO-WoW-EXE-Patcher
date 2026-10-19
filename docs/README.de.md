@@ -503,7 +503,7 @@ dem Patchen listet er sie noch einmal auf.
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [19](PATCHES.de.md#patch-glue) | Custom Glue-XML erlauben | 🟢 **[sicher]** | Alastor StrixEfuartus / Kebabstorm (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [20](PATCHES.de.md#patch-mpqsig) | Falsch/Nicht signierte MPQs zulassen | 🟢 **[sicher]** | Alastor StrixEfuartus | – | – | ✅ |
-| [21](PATCHES.de.md#patch-mpqnames) | Erweiterte MPQ-Namen erlauben | 🟢 **[sicher]** | unbekannt | – | ✅ | ✅ |
+| [21](PATCHES.de.md#patch-mpqnames) | Erweiterte MPQ-Namen erlauben | 🟢 **[sicher]** | iThorgrim | – | ✅ | ✅ |
 | [22](PATCHES.de.md#patch-localdata) | Daten direkt aus dem Data-Ordner laden (ohne MPQ) | 🟢 **[sicher]** | Alastor StrixEfuartus | – | ✅ | ✅ |
 | [23](PATCHES.de.md#patch-luaunlock) | LUA Unlock (Zauber, Bewegung, Makros) | 🔴 **[unsicher]** | Alastor StrixEfuartus | – | – | – |
 | [24](PATCHES.de.md#patch-luaunlockfull) | LUA Unlock (vollständig): alle geschützten Funktionen freigeben | 🔴 **[unsicher]** | St0ny (original by Alastor StrixEfuartus) | – | – | – |
