@@ -293,15 +293,16 @@ sichere Patches (🟢), die Stormhand alle mehrere Stunden auf Warmane getestet
 hat – **das Preset ist sicher** und kann auch auf öffentlichen Servern
 verwendet werden. Drei davon (Nr. 9, 65 und 66) vergrößern die `Wow.exe`; auf
 Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen.
-Dazu kommen der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften, der
-Lux-Lader (Nr. 31) für die Schulterkamera LuxShoulderCam und die
-Licht-Patches Nr. 67 und 68. Bei den beiden Ladern ist der Patch selbst
-sicher, die geladene DLL kann auf öffentlichen Servern aber erkannt oder
-blockiert werden; ohne die DLL im WoW-Ordner bewirken sie nichts. Lexara
-lädt die `LuxShoulderCam.dll` selbst mit, der Lux-Lader lädt sie auch ohne
-Lexara – beide zusammen schaden nicht. Die Licht-Patches sind im Spiel und
-online getestet und sicher. Nr. 67 vergrößert die `Wow.exe` ebenfalls und
-wirkt erst mit den Shadern aus
+Dazu kommen der awesome_wotlk-Lader (Nr. 28) für die Client-Erweiterungen
+von noname08662, der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften, der
+Lux-Lader (Nr. 31) für die Schulterkamera LuxShoulderCam und der
+Licht-Patch Nr. 67. Bei den drei Ladern ist der Patch selbst sicher, die
+geladene DLL kann auf öffentlichen Servern aber erkannt oder blockiert
+werden; ohne die DLL im WoW-Ordner bewirken sie nichts. Lexara lädt die
+`LuxShoulderCam.dll` selbst mit, der Lux-Lader lädt sie auch ohne Lexara –
+beide zusammen schaden nicht. Der Licht-Patch ist im Spiel und online
+getestet und sicher. Er vergrößert die `Wow.exe` ebenfalls und wirkt erst
+mit den Shadern aus
 [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases).
 Welche Patches dazugehören, zeigt die Spalte „Reforged“ in der
 [Patch-Übersicht](#patch-übersicht).
@@ -514,7 +515,7 @@ dem Patchen listet er sie noch einmal auf.
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
 | [27](PATCHES.de.md#patch-wowoptimize) | wow_optimize.dll beim Start laden (Performance-Optimierung von SUPREMATIST) *(benötigt [wow_optimize](https://github.com/suprepupre/wow-optimize) – nur `wow_optimize.dll`, ohne `version.dll`)* | 🟡 **[sicher - DLL riskant]** | St0ny | – | – | ✅ |
-| [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom (fixed by St0ny) | – | ✅ | ✅ |
+| [28](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll beim Start laden (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.de.md#patch-lexara) | Lexara.dll beim Start laden (HD-Schriften von Stormhand) *(benötigt [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – `dinput8.dll` in `Lexara.dll` umbenennen)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
 | [31](PATCHES.de.md#patch-lux) | LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) *(benötigt [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – mit Lexara (Nr. 30) nicht nötig)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
@@ -531,7 +532,7 @@ dem Patchen listet er sie noch einmal auf.
 | [37](PATCHES.de.md#patch-naked) | Nackter-Charakter-Bug behoben | 🟢 **[sicher]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [38](PATCHES.de.md#patch-forcereaction) | Force-Reaction bei /reload erhalten | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [39](PATCHES.de.md#patch-mail) | Neue Post ohne 60 Sekunden Wartezeit | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
-| [40](PATCHES.de.md#patch-deadchat) | Chat-Befehle auch im Tod erlauben | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
+| [40](PATCHES.de.md#patch-deadchat) | Chat-Befehle auch im Tod erlauben | 🟢 **[sicher]** | Robinsch | – | ✅ | ✅ |
 | [41](PATCHES.de.md#patch-follow) | /follow auch bei NPCs erlauben | 🟠 **[online ungetestet]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
 | [42](PATCHES.de.md#patch-level101) | Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl für alle) | 🟢 **[sicher]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
 | [43](PATCHES.de.md#patch-raceclass) | Charaktererstellung: mehr als 10 Klassen (Zufallsklasse) *(für eigene Klassen; Server muss es unterstützen)* | 🔴 **[unsicher]** | Alastor StrixEfuartus / Robinsch | – | – | – |
@@ -564,7 +565,7 @@ dem Patchen listet er sie noch einmal auf.
 | [65](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher - Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
 | [66](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟡 **[sicher - Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [67](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) *(benötigt [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – `patch-5.MPQ.zip` aus dem Release in den `Data`-Ordner entpacken)* | 🟡 **[sicher - Exe wird größer]** | St0ny | ✅ | – | – |
-| [68](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist | 🟢 **[sicher]** | St0ny | ✅ | – | – |
+| [68](PATCHES.de.md#patch-lightstay) | Lichter bleiben an, wenn ihre Quelle außerhalb des Bildes ist | 🟢 **[sicher]** | St0ny | – | – | – |
 
 #### Interface & Komfort
 
