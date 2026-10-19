@@ -1764,11 +1764,11 @@ and writable) and hooks in at three places:
 ## Sound
 
 <a id="patch-sound"></a>
-**Optimize sound settings** *(No. 87, Author: St0ny)* 🟢 **[safe]**
+**Optimize sound settings** *(No. 87, Author: St0ny / FrostAtom)* 🟢 **[safe]**
 
 Includes the following changes:
 
-- Sound channel hardware limit raised to 126
+- Sound channel hardware limit raised to 126 (by FrostAtom)
 - `Sound_OutputQuality` set to maximum (2)
 - `Sound_NumChannels` raised from 32 to 64
 - `Sound_EnableReverb` enabled (reverb effect)

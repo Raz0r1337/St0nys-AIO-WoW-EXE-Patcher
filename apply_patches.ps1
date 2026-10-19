@@ -8003,13 +8003,14 @@ $patches = @(
     # --- Sound ---
 
     @{ Id = 'sound'; Cat = 'sound'; On = $false
-       Author = 'St0ny'
+       Author = 'St0ny / FrostAtom'
        De = 'Sound-Einstellungen optimieren'
        En = 'Optimize sound settings'
        NoteDe = 'benoetigt OpenAL, sonst wirken die Einstellungen nicht'
        NoteEn = 'requires OpenAL, otherwise the settings have no effect'
        Url = 'https://github.com/kcat/openal-soft'
        Code = {
+        # Hardware-Limit der Sound-Kanaele auf 126 (FrostAtom)
         Patch 0x0C77C2 @(0xC7, 0x45, 0xF8, 0x7E, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90)
         Patch 0x6B3F80 @(0x36, 0x34, 0x00)
         Patch 0x6B3F84 @(0x32, 0x00)

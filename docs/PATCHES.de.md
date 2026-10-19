@@ -1829,11 +1829,11 @@ und beschreibbar) und hängt sich an drei Stellen ein:
 ## Sound
 
 <a id="patch-sound"></a>
-**Sound-Einstellungen optimieren** *(Nr. 87, Autor: St0ny)* 🟢 **[sicher]**
+**Sound-Einstellungen optimieren** *(Nr. 87, Autor: St0ny / FrostAtom)* 🟢 **[sicher]**
 
 Umfasst folgende Änderungen:
 
-- Sound-Kanal-Hardware-Limit auf 126 angehoben
+- Sound-Kanal-Hardware-Limit auf 126 angehoben (von FrostAtom)
 - `Sound_OutputQuality` auf Maximum (2) gesetzt
 - `Sound_NumChannels` von 32 auf 64 erhöht
 - `Sound_EnableReverb` aktiviert (Hall-Effekt)
