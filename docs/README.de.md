@@ -558,7 +558,7 @@ dem Patchen listet er sie noch einmal auf.
 | [56](PATCHES.de.md#patch-horizon) | CVar horizonFarclipScale unlock (max 12) | 🟢 **[sicher]** | St0ny | ✅ | ✅ | ✅ |
 | [57](PATCHES.de.md#patch-envdetail) | CVar environmentDetail unlock (kein Limit statt 1.5) | 🟢 **[sicher]** | St0ny | ✅ | ✅ | ✅ |
 | [58](PATCHES.de.md#patch-grounddist) | CVar groundEffectDist unlock (max 3166 statt 140) | 🟢 **[sicher]** | unbekannt | ✅ | ✅ | ✅ |
-| [59](PATCHES.de.md#patch-sliders) | Grafikoptionen: Slider-Maxima erweitern | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
+| [59](PATCHES.de.md#patch-sliders) | Grafikoptionen: Slider-Maxima erweitern | 🟢 **[sicher]** | St0ny | – | – | ✅ |
 | [60](PATCHES.de.md#patch-goscale) | GameObject Sichtweite: Cat 0 und Cat 4 auf environmentDetail reagieren lassen | 🟢 **[sicher]** | St0ny | ✅ | – | ✅ |
 | [61](PATCHES.de.md#patch-cat0) | GameObject Sichtweite: Cat 0 von 30 auf 50 Yards *(kostet Leistung, mehr Kleinkram sichtbar)* | 🟢 **[sicher]** | St0ny | – | – | ✅ |
 | [62](PATCHES.de.md#patch-occluder) | Occluder Fix für Stormwind (Open Azeroth) | 🟢 **[sicher]** | Robinsch | ✅ | – | ✅ |
