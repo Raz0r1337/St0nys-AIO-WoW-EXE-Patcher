@@ -6949,7 +6949,9 @@ function Get-BubbleRangeFromExe {
 #            Standard anwenden" oder "2 = Patch-Optionen aufrufen"
 #    Code  - Scriptblock mit den Patch-Aufrufen
 #  Die Reihenfolge hier ist die Reihenfolge im Menue und beim Einspielen,
-#  Patches einer Kategorie stehen zusammen.
+#  Patches einer Kategorie stehen zusammen. "Debugging & Testen" (debug)
+#  bleibt immer die letzte Kategorie - neue Patches und Kategorien davor
+#  einfuegen.
 # ============================================================
 
 $CATEGORIES = @{
@@ -8600,7 +8602,7 @@ $patches = @(
     }}
 
 
-    # --- Debugging & Testen ---
+    # --- Debugging & Testen (bleibt immer die letzte Kategorie) ---
 
     @{ Id = 'assetdebug'; Cat = 'debug'; On = $false; GrowsExe = $true; PublicUntested = $true; GameUntested = $true
        Author = 'FineWolf'
