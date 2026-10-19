@@ -4001,7 +4001,7 @@ $patches = @(
     }}
 
     @{ Id = 'occluder'; Cat = 'graphics'; On = $false
-       Author = 'Robinsch'
+       Author = 'Kebful'
        De = 'Occluder Fix fuer Stormwind (Open Azeroth)'
        En = 'Occluder fix for Stormwind (Open Azeroth)'
        Code = {
