@@ -209,8 +209,12 @@ zusammengestellt von Stormhand, und die Standard-Auswahl. Es enthält
 sichere Patches (🟢), die Stormhand alle mehrere Stunden auf Warmane getestet
 hat – **das Preset ist sicher** und kann auch auf öffentlichen Servern
 verwendet werden. Drei davon (Nr. 9, 63 und 64) vergrößern die `Wow.exe`; auf
-Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen. Welche Patches
-dazugehören, zeigt die Spalte „Reforged“ in der
+Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen.
+Dazu kommt der awesome_wotlk-Lader (Nr. 27) für die Client-Erweiterungen von
+noname08662: Der Patch selbst ist sicher, die geladene DLL kann auf
+öffentlichen Servern aber erkannt oder blockiert werden; ohne die DLL im
+WoW-Ordner bewirkt er nichts. Welche Patches dazugehören, zeigt die Spalte
+„Reforged“ in der
 [Patch-Übersicht](#patch-übersicht); im Skript steht die Liste unter
 `$PRESET_REFORGED`.
 
@@ -404,7 +408,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [27](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom (fixed by St0ny) | – | ✅ | ✅ |
+| [27](PATCHES.de.md#patch-awesome) | AwesomeWotlkLib.dll Unterstützung aktivieren (Client-Erweiterungen von noname08662) *(benötigt [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[sicher - DLL riskant]** | FrostAtom (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [28](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll Unterstützung aktivieren (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [29](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (mod-voicechat) [ALPHA] *(Modul noch unfertig, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
@@ -420,7 +424,7 @@ dem Patchen listet er sie noch einmal auf.
 | [35](PATCHES.de.md#patch-naked) | Nackter-Charakter-Bug behoben | 🟢 **[sicher]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [36](PATCHES.de.md#patch-forcereaction) | Force-Reaction bei /reload erhalten | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [37](PATCHES.de.md#patch-mail) | Neue Post ohne 60 Sekunden Wartezeit | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
-| [38](PATCHES.de.md#patch-deadchat) | Chat-Befehle auch im Tod erlauben | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
+| [38](PATCHES.de.md#patch-deadchat) | Chat-Befehle auch im Tod erlauben | 🟢 **[sicher]** | Robinsch | – | ✅ | ✅ |
 | [39](PATCHES.de.md#patch-follow) | /follow auch bei NPCs erlauben | 🟠 **[online ungetestet]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
 | [40](PATCHES.de.md#patch-level101) | Level 101+ Druid Fix (Druiden-Werte im Charakterfenster, Barbierstuhl für alle) | 🟢 **[sicher]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
 | [41](PATCHES.de.md#patch-raceclass) | Charaktererstellung: mehr als 10 Klassen (Zufallsklasse) *(für eigene Klassen; Server muss es unterstützen)* | 🔴 **[unsicher]** | Alastor StrixEfuartus / Robinsch | – | – | – |

@@ -201,7 +201,11 @@ The preset "Reforged" (key `R`) is the official preset of the
 together by Stormhand, and the default selection. It contains patches
 rated safe (🟢), all tested by Stormhand for several hours on Warmane – **the
 preset is safe** and can be used on public servers as well. Three of them (No. 9, 63 and 64) make `Wow.exe` larger; that was no problem
-on Warmane, but other servers may check the file size. The "Reforged" column in the
+on Warmane, but other servers may check the file size. On top of that comes
+the awesome_wotlk loader (No. 27) for the client extensions by noname08662:
+the patch itself is safe, but the loaded DLL may be detected or blocked on
+public servers; without the DLL in the WoW folder it does nothing. The
+"Reforged" column in the
 [patch overview](#patch-overview) shows which patches belong to it; in the
 script the list is `$PRESET_REFORGED`.
 
@@ -391,7 +395,7 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom (fixed by St0ny) | – | ✅ | ✅ |
+| [27](PATCHES.en.md#patch-awesome) | Enable AwesomeWotlkLib.dll support (client extensions by noname08662) *(requires [awesome_wotlk](https://github.com/noname08662/awesome_wotlk))* | 🟡 **[safe - DLL risky]** | FrostAtom (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [28](PATCHES.en.md#patch-wotlkext) | Enable WotLKExtensions.dll support (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
 | [29](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (mod-voicechat) [ALPHA] *(module not finished yet, [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat))* | 🟠 **[untested]** | St0ny | – | – | – |
 
@@ -407,7 +411,7 @@ name, and before patching it lists them once more.
 | [35](PATCHES.en.md#patch-naked) | Fix naked character bug | 🟢 **[safe]** | Robinsch (fixed by St0ny) | ✅ | ✅ | ✅ |
 | [36](PATCHES.en.md#patch-forcereaction) | Keep force reaction on /reload | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [37](PATCHES.en.md#patch-mail) | New mail without the 60-second wait | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
-| [38](PATCHES.en.md#patch-deadchat) | Allow chat commands while dead | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
+| [38](PATCHES.en.md#patch-deadchat) | Allow chat commands while dead | 🟢 **[safe]** | Robinsch | – | ✅ | ✅ |
 | [39](PATCHES.en.md#patch-follow) | Allow /follow on NPCs | 🟠 **[untested online]** | St0ny (original by Alastor StrixEfuartus) | – | – | ✅ |
 | [40](PATCHES.en.md#patch-level101) | Level 101+ Druid fix (druid stats in the character window, barber shop for everyone) | 🟢 **[safe]** | Alastor StrixEfuartus (fixed by St0ny) | ✅ | – | ✅ |
 | [41](PATCHES.en.md#patch-raceclass) | Character creation: more than 10 classes (random class) *(for custom classes; server must support it)* | 🔴 **[unsafe]** | Alastor StrixEfuartus / Robinsch | – | – | – |
