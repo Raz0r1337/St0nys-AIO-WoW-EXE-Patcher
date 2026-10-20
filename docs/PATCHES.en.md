@@ -1909,11 +1909,17 @@ patcher aborts with a message.
 ## Debugging & testing
 
 <a id="patch-assetdebug"></a>
-**Debug log for loaded files, models, textures and crashes [BETA]** *(No. 93, Author: FineWolf)* 🟠 **[untested - exe grows]**
+**Debug and error log for loaded files, models, textures and crashes [BETA]** *(No. 93, Author: FineWolf (modified by St0ny))* 🟠 **[untested - exe grows]**
 
 For troubleshooting, e.g. when custom models, textures or maps crash the client.
-The patch writes a log to `Logs\AssetDebug.log` in the WoW folder (if that
-fails, to `AssetDebug.log` next to `Wow.exe`):
+The patch writes two logs to the `Logs` folder in the WoW folder (if that fails,
+right next to `Wow.exe`):
+
+- `AssetDebug.log` – **everything** listed below.
+- `AssetErrors.log` – **only the errors**: `OPEN-FAIL`, `WOW-ERROR` and the
+  crash report.
+
+The big log gets:
 
 - **Every file the client opens** – from the MPQs or the `Data` folder – in the
   order it loads them: `OPEN`, or `OPEN-FAIL` if it cannot find the file.
@@ -1921,16 +1927,27 @@ fails, to `AssetDebug.log` next to `Wow.exe`):
   and memory address.
 - **Textures** that are really loaded (not already in the cache): `TEX-LOAD`
   with path.
+- **WoW's own error messages** (`WOW-ERROR`): the client has many error
+  messages built in, but in the release game they vanish unread. The patch
+  catches 52 of them – about files, models, textures, maps and DBC data, e.g.
+  `Model2: File not found`, `Corrupt model data`, `Failed to load skin profile`,
+  `Unable to Load Texture`, `CMap::SafeOpen() failed` or `Bad zone ID` (map
+  missing from `Map.dbc`). They also reveal files that exist but are broken.
+  By the way, WoW silently replaces a missing model with a placeholder
+  (`Spells\ErrorCube.mdx`) – the log still shows a normal `M2-CREATE`, only
+  the `WOW-ERROR` line before it gives the error away.
 - **On a crash:** exception code and address, the registers, the model, WMO
   group and terrain chunk (ADT file and chunk) drawn last and the last 16
   opened files. After that the client reports the crash as usual.
 
 Every line starts with the time in milliseconds since Windows started and the
-thread number, e.g.:
+thread number – the same in both logs, so for every error you find the spot in
+the big log. For example:
 
 ```
 0001234567 [0A1C] OPEN      Creature\Foo\Foo.m2 (flags=0)
 0001234567 [0A1C] OPEN-FAIL Creature\Foo\Foo01.skin (flags=0)
+0001234568 [0A1C] WOW-ERROR Failed to load skin profile: Creature\Foo\Foo.m2
 0001234570 [0A1C] M2-CREATE  Creature\Foo\Foo.m2 -> model=1A2B3C40
 ```
 
@@ -1943,23 +1960,34 @@ is written per frame.
 > `st0ny-main`. It is not meant for public servers.
 
 > [!NOTE]
+> Not every `OPEN-FAIL` is a real error: WoW only tries some files, e.g. a
+> texture first as `.tga` and then as `.blp`. The first failure is harmless
+> then. Other files WoW tries to open several times (map files such as WMOs up
+> to ten times) – then the same error shows up several times in the log.
+
+> [!NOTE]
 > The log names the individual files, not the MPQ archives: it shows in which
 > order the client loads files and whether it finds them, but not which MPQ a
 > file came from.
 
 > [!IMPORTANT]
-> The file is continued at every start (line
-> `==== AssetDebug session start ====`) and never truncated – it grows with
-> every session. Best delete it from time to time. Because every opened file is
-> written right away, the client loads a bit slower.
+> Both files are continued and never truncated – they keep growing. In the big
+> log every start begins with `==== AssetDebug session start ====`. The error
+> log is only opened at the first error and then gets the line
+> `==== AssetErrors session start ====` – a session without errors leaves
+> nothing there. Best delete them from time to time. Because every opened file
+> is written right away, the client loads a bit slower.
 
 Technical details: the patch appends its own section `.alog` (code and data,
-a little over 9 KB) and redirects nine spots in the client to it:
+about 9 KB) and redirects nine spots in the client to it:
 `SFileOpenFileEx` (VA `0x424B50`), `CM2Scene::CreateModel` (`0x81F8F0`),
 `CMapObj::Create` (`0x7B0CC0`), the cache miss in `TextureCreate`
 (`0x4B9853`), the M2 draw loop (`0x823A20`), both WMO group calls
 (`0x7ABFF0`, `0x7AC011`), the terrain loop (`0x798A6C`) and the top-level
 exception filter (`0x772B20`). The overwritten instructions keep running
-unchanged in the section. Ported from FineWolf's script `make_debug_exe.py`:
-code, data and hook sites are byte-identical. Together with DLLs that redirect
-the same functions, the patch is untested.
+unchanged in the section. On top of that, 52 calls of WoW's output function
+for error messages (`0x5EEB70`, empty in the release client) now lead into the
+patch, which formats the message and writes it to the log – all registers stay
+unchanged. Based on FineWolf's script `make_debug_exe.py`; St0ny added the
+error log. Together with DLLs that redirect the same functions, the patch is
+untested.

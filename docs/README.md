@@ -602,7 +602,7 @@ name, and before patching it lists them once more.
 
 | No. | Patch | Status | Author | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [93](PATCHES.en.md#patch-assetdebug) | Debug log for loaded files, models, textures and crashes [BETA] *(writes `Logs\AssetDebug.log` in the WoW folder – the file grows with every start)* | 🟠 **[untested - exe grows]** | FineWolf | – | – | – |
+| [93](PATCHES.en.md#patch-assetdebug) | Debug and error log for loaded files, models, textures and crashes [BETA] *(writes `Logs\AssetDebug.log` (everything) and `Logs\AssetErrors.log` (errors only) – both files keep growing)* | 🟠 **[untested - exe grows]** | FineWolf (modified by St0ny) | – | – | – |
 
 </details>
 

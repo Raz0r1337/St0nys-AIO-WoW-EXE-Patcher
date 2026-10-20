@@ -6122,10 +6122,10 @@ function Add-MoreLights {
 }
 
 # ============================================================
-#  Asset-Debug-Log (FineWolf, make_debug_exe.py, BETA)
-#  Eigene Sektion .alog: Code (0x511 Byte) ab $CAVE, Daten ab $CAVE + 0x1000
-#  (13 Variablen, die Texte und ein Ringpuffer mit den letzten 16 geoeffneten
-#  Dateinamen). Neun Stellen im Client springen dorthin:
+#  Asset-Debug-Log (FineWolf, modified by St0ny; make_debug_exe_st0ny.py, BETA)
+#  Eigene Sektion .alog: Code ab $CAVE, Daten ab $CAVE + 0x1000 (14 Variablen,
+#  die Texte und ein Ringpuffer mit den letzten 16 geoeffneten Dateinamen).
+#  Neun Stellen im Client springen dorthin (FineWolf):
 #   - SFileOpenFileEx (VA 0x424B50): jede Datei, die der Client oeffnet
 #     (MPQs oder Data-Ordner) -> "OPEN" bzw. "OPEN-FAIL" ins Log, der Name
 #     kommt zusaetzlich in den Ringpuffer.
@@ -6139,14 +6139,21 @@ function Add-MoreLights {
 #     Ausnahme, Register, das zuletzt gezeichnete M2, die WMO-Gruppe und den
 #     Gelaendeabschnitt (ADT-Pfad und Chunk) sowie die letzten 16 Dateien ins
 #     Log und springt dann in WoWs eigenen Filter (0x772760).
+#  Dazu (St0ny) 52 Aufrufe von WoWs printf-Funktion fuer Fehlermeldungen
+#  (VA 0x5EEB70, im fertigen Client leer, z.B. "Corrupt model data: %s"):
+#  Sie gehen nach hk_wowerr und landen als "WOW-ERROR <Meldung>" im Log.
 #  Die ersetzten Befehle laufen in der Sektion unveraendert weiter; mehrere
 #  Threads teilen sich das Log ueber eine Sperre. Log: Logs\AssetDebug.log im
 #  WoW-Ordner (sonst AssetDebug.log), es wird immer angehaengt. Zeilen:
-#  "<GetTickCount> [<Thread>] <Text>". Den Code erzeugt tools/dbg/gen_alog.py
-#  aus FineWolfs Skript - Code, Daten und Hook-Bytes sind dieselben.
+#  "<GetTickCount> [<Thread>] <Text>".
+#  Fehler-Log (St0ny): Logs\AssetErrors.log (sonst AssetErrors.log) bekommt
+#  nur die Fehler - OPEN-FAIL, den ganzen Absturzbericht und WOW-ERROR - mit
+#  derselben Zeit und Thread-Nummer wie das grosse Log. Es wird erst beim
+#  ersten Fehler einer Sitzung geoeffnet. Den Code erzeugt tools/dbg/gen_alog.py
+#  aus make_debug_exe_st0ny.py (FineWolfs make_debug_exe.py plus Fehler-Log).
 # ============================================================
 function Add-AssetDebugLog {
-    # Hook-Stellen mit den Original-Bytes von 3.3.5a 12340 (wie in make_debug_exe.py geprueft)
+    # Hook-Stellen mit den Original-Bytes von 3.3.5a 12340 (wie in make_debug_exe_st0ny.py geprueft)
     Assert-Bytes 0x23F50 @(0x55, 0x8B, 0xEC, 0x64, 0xA1, 0x00, 0x00, 0x00, 0x00) 'Asset-Debug-Log'   # VA 0x424B50 SFileOpenFileEx
     Assert-Bytes 0x41ECF0 @(0x55, 0x8B, 0xEC, 0x8B, 0x45, 0x08) 'Asset-Debug-Log'   # VA 0x81F8F0 CM2Scene::CreateModel
     Assert-Bytes 0x3B00C0 @(0x55, 0x8B, 0xEC, 0x53, 0x8B, 0x5D, 0x08) 'Asset-Debug-Log'   # VA 0x7B0CC0 CMapObj::Create
@@ -6156,20 +6163,90 @@ function Add-AssetDebugLog {
     Assert-Bytes 0x371F20 @(0x68, 0x60, 0x27, 0x77, 0x00, 0xFF, 0x15) 'Asset-Debug-Log'   # VA 0x772B20 SetUnhandledExceptionFilter(WoW filter)
     Assert-Bytes 0xB8C53 @(0x39, 0x45, 0xFC, 0x89, 0x45, 0xF8) 'Asset-Debug-Log'   # VA 0x4B9853 TextureCreate cache miss
     Assert-Bytes 0x397E6C @(0x6A, 0x01, 0x8B, 0xCB, 0x89, 0x45, 0xF0) 'Asset-Debug-Log'   # VA 0x798A6C Terrain chunk loop
+    # WoWs eigene Fehlermeldungen (St0ny): Aufrufe der im fertigen Client leeren printf-Funktion 0x5EEB70,
+    # je "push <Text>" + "call 0x5EEB70" - je Zeile VA des Aufrufs, VA des Textes. Werden auf hk_wowerr umgeleitet.
+    $wowerr = @(
+        0x4057BC, 0x9E2600   # Bad zone ID %i
+        0x4B8A06, 0x9F13BC   # CreateBlpTexture() failed read: %s.\n
+        0x4BA806, 0x9F14FC   # AsyncFileReadThread() failed reading %s: %s
+        0x4C6DFD, 0x9F23F0   # XXXX\nXXXX ERROR!! Sound Kit ID %d is a looping sound but there is no...
+        0x4EA2B0, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x4EA7B6, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x4EA7F5, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x4EC24B, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x4EC2CA, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x4EC350, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x4EC3D3, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x4EC459, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x4EC4E0, 0x9F6D30   # **** Unable to Load Texture %s\n
+        0x66A115, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66A415, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66A715, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66AA05, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66AD05, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66B002, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66B315, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66B615, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66B915, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66BC05, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66BEF5, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66C1F5, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66C502, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66C815, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x66CA95, 0xA298E4   # OsCreateFile failed for cache file: %s\n
+        0x6DC862, 0xA324D8   # Error, unknown displayInfo %d specified for player race %d sex %d!
+        0x6DC898, 0xA32490   # Error, unknown model record %d specified for player race %d sex %d!
+        0x6E6CA0, 0xA326A4   # Error, player %s has displayID 0!
+        0x72D9E0, 0xA34CBC   # Error, NO creature display records found
+        0x734ADB, 0xA34D20   # \n*** WARNING NAN in AnimEventCallback position\neventId %x eventData...
+        0x7B0D0D, 0xA3FF04   # CMapObj::Create(): mapObj->Read("%s") failed
+        0x7BD4A2, 0xA40234   # CMap::SafeOpen() failed %s\n
+        0x7BD502, 0xA4026C   # CMap::SafeRead() failed %s\n
+        0x7BD516, 0xA40250   # CMap::SafeRead() failed %s
+        0x7D9A04, 0xA40630   # Failed to load texture: %s\n
+        0x81C478, 0xA4531C   # Model2: Invalid file extension: %s\n
+        0x81C584, 0xA45300   # Model2: File not found: %s\n
+        0x837531, 0xA458D8   # Failed to fix up texture combo!\n
+        0x8375AA, 0xA458D8   # Failed to fix up texture combo!\n
+        0x83852B, 0xA45928   # Corrupt skin profile data: %s
+        0x838550, 0xA458FC   # Failed to initialize model skin profile: %s
+        0x83CA66, 0xA45948   # Corrupt model sequence data: %s (%d)
+        0x83CB8F, 0xA45300   # Model2: File not found: %s\n
+        0x83CD19, 0xA459B8   # Failed to choose skin profile: %s
+        0x83CD3F, 0xA45998   # Failed to load skin profile: %s
+        0x83CD82, 0xA45970   # Failed to allocate texture array: %s
+        0x83D230, 0xA459FC   # Corrupt model data: %s
+        0x83D252, 0xA459DC   # Failed to initialize model: %s
+        0x83DB49, 0xA45300   # Model2: File not found: %s\n
+    )
+    for ($i = 0; $i -lt $wowerr.Count; $i += 2) {
+        Assert-Bytes ($wowerr[$i] - 0x400C05) ([byte[]](@(0x68) + [BitConverter]::GetBytes([uint32]$wowerr[$i + 1]))) 'Asset-Debug-Log'
+        Assert-Bytes ($wowerr[$i] - 0x400C00) ([byte[]](Get-Rel32 @(0xE8) $wowerr[$i] 0x5EEB70)) 'Asset-Debug-Log'
+    }
     $e = RU32 $script:f 0x3C
     $nsec = RU16 $script:f ($e + 6)
     $lastSo = $e + 24 + (RU16 $script:f ($e + 20)) + 40 * ($nsec - 1)
     $rva = AlignUp ((RU32 $script:f ($lastSo + 12)) + (RU32 $script:f ($lastSo + 8))) (RU32 $script:f ($e + 24 + 32))
     $CAVE = (RU32 $script:f ($e + 24 + 28)) + $rva          # Code ab $CAVE, Daten ab $CAVE + 0x1000
     $c = New-Object System.Collections.Generic.List[byte]
-    # log_line:  (+0x0)
+    # log_err:  (+0x0)
     AddRaw $c @(0x55)                                          # push ebp
     AddRaw $c @(0x89, 0xE5)                                    # mov ebp, esp
     AddRaw $c @(0x81, 0xEC, 0x10, 0x06, 0x00, 0x00)            # sub esp, 0x610
     AddRaw $c @(0x53)                                          # push ebx
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x57)                                          # push edi
-    # log_spin:  (+0xC)
+    AddRaw $c @(0xBF, 0x01, 0x00, 0x00, 0x00)                  # mov edi, 1
+    AddRaw $c @(0xEB, 0x0E)                                    # jmp log_spin
+    # log_line:  (+0x13)
+    AddRaw $c @(0x55)                                          # push ebp
+    AddRaw $c @(0x89, 0xE5)                                    # mov ebp, esp
+    AddRaw $c @(0x81, 0xEC, 0x10, 0x06, 0x00, 0x00)            # sub esp, 0x610
+    AddRaw $c @(0x53)                                          # push ebx
+    AddRaw $c @(0x56)                                          # push esi
+    AddRaw $c @(0x57)                                          # push edi
+    AddRaw $c @(0x31, 0xFF)                                    # xor edi, edi
+    # log_spin:  (+0x21)
     AddRaw $c @(0xB8, 0x01, 0x00, 0x00, 0x00)                  # mov eax, 1
     AddRaw $c @(0x87, 0x05); AddLE32 $c ($CAVE + 0x1004)       # xchg dword ptr [LOCK], eax
     AddRaw $c @(0x85, 0xC0)                                    # test eax, eax
@@ -6177,11 +6254,11 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x6A, 0x00)                                    # push 0
     AddRaw $c @(0xFF, 0x15, 0x64, 0xF2, 0x9D, 0x00)            # call dword ptr [Sleep]
     AddRaw $c @(0xEB, 0xE7)                                    # jmp log_spin
-    # log_locked:  (+0x25)
+    # log_locked:  (+0x3A)
     AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x1000); AddRaw $c @(0x00) # cmp dword ptr [HFILE], 0
     AddRaw $c @(0x75, 0x05)                                    # jne log_opened
-    AddRaw $c @(0xE8, 0x9F, 0x00, 0x00, 0x00)                  # call open_log
-    # log_opened:  (+0x33)
+    AddRaw $c @(0xE8, 0xD3, 0x00, 0x00, 0x00)                  # call open_log
+    # log_opened:  (+0x48)
     AddRaw $c @(0xFF, 0x15, 0x18, 0xF2, 0x9D, 0x00)            # call dword ptr [GetCurrentThreadId]
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xFF, 0x15, 0x74, 0xF1, 0x9D, 0x00)            # call dword ptr [GetTickCount]
@@ -6218,13 +6295,31 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x51)                                          # push ecx
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xFF, 0x15, 0xA8, 0xF1, 0x9D, 0x00)            # call dword ptr [WriteFile]
-    # log_nofile:  (+0xAB)
+    # log_nofile:  (+0xC0)
+    AddRaw $c @(0x85, 0xFF)                                    # test edi, edi
+    AddRaw $c @(0x74, 0x30)                                    # jz log_noerr
+    AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x1034); AddRaw $c @(0x00) # cmp dword ptr [HFILE2], 0
+    AddRaw $c @(0x75, 0x05)                                    # jne log_eopened
+    AddRaw $c @(0xE8, 0xBA, 0x00, 0x00, 0x00)                  # call open_errlog
+    # log_eopened:  (+0xD2)
+    AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x1034)             # mov eax, dword ptr [HFILE2]
+    AddRaw $c @(0x83, 0xF8, 0xFF)                              # cmp eax, -1
+    AddRaw $c @(0x74, 0x18)                                    # je log_noerr
+    AddRaw $c @(0x6A, 0x00)                                    # push 0
+    AddRaw $c @(0x8D, 0x8D, 0xFC, 0xF9, 0xFF, 0xFF)            # lea ecx, [ebp-0x604]
+    AddRaw $c @(0x51)                                          # push ecx
+    AddRaw $c @(0x53)                                          # push ebx
+    AddRaw $c @(0x8D, 0x8D, 0x00, 0xFA, 0xFF, 0xFF)            # lea ecx, [ebp-0x600]
+    AddRaw $c @(0x51)                                          # push ecx
+    AddRaw $c @(0x50)                                          # push eax
+    AddRaw $c @(0xFF, 0x15, 0xA8, 0xF1, 0x9D, 0x00)            # call dword ptr [WriteFile]
+    # log_noerr:  (+0xF4)
     AddRaw $c @(0x83, 0x3D); AddLE32 $c ($CAVE + 0x1028); AddRaw $c @(0x00) # cmp dword ptr [ODS], 0
     AddRaw $c @(0x74, 0x0D)                                    # je log_unlock
     AddRaw $c @(0x8D, 0x85, 0x00, 0xFA, 0xFF, 0xFF)            # lea eax, [ebp-0x600]
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xFF, 0x15, 0xC0, 0xF3, 0x9D, 0x00)            # call dword ptr [OutputDebugStringA]
-    # log_unlock:  (+0xC1)
+    # log_unlock:  (+0x10A)
     AddRaw $c @(0xC7, 0x05); AddLE32 $c ($CAVE + 0x1004); AddRaw $c @(0x00, 0x00, 0x00, 0x00) # mov dword ptr [LOCK], 0
     AddRaw $c @(0x5F)                                          # pop edi
     AddRaw $c @(0x5E)                                          # pop esi
@@ -6232,7 +6327,7 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x89, 0xEC)                                    # mov esp, ebp
     AddRaw $c @(0x5D)                                          # pop ebp
     AddRaw $c @(0xC3)                                          # ret
-    # open_log:  (+0xD2)
+    # open_log:  (+0x11B)
     AddRaw $c @(0x6A, 0x00)                                    # push 0
     AddRaw $c @(0x68, 0x80, 0x00, 0x00, 0x00)                  # push 0x80
     AddRaw $c @(0x6A, 0x04)                                    # push 4
@@ -6251,7 +6346,7 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x68, 0x00, 0x00, 0x00, 0x40)                  # push 0x40000000
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1054)             # push S_PATH2
     AddRaw $c @(0xFF, 0x15, 0x28, 0xF1, 0x9D, 0x00)            # call dword ptr [CreateFileA]
-    # open_ok:  (+0x111)
+    # open_ok:  (+0x15A)
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x1000)             # mov dword ptr [HFILE], eax
     AddRaw $c @(0x83, 0xF8, 0xFF)                              # cmp eax, -1
     AddRaw $c @(0x74, 0x27)                                    # je open_ret
@@ -6266,9 +6361,45 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1063)             # push S_SESSION
     AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x1000)       # push dword ptr [HFILE]
     AddRaw $c @(0xFF, 0x15, 0xA8, 0xF1, 0x9D, 0x00)            # call dword ptr [WriteFile]
-    # open_ret:  (+0x142)
+    # open_ret:  (+0x18B)
     AddRaw $c @(0xC3)                                          # ret
-    # hk_open:  (+0x143)
+    # open_errlog:  (+0x18C)
+    AddRaw $c @(0x6A, 0x00)                                    # push 0
+    AddRaw $c @(0x68, 0x80, 0x00, 0x00, 0x00)                  # push 0x80
+    AddRaw $c @(0x6A, 0x04)                                    # push 4
+    AddRaw $c @(0x6A, 0x00)                                    # push 0
+    AddRaw $c @(0x6A, 0x03)                                    # push 3
+    AddRaw $c @(0x68, 0x00, 0x00, 0x00, 0x40)                  # push 0x40000000
+    AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1315)             # push S_EPATH1
+    AddRaw $c @(0xFF, 0x15, 0x28, 0xF1, 0x9D, 0x00)            # call dword ptr [CreateFileA]
+    AddRaw $c @(0x83, 0xF8, 0xFF)                              # cmp eax, -1
+    AddRaw $c @(0x75, 0x1D)                                    # jne eopen_ok
+    AddRaw $c @(0x6A, 0x00)                                    # push 0
+    AddRaw $c @(0x68, 0x80, 0x00, 0x00, 0x00)                  # push 0x80
+    AddRaw $c @(0x6A, 0x04)                                    # push 4
+    AddRaw $c @(0x6A, 0x00)                                    # push 0
+    AddRaw $c @(0x6A, 0x03)                                    # push 3
+    AddRaw $c @(0x68, 0x00, 0x00, 0x00, 0x40)                  # push 0x40000000
+    AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x132A)             # push S_EPATH2
+    AddRaw $c @(0xFF, 0x15, 0x28, 0xF1, 0x9D, 0x00)            # call dword ptr [CreateFileA]
+    # eopen_ok:  (+0x1CB)
+    AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x1034)             # mov dword ptr [HFILE2], eax
+    AddRaw $c @(0x83, 0xF8, 0xFF)                              # cmp eax, -1
+    AddRaw $c @(0x74, 0x27)                                    # je eopen_ret
+    AddRaw $c @(0x6A, 0x02)                                    # push 2
+    AddRaw $c @(0x6A, 0x00)                                    # push 0
+    AddRaw $c @(0x6A, 0x00)                                    # push 0
+    AddRaw $c @(0x50)                                          # push eax
+    AddRaw $c @(0xFF, 0x15, 0x04, 0xF2, 0x9D, 0x00)            # call dword ptr [SetFilePointer]
+    AddRaw $c @(0x6A, 0x00)                                    # push 0
+    AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1024)             # push WRITTEN
+    AddRaw $c @(0x6A, 0x25)                                    # push S_ESESSION_LEN
+    AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x133A)             # push S_ESESSION
+    AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x1034)       # push dword ptr [HFILE2]
+    AddRaw $c @(0xFF, 0x15, 0xA8, 0xF1, 0x9D, 0x00)            # call dword ptr [WriteFile]
+    # eopen_ret:  (+0x1FC)
+    AddRaw $c @(0xC3)                                          # ret
+    # hk_open:  (+0x1FD)
     AddRaw $c @(0x9C)                                          # pushfd
     AddRaw $c @(0x60)                                          # pushad
     AddRaw $c @(0x8B, 0x74, 0x24, 0x2C)                        # mov esi, dword ptr [esp+0x2c]
@@ -6278,9 +6409,9 @@ function Add-AssetDebugLog {
     AddRaw $c @(0xF0, 0x0F, 0xC1, 0x05); AddLE32 $c ($CAVE + 0x1020) # lock xadd dword ptr [RING_IDX], eax
     AddRaw $c @(0x83, 0xE0, 0x0F)                              # and eax, RING_MASK
     AddRaw $c @(0x69, 0xC0, 0x04, 0x01, 0x00, 0x00)            # imul eax, eax, RING_SLOT_SIZE
-    AddRaw $c @(0x8D, 0xB8); AddLE32 $c ($CAVE + 0x1320)       # lea edi, [eax+RING]
+    AddRaw $c @(0x8D, 0xB8); AddLE32 $c ($CAVE + 0x1370)       # lea edi, [eax+RING]
     AddRaw $c @(0xB9, 0x03, 0x01, 0x00, 0x00)                  # mov ecx, RING_SLOT_SIZE_M1
-    # open_cp:  (+0x16E)
+    # open_cp:  (+0x228)
     AddRaw $c @(0x8A, 0x06)                                    # mov al, byte ptr [esi]
     AddRaw $c @(0x88, 0x07)                                    # mov byte ptr [edi], al
     AddRaw $c @(0x84, 0xC0)                                    # test al, al
@@ -6290,39 +6421,41 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x49)                                          # dec ecx
     AddRaw $c @(0x75, 0xF3)                                    # jnz open_cp
     AddRaw $c @(0xC6, 0x07, 0x00)                              # mov byte ptr [edi], 0
-    # open_skipcopy:  (+0x17E)
+    # open_skipcopy:  (+0x238)
     AddRaw $c @(0x61)                                          # popad
     AddRaw $c @(0x9D)                                          # popfd
     AddRaw $c @(0xFF, 0x74, 0x24, 0x10)                        # push dword ptr [esp+0x10]
     AddRaw $c @(0xFF, 0x74, 0x24, 0x10)                        # push dword ptr [esp+0x10]
     AddRaw $c @(0xFF, 0x74, 0x24, 0x10)                        # push dword ptr [esp+0x10]
     AddRaw $c @(0xFF, 0x74, 0x24, 0x10)                        # push dword ptr [esp+0x10]
-    AddRaw $c @(0xE8, 0x34, 0x00, 0x00, 0x00)                  # call tramp_open
+    AddRaw $c @(0xE8, 0x3A, 0x00, 0x00, 0x00)                  # call tramp_open
     AddRaw $c @(0x9C)                                          # pushfd
     AddRaw $c @(0x60)                                          # pushad
     AddRaw $c @(0x8B, 0x74, 0x24, 0x2C)                        # mov esi, dword ptr [esp+0x2c]
     AddRaw $c @(0x85, 0xF6)                                    # test esi, esi
     AddRaw $c @(0x75, 0x05)                                    # jnz open_nn
     AddRaw $c @(0xBE); AddLE32 $c ($CAVE + 0x12FA)             # mov esi, S_NULL
-    # open_nn:  (+0x1A4)
+    # open_nn:  (+0x25E)
     AddRaw $c @(0x8B, 0x54, 0x24, 0x30)                        # mov edx, dword ptr [esp+0x30]
-    AddRaw $c @(0xB9); AddLE32 $c ($CAVE + 0x1096)             # mov ecx, S_OPEN_OK
-    AddRaw $c @(0x83, 0x7C, 0x24, 0x1C, 0x00)                  # cmp dword ptr [esp+0x1c], 0
-    AddRaw $c @(0x75, 0x05)                                    # jne open_res
-    AddRaw $c @(0xB9); AddLE32 $c ($CAVE + 0x10B0)             # mov ecx, S_OPEN_FAIL
-    # open_res:  (+0x1B9)
     AddRaw $c @(0x52)                                          # push edx
     AddRaw $c @(0x56)                                          # push esi
-    AddRaw $c @(0x51)                                          # push ecx
-    AddRaw $c @(0xE8, 0x3F, 0xFE, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0x83, 0x7C, 0x24, 0x24, 0x00)                  # cmp dword ptr [esp+0x24], 0
+    AddRaw $c @(0x74, 0x0C)                                    # je open_fail
+    AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1096)             # push S_OPEN_OK
+    AddRaw $c @(0xE8, 0x9E, 0xFD, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xEB, 0x0A)                                    # jmp open_logged
+    # open_fail:  (+0x277)
+    AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x10B0)             # push S_OPEN_FAIL
+    AddRaw $c @(0xE8, 0x7F, 0xFD, 0xFF, 0xFF)                  # call log_err
+    # open_logged:  (+0x281)
     AddRaw $c @(0x83, 0xC4, 0x0C)                              # add esp, 12
     AddRaw $c @(0x61)                                          # popad
     AddRaw $c @(0x9D)                                          # popfd
     AddRaw $c @(0xC2, 0x10, 0x00)                              # ret 0x10
-    # tramp_open:  (+0x1C9)
+    # tramp_open:  (+0x289)
     AddRaw $c @(0x55, 0x8B, 0xEC, 0x64, 0xA1, 0x00, 0x00, 0x00, 0x00) # urspruengliche Bytes von SFileOpenFileEx
-    AddRaw $c @(0xE9); AddLE32 $c (0x424B59 - ($CAVE + 0x1D7)) # jmp SFileOpenFileEx_RESUME
-    # hk_m2create:  (+0x1D7)
+    AddRaw $c @(0xE9); AddLE32 $c (0x424B59 - ($CAVE + 0x297)) # jmp SFileOpenFileEx_RESUME
+    # hk_m2create:  (+0x297)
     AddRaw $c @(0xFF, 0x74, 0x24, 0x08)                        # push dword ptr [esp+8]
     AddRaw $c @(0xFF, 0x74, 0x24, 0x08)                        # push dword ptr [esp+8]
     AddRaw $c @(0xE8, 0x26, 0x00, 0x00, 0x00)                  # call tramp_m2create
@@ -6332,19 +6465,19 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x85, 0xF6)                                    # test esi, esi
     AddRaw $c @(0x75, 0x05)                                    # jnz m2c_nn
     AddRaw $c @(0xBE); AddLE32 $c ($CAVE + 0x12FA)             # mov esi, S_NULL
-    # m2c_nn:  (+0x1F3)
+    # m2c_nn:  (+0x2B3)
     AddRaw $c @(0xFF, 0x74, 0x24, 0x1C)                        # push dword ptr [esp+0x1c]
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x10CA)             # push S_M2
-    AddRaw $c @(0xE8, 0xFE, 0xFD, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0x51, 0xFD, 0xFF, 0xFF)                  # call log_line
     AddRaw $c @(0x83, 0xC4, 0x0C)                              # add esp, 12
     AddRaw $c @(0x61)                                          # popad
     AddRaw $c @(0x9D)                                          # popfd
     AddRaw $c @(0xC2, 0x08, 0x00)                              # ret 8
-    # tramp_m2create:  (+0x20A)
+    # tramp_m2create:  (+0x2CA)
     AddRaw $c @(0x55, 0x8B, 0xEC, 0x8B, 0x45, 0x08)            # urspruengliche Bytes von CM2Scene::CreateModel
-    AddRaw $c @(0xE9); AddLE32 $c (0x81F8F6 - ($CAVE + 0x215)) # jmp CM2Scene_CreateModel_RESUME
-    # hk_wmocreate:  (+0x215)
+    AddRaw $c @(0xE9); AddLE32 $c (0x81F8F6 - ($CAVE + 0x2D5)) # jmp CM2Scene_CreateModel_RESUME
+    # hk_wmocreate:  (+0x2D5)
     AddRaw $c @(0xFF, 0x74, 0x24, 0x04)                        # push dword ptr [esp+4]
     AddRaw $c @(0xE8, 0x27, 0x00, 0x00, 0x00)                  # call tramp_wmocreate
     AddRaw $c @(0x83, 0xC4, 0x04)                              # add esp, 4
@@ -6354,19 +6487,19 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x85, 0xF6)                                    # test esi, esi
     AddRaw $c @(0x75, 0x05)                                    # jnz wmoc_nn
     AddRaw $c @(0xBE); AddLE32 $c ($CAVE + 0x12FA)             # mov esi, S_NULL
-    # wmoc_nn:  (+0x230)
+    # wmoc_nn:  (+0x2F0)
     AddRaw $c @(0xFF, 0x74, 0x24, 0x1C)                        # push dword ptr [esp+0x1c]
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x10E8)             # push S_WMO
-    AddRaw $c @(0xE8, 0xC1, 0xFD, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0x14, 0xFD, 0xFF, 0xFF)                  # call log_line
     AddRaw $c @(0x83, 0xC4, 0x0C)                              # add esp, 12
     AddRaw $c @(0x61)                                          # popad
     AddRaw $c @(0x9D)                                          # popfd
     AddRaw $c @(0xC3)                                          # ret
-    # tramp_wmocreate:  (+0x245)
+    # tramp_wmocreate:  (+0x305)
     AddRaw $c @(0x55, 0x8B, 0xEC, 0x53, 0x8B, 0x5D, 0x08)      # urspruengliche Bytes von CMapObj::Create
-    AddRaw $c @(0xE9); AddLE32 $c (0x7B0CC7 - ($CAVE + 0x251)) # jmp CMapObj_Create_RESUME
-    # hk_m2draw:  (+0x251)
+    AddRaw $c @(0xE9); AddLE32 $c (0x7B0CC7 - ($CAVE + 0x311)) # jmp CMapObj_Create_RESUME
+    # hk_m2draw:  (+0x311)
     AddRaw $c @(0x8B, 0x50, 0x2C)                              # mov edx, dword ptr [eax+0x2c]
     AddRaw $c @(0x89, 0x56, 0x68)                              # mov dword ptr [esi+0x68], edx
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x1008)             # mov dword ptr [M2_MODEL], eax
@@ -6375,8 +6508,8 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x8D, 0x49, 0x01)                              # lea ecx, [ecx+1]
     AddRaw $c @(0x89, 0x0D); AddLE32 $c ($CAVE + 0x101C)       # mov dword ptr [SEQ], ecx
     AddRaw $c @(0x89, 0x0D); AddLE32 $c ($CAVE + 0x1010)       # mov dword ptr [M2_SEQ], ecx
-    AddRaw $c @(0xE9); AddLE32 $c (0x823A26 - ($CAVE + 0x27C)) # jmp M2_DRAW_RESUME
-    # hk_wmodraw_a:  (+0x27C)
+    AddRaw $c @(0xE9); AddLE32 $c (0x823A26 - ($CAVE + 0x33C)) # jmp M2_DRAW_RESUME
+    # hk_wmodraw_a:  (+0x33C)
     AddRaw $c @(0x89, 0x35); AddLE32 $c ($CAVE + 0x1014)       # mov dword ptr [WMO_GROUP], esi
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x101C)             # mov eax, dword ptr [SEQ]
@@ -6385,7 +6518,7 @@ function Add-AssetDebugLog {
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x1018)             # mov dword ptr [WMO_SEQ], eax
     AddRaw $c @(0x58)                                          # pop eax
     AddRaw $c @(0xFF, 0x25, 0xCC, 0xBE, 0xCF, 0x00)            # jmp dword ptr [0xcfbecc]
-    # hk_wmodraw_b:  (+0x29C)
+    # hk_wmodraw_b:  (+0x35C)
     AddRaw $c @(0x89, 0x35); AddLE32 $c ($CAVE + 0x1014)       # mov dword ptr [WMO_GROUP], esi
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x101C)             # mov eax, dword ptr [SEQ]
@@ -6394,25 +6527,25 @@ function Add-AssetDebugLog {
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x1018)             # mov dword ptr [WMO_SEQ], eax
     AddRaw $c @(0x58)                                          # pop eax
     AddRaw $c @(0xFF, 0x25, 0xC4, 0xBE, 0xCF, 0x00)            # jmp dword ptr [0xcfbec4]
-    # hk_texload:  (+0x2BC)
+    # hk_texload:  (+0x37C)
     AddRaw $c @(0x9C)                                          # pushfd
     AddRaw $c @(0x60)                                          # pushad
     AddRaw $c @(0x8B, 0x75, 0x08)                              # mov esi, dword ptr [ebp+8]
     AddRaw $c @(0x85, 0xF6)                                    # test esi, esi
     AddRaw $c @(0x75, 0x05)                                    # jnz tex_nn
     AddRaw $c @(0xBE); AddLE32 $c ($CAVE + 0x12FA)             # mov esi, S_NULL
-    # tex_nn:  (+0x2CA)
+    # tex_nn:  (+0x38A)
     AddRaw $c @(0xFF, 0x75, 0x14)                              # push dword ptr [ebp+0x14]
     AddRaw $c @(0xFF, 0x75, 0x0C)                              # push dword ptr [ebp+0x0c]
     AddRaw $c @(0x56)                                          # push esi
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x123D)             # push S_TEX
-    AddRaw $c @(0xE8, 0x25, 0xFD, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0x78, 0xFC, 0xFF, 0xFF)                  # call log_line
     AddRaw $c @(0x83, 0xC4, 0x10)                              # add esp, 16
     AddRaw $c @(0x61)                                          # popad
     AddRaw $c @(0x9D)                                          # popfd
     AddRaw $c @(0x39, 0x45, 0xFC, 0x89, 0x45, 0xF8)            # urspruengliche Bytes von TextureCreate cache miss
-    AddRaw $c @(0xE9); AddLE32 $c (0x4B9859 - ($CAVE + 0x2EB)) # jmp TEX_RESUME
-    # hk_terrain:  (+0x2EB)
+    AddRaw $c @(0xE9); AddLE32 $c (0x4B9859 - ($CAVE + 0x3AB)) # jmp TEX_RESUME
+    # hk_terrain:  (+0x3AB)
     AddRaw $c @(0x6A, 0x01, 0x8B, 0xCB, 0x89, 0x45, 0xF0)      # urspruengliche Bytes von Terrain chunk loop
     AddRaw $c @(0x89, 0x1D); AddLE32 $c ($CAVE + 0x102C)       # mov dword ptr [TER_CHUNK], ebx
     AddRaw $c @(0x50)                                          # push eax
@@ -6421,8 +6554,8 @@ function Add-AssetDebugLog {
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x101C)             # mov dword ptr [SEQ], eax
     AddRaw $c @(0xA3); AddLE32 $c ($CAVE + 0x1030)             # mov dword ptr [TER_SEQ], eax
     AddRaw $c @(0x58)                                          # pop eax
-    AddRaw $c @(0xE9); AddLE32 $c (0x798A73 - ($CAVE + 0x311)) # jmp TERRAIN_RESUME
-    # hk_filter:  (+0x311)
+    AddRaw $c @(0xE9); AddLE32 $c (0x798A73 - ($CAVE + 0x3D1)) # jmp TERRAIN_RESUME
+    # hk_filter:  (+0x3D1)
     AddRaw $c @(0x55)                                          # push ebp
     AddRaw $c @(0x89, 0xE5)                                    # mov ebp, esp
     AddRaw $c @(0x83, 0xEC, 0x10)                              # sub esp, 0x10
@@ -6435,7 +6568,7 @@ function Add-AssetDebugLog {
     AddRaw $c @(0xFF, 0x73, 0x0C)                              # push dword ptr [ebx+0x0c]
     AddRaw $c @(0xFF, 0x33)                                    # push dword ptr [ebx]
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1107)             # push S_CRASH
-    AddRaw $c @(0xE8, 0xC4, 0xFC, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0x04, 0xFC, 0xFF, 0xFF)                  # call log_err
     AddRaw $c @(0x83, 0xC4, 0x14)                              # add esp, 20
     AddRaw $c @(0x8B, 0x7E, 0x04)                              # mov edi, dword ptr [esi+4]
     AddRaw $c @(0xFF, 0xB7, 0x9C, 0x00, 0x00, 0x00)            # push dword ptr [edi+0x9c]
@@ -6445,12 +6578,12 @@ function Add-AssetDebugLog {
     AddRaw $c @(0xFF, 0xB7, 0xA4, 0x00, 0x00, 0x00)            # push dword ptr [edi+0xa4]
     AddRaw $c @(0xFF, 0xB7, 0xB0, 0x00, 0x00, 0x00)            # push dword ptr [edi+0xb0]
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1146)             # push S_REGS
-    AddRaw $c @(0xE8, 0x90, 0xFC, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0xD0, 0xFB, 0xFF, 0xFF)                  # call log_err
     AddRaw $c @(0x83, 0xC4, 0x1C)                              # add esp, 28
     AddRaw $c @(0xFF, 0xB7, 0xC4, 0x00, 0x00, 0x00)            # push dword ptr [edi+0xc4]
     AddRaw $c @(0xFF, 0xB7, 0xB4, 0x00, 0x00, 0x00)            # push dword ptr [edi+0xb4]
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1183)             # push S_REGS2
-    AddRaw $c @(0xE8, 0x77, 0xFC, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0xB7, 0xFB, 0xFF, 0xFF)                  # call log_err
     AddRaw $c @(0x83, 0xC4, 0x0C)                              # add esp, 12
     AddRaw $c @(0xB8); AddLE32 $c ($CAVE + 0x1301)             # mov eax, S_NONE
     AddRaw $c @(0x8B, 0x1D); AddLE32 $c ($CAVE + 0x100C)       # mov ebx, dword ptr [M2_SHARED]
@@ -6464,13 +6597,13 @@ function Add-AssetDebugLog {
     AddRaw $c @(0xB8); AddLE32 $c ($CAVE + 0x1308)             # mov eax, S_UNREADABLE
     AddRaw $c @(0x75, 0x02)                                    # jnz flt_m2
     AddRaw $c @(0x89, 0xD8)                                    # mov eax, ebx
-    # flt_m2:  (+0x3B5)
+    # flt_m2:  (+0x475)
     AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x100C)       # push dword ptr [M2_SHARED]
     AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x1008)       # push dword ptr [M2_MODEL]
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x1010)       # push dword ptr [M2_SEQ]
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x119C)             # push S_CM2
-    AddRaw $c @(0xE8, 0x2E, 0xFC, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0x6E, 0xFB, 0xFF, 0xFF)                  # call log_err
     AddRaw $c @(0x83, 0xC4, 0x14)                              # add esp, 20
     AddRaw $c @(0xC7, 0x45, 0xFC, 0x00, 0x00, 0x00, 0x00)      # mov dword ptr [ebp-4], 0
     AddRaw $c @(0xB8); AddLE32 $c ($CAVE + 0x1301)             # mov eax, S_NONE
@@ -6497,13 +6630,13 @@ function Add-AssetDebugLog {
     AddRaw $c @(0xB8); AddLE32 $c ($CAVE + 0x1308)             # mov eax, S_UNREADABLE
     AddRaw $c @(0x75, 0x03)                                    # jnz flt_wmo
     AddRaw $c @(0x8B, 0x45, 0xF8)                              # mov eax, dword ptr [ebp-8]
-    # flt_wmo:  (+0x42E)
+    # flt_wmo:  (+0x4EE)
     AddRaw $c @(0xFF, 0x75, 0xFC)                              # push dword ptr [ebp-4]
     AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x1014)       # push dword ptr [WMO_GROUP]
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x1018)       # push dword ptr [WMO_SEQ]
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x11DF)             # push S_CWMO
-    AddRaw $c @(0xE8, 0xB8, 0xFB, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0xF8, 0xFA, 0xFF, 0xFF)                  # call log_err
     AddRaw $c @(0x83, 0xC4, 0x14)                              # add esp, 20
     AddRaw $c @(0xB8); AddLE32 $c ($CAVE + 0x1301)             # mov eax, S_NONE
     AddRaw $c @(0x8B, 0x1D); AddLE32 $c ($CAVE + 0x102C)       # mov ebx, dword ptr [TER_CHUNK]
@@ -6533,51 +6666,121 @@ function Add-AssetDebugLog {
     AddRaw $c @(0x68, 0xD0, 0x07, 0xCE, 0x00)                  # push MAP_DIR
     AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x1030)       # push dword ptr [TER_SEQ]
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1269)             # push S_CTER
-    AddRaw $c @(0xE8, 0x5C, 0xFB, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0x9C, 0xFA, 0xFF, 0xFF)                  # call log_err
     AddRaw $c @(0x83, 0xC4, 0x24)                              # add esp, 36
     AddRaw $c @(0xEB, 0x15)                                    # jmp flt_ter_done
-    # flt_ter_simple:  (+0x4A9)
+    # flt_ter_simple:  (+0x569)
     AddRaw $c @(0x53)                                          # push ebx
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xFF, 0x35); AddLE32 $c ($CAVE + 0x1030)       # push dword ptr [TER_SEQ]
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x12BF)             # push S_CTER0
-    AddRaw $c @(0xE8, 0x45, 0xFB, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0x85, 0xFA, 0xFF, 0xFF)                  # call log_err
     AddRaw $c @(0x83, 0xC4, 0x10)                              # add esp, 16
-    # flt_ter_done:  (+0x4BE)
+    # flt_ter_done:  (+0x57E)
     AddRaw $c @(0x8B, 0x35); AddLE32 $c ($CAVE + 0x1020)       # mov esi, dword ptr [RING_IDX]
     AddRaw $c @(0x89, 0xF7)                                    # mov edi, esi
     AddRaw $c @(0x83, 0xEF, 0x10)                              # sub edi, RING_SLOTS
     AddRaw $c @(0x79, 0x02)                                    # jns flt_loop
     AddRaw $c @(0x31, 0xFF)                                    # xor edi, edi
-    # flt_loop:  (+0x4CD)
+    # flt_loop:  (+0x58D)
     AddRaw $c @(0x39, 0xF7)                                    # cmp edi, esi
     AddRaw $c @(0x73, 0x22)                                    # jae flt_done
     AddRaw $c @(0x89, 0xF8)                                    # mov eax, edi
     AddRaw $c @(0x83, 0xE0, 0x0F)                              # and eax, RING_MASK
     AddRaw $c @(0x69, 0xC0, 0x04, 0x01, 0x00, 0x00)            # imul eax, eax, RING_SLOT_SIZE
-    AddRaw $c @(0x05); AddLE32 $c ($CAVE + 0x1320)             # add eax, RING
+    AddRaw $c @(0x05); AddLE32 $c ($CAVE + 0x1370)             # add eax, RING
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0x57)                                          # push edi
     AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1222)             # push S_CLAST
-    AddRaw $c @(0xE8, 0x13, 0xFB, 0xFF, 0xFF)                  # call log_line
+    AddRaw $c @(0xE8, 0x53, 0xFA, 0xFF, 0xFF)                  # call log_err
     AddRaw $c @(0x83, 0xC4, 0x0C)                              # add esp, 12
     AddRaw $c @(0x47)                                          # inc edi
     AddRaw $c @(0xEB, 0xDA)                                    # jmp flt_loop
-    # flt_done:  (+0x4F3)
+    # flt_done:  (+0x5B3)
     AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x1000)             # mov eax, dword ptr [HFILE]
+    AddRaw $c @(0x85, 0xC0)                                    # test eax, eax
+    AddRaw $c @(0x74, 0x0C)                                    # jz flt_flush2
+    AddRaw $c @(0x83, 0xF8, 0xFF)                              # cmp eax, -1
+    AddRaw $c @(0x74, 0x07)                                    # je flt_flush2
+    AddRaw $c @(0x50)                                          # push eax
+    AddRaw $c @(0xFF, 0x15, 0x20, 0xF1, 0x9D, 0x00)            # call dword ptr [FlushFileBuffers]
+    # flt_flush2:  (+0x5C8)
+    AddRaw $c @(0xA1); AddLE32 $c ($CAVE + 0x1034)             # mov eax, dword ptr [HFILE2]
     AddRaw $c @(0x85, 0xC0)                                    # test eax, eax
     AddRaw $c @(0x74, 0x0C)                                    # jz flt_out
     AddRaw $c @(0x83, 0xF8, 0xFF)                              # cmp eax, -1
     AddRaw $c @(0x74, 0x07)                                    # je flt_out
     AddRaw $c @(0x50)                                          # push eax
     AddRaw $c @(0xFF, 0x15, 0x20, 0xF1, 0x9D, 0x00)            # call dword ptr [FlushFileBuffers]
-    # flt_out:  (+0x508)
+    # flt_out:  (+0x5DD)
     AddRaw $c @(0x61)                                          # popad
     AddRaw $c @(0x89, 0xEC)                                    # mov esp, ebp
     AddRaw $c @(0x5D)                                          # pop ebp
-    AddRaw $c @(0xE9); AddLE32 $c (0x772760 - ($CAVE + 0x511)) # jmp WOW_FILTER
+    AddRaw $c @(0xE9); AddLE32 $c (0x772760 - ($CAVE + 0x5E6)) # jmp WOW_FILTER
+    # hk_wowerr:  (+0x5E6)
+    AddRaw $c @(0x9C)                                          # pushfd
+    AddRaw $c @(0x60)                                          # pushad
+    AddRaw $c @(0x89, 0xE5)                                    # mov ebp, esp
+    AddRaw $c @(0x81, 0xEC, 0x00, 0x04, 0x00, 0x00)            # sub esp, 0x400
+    AddRaw $c @(0xFF, 0x75, 0x48)                              # push dword ptr [ebp+0x48]
+    AddRaw $c @(0xFF, 0x75, 0x44)                              # push dword ptr [ebp+0x44]
+    AddRaw $c @(0xFF, 0x75, 0x40)                              # push dword ptr [ebp+0x40]
+    AddRaw $c @(0xFF, 0x75, 0x3C)                              # push dword ptr [ebp+0x3c]
+    AddRaw $c @(0xFF, 0x75, 0x38)                              # push dword ptr [ebp+0x38]
+    AddRaw $c @(0xFF, 0x75, 0x34)                              # push dword ptr [ebp+0x34]
+    AddRaw $c @(0xFF, 0x75, 0x30)                              # push dword ptr [ebp+0x30]
+    AddRaw $c @(0xFF, 0x75, 0x2C)                              # push dword ptr [ebp+0x2c]
+    AddRaw $c @(0xFF, 0x75, 0x28)                              # push dword ptr [ebp+0x28]
+    AddRaw $c @(0x8D, 0x85, 0x00, 0xFC, 0xFF, 0xFF)            # lea eax, [ebp-0x400]
+    AddRaw $c @(0x50)                                          # push eax
+    AddRaw $c @(0xFF, 0x15, 0xC0, 0xF5, 0x9D, 0x00)            # call dword ptr [wsprintfA]
+    AddRaw $c @(0x83, 0xC4, 0x28)                              # add esp, 40
+    AddRaw $c @(0x8D, 0xB5, 0x00, 0xFC, 0xFF, 0xFF)            # lea esi, [ebp-0x400]
+    AddRaw $c @(0x89, 0xF7)                                    # mov edi, esi
+    AddRaw $c @(0xB2, 0x20)                                    # mov dl, 0x20
+    # werr_loop:  (+0x625)
+    AddRaw $c @(0x8A, 0x06)                                    # mov al, byte ptr [esi]
+    AddRaw $c @(0x46)                                          # inc esi
+    AddRaw $c @(0x84, 0xC0)                                    # test al, al
+    AddRaw $c @(0x74, 0x24)                                    # jz werr_end
+    AddRaw $c @(0x3C, 0x20)                                    # cmp al, 0x20
+    AddRaw $c @(0x74, 0x13)                                    # je werr_blank
+    AddRaw $c @(0x3C, 0x0A)                                    # cmp al, 0x0a
+    AddRaw $c @(0x74, 0x0F)                                    # je werr_blank
+    AddRaw $c @(0x3C, 0x0D)                                    # cmp al, 0x0d
+    AddRaw $c @(0x74, 0x0B)                                    # je werr_blank
+    AddRaw $c @(0x3C, 0x09)                                    # cmp al, 0x09
+    AddRaw $c @(0x74, 0x07)                                    # je werr_blank
+    AddRaw $c @(0x88, 0x07)                                    # mov byte ptr [edi], al
+    AddRaw $c @(0x47)                                          # inc edi
+    AddRaw $c @(0x88, 0xC2)                                    # mov dl, al
+    AddRaw $c @(0xEB, 0xE2)                                    # jmp werr_loop
+    # werr_blank:  (+0x643)
+    AddRaw $c @(0x80, 0xFA, 0x20)                              # cmp dl, 0x20
+    AddRaw $c @(0x74, 0xDD)                                    # je werr_loop
+    AddRaw $c @(0xC6, 0x07, 0x20)                              # mov byte ptr [edi], 0x20
+    AddRaw $c @(0x47)                                          # inc edi
+    AddRaw $c @(0xB2, 0x20)                                    # mov dl, 0x20
+    AddRaw $c @(0xEB, 0xD5)                                    # jmp werr_loop
+    # werr_end:  (+0x650)
+    AddRaw $c @(0x8D, 0x85, 0x00, 0xFC, 0xFF, 0xFF)            # lea eax, [ebp-0x400]
+    AddRaw $c @(0x39, 0xC7)                                    # cmp edi, eax
+    AddRaw $c @(0x76, 0x07)                                    # jbe werr_term
+    AddRaw $c @(0x80, 0x7F, 0xFF, 0x20)                        # cmp byte ptr [edi-1], 0x20
+    AddRaw $c @(0x75, 0x01)                                    # jne werr_term
+    AddRaw $c @(0x4F)                                          # dec edi
+    # werr_term:  (+0x661)
+    AddRaw $c @(0xC6, 0x07, 0x00)                              # mov byte ptr [edi], 0
+    AddRaw $c @(0x50)                                          # push eax
+    AddRaw $c @(0x68); AddLE32 $c ($CAVE + 0x1360)             # push S_WOWERR
+    AddRaw $c @(0xE8, 0x91, 0xF9, 0xFF, 0xFF)                  # call log_err
+    AddRaw $c @(0x83, 0xC4, 0x08)                              # add esp, 8
+    AddRaw $c @(0x89, 0xEC)                                    # mov esp, ebp
+    AddRaw $c @(0x61)                                          # popad
+    AddRaw $c @(0x9D)                                          # popfd
+    AddRaw $c @(0xC3)                                          # ret
     while ($c.Count -lt 0x1000) { [void]$c.Add(0) }
-    # Daten (+0x1000): 13 Variablen zu 4 Byte (HFILE, LOCK, M2_MODEL, M2_SHARED, M2_SEQ, WMO_GROUP, WMO_SEQ, SEQ, RING_IDX, WRITTEN, ODS, TER_CHUNK, TER_SEQ), auf 16 Byte aufgefuellt
+    # Daten (+0x1000): 14 Variablen zu 4 Byte (HFILE, LOCK, M2_MODEL, M2_SHARED, M2_SEQ, WMO_GROUP, WMO_SEQ, SEQ, RING_IDX, WRITTEN, ODS, TER_CHUNK, TER_SEQ, HFILE2), auf 16 Byte aufgefuellt
     for ($i = 0; $i -lt 0x40; $i++) { [void]$c.Add(0) }
     AddAsciiZ $c 'Logs\AssetDebug.log'                                         # S_PATH1 (+0x1040)
     AddAsciiZ $c 'AssetDebug.log'                                              # S_PATH2 (+0x1054)
@@ -6599,19 +6802,26 @@ function Add-AssetDebugLog {
     AddAsciiZ $c '(null)'                                                      # S_NULL (+0x12FA)
     AddAsciiZ $c '(none)'                                                      # S_NONE (+0x1301)
     AddAsciiZ $c '(unreadable)'                                                # S_UNREADABLE (+0x1308)
-    while ($c.Count -lt 0x1320) { [void]$c.Add(0) }
-    # Ringpuffer (+0x1320): die letzten 16 geoeffneten Dateinamen zu je 260 Byte
+    AddAsciiZ $c 'Logs\AssetErrors.log'                                        # S_EPATH1 (+0x1315)
+    AddAsciiZ $c 'AssetErrors.log'                                             # S_EPATH2 (+0x132A)
+    AddAsciiZ $c '==== AssetErrors session start ====' -CrLf                   # S_ESESSION (+0x133A)
+    AddAsciiZ $c 'WOW-ERROR %s' -CrLf                                          # S_WOWERR (+0x1360)
+    while ($c.Count -lt 0x1370) { [void]$c.Add(0) }
+    # Ringpuffer (+0x1370): die letzten 16 geoeffneten Dateinamen zu je 260 Byte
     for ($i = 0; $i -lt 4160; $i++) { [void]$c.Add(0) }
     [void](Add-SectionBlock '.alog' $rva $c.Count $c.ToArray() ([uint32]3758096416) 0)   # 0xE0000020 = Code | ausfuehrbar | lesbar | schreibbar
-    Patch 0x23F50 ([byte[]]((Get-Rel32 @(0xE9) 0x424B50 ($CAVE + 0x143)) + @(0x90, 0x90, 0x90, 0x90)))   # VA 0x424B50 SFileOpenFileEx -> jmp hk_open
-    Patch 0x41ECF0 ([byte[]]((Get-Rel32 @(0xE9) 0x81F8F0 ($CAVE + 0x1D7)) + @(0x90)))   # VA 0x81F8F0 CM2Scene::CreateModel -> jmp hk_m2create
-    Patch 0x3B00C0 ([byte[]]((Get-Rel32 @(0xE9) 0x7B0CC0 ($CAVE + 0x215)) + @(0x90, 0x90)))   # VA 0x7B0CC0 CMapObj::Create -> jmp hk_wmocreate
-    Patch 0x422E20 ([byte[]]((Get-Rel32 @(0xE9) 0x823A20 ($CAVE + 0x251)) + @(0x90)))   # VA 0x823A20 CM2Scene batch loop -> jmp hk_m2draw
-    Patch 0x3AB3F0 ([byte[]]((Get-Rel32 @(0xE8) 0x7ABFF0 ($CAVE + 0x27C)) + @(0x90)))   # VA 0x7ABFF0 WMO group render A -> call hk_wmodraw_a
-    Patch 0x3AB411 ([byte[]]((Get-Rel32 @(0xE8) 0x7AC011 ($CAVE + 0x29C)) + @(0x90)))   # VA 0x7AC011 WMO group render B -> call hk_wmodraw_b
-    Patch 0xB8C53 ([byte[]]((Get-Rel32 @(0xE9) 0x4B9853 ($CAVE + 0x2BC)) + @(0x90)))   # VA 0x4B9853 TextureCreate cache miss -> jmp hk_texload
-    Patch 0x397E6C ([byte[]]((Get-Rel32 @(0xE9) 0x798A6C ($CAVE + 0x2EB)) + @(0x90, 0x90)))   # VA 0x798A6C Terrain chunk loop -> jmp hk_terrain
-    Patch 0x371F21 ([BitConverter]::GetBytes([uint32]($CAVE + 0x311)))   # VA 0x772B21 push 0x772760 -> push hk_filter
+    Patch 0x23F50 ([byte[]]((Get-Rel32 @(0xE9) 0x424B50 ($CAVE + 0x1FD)) + @(0x90, 0x90, 0x90, 0x90)))   # VA 0x424B50 SFileOpenFileEx -> jmp hk_open
+    Patch 0x41ECF0 ([byte[]]((Get-Rel32 @(0xE9) 0x81F8F0 ($CAVE + 0x297)) + @(0x90)))   # VA 0x81F8F0 CM2Scene::CreateModel -> jmp hk_m2create
+    Patch 0x3B00C0 ([byte[]]((Get-Rel32 @(0xE9) 0x7B0CC0 ($CAVE + 0x2D5)) + @(0x90, 0x90)))   # VA 0x7B0CC0 CMapObj::Create -> jmp hk_wmocreate
+    Patch 0x422E20 ([byte[]]((Get-Rel32 @(0xE9) 0x823A20 ($CAVE + 0x311)) + @(0x90)))   # VA 0x823A20 CM2Scene batch loop -> jmp hk_m2draw
+    Patch 0x3AB3F0 ([byte[]]((Get-Rel32 @(0xE8) 0x7ABFF0 ($CAVE + 0x33C)) + @(0x90)))   # VA 0x7ABFF0 WMO group render A -> call hk_wmodraw_a
+    Patch 0x3AB411 ([byte[]]((Get-Rel32 @(0xE8) 0x7AC011 ($CAVE + 0x35C)) + @(0x90)))   # VA 0x7AC011 WMO group render B -> call hk_wmodraw_b
+    Patch 0xB8C53 ([byte[]]((Get-Rel32 @(0xE9) 0x4B9853 ($CAVE + 0x37C)) + @(0x90)))   # VA 0x4B9853 TextureCreate cache miss -> jmp hk_texload
+    Patch 0x397E6C ([byte[]]((Get-Rel32 @(0xE9) 0x798A6C ($CAVE + 0x3AB)) + @(0x90, 0x90)))   # VA 0x798A6C Terrain chunk loop -> jmp hk_terrain
+    Patch 0x371F21 ([BitConverter]::GetBytes([uint32]($CAVE + 0x3D1)))   # VA 0x772B21 push 0x772760 -> push hk_filter
+    for ($i = 0; $i -lt $wowerr.Count; $i += 2) {   # call 0x5EEB70 -> call hk_wowerr
+        Patch ($wowerr[$i] - 0x400C00) ([byte[]](Get-Rel32 @(0xE8) $wowerr[$i] ($CAVE + 0x5E6)))
+    }
 }
 
 # ============================================================
@@ -8605,11 +8815,11 @@ $patches = @(
     # --- Debugging & Testen (bleibt immer die letzte Kategorie) ---
 
     @{ Id = 'assetdebug'; Cat = 'debug'; On = $false; GrowsExe = $true; PublicUntested = $true; GameUntested = $true
-       Author = 'FineWolf'
-       De = 'Debug-Log fuer geladene Dateien, Modelle, Texturen und Abstuerze [BETA]'
-       En = 'Debug log for loaded files, models, textures and crashes [BETA]'
-       NoteDe = 'schreibt Logs\AssetDebug.log im WoW-Ordner - die Datei waechst mit jedem Start'
-       NoteEn = 'writes Logs\AssetDebug.log in the WoW folder - the file grows with every start'
+       Author = 'FineWolf (modified by St0ny)'
+       De = 'Debug- und Fehler-Log fuer geladene Dateien, Modelle, Texturen und Abstuerze [BETA]'
+       En = 'Debug and error log for loaded files, models, textures and crashes [BETA]'
+       NoteDe = 'schreibt Logs\AssetDebug.log (alles) und Logs\AssetErrors.log (nur Fehler) - beide Dateien wachsen immer weiter'
+       NoteEn = 'writes Logs\AssetDebug.log (everything) and Logs\AssetErrors.log (errors only) - both files keep growing'
        Code = {
         # Eigene Sektion (.alog), siehe Add-AssetDebugLog.
         Add-AssetDebugLog
@@ -9034,15 +9244,67 @@ assetdebug;2F8;00000000000000000000000000000000000000000000000000000000000000000
 assetdebug;3C8;00000000;0
 assetdebug;3D0;00000000;0
 assetdebug;3E4;00000000;0
+assetdebug;4BBC;E8AF931E00;1
 assetdebug;23F50;558BEC64A100000000;1
+assetdebug;B7E06;E865611300;1
 assetdebug;B8C53;3945FC8945F8;1
+assetdebug;B9C06;E865431300;1
+assetdebug;C61FD;E86E7D1200;1
+assetdebug;E96B0;E8BB481000;1
+assetdebug;E9BB6;E8B5431000;1
+assetdebug;E9BF5;E876431000;1
+assetdebug;EB64B;E820291000;1
+assetdebug;EB6CA;E8A1281000;1
+assetdebug;EB750;E81B281000;1
+assetdebug;EB7D3;E898271000;1
+assetdebug;EB859;E812271000;1
+assetdebug;EB8E0;E88B261000;1
+assetdebug;269515;E8564AF8FF;1
+assetdebug;269815;E85647F8FF;1
+assetdebug;269B15;E85644F8FF;1
+assetdebug;269E05;E86641F8FF;1
+assetdebug;26A105;E8663EF8FF;1
+assetdebug;26A402;E8693BF8FF;1
+assetdebug;26A715;E85638F8FF;1
+assetdebug;26AA15;E85635F8FF;1
+assetdebug;26AD15;E85632F8FF;1
+assetdebug;26B005;E8662FF8FF;1
+assetdebug;26B2F5;E8762CF8FF;1
+assetdebug;26B5F5;E87629F8FF;1
+assetdebug;26B902;E86926F8FF;1
+assetdebug;26BC15;E85623F8FF;1
+assetdebug;26BE95;E8D620F8FF;1
+assetdebug;2DBC62;E80923F1FF;1
+assetdebug;2DBC98;E8D322F1FF;1
+assetdebug;2E60A0;E8CB7EF0FF;1
+assetdebug;32CDE0;E88B11ECFF;1
+assetdebug;333EDB;E890A0EBFF;1
 assetdebug;371F21;60277700;1
 assetdebug;397E6C;6A018BCB8945F0;1
 assetdebug;3AB3F0;FF15CCBECF00;1
 assetdebug;3AB411;FF15C4BECF00;1
 assetdebug;3B00C0;558BEC538B5D08;1
+assetdebug;3B010D;E85EDEE3FF;1
+assetdebug;3BC8A2;E8C916E3FF;1
+assetdebug;3BC902;E86916E3FF;1
+assetdebug;3BC916;E85516E3FF;1
+assetdebug;3D8E04;E86751E1FF;1
+assetdebug;41B878;E8F326DDFF;1
+assetdebug;41B984;E8E725DDFF;1
 assetdebug;41ECF0;558BEC8B4508;1
 assetdebug;422E20;8B502C895668;1
+assetdebug;436931;E83A76DBFF;1
+assetdebug;4369AA;E8C175DBFF;1
+assetdebug;43792B;E84066DBFF;1
+assetdebug;437950;E81B66DBFF;1
+assetdebug;43BE66;E80521DBFF;1
+assetdebug;43BF8F;E8DC1FDBFF;1
+assetdebug;43C119;E8521EDBFF;1
+assetdebug;43C13F;E82C1EDBFF;1
+assetdebug;43C182;E8E91DDBFF;1
+assetdebug;43C630;E83B19DBFF;1
+assetdebug;43C652;E81919DBFF;1
+assetdebug;43CF49;E82210DBFF;1
 watermark;72DE20;00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000;1
 pe;116;0600;0
 pe;160;00D09F00;0

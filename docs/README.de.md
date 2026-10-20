@@ -626,7 +626,7 @@ dem Patchen listet er sie noch einmal auf.
 
 | Nr. | Patch | Status | Autor | Reforged | Billy | St0ny |
 |----:|-------|--------|-------|:--------:|:-----:|:-----:|
-| [93](PATCHES.de.md#patch-assetdebug) | Debug-Log für geladene Dateien, Modelle, Texturen und Abstürze [BETA] *(schreibt `Logs\AssetDebug.log` im WoW-Ordner – die Datei wächst mit jedem Start)* | 🟠 **[ungetestet - Exe wird größer]** | FineWolf | – | – | – |
+| [93](PATCHES.de.md#patch-assetdebug) | Debug- und Fehler-Log für geladene Dateien, Modelle, Texturen und Abstürze [BETA] *(schreibt `Logs\AssetDebug.log` (alles) und `Logs\AssetErrors.log` (nur Fehler) – beide Dateien wachsen immer weiter)* | 🟠 **[ungetestet - Exe wird größer]** | FineWolf (modified by St0ny) | – | – | – |
 
 </details>
 

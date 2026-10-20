@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # Emuliert die Hooks des Asset-Debug-Logs (Patch "assetdebug") in einer gepatchten Wow.exe mit unicorn:
-# Windows-Funktionen als Attrappen (WriteFile schneidet das Log mit), die Originalfunktionen des Clients als
-# Stubs. Prueft Logzeilen, Rueckgabewerte, Stack und gesicherte Register - auch den Absturz-Bericht.
+# Windows-Funktionen als Attrappen (WriteFile schneidet beide Logs mit), die Originalfunktionen des Clients als
+# Stubs. Prueft Logzeilen, Rueckgabewerte, Stack und gesicherte Register - auch den Absturz-Bericht - und das
+# Fehler-Log (St0ny): OPEN-FAIL, Absturzbericht und alle umgeleiteten WoW-Fehlermeldungen (WOW-ERROR).
 # Aufruf: emu_alog.py <gepatchte Wow.exe>
-import sys, struct, re
+import sys, os, struct, re, importlib.util
 from unicorn import *
 from unicorn.x86_const import *
 import pefile
@@ -14,11 +15,15 @@ mu.mem_map(IB, (pe.OPTIONAL_HEADER.SizeOfImage + 0xFFF) & ~0xFFF)
 mu.mem_write(IB, d[:0x1000])
 for s in pe.sections:
     mu.mem_write(IB + s.VirtualAddress, d[s.PointerToRawData:s.PointerToRawData + min(s.SizeOfRawData, s.Misc_VirtualSize or s.SizeOfRawData)])
-# Sektionsanfang aus dem Hook: der Push bei 0x772B20 zeigt auf hk_filter (+0x311). So geht es auch, wenn der
-# Patcher mangels freier Sektionskoepfe die letzte Sektion erweitert hat (dann gibt es keine eigene .alog).
+# Sektionsanfang aus dem Hook: der Push bei 0x772B20 zeigt auf hk_filter im ersten Code-Page der Sektion, die
+# auf 0x1000 ausgerichtet beginnt. So geht es auch, wenn der Patcher mangels freier Sektionskoepfe die letzte
+# Sektion erweitert hat (dann gibt es keine eigene .alog).
 o = pe.get_offset_from_rva(0x772B21 - IB)
-CAVE = struct.unpack_from('<I', d, o)[0] - 0x311
+CAVE = struct.unpack_from('<I', d, o)[0] & ~0xFFF
 assert d[pe.get_offset_from_rva(0x772B20 - IB)] == 0x68 and CAVE >= IB + 0x9FD000, hex(CAVE)
+assert d[pe.get_offset_from_rva(CAVE + 0x1040 - IB):].startswith(b'Logs\\AssetDebug.log\0'), 'Datenblock nicht bei +0x1000'
+spec = importlib.util.spec_from_file_location('mde', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'make_debug_exe_st0ny.py'))
+M = importlib.util.module_from_spec(spec); spec.loader.exec_module(M)
 mu.mem_map(0, 0x1000)                      # fs:[0] (SEH-Kette) liest Adresse 0
 STK = 0x100000; mu.mem_map(STK, 0x100000)
 HEAP = 0x300000; mu.mem_map(HEAP, 0x100000)
@@ -32,14 +37,15 @@ def r32(a): return struct.unpack('<I', mu.mem_read(a, 4))[0]
 def w32(a, v): mu.mem_write(a, struct.pack('<I', v & 0xFFFFFFFF))
 def rstr(a, n=512):
     b = bytes(mu.mem_read(a, n)); return b.split(b'\0')[0].decode('latin-1')
-LOG = []; FILES = []; ODS = []; STATE = {'createfail': 0}
+LOG = []; ELOG = []; FILES = []; ODS = []; STATE = {'fail': set()}
+H_LOG, H_ELOG = 0x100, 0x200
 def mapped(a, n):
     for b, e, _ in mu.mem_regions():
         if b <= a and a + n - 1 <= e: return True
     return False
 def wsprintf(buf, fmt, argp):
     f = rstr(fmt, 1024); out = ''; i = 0
-    for m in re.finditer(r'%(0?)(\d*)([sudXx%])|[^%]+', f):
+    for m in re.finditer(r'%(0?)(\d*)([sudiXx%])|[^%]+', f):
         if not m.group(3): out += m.group(0); continue
         t = m.group(3)
         if t == '%': out += '%'; continue
@@ -47,7 +53,7 @@ def wsprintf(buf, fmt, argp):
         w = int(m.group(2) or 0); z = m.group(1) == '0'
         if t == 's': x = rstr(v) if v else '(null)'
         elif t == 'u': x = str(v)
-        elif t == 'd': x = str(v - 2**32 if v & 0x80000000 else v)
+        elif t in 'di': x = str(v - 2**32 if v & 0x80000000 else v)
         elif t == 'X': x = '%X' % v
         else: x = '%x' % v
         if t != 's' and w: x = x.rjust(w, '0' if z else ' ')
@@ -60,19 +66,19 @@ def api(name, n):
     return deco
 @api('CreateFileA', 7)
 def _(a):
-    FILES.append(rstr(a[0]))
-    if STATE['createfail'] > 0: STATE['createfail'] -= 1; return 0xFFFFFFFF
-    return 0x100
+    n = rstr(a[0]); FILES.append(n)
+    if n in STATE['fail']: return 0xFFFFFFFF
+    return H_ELOG if 'AssetErrors' in n else H_LOG
 @api('SetFilePointer', 4)
 def _(a): return 0
 @api('WriteFile', 5)
 def _(a):
-    assert a[0] == 0x100
-    LOG.append(bytes(mu.mem_read(a[1], a[2])).decode('latin-1'))
+    assert a[0] in (H_LOG, H_ELOG)
+    (LOG if a[0] == H_LOG else ELOG).append(bytes(mu.mem_read(a[1], a[2])).decode('latin-1'))
     if a[3]: w32(a[3], a[2])
     return 1
 @api('FlushFileBuffers', 1)
-def _(a): LOG.append('<flush>'); return 1
+def _(a): (LOG if a[0] == H_LOG else ELOG).append('<flush>'); return 1
 @api('GetTickCount', 0)
 def _(a): return 1234567
 @api('GetCurrentThreadId', 0)
@@ -149,11 +155,14 @@ out = alloc(b'\0' * 4)
 eax, clean = call(0x424B50, [0x1234, cstr('Creature\\Foo\\Foo.m2'), 0, out])
 ok('Rueckgabe 1, Handle geschrieben, Stack (ret 10h) und ebx/esi/edi/ebp unveraendert', eax == 1 and r32(out) == 0xF11E and clean)
 ok('Log in Logs\\AssetDebug.log geoeffnet, Sitzungszeile', FILES == ['Logs\\AssetDebug.log'] and LOG[0] == '==== AssetDebug session start ====\r\n')
+ok('Fehler-Log ohne Fehler nicht geoeffnet', ELOG == [])
 ok('Zeile "OPEN      Creature\\Foo\\Foo.m2 (flags=0)"', LOG[1] == '0001234567 [0A1C] OPEN      Creature\\Foo\\Foo.m2 (flags=0)\r\n')
 print('== SFileOpenFileEx: Datei fehlt')
 eax, clean = call(0x424B50, [0x1234, cstr('Creature\\Foo\\Missing01.skin'), 2, alloc(b'\0' * 4)])
 ok('Rueckgabe 0, Stack sauber', eax == 0 and clean)
 ok('Zeile "OPEN-FAIL ... (flags=2)"', LOG[-1] == '0001234567 [0A1C] OPEN-FAIL Creature\\Foo\\Missing01.skin (flags=2)\r\n')
+ok('Fehler-Log beim ersten Fehler geoeffnet (Logs\\AssetErrors.log), Sitzungszeile, dieselbe OPEN-FAIL-Zeile',
+   FILES == ['Logs\\AssetDebug.log', 'Logs\\AssetErrors.log'] and ELOG == ['==== AssetErrors session start ====\r\n', LOG[-1]])
 print('== CM2Scene::CreateModel (0x81F8F0, thiscall)')
 eax, clean = call(0x81F8F0, [cstr('Creature\\Foo\\Foo.m2'), 0], ecx=0x5CE7E)
 ok('Rueckgabe Modell, Stack (ret 8) und Register sauber', eax == 0x1A2B3C40 and clean)
@@ -170,10 +179,10 @@ mu.emu_start(0x4B9853, 0x4B9859)
 ef = mu.reg_read(UC_X86_REG_EFLAGS)
 ok('am jle angekommen, [ebp-8] = eax, Vergleich [ebp-4]=5 mit 0 -> jle nicht genommen (ZF=0, SF=OF)', mu.reg_read(UC_X86_REG_EIP) == 0x4B9859 and r32(frame - 8) == 0 and not ef & 0x40 and bool(ef & 0x80) == bool(ef & 0x800))
 ok('Zeile "TEX-LOAD   Textures\\Foo\\Bar.blp (gxflags=22 createflags=7)"', LOG[-1].endswith('TEX-LOAD   Textures\\Foo\\Bar.blp (gxflags=22 createflags=7)\r\n'))
+ok('M2-CREATE, WMO-CREATE und TEX-LOAD nicht im Fehler-Log', len(ELOG) == 2)
 print('== Zeichnen: M2-Schleife, WMO-Gruppen, Gelaende (nur im Speicher)')
 n_log = len(LOG)
-VARS = ["HFILE", "LOCK", "M2_MODEL", "M2_SHARED", "M2_SEQ", "WMO_GROUP", "WMO_SEQ", "SEQ", "RING_IDX", "WRITTEN", "ODS", "TER_CHUNK", "TER_SEQ"]
-V = {n: CAVE + 0x1000 + 4 * i for i, n in enumerate(VARS)}
+V = {n: CAVE + 0x1000 + 4 * i for i, n in enumerate(M.VARS)}
 shared = alloc(b'\0' * 0x3C + b'Creature\\Foo\\Foo.m2\0' + b'\0' * 300)
 model = alloc(b'\0' * 0x2C + struct.pack('<I', shared) + b'\0' * 0x300)
 st = alloc(b'\0' * 0x100)
@@ -204,9 +213,9 @@ for off, v in ((0x9C, 0xED1), (0xA0, 0xE51), (0xA4, 0xEB1), (0xA8, 0xED2), (0xAC
     struct.pack_into('<I', ctx, off, v)
 ctxa = alloc(bytes(ctx)); ptrs = alloc(struct.pack('<II', rec, ctxa))
 w32(V['LOCK'], 1)      # Absturz waehrend gehaltener Sperre
-n_log = len(LOG)
+n_log = len(LOG); n_elog = len(ELOG)
 eax, clean = call(filt, [ptrs])
-crash = LOG[n_log:]
+crash = LOG[n_log:]; ecrash = ELOG[n_elog:]
 ok('WoWs Filter danach mit demselben Argument aufgerufen, Stack sauber', STATE.get('filter', (0, 0))[1] == ptrs and clean)
 ok('Sperre zurueckgesetzt (sonst Haenger)', r32(V['LOCK']) == 0)
 want = ['!!!! CRASH: exception C0000005 at EIP 007ABFF6 (info0=0 info1=0000DEAD)',
@@ -220,10 +229,70 @@ want = ['!!!! CRASH: exception C0000005 at EIP 007ABFF6 (info0=0 info1=0000DEAD)
 got = [l[len('0001234567 [0A1C] '):].rstrip('\r\n') for l in crash if l != '<flush>']
 for w_ in want: ok('Bericht: ' + w_[:70], w_ in got)
 ok('Log am Ende auf die Platte geschrieben (FlushFileBuffers)', crash[-1] == '<flush>')
+ok('Fehler-Log: derselbe Bericht (%d Zeilen), am Ende ebenfalls FlushFileBuffers' % (len(crash) - 1), ecrash == crash and len(crash) > len(want))
 print('== Fallback: Logs-Ordner fehlt')
-LOG.clear(); FILES.clear(); w32(V['HFILE'], 0); STATE['createfail'] = 1
+LOG.clear(); ELOG.clear(); FILES.clear(); w32(V['HFILE'], 0); w32(V['HFILE2'], 0); STATE['fail'] = {'Logs\\AssetDebug.log', 'Logs\\AssetErrors.log'}
 call(0x424B50, [0x1234, cstr('Interface\\x.blp'), 0, alloc(b'\0' * 4)])
 ok('zweiter Versuch AssetDebug.log neben der Exe', FILES == ['Logs\\AssetDebug.log', 'AssetDebug.log'] and LOG[0].startswith('====') and 'OPEN      Interface\\x.blp' in LOG[1])
+call(0x424B50, [0x1234, cstr('Interface\\Missing.blp'), 0, alloc(b'\0' * 4)])
+ok('Fehler-Log: zweiter Versuch AssetErrors.log neben der Exe', FILES[2:] == ['Logs\\AssetErrors.log', 'AssetErrors.log'] and ELOG[0].startswith('==== AssetErrors') and 'OPEN-FAIL Interface\\Missing.blp' in ELOG[1])
+print('== Fehler-Log laesst sich gar nicht anlegen')
+LOG.clear(); ELOG.clear(); FILES.clear(); w32(V['HFILE2'], 0); STATE['fail'] = {'Logs\\AssetErrors.log', 'AssetErrors.log'}
+for i in range(2):
+    eax, clean = call(0x424B50, [0x1234, cstr('Missing%d.blp' % i), 0, alloc(b'\0' * 4)])
+ok('nur ein Versuch (2 CreateFileA), danach still; Zeilen weiter im grossen Log, Stack sauber',
+   FILES == ['Logs\\AssetErrors.log', 'AssetErrors.log'] and ELOG == [] and r32(V['HFILE2']) == 0xFFFFFFFF and 'OPEN-FAIL Missing1.blp' in LOG[-1] and clean)
+STATE['fail'] = set()
 ok('kein OutputDebugString (ODS aus)', ODS == [])
+print('== WoWs eigene Fehlermeldungen: %d umgeleitete Aufrufe von 0x%X' % (len(M.WOWERR_SITES), M.DEBUG_PRINTF))
+LOG.clear(); ELOG.clear(); FILES.clear(); w32(V['HFILE'], 0); w32(V['HFILE2'], 0)
+HKW = None; bad_site = []
+for va, fmt in M.WOWERR_SITES:
+    po = pe.get_offset_from_rva(va - 5 - IB)
+    tgt = va + 5 + struct.unpack_from('<i', d, po + 6)[0]
+    HKW = HKW or tgt
+    if not (d[po] == 0x68 and d[po + 5] == 0xE8 and tgt == HKW and CAVE <= tgt < CAVE + 0x1000): bad_site.append(hex(va))
+ok('alle Aufrufe gehen auf dieselbe Stelle in der Sektion (hk_wowerr), "push <Text>" davor unveraendert', not bad_site)
+def expect(fmt, args):
+    out = ''; i = 0
+    for m in re.finditer(r'%(0?)(\d*)([sudiXx%])|[^%]+', fmt):
+        if not m.group(3): out += m.group(0); continue
+        t = m.group(3)
+        if t == '%': out += '%'; continue
+        v = args[i]; i += 1
+        out += v if t == 's' else str(v) if t in 'udi' else ('%X' % v if t == 'X' else '%x' % v)
+    return ' '.join(out.split())
+ALLR = [UC_X86_REG_EAX, UC_X86_REG_EBX, UC_X86_REG_ECX, UC_X86_REG_EDX, UC_X86_REG_ESI, UC_X86_REG_EDI, UC_X86_REG_EBP]
+n_ok = 0; first_open = None
+for va, fmt in M.WOWERR_SITES:
+    conv = re.findall(r'%[-0-9]*([sudiXx])', fmt)
+    pyargs = []; raw = []
+    for k, t in enumerate(conv):
+        if t == 's': x = 'Arg%d\\Datei%d.m2' % (k, k); pyargs.append(x); raw.append(cstr(x))
+        elif t in 'di': pyargs.append(k + 7); raw.append(k + 7)
+        elif t == 'u': pyargs.append(40 + k); raw.append(40 + k)
+        else: pyargs.append(0xABC0 + k); raw.append(0xABC0 + k)
+    esp0 = STK + 0xE0000
+    for k, v in enumerate(raw): w32(esp0 + 4 * k, v)
+    for k, r in enumerate(ALLR): mu.reg_write(r, 0x51E00000 + k)
+    mu.reg_write(UC_X86_REG_EFLAGS, 0x8C7); mu.reg_write(UC_X86_REG_ESP, esp0)
+    nl, ne = len(LOG), len(ELOG)
+    mu.emu_start(va - 5, va + 5, count=200000)
+    want_line = '0001234567 [0A1C] WOW-ERROR %s\r\n' % expect(fmt, pyargs)
+    regs = all(mu.reg_read(r) == 0x51E00000 + k for k, r in enumerate(ALLR))
+    flags = (mu.reg_read(UC_X86_REG_EFLAGS) & 0xCD5) == 0x8C5
+    stack = mu.reg_read(UC_X86_REG_ESP) == esp0 - 4 and mu.reg_read(UC_X86_REG_EIP) == va + 5
+    lines = (LOG[nl:] in ([want_line], ['==== AssetDebug session start ====\r\n', want_line])
+             and ELOG[ne:] in ([want_line], ['==== AssetErrors session start ====\r\n', want_line]))
+    if regs and flags and stack and lines: n_ok += 1
+    else: print('    Stelle 0x%X: Register %s, Flags %s, Stack %s, Zeilen %s' % (va, regs, flags, stack, lines), LOG[nl:], ELOG[ne:])
+ok('%d/%d Stellen: Zeile "WOW-ERROR <Meldung>" in beiden Logs, alle Register, Flags und Stack wie vorher, weiter hinter dem Aufruf' % (n_ok, len(M.WOWERR_SITES)), n_ok == len(M.WOWERR_SITES))
+ok('Fehler-Log einmal geoeffnet, Sitzungszeile vorne', FILES == ['Logs\\AssetDebug.log', 'Logs\\AssetErrors.log'] and ELOG[0] == '==== AssetErrors session start ====\r\n')
+smp = {l.split('WOW-ERROR ', 1)[1].rstrip('\r\n') for l in ELOG[1:]}
+for w_ in ('Model2: File not found: Arg0\\Datei0.m2', 'Bad zone ID 7', 'Corrupt model sequence data: Arg0\\Datei0.m2 (8)',
+           'Error, unknown displayInfo 7 specified for player race 8 sex 9!', 'Error, NO creature display records found',
+           '*** WARNING NAN in AnimEventCallback position eventId abc0 eventData 8 model Arg2\\Datei2.m2 unitname Arg3\\Datei3.m2 xyz = abc4 abc5 abc6',
+           'XXXX XXXX ERROR!! Sound Kit ID 7 is a looping sound but there is no user handle! This sound will play forever!! XXXX'):
+    ok('Beispiel: ' + w_[:80], w_ in smp)
 print('DONE fails=%d' % fails)
 sys.exit(1 if fails else 0)

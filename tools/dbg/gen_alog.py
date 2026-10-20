@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-# Erzeugt die PowerShell-Funktion Add-AssetDebugLog fuer apply_patches.ps1 aus FineWolfs make_debug_exe.py
-# (gleicher Ordner): derselbe Assembler-Code, dieselben Daten, dieselben Hook-Stellen - nur legt der Patcher
-# die Sektion an. Eine Zeile je Befehl; Adressen in der eigenen Sektion als ($CAVE + Offset), Sprungziele im
+# Erzeugt die PowerShell-Funktion Add-AssetDebugLog fuer apply_patches.ps1 aus make_debug_exe_st0ny.py
+# (FineWolfs make_debug_exe.py, modified by St0ny: zweites Log nur mit Fehlern; gleicher Ordner): derselbe
+# Assembler-Code, dieselben Daten, dieselben Hook-Stellen - nur legt der Patcher die Sektion an. Eine Zeile je Befehl; Adressen in der eigenen Sektion als ($CAVE + Offset), Sprungziele im
 # Client als rel32 (Ziel - ($CAVE + Folgeoffset)). Die Einordnung kommt aus dem Vergleich zweier Basisadressen,
 # das Ergebnis wird gegen Keystones Ausgabe fuer beide Basen geprueft.
 # Aufruf: gen_alog.py <originale Wow.exe>   -> PowerShell auf stdout
 import sys, os, re, struct, importlib.util, ctypes
 import keystone, pefile
-spec = importlib.util.spec_from_file_location('mde', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'make_debug_exe.py'))
+spec = importlib.util.spec_from_file_location('mde', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'make_debug_exe_st0ny.py'))
 M = importlib.util.module_from_spec(spec); spec.loader.exec_module(M)
 raw = open(sys.argv[1], 'rb').read()
 pe = pefile.PE(data=raw)
@@ -26,6 +26,7 @@ def layout(base):
     for k, s in M.STRINGS.items():
         sym[k] = data_va + len(data); offs.append((k, len(data), s)); data += s.encode('ascii') + b'\0'
     sym['S_SESSION_LEN'] = len(M.STRINGS['S_SESSION'])
+    sym['S_ESESSION_LEN'] = len(M.STRINGS['S_ESESSION'])
     data += b'\0' * (align(len(data), 16) - len(data)); str_end = len(data)
     sym['RING'] = data_va + len(data); data += b'\0' * (M.RING_SLOTS * M.RING_SLOT_SIZE)
     sym.update(iat)
@@ -128,9 +129,27 @@ w = P.append
 SITES = M.SITES
 def fo(va): return va - 0x400C00
 w('function Add-AssetDebugLog {')
-w('    # Hook-Stellen mit den Original-Bytes von 3.3.5a 12340 (wie in make_debug_exe.py geprueft)')
+w('    # Hook-Stellen mit den Original-Bytes von 3.3.5a 12340 (wie in make_debug_exe_st0ny.py geprueft)')
 for name, (va, orig) in SITES.items():
     w("    Assert-Bytes 0x%X @(%s) 'Asset-Debug-Log'   # VA 0x%X %s" % (fo(va), hx(bytes.fromhex(orig)), va, name))
+# WoWs eigene Fehlermeldungen: VA des Aufrufs und VA des Textes (aus "push <Text>" davor)
+img = pe.get_memory_mapped_image(); IB = pe.OPTIONAL_HEADER.ImageBase
+def ctext(va): return img[va - IB:img.index(b'\0', va - IB)].decode('latin-1')
+w('    # WoWs eigene Fehlermeldungen (St0ny): Aufrufe der im fertigen Client leeren printf-Funktion 0x%X,' % M.DEBUG_PRINTF)
+w('    # je "push <Text>" + "call 0x%X" - je Zeile VA des Aufrufs, VA des Textes. Werden auf hk_wowerr umgeleitet.' % M.DEBUG_PRINTF)
+w('    $wowerr = @(')
+for va, fmt in M.WOWERR_SITES:
+    assert img[va - IB - 5] == 0x68 and img[va - IB] == 0xE8
+    fva = struct.unpack_from('<I', img, va - IB - 4)[0]
+    assert ctext(fva) == fmt and va + 5 + struct.unpack_from('<i', img, va - IB + 1)[0] == M.DEBUG_PRINTF
+    t = fmt.encode('unicode_escape').decode('ascii')
+    if len(t) > 72: t = t[:69] + '...'
+    w('        0x%X, 0x%X   # %s' % (va, fva, t))
+w('    )')
+w('    for ($i = 0; $i -lt $wowerr.Count; $i += 2) {')
+w("        Assert-Bytes ($wowerr[$i] - 0x400C05) ([byte[]](@(0x68) + [BitConverter]::GetBytes([uint32]$wowerr[$i + 1]))) 'Asset-Debug-Log'")
+w("        Assert-Bytes ($wowerr[$i] - 0x400C00) ([byte[]](Get-Rel32 @(0xE8) $wowerr[$i] 0x%X)) 'Asset-Debug-Log'" % M.DEBUG_PRINTF)
+w('    }')
 w('    $e = RU32 $script:f 0x3C')
 w('    $nsec = RU16 $script:f ($e + 6)')
 w('    $lastSo = $e + 24 + (RU16 $script:f ($e + 20)) + 40 * ($nsec - 1)')
@@ -179,6 +198,9 @@ hook('jmp', 'TextureCreate cache miss', 'hk_texload', 6)
 hook('jmp', 'Terrain chunk loop', 'hk_terrain', 7)
 va = SITES['SetUnhandledExceptionFilter(WoW filter)'][0]
 w("    Patch 0x%X ([BitConverter]::GetBytes([uint32]($CAVE + 0x%X)))   # VA 0x%X push 0x%X -> push hk_filter" % (fo(va) + 1, lab['hk_filter'], va + 1, M.WOW_FILTER))
+w('    for ($i = 0; $i -lt $wowerr.Count; $i += 2) {   # call 0x%X -> call hk_wowerr' % M.DEBUG_PRINTF)
+w('        Patch ($wowerr[$i] - 0x400C00) ([byte[]](Get-Rel32 @(0xE8) $wowerr[$i] ($CAVE + 0x%X)))' % lab['hk_wowerr'])
+w('    }')
 w('}')
 print('\n'.join(P))
 print('# code 0x%X Byte, Daten 0x%X Byte' % (len(codeA), len(data)), file=sys.stderr)
