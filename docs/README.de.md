@@ -732,7 +732,8 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
 - Danke an **Pogzur** dafür, RCEPatcher v2.0 (Grundlage des Patches
   [#10](PATCHES.de.md#patch-rce)) aufgespürt und mir zugespielt zu haben.
 - Danke an **FineWolf** für den Debug-Patch
-  [#93](PATCHES.de.md#patch-assetdebug) (Asset-Debug-Log).
+  [#93](PATCHES.de.md#patch-assetdebug) (Asset-Debug-Log) und für den Tipp, dass
+  das Skript nativ [unter Linux](#unter-linux) funktioniert.
 - Und natürlich danke an alle Autoren der Patches, die in der
   [Patch-Übersicht](#patch-übersicht) genannt sind.
 

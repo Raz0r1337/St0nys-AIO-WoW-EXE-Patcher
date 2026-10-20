@@ -702,7 +702,8 @@ clicking the number of a patch takes you straight to its description.
 - Thanks to **Pogzur**, who tracked down RCEPatcher v2.0 (the basis of patch
   [#10](PATCHES.en.md#patch-rce)) and passed it on to me.
 - Thanks to **FineWolf** for the debug patch
-  [#93](PATCHES.en.md#patch-assetdebug) (asset debug log).
+  [#93](PATCHES.en.md#patch-assetdebug) (asset debug log) and for the tip that
+  the script works natively [on Linux](#on-linux).
 - And of course thanks to all patch authors named in the
   [patch overview](#patch-overview).
 
