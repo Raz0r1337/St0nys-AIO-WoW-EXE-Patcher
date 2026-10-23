@@ -1,6 +1,6 @@
-# Stellen, die Luxveil vor dem Einhaengen prueft oder umschreibt (VA, Laenge in Byte, Beschreibung).
-# Aus dem Auftrag fuer den Luxveil-Lader (Stand 23.10.2026); Original-Bytes in Luxveils src/engine.cpp,
-# src/engine_actors.cpp und src/client_ripple_sprites.cpp. "[schreibt]" = Luxveil aendert die Stelle im Speicher.
+# Stellen, die Luxvelum vor dem Einhaengen prueft oder umschreibt (VA, Laenge in Byte, Beschreibung).
+# Aus dem Auftrag fuer den Luxvelum-Lader (Stand 23.10.2026); Original-Bytes in Luxvelums src/engine.cpp,
+# src/engine_actors.cpp und src/client_ripple_sprites.cpp. "[schreibt]" = Luxvelum aendert die Stelle im Speicher.
 004D4B44 14 visible list first object (engine_actors.cpp)
 004D4B6D 6 object guid (engine_actors.cpp)
 004D4B80 18 visible list next object (engine_actors.cpp)

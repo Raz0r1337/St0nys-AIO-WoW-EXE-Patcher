@@ -2,7 +2,7 @@
 # Emuliert die Startkette einer gepatchten Wow.exe ab dem Einstiegspunkt (VA 0x401000) mit unicorn bis
 # __tmainCRTStartup (VA 0x40BA9B) und schreibt mit, welche DLLs in welcher Reihenfolge per LoadLibraryA geladen
 # werden (und ob der wow_optimize-Lader seinen Thread anlegt). __security_init_cookie (VA 0x7755F0) ist ein Stub.
-# Aufruf: emu_entry.py <Wow.exe> <erwartete Folge, z.B. "Luxveil.dll,Lexara.dll,THREAD,LuxShoulderCam.dll"> [fehlt]
+# Aufruf: emu_entry.py <Wow.exe> <erwartete Folge, z.B. "Luxvelum.dll,Lexara.dll,THREAD,LuxShoulderCam.dll"> [fehlt]
 #         "fehlt": LoadLibraryA liefert NULL (DLL nicht da) - die Kette muss trotzdem durchlaufen.
 import sys, struct
 from unicorn import *

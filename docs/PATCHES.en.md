@@ -421,7 +421,7 @@ starts a thread of its own at startup that waits 3 seconds and then calls
 `0x76E490` that the entry point runs right at the start. The code is spread
 over eight free gaps between functions, and the thread builds the DLL name on
 the stack. The patch works together with the Lexara loader (No. 30), the
-Lux loader (No. 31), the Luxveil loader (No. 32) and the voice.dll loader
+Lux loader (No. 31), the Luxvelum loader (No. 32) and the voice.dll loader
 (No. 33).
 
 <a id="patch-awesome"></a>
@@ -514,9 +514,9 @@ calls `__security_init_cookie`. This call now points to a free 16-byte gap
 `__security_init_cookie`. The name sits in a second gap (VA `0x6DC0E0`). A
 proxy DLL is loaded before the entry point as well, so the timing matches. The
 patch works together with the Lux loader (No. 31) and the voice.dll loader
-(No. 33), which only change later jumps in the startup code. With the Luxveil
+(No. 33), which only change later jumps in the startup code. With the Luxvelum
 loader (No. 32) the call at the entry point first points to its loader, which
-then jumps to the Lexara loader – so Luxveil is loaded before Lexara.
+then jumps to the Lexara loader – so Luxvelum is loaded before Lexara.
 
 <a id="patch-lux"></a>
 **Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand)** *(No. 31, Author: St0ny)* 🟡 **[safe - DLL risky]**
@@ -555,50 +555,50 @@ before any game code runs. Lux itself places a small jump into the first free
 gap of 24 bytes or more in the exe's code at runtime; the loader's three gaps
 are smaller, so Lux picks the same spot as when it is loaded by Lexara. The
 patch works together with the wow_optimize loader (No. 27), the Lexara loader
-(No. 30), the Luxveil loader (No. 32) and the voice.dll loader (No. 33).
+(No. 30), the Luxvelum loader (No. 32) and the voice.dll loader (No. 33).
 
-<a id="patch-luxveil"></a>
-**Load Luxveil.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged)** *(No. 32, Author: St0ny)* 🟠 **[untested - DLL risky]**
+<a id="patch-luxvelum"></a>
+**Load Luxvelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged)** *(No. 32, Author: St0ny)* 🟠 **[untested - DLL risky]**
 
-Loads `Luxveil.dll` from the WoW folder at startup –
-[Luxveil](https://github.com/Raz0r1337/coa-vfog) (formerly CoAVolFog) brings volumetric
-fog, light and water to the 3.3.5a client. So far Luxveil came with a proxy
+Loads `Luxvelum.dll` from the WoW folder at startup –
+[Luxvelum](https://github.com/Raz0r1337/coa-vfog) (formerly CoAVolFog) brings volumetric
+fog, light and water to the 3.3.5a client. So far Luxvelum came with a proxy
 `version.dll`; with this patch it is no longer needed, and on Wine/Proton
-`WINEDLLOVERRIDES` is not needed any more. Luxveil reads `Luxveil.ini`,
+`WINEDLLOVERRIDES` is not needed any more. Luxvelum reads `Luxvelum.ini`,
 `fogdata.bin` and `waterdata.bin` from the WoW folder and writes
-`Luxveil.log`. If the DLL is missing, WoW starts normally.
+`Luxvelum.log`. If the DLL is missing, WoW starts normally.
 
 > [!WARNING]
 > Still untested, online and in game. That is why the patch is deselected by
 > default and only in the `st0ny-dev` branch for now. The patch itself only
-> loads a DLL that is not included here – but `Luxveil.dll` may be detected or
+> loads a DLL that is not included here – but `Luxvelum.dll` may be detected or
 > blocked on public servers.
 
 > [!IMPORTANT]
 > **Delete the old files:** if the old `CoAVolFog.dll` and its `version.dll`
 > are still in the WoW folder, the old DLL loads first and takes the hook
-> spots. Luxveil then does not hook in (it says so in `Luxveil.log`), and the
-> fog comes from the old DLL. Luxveil's own `version.dll` does no harm, it is
-> just not needed with this patch any more: Windows loads `Luxveil.dll` only
+> spots. Luxvelum then does not hook in (it says so in `Luxvelum.log`), and the
+> fog comes from the old DLL. Luxvelum's own `version.dll` does no harm, it is
+> just not needed with this patch any more: Windows loads `Luxvelum.dll` only
 > once.
 
-Luxveil recognizes the client by the timestamp in the program header. "Change
+Luxvelum recognizes the client by the timestamp in the program header. "Change
 build date" (No. 92) therefore leaves this timestamp unchanged when this loader
 is selected – the build date shown still changes.
 
-File size and PE header stay unchanged. Luxveil has to be loaded before
+File size and PE header stay unchanged. Luxvelum has to be loaded before
 Direct3D: it catches `Direct3DCreate9` through the client's GetProcAddress
 pointer (VA `0xB2ED98`). That is why the loader sits at the very front of the
 startup chain, even before the Lexara loader – just like the proxy DLL before:
 the first call at the entry point (VA `0x401000`) now points to a free 16-byte
-gap (VA `0x6D3080`) with `push "Luxveil.dll"` → `call [LoadLibraryA]` → jump
+gap (VA `0x6D3080`) with `push "Luxvelum.dll"` → `call [LoadLibraryA]` → jump
 to the Lexara loader (if selected) or to `__security_init_cookie`. The name sits
-in a second gap (VA `0x6D3214`). Both gaps are smaller than 24 bytes – Lux picks
+in a second gap (VA `0x6D2063`). Both gaps are smaller than 24 bytes – Lux picks
 the first gap of 24 bytes or more at runtime – and lie outside the spots
-Luxveil checks or rewrites. The loader does not need to call an export,
-Luxveil does everything in `DllMain`. The patch works together with the other
+Luxvelum checks or rewrites. The loader does not need to call an export,
+Luxvelum does everything in `DllMain`. The patch works together with the other
 DLL loaders (No. 27–31 and 33). Of all other patches only "Lights stay on"
-(No. 71) touches a spot that Luxveil checks – on purpose: Luxveil sets the same
+(No. 71) touches a spot that Luxvelum checks – on purpose: Luxvelum sets the same
 jump there and recognizes it.
 
 <a id="patch-voicedll"></a>
@@ -1910,8 +1910,8 @@ the year in the copyright notice, plus the time. The time is stored in two
 places: in the build text `WoW [Release] Build 12340 (Jun 24 2010 23:54:57)` and
 as the timestamp in the program header, which analysis tools show as the build
 time of `Wow.exe` (original 2010-06-25 06:55:58 UTC). Date and time are taken
-as local time of the computer you patch on. With the Luxveil loader (No. 32)
-this timestamp stays unchanged: Luxveil recognizes the client by it and turns
+as local time of the computer you patch on. With the Luxvelum loader (No. 32)
+this timestamp stays unchanged: Luxvelum recognizes the client by it and turns
 itself off otherwise. The build date shown still changes.
 
 Input as `YYYY-MM-DD HH:MM:SS`, optionally followed by `FR` for French month

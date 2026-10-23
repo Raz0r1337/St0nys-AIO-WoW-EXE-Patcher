@@ -522,7 +522,7 @@ dem Patchen listet er sie noch einmal auf.
 | [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.de.md#patch-lexara) | Lexara.dll beim Start laden (HD-Schriften von Stormhand) *(benötigt [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – `dinput8.dll` in `Lexara.dll` umbenennen)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
 | [31](PATCHES.de.md#patch-lux) | LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) *(benötigt [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – mit Lexara (Nr. 30) nicht nötig)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
-| [32](PATCHES.de.md#patch-luxveil) | Luxveil.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged) *(benötigt [Luxveil](https://github.com/Raz0r1337/coa-vfog) – ohne `version.dll`; alte `CoAVolFog.dll` und `version.dll` löschen)* | 🟠 **[ungetestet - DLL riskant]** | St0ny | – | – | – |
+| [32](PATCHES.de.md#patch-luxvelum) | Luxvelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged) *(benötigt [Luxvelum](https://github.com/Raz0r1337/coa-vfog) – ohne `version.dll`; alte `CoAVolFog.dll` und `version.dll` löschen)* | 🟠 **[ungetestet - DLL riskant]** | St0ny | – | – | – |
 | [33](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (Voice-Chat von St0ny) [BETA] *(benötigt [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat) – Modul noch unfertig)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
 #### Gameplay-Fixes

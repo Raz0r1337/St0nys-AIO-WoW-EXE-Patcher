@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Vergleicht eine gepatchte Wow.exe mit dem Original an den Stellen, die Luxveil prueft oder umschreibt
-# (luxveil_sites.txt im selben Ordner). Gibt jede abweichende Stelle aus.
+# Vergleicht eine gepatchte Wow.exe mit dem Original an den Stellen, die Luxvelum prueft oder umschreibt
+# (luxvelum_sites.txt im selben Ordner). Gibt jede abweichende Stelle aus.
 # Aufruf: check_sites.py <Original-Wow.exe> <gepatchte Wow.exe> [erlaubte VAs, z.B. 0x81E548]
 import sys, os, pefile
 orig, new = sys.argv[1], sys.argv[2]
@@ -8,7 +8,7 @@ allowed = {int(x, 16) for x in sys.argv[3].split(',')} if len(sys.argv) > 3 and 
 pe = pefile.PE(orig, fast_load=True); IB = pe.OPTIONAL_HEADER.ImageBase
 a = open(orig, 'rb').read(); b = open(new, 'rb').read()
 bad = []; mem = 0; n = 0
-for l in open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'luxveil_sites.txt')):
+for l in open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'luxvelum_sites.txt')):
     if l.startswith('#') or not l.strip(): continue
     va, ln, what = l.split(None, 2); va = int(va, 16); ln = int(ln); n += 1
     off = None
