@@ -844,6 +844,10 @@ function Set-ClientDate([string]$v) {
     # Zeitstempel im PE-Kopf (TimeDateStamp, Sekunden seit 1970 in UTC), den
     # Analyse-Werkzeuge als Erstellungszeit zeigen. Datum und Uhrzeit gelten
     # als Ortszeit dieses Rechners, so zeigt Windows sie hier wieder genauso an.
+    # Nicht mit dem LuxVelum-Lader (steht in der Liste davor, sein DLL-Name ist
+    # dann schon eingespielt): LuxVelum erkennt den Client 12340 an diesem
+    # Zeitstempel und schaltet sich sonst ab - dann bleibt er im Original.
+    if ([System.Text.Encoding]::ASCII.GetString($script:f, 0x2D1463, 13) -ieq "LuxVelum.dll`0") { return }
     $e = RU32 $script:f 0x3C
     $local = [datetime]::SpecifyKind($d, [System.DateTimeKind]::Local)
     $epoch = [int64]($local.ToUniversalTime() - [datetime]::new(1970, 1, 1, 0, 0, 0, [System.DateTimeKind]::Utc)).TotalSeconds
@@ -3333,8 +3337,10 @@ $patches = @(
         # zurueckkehrt): push "Lexara.dll" / call [LoadLibraryA] / jmp 0x76E490.
         # Der Name steht in einer zweiten Luecke (VA 0x6DC0E0). Eine Proxy-DLL
         # wird ebenfalls vor dem Einstiegspunkt geladen, der Zeitpunkt passt.
-        # Fehlt die DLL, startet WoW ganz normal. Lexara laedt selbst die
-        # LuxShoulderCam.dll mit, wenn sie im WoW-Ordner liegt (siehe Lux-Lader).
+        # Mit dem LuxVelum-Lader zeigt der Aufruf auf dessen Lader, der danach
+        # hierher springt (LuxVelum wird zuerst geladen). Fehlt die DLL,
+        # startet WoW ganz normal. Lexara laedt selbst die LuxShoulderCam.dll
+        # mit, wenn sie im WoW-Ordner liegt (siehe Lux-Lader).
         Assert-Bytes 0x400 @(0xE8, 0x8B, 0xD4, 0x36, 0x00) 'Lexara-Lader'
         Assert-Bytes 0x2DBCC0 @(0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC) 'Lexara-Lader'
         Assert-Bytes 0x2DB4E0 @(0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC) 'Lexara-Lader'
@@ -3380,6 +3386,49 @@ $patches = @(
     }}
 
     # --- Gameplay-Fixes ---
+
+    @{ Id = 'luxvelum'; Cat = 'dll'; On = $false; DllRisky = $true
+       Author = 'St0ny'
+       De = 'LuxVelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged)'
+       En = 'Load LuxVelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged)'
+       NoteDe = 'benoetigt LuxVelum - ohne version.dll; alte CoAVolFog.dll und version.dll loeschen'
+       NoteEn = 'requires LuxVelum - no version.dll needed; delete the old CoAVolFog.dll and version.dll'
+       Url = 'https://github.com/Raz0r1337/coa-vfog'
+       Code = {
+        # Laedt beim Start LuxVelum.dll (volumetrischer Nebel, Licht und Wasser,
+        # frueher CoAVolFog, kurz auch Luxveil) aus dem WoW-Ordner. Bisher kam
+        # LuxVelum ueber eine Proxy-version.dll, die LuxVelum.dll fest
+        # importiert. LuxVelum erledigt alles in DllMain (kein Export-Aufruf
+        # noetig) und muss vor Direct3D geladen sein: Es biegt den
+        # GetProcAddress-Zeiger des Clients bei VA 0xB2ED98 um und faengt so
+        # Direct3DCreate9 ab.
+        # Deshalb ganz vorne in der Einstiegskette, noch vor dem Lexara-Lader
+        # (so wie die Proxy-DLL vor allen Ladern lief): Der erste Aufruf am
+        # Einstiegspunkt (VA 0x401000) zeigt auf einen Lader in einer freien
+        # 16-Byte-Luecke (VA 0x6D3080, hinter einem Aufruf, der nie
+        # zurueckkehrt): push "LuxVelum.dll" / call [LoadLibraryA] / jmp zum
+        # bisherigen Ziel des Aufrufs - dem Lexara-Lader, wenn er gewaehlt ist
+        # (er steht davor in der Liste und ist dann schon eingespielt), sonst
+        # __security_init_cookie (VA 0x76E490). Der Name steht in einer zweiten
+        # Luecke (VA 0x6D2063, genau 13 Byte). Beide Luecken sind kleiner als
+        # 24 Byte (Lux sucht sich zur Laufzeit die erste Luecke ab 24 Byte) und
+        # liegen ausserhalb der Stellen, die LuxVelum prueft oder umschreibt.
+        # Fehlt die DLL, startet WoW ganz normal; zusammen mit der Proxy-
+        # version.dll laedt Windows die DLL nur einmal. LuxVelum erkennt den
+        # Client am Zeitstempel im PE-Kopf - "Build-Datum aendern" laesst ihn
+        # deshalb in Ruhe, wenn dieser Lader eingespielt ist (Set-ClientDate).
+        # Dateigroesse und PE-Header bleiben unveraendert.
+        Assert-Bytes 0x400 @(0xE8) 'LuxVelum-Lader'
+        Assert-Bytes 0x2D2480 (@(0xCC) * 16) 'LuxVelum-Lader'
+        Assert-Bytes 0x2D1463 (@(0xCC) * 13) 'LuxVelum-Lader'
+        $next = 0x401005 + [BitConverter]::ToInt32($script:f, 0x401)   # bisheriges Ziel des Aufrufs
+        if ($next -eq 0x6DC8C0) {
+            Assert-Bytes 0x2DBCC0 @(0x68, 0xE0, 0xC0, 0x6D, 0x00, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0xE9, 0xC0, 0x1B, 0x09, 0x00) 'LuxVelum-Lader'   # Lexara-Lader
+        } elseif ($next -ne 0x76E490) { throw 'LuxVelum-Lader: Code bei Datei 0x400 unbekannt.' }
+        Patch 0x2D2480 ([byte[]](@(0x68, 0x63, 0x20, 0x6D, 0x00, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00) + (Get-Rel32 @(0xE9) 0x6D308B $next)))
+        Patch 0x2D1463 @(0x4C, 0x75, 0x78, 0x56, 0x65, 0x6C, 0x75, 0x6D, 0x2E, 0x64, 0x6C, 0x6C, 0x00)   # "LuxVelum.dll"
+        Patch 0x401 ([BitConverter]::GetBytes([int32](0x6D3080 - 0x401005)))   # call -> LuxVelum-Lader
+    }}
 
     @{ Id = 'areatrigger'; Cat = 'gameplay'; On = $true
        Author = 'Robinsch'
@@ -4221,13 +4270,13 @@ $patches = @(
        Author = 'tb (ported by St0ny)'
        De = 'Echtes Level statt "??" bei Gegnern ab 10 Level ueber dir'
        En = 'Real level instead of "??" for enemies 10+ levels above you'
-       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 77'
-       NoteEn = 'bosses still show "??" - see No. 77'
+       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 78'
+       NoteEn = 'bosses still show "??" - see No. 78'
        Code = {
         # Lua UnitLevel (VA 0x60F9E0), Tooltip (VA 0x620EE0) und Namensplakette
         # (VA 0x98EF10) zeigen "??" (bzw. -1 / Totenkopf), wenn ein feindliches
         # Ziel 10 oder mehr Level ueber dir ist. Diese Pruefung ("jle") faellt
-        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 77 raus).
+        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 78 raus).
         Patch 0x20EEB2 @(0x90, 0x90)
         Patch 0x220B66 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)
         Patch 0x58E3B9 @(0x90, 0x90)
@@ -4235,15 +4284,15 @@ $patches = @(
 
     @{ Id = 'showlevelboss'; Cat = 'ui'; On = $false; Needs = @('showlevel'); PublicUntested = $true
        Author = 'St0ny'
-       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 76)'
-       En = 'Real level for bosses too instead of "??" (extension to No. 76)'
+       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 77)'
+       En = 'Real level for bosses too instead of "??" (extension to No. 77)'
        Code = {
         # Ist eine Kreatur als Boss markiert (Flag 0x4 in den Kreatur-Typflags,
         # Pruefung CGUnit_C::IsBossMob bei VA 0x715D70), zeigen UnitLevel,
         # Tooltip und Namensplakette immer "??" bzw. -1 / Totenkopf. Diese drei
         # Boss-Pruefungen fallen weg; die Beschriftung "Boss" im Tooltip und das
         # Elite-Symbol der Namensplakette bleiben. Gegner 10+ Level ueber dir
-        # zeigen ihr Level erst zusammen mit Nr. 76.
+        # zeigen ihr Level erst zusammen mit Nr. 77.
         Patch 0x20EEBD @(0xEB)                                 # VA 0x60FABD UnitLevel: je -> jmp (kein -1)
         Patch 0x220B78 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)   # VA 0x621778 Tooltip: jne "??" -> nop
         Patch 0x58E358 @(0xEB)                                 # VA 0x98EF58 Namensplakette: je -> jmp (Level statt Totenkopf)
@@ -4288,8 +4337,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus als Standard setzen'
        En = 'Windowed mode by default'
-       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 81'
-       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 81'
+       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 82'
+       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 82'
        Code = {
         Patch 0x369A7D @(0x64, 0x14, 0x9E)
     }}
@@ -4298,8 +4347,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus maximiert als Standard setzen'
        En = 'Maximized window by default'
-       NoteDe = 'wirkt nur zusammen mit Nr. 80'
-       NoteEn = 'only works together with No. 80'
+       NoteDe = 'wirkt nur zusammen mit Nr. 81'
+       NoteEn = 'only works together with No. 81'
        Code = {
         Patch 0x369AB2 @(0x64, 0x14, 0x9E)
     }}
@@ -4407,7 +4456,8 @@ $patches = @(
        Code = {
         # Portierung von edit_date.py (MacWarrior): die drei Datumsfelder
         # ("Jun 24 2010") und das Jahr im LegalCopyright, dazu die Uhrzeit im
-        # Build-Text und der Zeitstempel im PE-Kopf.
+        # Build-Text und der Zeitstempel im PE-Kopf (nicht mit dem
+        # LuxVelum-Lader, siehe Set-ClientDate).
         Set-ClientDate $script:VALUES['clientdate']
     }}
 
@@ -4431,16 +4481,17 @@ $patches = @(
 # Standard-Preset "Reforged" - das offizielle Preset des Projekts
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
-# Warmane getestet (Nr. 9 und 66 vergroessern die Wow.exe); dazu die
-# Lader fuer awesome_wotlk, Lexara und Lux (Nr. 28, 30 und 31, Patch sicher,
-# DLL riskant; Lexara laedt Lux ohnehin mit, der Lux-Lader auch ohne Lexara)
-# und der Licht-Patch Nr. 67 (im Spiel und online getestet, sicher;
+# Warmane getestet (Nr. 9 und 67 vergroessern die Wow.exe); dazu die
+# Lader fuer awesome_wotlk, Lexara, Lux und LuxVelum (Nr. 28, 30, 31 und 32,
+# Patch sicher, DLL riskant; Lexara laedt Lux ohnehin mit, der Lux-Lader auch
+# ohne Lexara)
+# und der Licht-Patch Nr. 68 (im Spiel und online getestet, sicher;
 # vergroessert die Wow.exe ebenfalls). Im Menue mit R, ueber -Select
 # reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',
     'scandll', 'noserverpatch', 'nosurvey', 'skipbnet', 'skiprdp', 'nohttp',
-    'glue', 'awesome', 'lexara', 'lux',
+    'glue', 'awesome', 'lexara', 'lux', 'luxvelum',
     'areatrigger', 'swing', 'npcanim', 'spellanim', 'ghostattack', 'naked',
     'forcereaction', 'mail', 'level101',
     'farclip', 'horizon', 'envdetail', 'grounddist', 'goscale',
@@ -4553,13 +4604,16 @@ awesome;E50B0;558BEC5633F639356CB4B6000F85DB010000393568B4B6000F85CF01000033C0B9
 wotlkext;6170;6870EB5E00;1
 wotlkext;DC0F0;558BEC568B75;0
 wotlkext;E5100;B6006A18526860659F00E881561D0083C40C84C074206854659F00E8C0BFF7FF6854659F006860659F00E841BFF7FF83;1
-lexara;401;8BD43600;1
+lexara;401;8BD43600;0
 lexara;2DB4E0;CCCCCCCCCCCCCCCCCCCCCC;1
 lexara;2DBCC0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
 lux;2B5CA0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
 lux;2B5DC0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
 lux;2B5EE0;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
 lux;36D896;D606E8FF;1
+luxvelum;401;8BD43600;0
+luxvelum;2D1463;CCCCCCCCCCCCCCCCCCCCCCCCCC;1
+luxvelum;2D2480;CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;1
 areatrigger;2DB241;64;1
 swing;2E1C67;6AFF6A408BCEE8BE830500;1
 npcanim;33D785;75308B96380A0000F7C2000800007522F6C1207516F7C200100000750E83F80B740583F80C752A33C9EB0CB90C000000EB05B90B0000003BC174168BCEE8C9FAFDFF85C0740B6AFF6A008BCEE85AC8FFFF;1
