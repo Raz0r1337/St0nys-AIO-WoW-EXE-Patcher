@@ -7718,7 +7718,7 @@ $patches = @(
         Patch 0x2B5EE0 @(0x68, 0x4C, 0x75, 0x78, 0x53, 0x54, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0x83, 0xC4, 0x14, 0xC3)   # C
     }}
 
-    @{ Id = 'luxvelum'; Cat = 'dll'; On = $false; PublicUntested = $true; GameUntested = $true; DllRisky = $true
+    @{ Id = 'luxvelum'; Cat = 'dll'; On = $false; DllRisky = $true
        Author = 'St0ny'
        De = 'Luxvelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged)'
        En = 'Load Luxvelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged)'
@@ -8880,15 +8880,16 @@ $patches = @(
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
 # Warmane getestet (Nr. 9 und 68 vergroessern die Wow.exe); dazu die
-# Lader fuer awesome_wotlk, Lexara und Lux (Nr. 28, 30 und 31, Patch sicher,
-# DLL riskant; Lexara laedt Lux ohnehin mit, der Lux-Lader auch ohne Lexara)
+# Lader fuer awesome_wotlk, Lexara, Lux und Luxvelum (Nr. 28, 30, 31 und 32,
+# Patch sicher, DLL riskant; Lexara laedt Lux ohnehin mit, der Lux-Lader auch
+# ohne Lexara)
 # und der Licht-Patch Nr. 70 (im Spiel und online getestet, sicher;
 # vergroessert die Wow.exe ebenfalls). Im Menue mit R, ueber -Select
 # reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
     'laa', 'itemcache', 'timer', 'mirrorfix', 'wmocube', 'glyphfix',
     'scandll', 'noserverpatch', 'nosurvey', 'skipbnet', 'skiprdp', 'nohttp',
-    'glue', 'awesome', 'lexara', 'lux',
+    'glue', 'awesome', 'lexara', 'lux', 'luxvelum',
     'areatrigger', 'swing', 'npcanim', 'spellanim', 'ghostattack', 'naked',
     'forcereaction', 'mail', 'level101',
     'farclip', 'horizon', 'envdetail', 'grounddist', 'goscale',

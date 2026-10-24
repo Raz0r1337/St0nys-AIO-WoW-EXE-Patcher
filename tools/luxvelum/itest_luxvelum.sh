@@ -1,6 +1,6 @@
 #!/bin/bash
 # Luxvelum-Lader im Patcher: Bytes und Startkette (Emulation) allein, mit Lexara, mit allen DLL-Ladern, mit dem
-# Reforged-Preset und mit allen Patches; Luxvelums Pruefstellen unberuehrt (ausser lightstay); Build-Datum laesst
+# Reforged-Preset (enthaelt ihn) und mit allen Patches; Luxvelums Pruefstellen unberuehrt (ausser lightstay); Build-Datum laesst
 # den PE-Zeitstempel mit Luxvelum in Ruhe; Erkennen und Zuruecknehmen.
 # Aufruf: itest_luxvelum.sh <Ordner mit apply_patches.ps1> <Lauf-Ordner> [Nr. des Patches, Vorgabe 32]
 NEW=$1; R=$2; NR=${3:-32}
@@ -26,12 +26,12 @@ print(','.join(str(ids.index(i) + 1) for i in dict.fromkeys(want)))
 EOF
 }
 ts() { python3 -c "import sys,struct; d=open(sys.argv[1],'rb').read(); e=struct.unpack_from('<I',d,0x3C)[0]; print('%08X %08X' % (struct.unpack_from('<I',d,e+8)[0], struct.unpack_from('<I',d,e+52)[0]))" "$1"; }   # TimeDateStamp, ImageBase
-LX=$(num luxvelum); LEX=$(num lexara); DLLS=$(num wowoptimize awesome wotlkext lexara lux luxvelum voicedll); REF=$(num reforged luxvelum); CD=$(num clientdate)
+LX=$(num luxvelum); LEX=$(num lexara); DLLS=$(num wowoptimize awesome wotlkext lexara lux luxvelum voicedll); REFN=$(num reforged | tr , '\n' | wc -l); CD=$(num clientdate)
 [ "$LX" = "$NR" ] || { echo "luxvelum ist Nr. $LX, erwartet $NR"; exit 1; }
 echo "== Nur Nr. $NR (Luxvelum-Lader)"
 run solo $NR a
 ok "Exit-Code 0, 1 Patch eingespielt" '[ "$(cat $R/solo/rc_a.txt)" = 0 ] && grep -q "\[+\] 1/1 - Luxvelum.dll beim Start laden" $R/solo/out_a.txt'
-ok "Warnungen: online und ingame ungetestet, DLL riskant" 'grep -A3 "nicht auf oeffentlichen Servern getestet" $R/solo/out_a.txt | grep -q "Nr. $NR " && grep -A3 "im Spiel ungetestet" $R/solo/out_a.txt | grep -q "Nr. $NR " && grep -A3 "DLL, die auf" $R/solo/out_a.txt | grep -q "Nr. $NR "'
+ok "Warnungen: nur DLL riskant (Patch sicher)" '! grep -q "nicht auf oeffentlichen Servern getestet" $R/solo/out_a.txt && ! grep -q "im Spiel ungetestet" $R/solo/out_a.txt && grep -A3 "DLL, die auf" $R/solo/out_a.txt | grep -q "Nr. $NR "'
 ok "Dateigroesse gleich, PE-Kopf gleich (TimeDateStamp 4C2452FE, ImageBase 00400000)" '[ $(stat -c%s $R/solo/Wow.exe) = $(stat -c%s $ORI) ] && cmp -s <(head -c 1024 $R/solo/Wow.exe) <(head -c 1024 $ORI) && [ "$(ts $R/solo/Wow.exe)" = "4C2452FE 00400000" ]'
 ok "nur Aufruf am Einstiegspunkt, Code-Luecke und Namens-Luecke geaendert (+ Wasserzeichen)" 'python3 -c "
 import sys; a=open(sys.argv[1],\"rb\").read(); b=open(sys.argv[2],\"rb\").read()
@@ -49,9 +49,9 @@ run dlls "$DLLS" a
 ok "Exit-Code 0" '[ "$(cat $R/dlls/rc_a.txt)" = 0 ]'
 ok "Startkette: Luxvelum, Lexara, wow_optimize-Thread, LuxShoulderCam, voice.dll" 'python3 -I $T/emu_entry.py $R/dlls/Wow.exe Luxvelum.dll,Lexara.dll,THREAD,LuxShoulderCam.dll,voice.dll'
 ok "Startkette ohne DLLs laeuft durch" 'python3 -I $T/emu_entry.py $R/dlls/Wow.exe Luxvelum.dll,Lexara.dll,THREAD,LuxShoulderCam.dll,voice.dll fehlt'
-echo "== Reforged-Preset + Luxvelum"
-run ref "$REF" a
-ok "Exit-Code 0" '[ "$(cat $R/ref/rc_a.txt)" = 0 ]'
+echo "== Reforged-Preset (enthaelt Luxvelum)"
+run ref reforged a
+ok "Exit-Code 0, $REFN Patches inkl. Luxvelum-Lader" '[ "$(cat $R/ref/rc_a.txt)" = 0 ] && grep -q "\[+\] $REFN/$REFN" $R/ref/out_a.txt && grep -q "\[+\] [0-9]*/$REFN - Luxvelum.dll beim Start laden" $R/ref/out_a.txt'
 ok "Startkette: Luxvelum, Lexara, LuxShoulderCam" 'python3 -I $T/emu_entry.py $R/ref/Wow.exe Luxvelum.dll,Lexara.dll,LuxShoulderCam.dll'
 ok "Luxvelums Pruefstellen unberuehrt (lightstay ist nicht im Preset)" 'python3 -I $T/check_sites.py $ORI $R/ref/Wow.exe > $R/sites_ref.txt'
 echo "== Alle Patches"

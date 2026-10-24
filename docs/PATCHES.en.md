@@ -558,7 +558,7 @@ patch works together with the wow_optimize loader (No. 27), the Lexara loader
 (No. 30), the Luxvelum loader (No. 32) and the voice.dll loader (No. 33).
 
 <a id="patch-luxvelum"></a>
-**Load Luxvelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged)** *(No. 32, Author: St0ny)* 🟠 **[untested - DLL risky]**
+**Load Luxvelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged)** *(No. 32, Author: St0ny)* 🟡 **[safe - DLL risky]**
 
 Loads `Luxvelum.dll` from the WoW folder at startup –
 [Luxvelum](https://github.com/Raz0r1337/coa-vfog) (formerly CoAVolFog) brings volumetric
@@ -569,10 +569,9 @@ fog, light and water to the 3.3.5a client. So far Luxvelum came with a proxy
 `Luxvelum.log`. If the DLL is missing, WoW starts normally.
 
 > [!WARNING]
-> Still untested, online and in game. That is why the patch is deselected by
-> default and only in the `st0ny-dev` branch for now. The patch itself only
-> loads a DLL that is not included here – but `Luxvelum.dll` may be detected or
-> blocked on public servers.
+> The patch itself is safe, it only loads a DLL that is not included here.
+> The loaded `Luxvelum.dll`, however, may be detected or blocked on public
+> servers – so use it only where Luxvelum is allowed.
 
 > [!IMPORTANT]
 > **Delete the old files:** if the old `CoAVolFog.dll` and its `version.dll`

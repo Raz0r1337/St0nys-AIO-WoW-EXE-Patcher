@@ -298,8 +298,9 @@ verwendet werden. Zwei davon (Nr. 9 und 68) vergrößern die `Wow.exe`; auf
 Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen.
 Dazu kommen der awesome_wotlk-Lader (Nr. 28) für die Client-Erweiterungen
 von noname08662, der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften, der
-Lux-Lader (Nr. 31) für die Schulterkamera LuxShoulderCam und der
-Licht-Patch Nr. 70. Bei den drei Ladern ist der Patch selbst sicher, die
+Lux-Lader (Nr. 31) für die Schulterkamera LuxShoulderCam, der Luxvelum-Lader
+(Nr. 32) für volumetrischen Nebel, Licht und Wasser und der Licht-Patch
+Nr. 70. Bei den vier Ladern ist der Patch selbst sicher, die
 geladene DLL kann auf öffentlichen Servern aber erkannt oder blockiert
 werden; ohne die DLL im WoW-Ordner bewirken sie nichts. Lexara lädt die
 `LuxShoulderCam.dll` selbst mit, der Lux-Lader lädt sie auch ohne Lexara –
@@ -522,7 +523,7 @@ dem Patchen listet er sie noch einmal auf.
 | [29](PATCHES.de.md#patch-wotlkext) | WotLKExtensions.dll beim Start laden (Client-Erweiterungen von Alyst3r) *(benötigt [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[sicher - DLL riskant]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.de.md#patch-lexara) | Lexara.dll beim Start laden (HD-Schriften von Stormhand) *(benötigt [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – `dinput8.dll` in `Lexara.dll` umbenennen)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
 | [31](PATCHES.de.md#patch-lux) | LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand) *(benötigt [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – mit Lexara (Nr. 30) nicht nötig)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
-| [32](PATCHES.de.md#patch-luxvelum) | Luxvelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged) *(benötigt [Luxvelum](https://github.com/Raz0r1337/coa-vfog) – ohne `version.dll`; alte `CoAVolFog.dll` und `version.dll` löschen)* | 🟠 **[ungetestet - DLL riskant]** | St0ny | – | – | – |
+| [32](PATCHES.de.md#patch-luxvelum) | Luxvelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged) *(benötigt [Luxvelum](https://github.com/Raz0r1337/coa-vfog) – ohne `version.dll`; alte `CoAVolFog.dll` und `version.dll` löschen)* | 🟡 **[sicher - DLL riskant]** | St0ny | ✅ | – | – |
 | [33](PATCHES.de.md#patch-voicedll) | voice.dll beim Start laden (Voice-Chat von St0ny) [BETA] *(benötigt [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat) – Modul noch unfertig)* | 🟠 **[ungetestet]** | St0ny | – | – | – |
 
 #### Gameplay-Fixes
@@ -657,10 +658,10 @@ ein Klick auf die Nummer eines Patches direkt zu seiner Beschreibung.
     11, 23–25, 45, 46, 49–54, 81 und 89–93 (rote Warnung).
   - 🟠 **riskant** – wird auf manchen Servern geblockt: Nr. 10 (orange Warnung).
   - 🟠 **online ungetestet** – nicht auf öffentlichen Servern getestet, mögliche Bann-Gefahr, Vorsicht,
-    kann zu Kick/Bann führen: Nr. 10, 26, 32, 33, 43, 48, 55, 66, 69, 75, 78–80, 87
+    kann zu Kick/Bann führen: Nr. 10, 26, 33, 43, 48, 55, 66, 69, 75, 78–80, 87
     und 94 (orange Warnung).
   - 🟠 **ingame ungetestet** – die Funktion ist im Spiel noch nicht geprüft,
-    möglicherweise verbuggt: Nr. 25, 26, 32, 33, 48, 55, 66, 69, 87 und 94 (orange
+    möglicherweise verbuggt: Nr. 25, 26, 33, 48, 55, 66, 69, 87 und 94 (orange
     Warnung).
   - 🟡 **Exe wird größer** – diese Patches hängen eine Sektion an die `Wow.exe` an:
     Nr. 9, 54, 67–70, 81, 87 und 94. Das ist keine sichere Bann-Gefahr,

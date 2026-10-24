@@ -282,7 +282,8 @@ preset is safe** and can be used on public servers as well. Two of them
 other servers may check the file size. On top of that come the awesome_wotlk
 loader (No. 28) for the client extensions by noname08662, the Lexara loader
 (No. 30) for Stormhand's HD fonts, the Lux loader (No. 31) for the
-LuxShoulderCam shoulder camera and the light patch No. 70. For the three
+LuxShoulderCam shoulder camera, the Luxvelum loader (No. 32) for volumetric
+fog, light and water and the light patch No. 70. For the four
 loaders the patch itself is safe, but the loaded DLL may be detected or
 blocked on public servers; without the DLL in the WoW folder they do nothing.
 Lexara loads `LuxShoulderCam.dll` by itself, the Lux loader also loads it
@@ -498,7 +499,7 @@ name, and before patching it lists them once more.
 | [29](PATCHES.en.md#patch-wotlkext) | Load WotLKExtensions.dll at startup (client extensions by Alyst3r) *(requires [WotLK-Extensions](https://github.com/Alyst3r/WotLK-Extensions))* | 🟡 **[safe - DLL risky]** | St0ny (original by Alyst3r) | – | – | – |
 | [30](PATCHES.en.md#patch-lexara) | Load Lexara.dll at startup (HD fonts by Stormhand) *(requires [Lexara](https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5) – rename `dinput8.dll` to `Lexara.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
 | [31](PATCHES.en.md#patch-lux) | Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand) *(requires [LuxShoulderCam](https://github.com/Stormhand-dev/Lux-Shoulder-Cam) – not needed with Lexara (No. 30))* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
-| [32](PATCHES.en.md#patch-luxvelum) | Load Luxvelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged) *(requires [Luxvelum](https://github.com/Raz0r1337/coa-vfog) – no `version.dll` needed; delete the old `CoAVolFog.dll` and `version.dll`)* | 🟠 **[untested - DLL risky]** | St0ny | – | – | – |
+| [32](PATCHES.en.md#patch-luxvelum) | Load Luxvelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged) *(requires [Luxvelum](https://github.com/Raz0r1337/coa-vfog) – no `version.dll` needed; delete the old `CoAVolFog.dll` and `version.dll`)* | 🟡 **[safe - DLL risky]** | St0ny | ✅ | – | – |
 | [33](PATCHES.en.md#patch-voicedll) | Load voice.dll at startup (voice chat by St0ny) [BETA] *(requires [mod-voicechat](https://github.com/Raz0r1337/mod-voicechat) – module not finished yet)* | 🟠 **[untested]** | St0ny | – | – | – |
 
 #### Gameplay fixes
@@ -633,10 +634,10 @@ clicking the number of a patch takes you straight to its description.
     45, 46, 49–54, 81 and 89–93 (red warning).
   - 🟠 **risky** – gets blocked on some servers: No. 10 (orange warning).
   - 🟠 **untested online** – not tested on public servers, possible ban risk, careful, may get
-    you kicked or banned: No. 10, 26, 32, 33, 43, 48, 55, 66, 69, 75, 78–80, 87
+    you kicked or banned: No. 10, 26, 33, 43, 48, 55, 66, 69, 75, 78–80, 87
     and 94 (orange warning).
   - 🟠 **untested ingame** – the function has not been checked in game yet,
-    possibly buggy: No. 25, 26, 32, 33, 48, 55, 66, 69, 87 and 94 (orange warning).
+    possibly buggy: No. 25, 26, 33, 48, 55, 66, 69, 87 and 94 (orange warning).
   - 🟡 **exe grows** – these patches append a section to `Wow.exe`: No. 9, 54,
     67–70, 81, 87 and 94. This does not mean a certain ban, but it is a risk: some
     servers check the file size (yellow note). All other patches do not change

@@ -576,7 +576,7 @@ dem wow_optimize-Lader (Nr. 27), dem Lexara-Lader (Nr. 30), dem Luxvelum-Lader
 (Nr. 32) und dem voice.dll-Lader (Nr. 33).
 
 <a id="patch-luxvelum"></a>
-**Luxvelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged)** *(Nr. 32, Autor: St0ny)* 🟠 **[ungetestet - DLL riskant]**
+**Luxvelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged)** *(Nr. 32, Autor: St0ny)* 🟡 **[sicher - DLL riskant]**
 
 Lädt beim Start die `Luxvelum.dll` aus dem WoW-Ordner –
 [Luxvelum](https://github.com/Raz0r1337/coa-vfog) (früher CoAVolFog) bringt volumetrischen
@@ -587,10 +587,9 @@ Wine/Proton fällt `WINEDLLOVERRIDES` weg. Luxvelum liest `Luxvelum.ini`,
 `Luxvelum.log`. Fehlt die DLL, startet WoW ganz normal.
 
 > [!WARNING]
-> Noch ungetestet, online wie im Spiel. Deshalb ist der Patch standardmäßig
-> abgewählt und vorerst nur im Zweig `st0ny-dev`. Der Patch selbst lädt nur
-> eine DLL, die hier nicht enthalten ist – die `Luxvelum.dll` kann aber auf
-> öffentlichen Servern erkannt oder blockiert werden.
+> Der Patch selbst ist sicher, er lädt nur eine DLL, die hier nicht enthalten
+> ist. Die geladene `Luxvelum.dll` kann aber auf öffentlichen Servern erkannt
+> oder blockiert werden – also nur dort einsetzen, wo Luxvelum erlaubt ist.
 
 > [!IMPORTANT]
 > **Alte Dateien löschen:** Liegen noch die alte `CoAVolFog.dll` und ihre
