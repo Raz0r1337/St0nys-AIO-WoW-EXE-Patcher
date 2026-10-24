@@ -1015,10 +1015,10 @@ function Set-ClientDate([string]$v) {
     # Zeitstempel im PE-Kopf (TimeDateStamp, Sekunden seit 1970 in UTC), den
     # Analyse-Werkzeuge als Erstellungszeit zeigen. Datum und Uhrzeit gelten
     # als Ortszeit dieses Rechners, so zeigt Windows sie hier wieder genauso an.
-    # Nicht mit dem Luxvelum-Lader (steht in der Liste davor, sein DLL-Name ist
-    # dann schon eingespielt): Luxvelum erkennt den Client 12340 an diesem
+    # Nicht mit dem LuxVelum-Lader (steht in der Liste davor, sein DLL-Name ist
+    # dann schon eingespielt): LuxVelum erkennt den Client 12340 an diesem
     # Zeitstempel und schaltet sich sonst ab - dann bleibt er im Original.
-    if ([System.Text.Encoding]::ASCII.GetString($script:f, 0x2D1463, 13) -ceq "Luxvelum.dll`0") { return }
+    if ([System.Text.Encoding]::ASCII.GetString($script:f, 0x2D1463, 13) -ieq "LuxVelum.dll`0") { return }
     $e = RU32 $script:f 0x3C
     $local = [datetime]::SpecifyKind($d, [System.DateTimeKind]::Local)
     $epoch = [int64]($local.ToUniversalTime() - [datetime]::new(1970, 1, 1, 0, 0, 0, [System.DateTimeKind]::Utc)).TotalSeconds
@@ -7668,8 +7668,8 @@ $patches = @(
         # Der Name steht in einer zweiten Luecke (VA 0x6DC0E0). Eine Proxy-DLL
         # wird ebenfalls vor dem Einstiegspunkt geladen, der Zeitpunkt passt.
         # Vertraegt sich mit dem voice.dll-Lader (der aendert nur den Sprung
-        # danach). Mit dem Luxvelum-Lader zeigt der Aufruf auf dessen Lader, der
-        # danach hierher springt (Luxvelum wird zuerst geladen). Fehlt die DLL,
+        # danach). Mit dem LuxVelum-Lader zeigt der Aufruf auf dessen Lader, der
+        # danach hierher springt (LuxVelum wird zuerst geladen). Fehlt die DLL,
         # startet WoW ganz normal. Lexara laedt selbst
         # die LuxShoulderCam.dll mit, wenn sie im WoW-Ordner liegt (siehe
         # Lux-Lader).
@@ -7720,16 +7720,16 @@ $patches = @(
 
     @{ Id = 'luxvelum'; Cat = 'dll'; On = $false; DllRisky = $true
        Author = 'St0ny'
-       De = 'Luxvelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged)'
-       En = 'Load Luxvelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged)'
-       NoteDe = 'benoetigt Luxvelum - ohne version.dll; alte CoAVolFog.dll und version.dll loeschen'
-       NoteEn = 'requires Luxvelum - no version.dll needed; delete the old CoAVolFog.dll and version.dll'
+       De = 'LuxVelum.dll beim Start laden (Nebel, Licht und Wasser - Atmospheric Immersion for Project Reforged)'
+       En = 'Load LuxVelum.dll at startup (fog, light and water - Atmospheric Immersion for Project Reforged)'
+       NoteDe = 'benoetigt LuxVelum - ohne version.dll; alte CoAVolFog.dll und version.dll loeschen'
+       NoteEn = 'requires LuxVelum - no version.dll needed; delete the old CoAVolFog.dll and version.dll'
        Url = 'https://github.com/Raz0r1337/coa-vfog'
        Code = {
-        # Laedt beim Start Luxvelum.dll (volumetrischer Nebel, Licht und Wasser,
+        # Laedt beim Start LuxVelum.dll (volumetrischer Nebel, Licht und Wasser,
         # frueher CoAVolFog, kurz auch Luxveil) aus dem WoW-Ordner. Bisher kam
-        # Luxvelum ueber eine Proxy-version.dll, die Luxvelum.dll fest
-        # importiert. Luxvelum erledigt alles in DllMain (kein Export-Aufruf
+        # LuxVelum ueber eine Proxy-version.dll, die LuxVelum.dll fest
+        # importiert. LuxVelum erledigt alles in DllMain (kein Export-Aufruf
         # noetig) und muss vor Direct3D geladen sein: Es biegt den
         # GetProcAddress-Zeiger des Clients bei VA 0xB2ED98 um und faengt so
         # Direct3DCreate9 ab.
@@ -7737,28 +7737,28 @@ $patches = @(
         # (so wie die Proxy-DLL vor allen Ladern lief): Der erste Aufruf am
         # Einstiegspunkt (VA 0x401000) zeigt auf einen Lader in einer freien
         # 16-Byte-Luecke (VA 0x6D3080, hinter einem Aufruf, der nie
-        # zurueckkehrt): push "Luxvelum.dll" / call [LoadLibraryA] / jmp zum
+        # zurueckkehrt): push "LuxVelum.dll" / call [LoadLibraryA] / jmp zum
         # bisherigen Ziel des Aufrufs - dem Lexara-Lader, wenn er gewaehlt ist
         # (er steht davor in der Liste und ist dann schon eingespielt), sonst
         # __security_init_cookie (VA 0x76E490). Der Name steht in einer zweiten
         # Luecke (VA 0x6D2063, genau 13 Byte). Beide Luecken sind kleiner als
         # 24 Byte (Lux sucht sich zur Laufzeit die erste Luecke ab 24 Byte) und
-        # liegen ausserhalb der Stellen, die Luxvelum prueft oder umschreibt.
+        # liegen ausserhalb der Stellen, die LuxVelum prueft oder umschreibt.
         # Fehlt die DLL, startet WoW ganz normal; zusammen mit der Proxy-
-        # version.dll laedt Windows die DLL nur einmal. Luxvelum erkennt den
+        # version.dll laedt Windows die DLL nur einmal. LuxVelum erkennt den
         # Client am Zeitstempel im PE-Kopf - "Build-Datum aendern" laesst ihn
         # deshalb in Ruhe, wenn dieser Lader eingespielt ist (Set-ClientDate).
         # Dateigroesse und PE-Header bleiben unveraendert.
-        Assert-Bytes 0x400 @(0xE8) 'Luxvelum-Lader'
-        Assert-Bytes 0x2D2480 (@(0xCC) * 16) 'Luxvelum-Lader'
-        Assert-Bytes 0x2D1463 (@(0xCC) * 13) 'Luxvelum-Lader'
+        Assert-Bytes 0x400 @(0xE8) 'LuxVelum-Lader'
+        Assert-Bytes 0x2D2480 (@(0xCC) * 16) 'LuxVelum-Lader'
+        Assert-Bytes 0x2D1463 (@(0xCC) * 13) 'LuxVelum-Lader'
         $next = 0x401005 + [BitConverter]::ToInt32($script:f, 0x401)   # bisheriges Ziel des Aufrufs
         if ($next -eq 0x6DC8C0) {
-            Assert-Bytes 0x2DBCC0 @(0x68, 0xE0, 0xC0, 0x6D, 0x00, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0xE9, 0xC0, 0x1B, 0x09, 0x00) 'Luxvelum-Lader'   # Lexara-Lader
-        } elseif ($next -ne 0x76E490) { throw 'Luxvelum-Lader: Code bei Datei 0x400 unbekannt.' }
+            Assert-Bytes 0x2DBCC0 @(0x68, 0xE0, 0xC0, 0x6D, 0x00, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00, 0xE9, 0xC0, 0x1B, 0x09, 0x00) 'LuxVelum-Lader'   # Lexara-Lader
+        } elseif ($next -ne 0x76E490) { throw 'LuxVelum-Lader: Code bei Datei 0x400 unbekannt.' }
         Patch 0x2D2480 ([byte[]](@(0x68, 0x63, 0x20, 0x6D, 0x00, 0xFF, 0x15, 0x48, 0xF2, 0x9D, 0x00) + (Get-Rel32 @(0xE9) 0x6D308B $next)))
-        Patch 0x2D1463 @(0x4C, 0x75, 0x78, 0x76, 0x65, 0x6C, 0x75, 0x6D, 0x2E, 0x64, 0x6C, 0x6C, 0x00)   # "Luxvelum.dll"
-        Patch 0x401 ([BitConverter]::GetBytes([int32](0x6D3080 - 0x401005)))   # call -> Luxvelum-Lader
+        Patch 0x2D1463 @(0x4C, 0x75, 0x78, 0x56, 0x65, 0x6C, 0x75, 0x6D, 0x2E, 0x64, 0x6C, 0x6C, 0x00)   # "LuxVelum.dll"
+        Patch 0x401 ([BitConverter]::GetBytes([int32](0x6D3080 - 0x401005)))   # call -> LuxVelum-Lader
     }}
 
     @{ Id = 'voicedll'; Cat = 'dll'; On = $false; PublicUntested = $true; GameUntested = $true
@@ -8841,7 +8841,7 @@ $patches = @(
         # Portierung von edit_date.py (MacWarrior): die drei Datumsfelder
         # ("Jun 24 2010") und das Jahr im LegalCopyright, dazu die Uhrzeit im
         # Build-Text und der Zeitstempel im PE-Kopf (nicht mit dem
-        # Luxvelum-Lader, siehe Set-ClientDate).
+        # LuxVelum-Lader, siehe Set-ClientDate).
         Set-ClientDate $script:VALUES['clientdate']
     }}
 
@@ -8880,7 +8880,7 @@ $patches = @(
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
 # Warmane getestet (Nr. 9 und 68 vergroessern die Wow.exe); dazu die
-# Lader fuer awesome_wotlk, Lexara, Lux und Luxvelum (Nr. 28, 30, 31 und 32,
+# Lader fuer awesome_wotlk, Lexara, Lux und LuxVelum (Nr. 28, 30, 31 und 32,
 # Patch sicher, DLL riskant; Lexara laedt Lux ohnehin mit, der Lux-Lader auch
 # ohne Lexara)
 # und der Licht-Patch Nr. 70 (im Spiel und online getestet, sicher;
