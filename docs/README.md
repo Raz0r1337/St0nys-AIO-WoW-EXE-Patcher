@@ -277,8 +277,8 @@ The preset "Reforged" (key `R`) is the official preset of the
 [Project Reforged](https://projectreforged.github.io/wotlk/) project, put
 together by Stormhand, and the default selection. It contains patches
 rated safe (🟢), all tested by Stormhand for several hours on Warmane – **the
-preset is safe** and can be used on public servers as well. Three of them
-(No. 9, 67 and 68) make `Wow.exe` larger; that was no problem on Warmane, but
+preset is safe** and can be used on public servers as well. Two of them
+(No. 9 and 68) make `Wow.exe` larger; that was no problem on Warmane, but
 other servers may check the file size. On top of that come the awesome_wotlk
 loader (No. 28) for the client extensions by noname08662, the Lexara loader
 (No. 30) for Stormhand's HD fonts, the Lux loader (No. 31) for the
@@ -543,7 +543,7 @@ name, and before patching it lists them once more.
 | [64](PATCHES.en.md#patch-bluemoon) | Re-enable the blue moon in the night sky | 🟢 **[safe]** | Robinsch | ✅ | ✅ | ✅ |
 | [65](PATCHES.en.md#patch-notransparency) | No character transparency when zooming in | 🟢 **[safe]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
 | [66](PATCHES.en.md#patch-nofade) | No fade-out for NPCs with flag DO_NOT_FADE_IN *(server must set the flag)* | 🟠 **[untested]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
-| [67](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe - exe grows]** | St0ny (original by Badgermilk0) | ✅ | – | – |
+| [67](PATCHES.en.md#patch-hdportraits) | HD unit frame portraits: render resolution 256 instead of 64 pixels | 🟡 **[safe - exe grows]** | St0ny (original by Badgermilk0) | – | – | – |
 | [68](PATCHES.en.md#patch-iconsnap) | Pixel-exact icons in text (sharp instead of blurry) | 🟡 **[safe - exe grows]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [69](PATCHES.en.md#patch-outline) | Outline for target and mouseover [BETA] *(gxApi d3d9 only, asks for the settings)* | 🟠 **[untested - exe grows]** | St0ny | – | – | – |
 | [70](PATCHES.en.md#patch-lights) | More lights: 8 instead of 4 point lights (groundwork for new shaders) *(requires [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – unpack `patch-5.MPQ.zip` from the release into the `Data` folder)* | 🟡 **[safe - exe grows]** | St0ny | ✅ | – | – |

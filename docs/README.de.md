@@ -294,7 +294,7 @@ Projekts [Project Reforged](https://projectreforged.github.io/wotlk/),
 zusammengestellt von Stormhand, und die Standard-Auswahl. Es enthält
 sichere Patches (🟢), die Stormhand alle mehrere Stunden auf Warmane getestet
 hat – **das Preset ist sicher** und kann auch auf öffentlichen Servern
-verwendet werden. Drei davon (Nr. 9, 67 und 68) vergrößern die `Wow.exe`; auf
+verwendet werden. Zwei davon (Nr. 9 und 68) vergrößern die `Wow.exe`; auf
 Warmane war das kein Problem, andere Server können die Dateigröße aber prüfen.
 Dazu kommen der awesome_wotlk-Lader (Nr. 28) für die Client-Erweiterungen
 von noname08662, der Lexara-Lader (Nr. 30) für Stormhands HD-Schriften, der
@@ -567,7 +567,7 @@ dem Patchen listet er sie noch einmal auf.
 | [64](PATCHES.de.md#patch-bluemoon) | Blauer Mond am Nachthimmel reaktiviert | 🟢 **[sicher]** | Robinsch | ✅ | ✅ | ✅ |
 | [65](PATCHES.de.md#patch-notransparency) | Keine Transparenz beim Heranzoomen | 🟢 **[sicher]** | Alastor StrixEfuartus | ✅ | ✅ | ✅ |
 | [66](PATCHES.de.md#patch-nofade) | Kein Ausblenden für NPCs mit Flag DO_NOT_FADE_IN *(Server muss das Flag setzen)* | 🟠 **[ungetestet]** | Alyst3r (0x539wowmod) (ported by St0ny) | – | – | – |
-| [67](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher - Exe wird größer]** | St0ny (original by Badgermilk0) | ✅ | – | – |
+| [67](PATCHES.de.md#patch-hdportraits) | HD Unit-Frame Portraits: Renderauflösung 256 statt 64 Pixel | 🟡 **[sicher - Exe wird größer]** | St0ny (original by Badgermilk0) | – | – | – |
 | [68](PATCHES.de.md#patch-iconsnap) | Icons im Text pixelgenau (scharf statt verschwommen) | 🟡 **[sicher - Exe wird größer]** | tb (ported by St0ny) | ✅ | – | ✅ |
 | [69](PATCHES.de.md#patch-outline) | Umrandung für Ziel und Mouseover [BETA] *(nur gxApi d3d9, fragt die Einstellungen ab)* | 🟠 **[ungetestet - Exe wird größer]** | St0ny | – | – | – |
 | [70](PATCHES.de.md#patch-lights) | Mehr Lichter: 8 statt 4 Punktlichter (Grundlage für neue Shader) *(benötigt [WoW-lights-patch-shader](https://github.com/Raz0r1337/WoW-lights-patch-shader/releases) – `patch-5.MPQ.zip` aus dem Release in den `Data`-Ordner entpacken)* | 🟡 **[sicher - Exe wird größer]** | St0ny | ✅ | – | – |
