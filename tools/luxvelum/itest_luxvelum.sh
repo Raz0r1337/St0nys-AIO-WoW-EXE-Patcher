@@ -21,13 +21,16 @@ ids = re.findall(r"(?m)^    @\{ Id = '([^']+)'", s)
 want = []
 for a in sys.argv[2:]:
     if a == 'reforged': want += re.findall(r"'(\w+)'", re.search(r'(?m)^\$PRESET_REFORGED = @\((.*?)\n\)', s, re.S).group(1))
+    elif a.startswith('?'):
+        if a[1:] in ids: want.append(a[1:])   # nur, wenn es den Patch im Zweig gibt
     else: want.append(a)
 print(','.join(str(ids.index(i) + 1) for i in dict.fromkeys(want)))
 EOF
 }
 ts() { python3 -c "import sys,struct; d=open(sys.argv[1],'rb').read(); e=struct.unpack_from('<I',d,0x3C)[0]; print('%08X %08X' % (struct.unpack_from('<I',d,e+8)[0], struct.unpack_from('<I',d,e+52)[0]))" "$1"; }   # TimeDateStamp, ImageBase
-LX=$(num luxvelum); LEX=$(num lexara); DLLS=$(num wowoptimize awesome wotlkext lexara lux luxvelum voicedll); REFN=$(num reforged | tr , '\n' | wc -l); CD=$(num clientdate)
+LX=$(num luxvelum); LEX=$(num lexara); DLLS=$(num wowoptimize awesome ?wotlkext lexara lux luxvelum ?voicedll); REFN=$(num reforged | tr , '\n' | wc -l); CD=$(num clientdate)
 [ "$LX" = "$NR" ] || { echo "luxvelum ist Nr. $LX, erwartet $NR"; exit 1; }
+CHAIN=Luxvelum.dll,Lexara.dll,THREAD,LuxShoulderCam.dll; grep -q "^    @{ Id = 'voicedll'" "$NEW/apply_patches.ps1" && CHAIN=$CHAIN,voice.dll   # st0ny-main ohne voice.dll-Lader
 echo "== Nur Nr. $NR (Luxvelum-Lader)"
 run solo $NR a
 ok "Exit-Code 0, 1 Patch eingespielt" '[ "$(cat $R/solo/rc_a.txt)" = 0 ] && grep -q "\[+\] 1/1 - Luxvelum.dll beim Start laden" $R/solo/out_a.txt'
@@ -47,8 +50,8 @@ ok "Startkette: erst Luxvelum.dll, dann Lexara.dll" 'python3 -I $T/emu_entry.py 
 echo "== Alle DLL-Lader ($DLLS)"
 run dlls "$DLLS" a
 ok "Exit-Code 0" '[ "$(cat $R/dlls/rc_a.txt)" = 0 ]'
-ok "Startkette: Luxvelum, Lexara, wow_optimize-Thread, LuxShoulderCam, voice.dll" 'python3 -I $T/emu_entry.py $R/dlls/Wow.exe Luxvelum.dll,Lexara.dll,THREAD,LuxShoulderCam.dll,voice.dll'
-ok "Startkette ohne DLLs laeuft durch" 'python3 -I $T/emu_entry.py $R/dlls/Wow.exe Luxvelum.dll,Lexara.dll,THREAD,LuxShoulderCam.dll,voice.dll fehlt'
+ok "Startkette: $CHAIN" 'python3 -I $T/emu_entry.py $R/dlls/Wow.exe $CHAIN'
+ok "Startkette ohne DLLs laeuft durch" 'python3 -I $T/emu_entry.py $R/dlls/Wow.exe $CHAIN fehlt'
 echo "== Reforged-Preset (enthaelt Luxvelum)"
 run ref reforged a
 ok "Exit-Code 0, $REFN Patches inkl. Luxvelum-Lader" '[ "$(cat $R/ref/rc_a.txt)" = 0 ] && grep -q "\[+\] $REFN/$REFN" $R/ref/out_a.txt && grep -q "\[+\] [0-9]*/$REFN - Luxvelum.dll beim Start laden" $R/ref/out_a.txt'
@@ -57,7 +60,7 @@ ok "Luxvelums Pruefstellen unberuehrt (lightstay ist nicht im Preset)" 'python3 
 echo "== Alle Patches"
 run all all a
 ok "Exit-Code 0, alle Patches eingespielt" '[ "$(cat $R/all/rc_a.txt)" = 0 ] && grep -q "\[+\] $(grep -c "^    @{ Id = " $NEW/apply_patches.ps1)/$(grep -c "^    @{ Id = " $NEW/apply_patches.ps1)" $R/all/out_a.txt'
-ok "Startkette mit allen Patches" 'python3 -I $T/emu_entry.py $R/all/Wow.exe Luxvelum.dll,Lexara.dll,THREAD,LuxShoulderCam.dll,voice.dll'
+ok "Startkette mit allen Patches" 'python3 -I $T/emu_entry.py $R/all/Wow.exe $CHAIN'
 ok "Luxvelums Pruefstellen: nur lightstay (0x81E548, gewollt)" 'python3 -I $T/check_sites.py $ORI $R/all/Wow.exe 0x81E548 > $R/sites_all.txt && grep -q "erlaubt 0x0081E548" $R/sites_all.txt'
 ok "Build-Datum mit Luxvelum: PE-Zeitstempel bleibt 4C2452FE, Datumstext geaendert" '[ "$(ts $R/all/Wow.exe)" = "4C2452FE 00400000" ] && [ "$(dd if=$R/all/Wow.exe bs=1 skip=$((0x5F39F4)) count=11 2>/dev/null)" = "Jan 02 2025" ]'
 OUTLINE=self,raid,walls,react run allopt all a
