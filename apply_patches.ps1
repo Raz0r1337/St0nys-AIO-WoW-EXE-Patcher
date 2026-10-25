@@ -7468,6 +7468,51 @@ $patches = @(
         Patch 0x5E0F16 @(0x2A)
     }}
 
+    @{ Id = 'mpqlimit'; Cat = 'modding'; On = $false; PublicUntested = $true; GameUntested = $true
+       Author = 'MacWarrior (ported by St0ny)'
+       De = 'MPQ-Limit-Fix (Abstuerze bei vielen Patch-MPQs)'
+       En = 'MPQ limit fix (crashes with many patch MPQs)'
+       NoteDe = 'erst ab etwa 30 eigenen Patch-MPQs noetig'
+       NoteEn = 'only needed from about 30 custom patch MPQs'
+       Code = {
+        # Nach patch_mpq_limit.py von MacWarrior. Der MPQ-Lader (VA 0x405DD0)
+        # legt die Tabelle der Archiv-Handles (Objekt bei VA 0xB2FA38:
+        # Kapazitaet, Anzahl, Daten, Schrittweite) mit nur 64 Plaetzen an und
+        # schreibt dann ohne Pruefung hinein: je ein Handle fuer jedes gefundene
+        # Patch-MPQ, fuer alternate.MPQ und dessen Kind-Archive in den Patches,
+        # dann ein Platz fuer jeden der 28 Basis-Eintraege (common.MPQ,
+        # expansion.MPQ, locale-xxXX.MPQ ...). Vergroessert wird erst ganz am
+        # Ende (VA 0x40624A). Ab etwa 37 geoeffneten Patch-MPQs (mit den sechs
+        # mitgelieferten also ab etwa 31 eigenen) ist der Heap da schon
+        # ueberschrieben - zufaellige Abstuerze beim Starten oder Beenden.
+        # Hier reserviert der Block, der im Original die 64 Plaetze anlegt
+        # (VA 0x405E33-0x405E78), gleich 2*N+64 Plaetze ueber die
+        # Original-Vergroesserung (VA 0x4037F0), N = Zahl der gefundenen
+        # Patch-Pfade ([ebp-24h]). Beschrieben werden hoechstens 2*N+31 Plaetze
+        # (N Patches, N Kind-Archive, alternate.MPQ, 28 Basis-Plaetze, zwei
+        # Streaming-Archive). Wie im Original wird die Schrittweite 64 gesetzt;
+        # ebx (Prioritaet der Patches, 64), edi und die Ladereihenfolge bleiben
+        # gleich. MacWarriors Skript haengt dafuer eine Sektion mit Hook an -
+        # hier gleiche Wirkung ohne Sektion, der Rest des Blocks ist nop.
+        #   xor edi,edi / mov dword [0B2FA44h],40h / mov eax,[ebp-24h]
+        #   lea eax,[eax+eax+40h] / cmp eax,[0B2FA38h] / jbe weiter
+        #   push eax / mov ecx,0B2FA38h / call 4037F0h / weiter: 32x nop
+        Assert-Bytes 0x5233 @(
+            0x33, 0xFF, 0x39, 0x1D, 0x3C, 0xFA, 0xB2, 0x00, 0x73, 0x3C, 0x39, 0x1D, 0x38, 0xFA, 0xB2, 0x00,
+            0x73, 0x34, 0x8B, 0x0D, 0x44, 0xFA, 0xB2, 0x00, 0x85, 0xC9, 0x75, 0x0D, 0x53, 0xB9, 0x38, 0xFA,
+            0xB2, 0x00, 0xE8, 0xE6, 0xA1, 0x1C, 0x00, 0x8B, 0xC8, 0x33, 0xD2, 0x8B, 0xC3, 0xF7, 0xF1, 0x8B,
+            0xF3, 0x85, 0xD2, 0x74, 0x06, 0x2B, 0xCA, 0x03, 0xCB, 0x8B, 0xF1, 0x56, 0xB9, 0x38, 0xFA, 0xB2,
+            0x00, 0xE8, 0x77, 0xD9, 0xFF, 0xFF
+        ) 'MPQ-Limit-Fix'
+        Patch 0x5233 @(
+            0x33, 0xFF, 0xC7, 0x05, 0x44, 0xFA, 0xB2, 0x00, 0x40, 0x00, 0x00, 0x00, 0x8B, 0x45, 0xDC, 0x8D,
+            0x44, 0x00, 0x40, 0x3B, 0x05, 0x38, 0xFA, 0xB2, 0x00, 0x76, 0x0B, 0x50, 0xB9, 0x38, 0xFA, 0xB2,
+            0x00, 0xE8, 0x97, 0xD9, 0xFF, 0xFF, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90
+        )
+    }}
+
     @{ Id = 'localdata'; Cat = 'modding'; On = $true
        Author = 'Alastor StrixEfuartus'
        De = 'Daten direkt aus dem Data-Ordner laden (ohne MPQ)'
@@ -7685,8 +7730,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'LuxShoulderCam.dll beim Start laden (Schulterkamera von Stormhand)'
        En = 'Load LuxShoulderCam.dll at startup (shoulder camera by Stormhand)'
-       NoteDe = 'benoetigt LuxShoulderCam - mit Lexara (Nr. 30) nicht noetig'
-       NoteEn = 'requires LuxShoulderCam - not needed with Lexara (No. 30)'
+       NoteDe = 'benoetigt LuxShoulderCam - mit Lexara (Nr. 31) nicht noetig'
+       NoteEn = 'requires LuxShoulderCam - not needed with Lexara (No. 31)'
        Url = 'https://github.com/Stormhand-dev/Lux-Shoulder-Cam'
        Code = {
         # Laedt beim Start LuxShoulderCam.dll
@@ -8638,13 +8683,13 @@ $patches = @(
        Author = 'tb (ported by St0ny)'
        De = 'Echtes Level statt "??" bei Gegnern ab 10 Level ueber dir'
        En = 'Real level instead of "??" for enemies 10+ levels above you'
-       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 80'
-       NoteEn = 'bosses still show "??" - see No. 80'
+       NoteDe = 'Bosse zeigen weiter "??" - dafuer Nr. 81'
+       NoteEn = 'bosses still show "??" - see No. 81'
        Code = {
         # Lua UnitLevel (VA 0x60F9E0), Tooltip (VA 0x620EE0) und Namensplakette
         # (VA 0x98EF10) zeigen "??" (bzw. -1 / Totenkopf), wenn ein feindliches
         # Ziel 10 oder mehr Level ueber dir ist. Diese Pruefung ("jle") faellt
-        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 80 raus).
+        # weg; die Boss-Pruefung direkt dahinter bleibt (die nimmt Nr. 81 raus).
         Patch 0x20EEB2 @(0x90, 0x90)
         Patch 0x220B66 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)
         Patch 0x58E3B9 @(0x90, 0x90)
@@ -8652,15 +8697,15 @@ $patches = @(
 
     @{ Id = 'showlevelboss'; Cat = 'ui'; On = $false; Needs = @('showlevel'); PublicUntested = $true
        Author = 'St0ny'
-       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 79)'
-       En = 'Real level for bosses too instead of "??" (extension to No. 79)'
+       De = 'Echtes Level auch bei Bossen statt "??" (Erweiterung zu Nr. 80)'
+       En = 'Real level for bosses too instead of "??" (extension to No. 80)'
        Code = {
         # Ist eine Kreatur als Boss markiert (Flag 0x4 in den Kreatur-Typflags,
         # Pruefung CGUnit_C::IsBossMob bei VA 0x715D70), zeigen UnitLevel,
         # Tooltip und Namensplakette immer "??" bzw. -1 / Totenkopf. Diese drei
         # Boss-Pruefungen fallen weg; die Beschriftung "Boss" im Tooltip und das
         # Elite-Symbol der Namensplakette bleiben. Gegner 10+ Level ueber dir
-        # zeigen ihr Level erst zusammen mit Nr. 79.
+        # zeigen ihr Level erst zusammen mit Nr. 80.
         Patch 0x20EEBD @(0xEB)                                 # VA 0x60FABD UnitLevel: je -> jmp (kein -1)
         Patch 0x220B78 @(0x90, 0x90, 0x90, 0x90, 0x90, 0x90)   # VA 0x621778 Tooltip: jne "??" -> nop
         Patch 0x58E358 @(0xEB)                                 # VA 0x98EF58 Namensplakette: je -> jmp (Level statt Totenkopf)
@@ -8705,8 +8750,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus als Standard setzen'
        En = 'Windowed mode by default'
-       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 84'
-       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 84'
+       NoteDe = 'startet als kleines Fenster mitten auf dem Desktop - maximiert nur zusammen mit Nr. 85'
+       NoteEn = 'starts as a small window in the middle of the desktop - maximized only together with No. 85'
        Code = {
         Patch 0x369A7D @(0x64, 0x14, 0x9E)
     }}
@@ -8715,8 +8760,8 @@ $patches = @(
        Author = 'St0ny'
        De = 'Fenstermodus maximiert als Standard setzen'
        En = 'Maximized window by default'
-       NoteDe = 'wirkt nur zusammen mit Nr. 83'
-       NoteEn = 'only works together with No. 83'
+       NoteDe = 'wirkt nur zusammen mit Nr. 84'
+       NoteEn = 'only works together with No. 84'
        Code = {
         Patch 0x369AB2 @(0x64, 0x14, 0x9E)
     }}
@@ -8879,11 +8924,11 @@ $patches = @(
 # Standard-Preset "Reforged" - das offizielle Preset des Projekts
 # Project Reforged (https://projectreforged.github.io/wotlk/), zusammengestellt
 # von Stormhand. Sichere Patches, alle von Stormhand mehrere Stunden auf
-# Warmane getestet (Nr. 9 und 68 vergroessern die Wow.exe); dazu die
-# Lader fuer awesome_wotlk, Lexara, Lux und LuxVelum (Nr. 28, 30, 31 und 32,
+# Warmane getestet (Nr. 9 und 69 vergroessern die Wow.exe); dazu die
+# Lader fuer awesome_wotlk, Lexara, Lux und LuxVelum (Nr. 29, 31, 32 und 33,
 # Patch sicher, DLL riskant; Lexara laedt Lux ohnehin mit, der Lux-Lader auch
 # ohne Lexara)
-# und der Licht-Patch Nr. 70 (im Spiel und online getestet, sicher;
+# und der Licht-Patch Nr. 71 (im Spiel und online getestet, sicher;
 # vergroessert die Wow.exe ebenfalls). Im Menue mit R, ueber -Select
 # reforged; gilt beim ersten Start und fuer neue Patches.
 $PRESET_REFORGED = @(
@@ -8971,6 +9016,7 @@ glue;415B5F;83C0035E8BE55D;1
 mpqsig;21350;558BEC8B451C8B4D188B55145368984F9E00508B4510;1
 mpqnames;5E0F09;3F;1
 mpqnames;5E0F16;3F;1
+mpqlimit;5233;33FF391D3CFAB200733C391D38FAB20073348B0D44FAB20085C9750D53B938FAB200E8E6A11C008BC833D28BC3F7F18BF385D274062BCA03CB8BF156B938FAB200E877D9FFFF;1
 localdata;1F2A;E821EC01006A00;1
 luaunlock;1185E7;33C05050E840A3FFFF83C40833C0;1
 luaunlockfull;1185C0;558BEC833D9C;1
